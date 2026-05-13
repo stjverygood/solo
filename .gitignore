@@ -1,0 +1,41 @@
+# Godot-specific ignores
+.godot/
+/android/
+/build/
+*.tmp
+
+# .import files should generally be tracked, but if you want to ignore 
+# specific imported assets' data, the .godot/ folder above covers it.
+
+# Mono/C# specific ignores
+.mono/
+bin/
+obj/
+/data_*/
+
+# Visual Studio / VS Code files
+.vs/
+.vscode/
+*.sln
+*.csproj
+*.user
+*.pdb
+*.orig
+
+# Desktop / OS specific
+.DS_Store
+Thumbs.db
+
+# If you use external C# IDEs like JetBrains Rider
+.idea/
+*.sln.DotSettings.user
+
+Assets/
+
+*.tscn
+
+*.import
+*.uid
+*.tres
+*.res
+*.svg

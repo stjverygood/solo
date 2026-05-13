@@ -1,0 +1,38 @@
+using Godot;
+using System;
+
+public partial class GameManager : Node
+{
+    static private GameManager _instance;
+    static public GameManager Instance()
+	{
+		return _instance;
+	}
+
+    [Export] public PackedScene PlayerPs;
+    [Export] public PackedScene MapManagerPs;
+
+
+    public Player Player;
+	public MapManager MapManager;
+	
+	public override void _Ready()
+	{
+        _instance = this;
+        GD.Print("Game Start ~~");
+
+        MapManager = MapManagerPs.Instantiate<MapManager>();
+        MapManager.Init();
+        GetTree().CurrentScene.AddChild(MapManager);
+
+        Player = PlayerPs.Instantiate<Player>();
+        Player.GlobalPosition = MapManager.GetRandomCellWorldPosition(CellType.Earth);
+        GetTree().CurrentScene.AddChild(Player);
+
+        MapManager.GenerateResource(1000);
+    }
+
+	public override void _Process(double delta)
+	{
+	}
+}
