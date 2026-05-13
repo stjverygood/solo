@@ -1,6 +1,7 @@
+using expand.Global.Interfaces;
 using Godot;
 using System;
-using static Godot.WebSocketPeer;
+using System.Collections.Generic;
 
 public enum PlayerState
 {
@@ -17,6 +18,7 @@ public partial class Player : CharacterBody2D
 	public float moveSpeed = 200;
     [Export] public Sprite2D Sprite;
     [Export] public Area2D AtkArea;
+    public int Atk = 10;
 
     public int ResCapacity = 1000;//资源存储上限
     private Tween _animTween; // 用于管理当前动画
@@ -24,18 +26,15 @@ public partial class Player : CharacterBody2D
     public override void _Ready()
     {
         AtkArea.Monitoring = false;
-        AtkArea.AreaEntered += AtkArea_AreaEntered;
+        AtkArea.BodyEntered += AtkArea_BodyEntered;
     }
 
-    private void AtkArea_AreaEntered(Area2D area)
-    {
-        throw new NotImplementedException();
-    }
+   
 
     public override void _PhysicsProcess(double delta)
     {
         UpdateState((float)delta);
-        GD.Print(_curDir);
+        //GD.Print(_curDir);
     }
 
     public void UpdateState(float delta)
@@ -154,17 +153,23 @@ public partial class Player : CharacterBody2D
                 float scaleX = Sprite.Scale.X;
 
                 // --- 第一阶段：向前冲顶 ---
-                _animTween.TweenProperty(Sprite, "position", targetPos, 0.07f)
-                    .SetTrans(Tween.TransitionType.Cubic).SetEase(Tween.EaseType.Out);
+                //_animTween.TweenProperty(Sprite, "position", targetPos, 0.07f).SetTrans(Tween.TransitionType.Cubic).SetEase(Tween.EaseType.Out);
                 _animTween.Parallel().TweenProperty(Sprite, "modulate", Colors.Black, 0.07f);
                 // 缩放也要考虑当前的镜像状态
-                _animTween.Parallel().TweenProperty(Sprite, "scale", new Vector2(1.3f * Mathf.Sign(scaleX), 2f), 0.07f);
+                _animTween.Parallel().TweenProperty(Sprite, "scale", new Vector2(1.3f, 2f), 0.07f);
 
                 // --- 伤害触发 ---
-                _animTween.TweenCallback(Callable.From(() => {
-                    GD.Print($"朝方向 {attackDir} 触发伤害！");
+                _animTween.TweenCallback(Callable.From(() =>
+                {
+                    //GD.Print($"朝方向 {attackDir} 触发伤害！");
                     AtkArea.Monitoring = true;
                 }));
+                _animTween.TweenInterval(0.1f);
+                _animTween.TweenCallback(Callable.From(() =>
+                {
+                    ApplyDamage();
+                }));
+
 
                 // --- 第二阶段：收招归位 ---
                 _animTween.TweenProperty(Sprite, "position", startPos, 0.2f)
@@ -188,6 +193,25 @@ public partial class Player : CharacterBody2D
                 _animTween.Finished += () => QueueFree(); // 动画结束删除对象
                 break;
         }
+    }
+
+
+    private List<IAttackable> _atkTargetList = new List<IAttackable>();
+    private void AtkArea_BodyEntered(Node2D body)
+    {
+        if (body is IAttackable atkTarget)
+        {
+            _atkTargetList.Add(atkTarget);
+        }
+    }
+    private void ApplyDamage()
+    {
+        foreach(var target in _atkTargetList)
+        {
+            target.TakeDamage(Atk);
+        }
+        AtkArea.Monitoring = false;
+        _atkTargetList.Clear();
     }
 }
 

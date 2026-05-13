@@ -16,8 +16,8 @@ obj/
 # Visual Studio / VS Code files
 .vs/
 .vscode/
-*.sln
-*.csproj
+# *.sln
+# *.csproj
 *.user
 *.pdb
 *.orig
