@@ -34,7 +34,7 @@ public partial class Player : CharacterBody2D
     public override void _PhysicsProcess(double delta)
     {
         UpdateState((float)delta);
-        //GD.Print(_curDir);
+        //GD.Print($"curTileType : {GameManager.Instance.ChunkManager.GetTileType(GlobalPosition)}");
     }
 
     public void UpdateState(float delta)
@@ -95,7 +95,10 @@ public partial class Player : CharacterBody2D
         else if (input.X > 0)
             Sprite.Scale = new Vector2(1, 1);
         AtkArea.Rotation = input.Angle();
-        Velocity = input * moveSpeed;
+        if(GameManager.Instance.ChunkManager.GetTileType(GlobalPosition) == TileType.Water)
+            Velocity = input * moveSpeed / 4;
+        else
+            Velocity = input * moveSpeed;
         MoveAndSlide();
     }
     public void UpdateAtk(float delta)
@@ -104,7 +107,10 @@ public partial class Player : CharacterBody2D
         if (input != Vector2.Zero)
         {
             AtkArea.Rotation = input.Angle();
-            Velocity = input * moveSpeed;
+            if (GameManager.Instance.ChunkManager.GetTileType(GlobalPosition) == TileType.Water)
+                Velocity = input * moveSpeed / 8;
+            else
+                Velocity = input * moveSpeed / 2;
             MoveAndSlide();
         }
     }
@@ -172,8 +178,7 @@ public partial class Player : CharacterBody2D
 
 
                 // --- 第二阶段：收招归位 ---
-                _animTween.TweenProperty(Sprite, "position", startPos, 0.2f)
-                    .SetTrans(Tween.TransitionType.Sine).SetEase(Tween.EaseType.InOut);
+                //_animTween.TweenProperty(Sprite, "position", startPos, 0.2f).SetTrans(Tween.TransitionType.Sine).SetEase(Tween.EaseType.InOut);
                 _animTween.Parallel().TweenProperty(Sprite, "modulate", Colors.White, 0.2f);
                 _animTween.Parallel().TweenProperty(Sprite, "scale", new Vector2(1.0f * Mathf.Sign(scaleX), 1.0f), 0.2f);
 
