@@ -21,7 +21,11 @@ public partial class ChunkManager : Node2D
     [Export] private int _chunkSize = 16;       // 每个区块的瓦片数量
     [Export] private int _tileSize = 16;        // 每个瓦片的像素大小
     [Export] private int _renderDistance = 2;  // 玩家视野内的区块半径
-    [Export] private string _seedString = "test_seed_2";
+    [Export] private string _seedString = "test_seed_3";
+
+    [Export] public PackedScene TreePs;
+    [Export] public PackedScene StonePs;
+    private List<Node2D> _genNodeList = new List<Node2D>();//记录生成的节点, 在卸载区块时要销毁
 
     private Dictionary<TileInfo, TileType> _tileInfoTypeMap = new Dictionary<TileInfo, TileType>()
     {
@@ -89,12 +93,36 @@ public partial class ChunkManager : Node2D
                 int globalY = chunkCoord.Y * _chunkSize + y;
 
                 float noiseVal = _noise.GetNoise2D(globalX, globalY);
-                if(noiseVal < 0)
+                if(noiseVal < 0)//水
+                {
                     _tileMapLayer.SetCell(new Vector2I(globalX, globalY), _tileTypeInfoMap[TileType.Water].SourceId, _tileTypeInfoMap[TileType.Water].AtlasCoords);
-                else if(noiseVal < 0.4)
+                }
+                else if(noiseVal < 0.3)//草
+                {
+                    //todo : 生成树木
+                    if(GD.Randf() < 0.1)
+                    {
+                        ResourceBase treeRes = TreePs.Instantiate<ResourceBase>();
+                        Vector2 tileWorldPos = new Vector2(globalX * _tileSize, globalY * _tileSize);
+                        Vector2 offset = new Vector2(_tileSize / 2f, _tileSize / 2f);// 计算偏移量，使物体位于瓦片中心 (假设 _tileSize 是 16，偏移就是 8)
+                        treeRes.GlobalPosition = tileWorldPos + offset;
+                        AddChild(treeRes);
+                    }
                     _tileMapLayer.SetCell(new Vector2I(globalX, globalY), _tileTypeInfoMap[TileType.Grass].SourceId, _tileTypeInfoMap[TileType.Grass].AtlasCoords);
-                else
+                }
+                else//泥
+                {
+                    if(GD.Randf() < 0.01)
+                    {
+                        ResourceBase stonePs = StonePs.Instantiate<ResourceBase>();
+                        Vector2 tileWorldPos = new Vector2(globalX * _tileSize, globalY * _tileSize);
+                        Vector2 offset = new Vector2(_tileSize / 2f, _tileSize / 2f);// 计算偏移量，使物体位于瓦片中心 (假设 _tileSize 是 16，偏移就是 8)
+                        stonePs.GlobalPosition = tileWorldPos + offset;
+                        AddChild(stonePs);
+                    }
                     _tileMapLayer.SetCell(new Vector2I(globalX, globalY), _tileTypeInfoMap[TileType.Dirt].SourceId, _tileTypeInfoMap[TileType.Dirt].AtlasCoords);
+
+                }
             }
         }
         _generatedChunks.Add(chunkCoord);

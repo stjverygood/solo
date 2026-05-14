@@ -39,3 +39,4 @@ Assets/
 *.tres
 *.res
 *.svg
+/project.godot
