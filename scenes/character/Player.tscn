@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://bwctbm6eq64vu"]
 
 [ext_resource type="Script" uid="uid://dpkxkwy3ger5n" path="res://scripts/character/Player.cs" id="1_eq5ko"]
-[ext_resource type="Texture2D" uid="uid://d4igqp371y5" path="res://assets/icon.svg" id="2_cxfou"]
+[ext_resource type="Texture2D" uid="uid://di0q8426y42st" path="res://assets/player_shadiao.png" id="2_eq5ko"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_kpjcp"]
 radius = 33.01515
@@ -10,26 +10,21 @@ radius = 33.01515
 radius = 5.0
 height = 14.0
 
-[node name="Player" type="CharacterBody2D" unique_id=1144409017 node_paths=PackedStringArray("Sprite", "AtkArea")]
+[node name="Player" type="CharacterBody2D" unique_id=1144409017 node_paths=PackedStringArray("SpriteRoot", "AtkArea")]
 script = ExtResource("1_eq5ko")
-Sprite = NodePath("Sprite")
+SpriteRoot = NodePath("SpriteRoot")
 AtkArea = NodePath("AtkArea")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=173865742]
+zoom = Vector2(3, 3)
 position_smoothing_enabled = true
 
-[node name="Sprite" type="Sprite2D" parent="." unique_id=13186832]
+[node name="SpriteRoot" type="Node2D" parent="." unique_id=700917934]
 
-[node name="ColorRect" type="ColorRect" parent="Sprite" unique_id=1955433057]
-offset_left = -7.0
-offset_top = -10.0
-offset_right = 6.0
-offset_bottom = 9.0
-
-[node name="Sprite2D" type="Sprite2D" parent="Sprite/ColorRect" unique_id=848331568]
-position = Vector2(12, 7)
-scale = Vector2(0.078125, 0.09375001)
-texture = ExtResource("2_cxfou")
+[node name="Sprite" type="Sprite2D" parent="SpriteRoot" unique_id=13186832]
+position = Vector2(0.18749744, -1.1920929e-07)
+scale = Vector2(0.045616146, 0.045112785)
+texture = ExtResource("2_eq5ko")
 
 [node name="AtkArea" type="Area2D" parent="." unique_id=588471765]
 
