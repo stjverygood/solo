@@ -1,10 +1,10 @@
 [gd_scene format=3 uid="uid://detdpii5ad2gr"]
 
-[ext_resource type="Script" uid="uid://ny8bmr02dmu0" path="res://scripts/MapManager.cs" id="1_e8f46"]
+[ext_resource type="Script" uid="uid://ny8bmr02dmu0" path="res://scriptstemp/MapManager.cs" id="1_e8f46"]
 [ext_resource type="Texture2D" uid="uid://d4igqp371y5" path="res://assets/icon.svg" id="2_1ghlo"]
 [ext_resource type="PackedScene" uid="uid://3y1owyakr1v" path="res://scenes/TreeRes.tscn" id="2_8uxi8"]
 [ext_resource type="Texture2D" uid="uid://dxlaon51r5d5" path="res://assets/Water.png" id="3_8uxi8"]
-[ext_resource type="Shader" uid="uid://6xtgfwahfwat" path="res://shaders/GridMap.gdshader" id="4_1ghlo"]
+[ext_resource type="Shader" uid="uid://6xtgfwahfwat" path="res://shaderstemp/GridMap.gdshader" id="4_1ghlo"]
 
 [sub_resource type="QuadMesh" id="QuadMesh_lyb2o"]
 size = Vector2(32, 32)
