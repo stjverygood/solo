@@ -1,4 +1,4 @@
-using expand.Global.Interfaces;
+using Solo.Global.Interfaces;
 using Godot;
 using System;
 

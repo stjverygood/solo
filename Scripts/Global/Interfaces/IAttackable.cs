@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace expand.Global.Interfaces
+namespace Solo.Global.Interfaces
 {
     public interface IAttackable
     {

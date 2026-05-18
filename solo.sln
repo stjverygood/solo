@@ -1,6 +1,6 @@
 ﻿Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "expand", "expand.csproj", "{A7421110-0B5E-428F-91D8-D1ABC84B44E1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "solo", "solo.csproj", "{A7421110-0B5E-428F-91D8-D1ABC84B44E1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

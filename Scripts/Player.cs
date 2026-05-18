@@ -1,4 +1,5 @@
-using expand.Global.Interfaces;
+using Solo.Global.Interfaces;
+using Solo.Scripts.Global;
 using Godot;
 using System;
 using System.Collections.Generic;
