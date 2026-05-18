@@ -1,0 +1,45 @@
+[gd_scene format=3 uid="uid://detdpii5ad2gr"]
+
+[ext_resource type="Script" uid="uid://ny8bmr02dmu0" path="res://scripts/MapManager.cs" id="1_e8f46"]
+[ext_resource type="Texture2D" uid="uid://d4igqp371y5" path="res://assets/icon.svg" id="2_1ghlo"]
+[ext_resource type="PackedScene" uid="uid://3y1owyakr1v" path="res://scenes/TreeRes.tscn" id="2_8uxi8"]
+[ext_resource type="Texture2D" uid="uid://dxlaon51r5d5" path="res://assets/Water.png" id="3_8uxi8"]
+[ext_resource type="Shader" uid="uid://6xtgfwahfwat" path="res://shaders/GridMap.gdshader" id="4_1ghlo"]
+
+[sub_resource type="QuadMesh" id="QuadMesh_lyb2o"]
+size = Vector2(32, 32)
+center_offset = Vector3(0.345, 0, 0)
+
+[sub_resource type="MultiMesh" id="MultiMesh_eadkb"]
+mesh = SubResource("QuadMesh_lyb2o")
+
+[sub_resource type="QuadMesh" id="QuadMesh_1ghlo"]
+size = Vector2(32, 32)
+
+[sub_resource type="MultiMesh" id="MultiMesh_lyb2o"]
+mesh = SubResource("QuadMesh_1ghlo")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_1ghlo"]
+shader = ExtResource("4_1ghlo")
+shader_parameter/grid_color = Color(0.4, 1, 0.4, 1)
+shader_parameter/cell_size = 32.0
+shader_parameter/line_thickness = 1.0
+
+[node name="MapManager" type="Node2D" unique_id=150954480 node_paths=PackedStringArray("EarthMultiMesh", "WaterMultiMesh")]
+script = ExtResource("1_e8f46")
+EarthMultiMesh = NodePath("EarthMultiMesh")
+WaterMultiMesh = NodePath("WaterMultiMesh")
+ResourcePs = ExtResource("2_8uxi8")
+
+[node name="EarthMultiMesh" type="MultiMeshInstance2D" parent="." unique_id=1027684352]
+multimesh = SubResource("MultiMesh_eadkb")
+texture = ExtResource("2_1ghlo")
+
+[node name="WaterMultiMesh" type="MultiMeshInstance2D" parent="." unique_id=2030031618]
+multimesh = SubResource("MultiMesh_lyb2o")
+texture = ExtResource("3_8uxi8")
+
+[node name="ColorRect" type="ColorRect" parent="." unique_id=2039762603]
+material = SubResource("ShaderMaterial_1ghlo")
+offset_right = 1000000.0
+offset_bottom = 1000000.0

@@ -1,0 +1,19 @@
+[gd_scene format=3 uid="uid://3hscp6ujcyfq"]
+
+[ext_resource type="Script" uid="uid://dobjpayk2kv3u" path="res://scripts/ResourceBase.cs" id="1_20v6o"]
+[ext_resource type="Texture2D" uid="uid://c0t2titgvp3od" path="res://assets/Basic_Grass_Biom_things.png" id="2_u2hfl"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_20v6o"]
+size = Vector2(10, 9)
+
+[node name="WoodRes" type="StaticBody2D" unique_id=353878676]
+script = ExtResource("1_20v6o")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=765404658]
+position = Vector2(0, 0.5)
+shape = SubResource("RectangleShape2D_20v6o")
+
+[node name="BasicGrassBiomThings" type="Sprite2D" parent="." unique_id=1710058284]
+texture = ExtResource("2_u2hfl")
+region_enabled = true
+region_rect = Rect2(128, 16, 16, 16)

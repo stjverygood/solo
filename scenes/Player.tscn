@@ -1,0 +1,41 @@
+[gd_scene format=3 uid="uid://bwctbm6eq64vu"]
+
+[ext_resource type="Script" uid="uid://dsvag8u7g1nk0" path="res://scripts/Player.cs" id="1_kyqiw"]
+[ext_resource type="Texture2D" uid="uid://d4igqp371y5" path="res://assets/icon.svg" id="2_gntrk"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_kpjcp"]
+radius = 33.01515
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_kpjcp"]
+radius = 5.0
+height = 14.0
+
+[node name="Player" type="CharacterBody2D" unique_id=1144409017 node_paths=PackedStringArray("Sprite", "AtkArea")]
+script = ExtResource("1_kyqiw")
+Sprite = NodePath("Sprite")
+AtkArea = NodePath("AtkArea")
+
+[node name="Camera2D" type="Camera2D" parent="." unique_id=173865742]
+position_smoothing_enabled = true
+
+[node name="Sprite" type="Sprite2D" parent="." unique_id=13186832]
+
+[node name="ColorRect" type="ColorRect" parent="Sprite" unique_id=1955433057]
+offset_left = -7.0
+offset_top = -10.0
+offset_right = 6.0
+offset_bottom = 9.0
+
+[node name="Sprite2D" type="Sprite2D" parent="Sprite/ColorRect" unique_id=848331568]
+position = Vector2(12, 7)
+scale = Vector2(0.078125, 0.09375001)
+texture = ExtResource("2_gntrk")
+
+[node name="AtkArea" type="Area2D" parent="." unique_id=588471765]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="AtkArea" unique_id=135832409]
+position = Vector2(40, 2)
+shape = SubResource("CircleShape2D_kpjcp")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1924437222]
+shape = SubResource("CapsuleShape2D_kpjcp")

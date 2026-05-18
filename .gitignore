@@ -1,42 +1,74 @@
-# Godot-specific ignores
+# ==========================================
+# Godot Standard Ignore
+# ==========================================
+# Godot 自动生成的导入缓存
 .godot/
-/android/
-/build/
-*.tmp
 
-# .import files should generally be tracked, but if you want to ignore 
-# specific imported assets' data, the .godot/ folder above covers it.
+# 导出项目时可能生成的二进制文件和安装包
+*.import
+export_presets.cfg
 
-# Mono/C# specific ignores
-.mono/
-bin/
-obj/
-/data_*/
+# 如果你不需要将本地的编辑器配置同步给团队
+.config/
 
-# Visual Studio / VS Code files
-.vs/
-.vscode/
-# *.sln
-# *.csproj
+# ==========================================
+# .NET / C# / Visual Studio Standard Ignore
+# ==========================================
+# 编译输出目录
+[Bb]in/
+[Oo]bj/
+
+# MSBuild / Visual Studio 自动生成的缓存和依赖
+.msbuild/
+*.suo
 *.user
-*.pdb
-*.orig
+*.userosscache
+*.sln.docstates
 
-# Desktop / OS specific
-.DS_Store
-Thumbs.db
-
-# If you use external C# IDEs like JetBrains Rider
+# Rider / JetBrains 各种 IDE 的配置文件
 .idea/
 *.sln.DotSettings.user
 
-Assets/
+# Visual Studio Code 配置
+.vscode/
+!.vscode/extensions.json
 
-*.tscn
+# ==========================================
+# OS / System Specific
+# ==========================================
+# Windows 缩略图缓存
+Thumbs.db
+ehthumbs.db
+Desktop.ini
 
-*.import
-*.uid
-*.tres
-*.res
-*.svg
-/project.godot
+# macOS 文件夹属性缓存
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# ==========================================
+# Crash Dumps & Logs
+# ==========================================
+*.log
+*.crash
+
+
+## 忽略编译产物
+/[Bb]in/
+/[Oo]bj/
+
+## 忽略 Visual Studio 本地缓存和设置
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+## 忽略 Rider 等其他 IDE 的缓存（以防万一）
+.idea/
+
+## 忽略对外的敏感配置文件（如果有）
+# appsettings.Development.json
+
+
+/assetsraw
