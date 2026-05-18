@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://bwctbm6eq64vu"]
 
-[ext_resource type="Script" uid="uid://dsvag8u7g1nk0" path="res://scripts/Player.cs" id="1_kyqiw"]
-[ext_resource type="Texture2D" uid="uid://d4igqp371y5" path="res://assets/icon.svg" id="2_gntrk"]
+[ext_resource type="Script" uid="uid://dpkxkwy3ger5n" path="res://scripts/character/Player.cs" id="1_eq5ko"]
+[ext_resource type="Texture2D" uid="uid://d4igqp371y5" path="res://assets/icon.svg" id="2_cxfou"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_kpjcp"]
 radius = 33.01515
@@ -11,7 +11,7 @@ radius = 5.0
 height = 14.0
 
 [node name="Player" type="CharacterBody2D" unique_id=1144409017 node_paths=PackedStringArray("Sprite", "AtkArea")]
-script = ExtResource("1_kyqiw")
+script = ExtResource("1_eq5ko")
 Sprite = NodePath("Sprite")
 AtkArea = NodePath("AtkArea")
 
@@ -29,7 +29,7 @@ offset_bottom = 9.0
 [node name="Sprite2D" type="Sprite2D" parent="Sprite/ColorRect" unique_id=848331568]
 position = Vector2(12, 7)
 scale = Vector2(0.078125, 0.09375001)
-texture = ExtResource("2_gntrk")
+texture = ExtResource("2_cxfou")
 
 [node name="AtkArea" type="Area2D" parent="." unique_id=588471765]
 

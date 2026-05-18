@@ -1,37 +1,42 @@
 using Godot;
 using System;
+using Solo.Scripts.Character;
 
-public partial class GameManager : Node
+
+namespace Solo.Global
 {
-    static private GameManager _instance;
-    static public GameManager Instance => _instance;
+    public partial class GameManager : Node
+    {
+        static private GameManager _instance;
+        static public GameManager Instance => _instance;
 
-    [Export] public PackedScene PlayerPs;
-    [Export] public PackedScene MapManagerPs;
+        [Export] public PackedScene PlayerPs;
 
 
-    public Player Player;
-	public ChunkManager ChunkManager;
-    //public MapManager MapManager;
+        public Player Player;
+        public ChunkManager ChunkManager;
+        //public MapManager MapManager;
 
-	
-	public override void _Ready()
-	{
-        _instance = this;
-        GD.Print("Game Start ~~");
 
-        //MapManager = MapManagerPs.Instantiate<MapManager>();
-        //MapManager.Init();
-        //GetTree().CurrentScene.AddChild(MapManager);
+        public override void _Ready()
+        {
+            _instance = this;
+            GD.Print("Game Start ~~");
 
-        Player = PlayerPs.Instantiate<Player>();
-        //layer.GlobalPosition = MapManager.GetRandomCellWorldPosition(CellType.Earth);
-        GetTree().CurrentScene.AddChild(Player);
+            //MapManager = MapManagerPs.Instantiate<MapManager>();
+            //MapManager.Init();
+            //GetTree().CurrentScene.AddChild(MapManager);
 
-        //MapManager.GenerateResource(1000);
+            Player = PlayerPs.Instantiate<Player>();
+            //layer.GlobalPosition = MapManager.GetRandomCellWorldPosition(CellType.Earth);
+            GetTree().CurrentScene.AddChild(Player);
+
+            //MapManager.GenerateResource(1000);
+        }
+
+        public override void _Process(double delta)
+        {
+        }
     }
 
-	public override void _Process(double delta)
-	{
-	}
 }

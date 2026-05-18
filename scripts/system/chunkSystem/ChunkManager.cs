@@ -2,6 +2,8 @@ using Godot;
 using System;
 using System.Collections.Generic;
 using Solo.Scripts.Global;
+using Solo.Global;
+using Solo.Scripts.System.ResourceSystem;
 
 public struct TileInfo
 {

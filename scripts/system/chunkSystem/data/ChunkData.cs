@@ -1,12 +1,11 @@
-﻿using Solo.Scripts.Global;
-using Godot;
+﻿using Godot;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Solo.Scripts.ChunkSystem.Model
+namespace Solo.Scripts.System.ChunkSystem.Data
 {
     public class ChunkData
     {
