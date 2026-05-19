@@ -2,6 +2,8 @@
 
 [ext_resource type="Script" uid="uid://dpkxkwy3ger5n" path="res://Scripts/Character/Player.cs" id="1_at620"]
 [ext_resource type="Texture2D" uid="uid://di0q8426y42st" path="res://Assets/player_shadiao.png" id="2_nkuch"]
+[ext_resource type="PackedScene" uid="uid://cegl0cmno78dg" path="res://Scenes/System/InventorySystem/InventoryView.tscn" id="3_nkuch"]
+[ext_resource type="PackedScene" uid="uid://557c5e8cwx11" path="res://Scenes/System/InventorySystem/FastInventoryView.tscn" id="4_qg63r"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_kpjcp"]
 radius = 33.01515
@@ -10,10 +12,11 @@ radius = 33.01515
 radius = 5.0
 height = 14.0
 
-[node name="Player" type="CharacterBody2D" unique_id=1144409017 node_paths=PackedStringArray("SpriteRoot", "AtkArea")]
+[node name="Player" type="CharacterBody2D" unique_id=1144409017 node_paths=PackedStringArray("SpriteRoot", "AtkArea", "InventoryView")]
 script = ExtResource("1_at620")
 SpriteRoot = NodePath("SpriteRoot")
 AtkArea = NodePath("AtkArea")
+InventoryView = NodePath("PlayerUI/Control/InventoryView")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=173865742]
 zoom = Vector2(5, 5)
@@ -34,3 +37,69 @@ shape = SubResource("CircleShape2D_kpjcp")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1924437222]
 shape = SubResource("CapsuleShape2D_kpjcp")
+
+[node name="PlayerUI" type="CanvasLayer" parent="." unique_id=2110109495]
+
+[node name="Control" type="Control" parent="PlayerUI" unique_id=452953413]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ColorRect2" type="ColorRect" parent="PlayerUI/Control" unique_id=1881234083]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = 134.0
+offset_top = -155.0
+offset_right = 218.0
+offset_bottom = -124.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="ColorRect3" type="ColorRect" parent="PlayerUI/Control" unique_id=1463418258]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -190.0
+offset_top = -150.0
+offset_right = -91.0
+offset_bottom = -124.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="InventoryView" parent="PlayerUI/Control" unique_id=2038670647 instance=ExtResource("3_nkuch")]
+visible = false
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -564.0
+offset_top = -209.0
+offset_right = -204.0
+offset_bottom = 151.0
+grow_horizontal = 0
+
+[node name="FastInventoryView" parent="PlayerUI/Control" unique_id=1473412187 instance=ExtResource("4_qg63r")]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -175.0
+offset_top = -100.0
+offset_right = 175.0
+offset_bottom = 0.0
+grow_horizontal = 2
+grow_vertical = 0

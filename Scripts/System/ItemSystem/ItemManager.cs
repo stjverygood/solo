@@ -16,7 +16,7 @@ namespace Solo.Scripts.System.ItemSystem
         private ItemManager()
         {
             //材料
-            _itemMap.Add(ItemType.Wood, new ItemData() { Type = ItemType.Wood, MaxCount = 16 });
+            _itemMap.Add(ItemType.Wood, new ItemData() { Type = ItemType.Wood, MaxCount = 16, IconPath = "res://Assets/icon.svg" });
             _itemMap.Add(ItemType.Stone, new ItemData() { Type = ItemType.Stone, MaxCount = 16 });
             _itemMap.Add(ItemType.Iron, new ItemData() { Type = ItemType.Iron, MaxCount = 16 });
             _itemMap.Add(ItemType.Gold, new ItemData() { Type = ItemType.Gold, MaxCount = 16 });

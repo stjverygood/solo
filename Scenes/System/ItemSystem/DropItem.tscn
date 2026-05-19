@@ -1,0 +1,32 @@
+[gd_scene format=3 uid="uid://qw0q5wipafhq"]
+
+[ext_resource type="Script" uid="uid://cfoeu50uirmhc" path="res://Scripts/System/ItemSystem/DropItem.cs" id="1_43lql"]
+[ext_resource type="Texture2D" uid="uid://d4igqp371y5" path="res://Assets/icon.svg" id="1_uk141"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_43lql"]
+size = Vector2(4, 4)
+
+[node name="DropItem" type="Node2D" unique_id=151450947 node_paths=PackedStringArray("TextLb", "IconSprite")]
+script = ExtResource("1_43lql")
+TextLb = NodePath("Label")
+IconSprite = NodePath("Sprite2D")
+
+[node name="Label" type="Label" parent="." unique_id=1286302052]
+offset_left = -7.0
+offset_top = -6.0
+offset_right = 79.0
+offset_bottom = 17.0
+scale = Vector2(0.155, 0.155)
+text = "木材"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1694164295]
+position = Vector2(4.7683716e-07, 0)
+scale = Vector2(0.029296873, 0.0234375)
+texture = ExtResource("1_uk141")
+
+[node name="Area2D" type="Area2D" parent="." unique_id=739332162]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D" unique_id=1045975997]
+shape = SubResource("RectangleShape2D_43lql")

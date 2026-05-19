@@ -2,36 +2,6 @@
 
 [ext_resource type="PackedScene" uid="uid://c364av0qjs5rx" path="res://Scenes/System/ChunkSystem/ChunkManager.tscn" id="1_5poqq"]
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_n0uhi"]
-size = Vector2(1, 10000)
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_6oms7"]
-size = Vector2(10000, 1)
-
 [node name="MainLevel" type="Node2D" unique_id=1442456336]
 
 [node name="ChunkManager" parent="." unique_id=2128049523 instance=ExtResource("1_5poqq")]
-
-[node name="StaticBody2D" type="StaticBody2D" parent="." unique_id=138020431]
-position = Vector2(-1000, 0)
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D" unique_id=777820451]
-shape = SubResource("RectangleShape2D_n0uhi")
-
-[node name="StaticBody2D2" type="StaticBody2D" parent="." unique_id=735484922]
-position = Vector2(1000, 0)
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D2" unique_id=1946736372]
-shape = SubResource("RectangleShape2D_n0uhi")
-
-[node name="StaticBody2D3" type="StaticBody2D" parent="." unique_id=563373054]
-position = Vector2(0, -1000)
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D3" unique_id=1788865351]
-shape = SubResource("RectangleShape2D_6oms7")
-
-[node name="StaticBody2D4" type="StaticBody2D" parent="." unique_id=676795600]
-position = Vector2(0, 1000)
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D4" unique_id=657759560]
-shape = SubResource("RectangleShape2D_6oms7")

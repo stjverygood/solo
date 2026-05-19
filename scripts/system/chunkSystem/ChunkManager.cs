@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Solo.Scripts.Global;
 using Solo.Global;
 using Solo.Scripts.System.ResourceSystem;
+using Solo.Scripts.System.ItemSystem;
 
 public struct TileInfo
 {
@@ -21,7 +22,8 @@ public partial class ChunkManager : Node2D
 
 	[Export] public PackedScene TreePs;
 	[Export] public PackedScene StonePs;
-	private List<Node2D> _genNodeList = new List<Node2D>();//记录生成的节点, 在卸载区块时要销毁
+	[Export] public PackedScene DropItemPs;
+    private List<Node2D> _genNodeList = new List<Node2D>();//记录生成的节点, 在卸载区块时要销毁
 
 	private Dictionary<TileInfo, TileType> _tileInfoTypeMap = new Dictionary<TileInfo, TileType>()
 	{
@@ -98,13 +100,19 @@ public partial class ChunkManager : Node2D
 					//todo : 生成树木
 					if(GD.Randf() < 0.1)
 					{
-						ResourceBase treeRes = TreePs.Instantiate<ResourceBase>();
+						//ResourceBase treeRes = TreePs.Instantiate<ResourceBase>();
+						//Vector2 tileWorldPos = new Vector2(globalX * _tileSize, globalY * _tileSize);
+						//Vector2 offset = new Vector2(_tileSize / 2f, _tileSize / 2f);// 计算偏移量，使物体位于瓦片中心 (假设 _tileSize 是 16，偏移就是 8)
+						//treeRes.GlobalPosition = tileWorldPos + offset;
+						//AddChild(treeRes);
+						DropItem woodDropItem = DropItemPs.Instantiate<DropItem>();
 						Vector2 tileWorldPos = new Vector2(globalX * _tileSize, globalY * _tileSize);
 						Vector2 offset = new Vector2(_tileSize / 2f, _tileSize / 2f);// 计算偏移量，使物体位于瓦片中心 (假设 _tileSize 是 16，偏移就是 8)
-						treeRes.GlobalPosition = tileWorldPos + offset;
-						AddChild(treeRes);
+						woodDropItem.GlobalPosition = tileWorldPos + offset;
+						AddChild(woodDropItem);
+						woodDropItem.Init(ItemManager.Instance.GetItemData(ItemType.Wood));
 					}
-					_tileMapLayer.SetCell(new Vector2I(globalX, globalY), _tileTypeInfoMap[TileType.Grass].SourceId, _tileTypeInfoMap[TileType.Grass].AtlasCoords);
+                    _tileMapLayer.SetCell(new Vector2I(globalX, globalY), _tileTypeInfoMap[TileType.Grass].SourceId, _tileTypeInfoMap[TileType.Grass].AtlasCoords);
 				}
 				else//泥
 				{

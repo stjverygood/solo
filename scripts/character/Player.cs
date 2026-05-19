@@ -12,6 +12,7 @@ namespace Solo.Scripts.Character
         Idle,
         Move,
         Atk,
+        UI,
         Death,
     }
 
@@ -22,6 +23,7 @@ namespace Solo.Scripts.Character
         public float moveSpeed = 200;
         [Export] public Node2D SpriteRoot;
         [Export] public Area2D AtkArea;
+        [Export] public Control InventoryView;
         public int Atk = 10;
 
         public int ResCapacity = 1000;//资源存储上限
@@ -54,6 +56,9 @@ namespace Solo.Scripts.Character
                 case PlayerState.Atk:
                     UpdateAtk(delta);
                     break;
+                case PlayerState.UI:
+                    UpdateUI(delta);
+                    break;
                 case PlayerState.Death:
                     UpdateDeath(delta);
                     break;
@@ -62,6 +67,12 @@ namespace Solo.Scripts.Character
 
         public void UpdateIdle(float delta)
         {
+            if(Input.IsActionJustPressed("Bag"))
+            {
+                InventoryView.Visible = true;
+                _curState = PlayerState.UI;
+            }
+
             if (Input.IsActionJustPressed("Atk"))
             {
                 _curState = PlayerState.Atk;
@@ -79,6 +90,12 @@ namespace Solo.Scripts.Character
         }
         public void UpdateMove(float delta)
         {
+            if (Input.IsActionJustPressed("Bag"))
+            {
+                InventoryView.Visible = true;
+                _curState = PlayerState.UI;
+            }
+
             if (Input.IsActionJustPressed("Atk"))
             {
                 _curState = PlayerState.Atk;
@@ -116,6 +133,14 @@ namespace Solo.Scripts.Character
                 else
                     Velocity = input * moveSpeed / 2;
                 MoveAndSlide();
+            }
+        }
+        public void UpdateUI(float delta)
+        {
+            if (Input.IsActionJustPressed("Bag"))
+            {
+                InventoryView.Visible = false;
+                _curState = PlayerState.Idle;
             }
         }
         public void UpdateDeath(float delta)

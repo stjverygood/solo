@@ -62,6 +62,8 @@ namespace Solo.Scripts.Global
         GoldPot,     // 金壶
         GoldHelmet,  // 金盔
         GoldArmor,   // 金甲
-        GoldBoot     // 金鞋
+        GoldBoot,    // 金鞋
+
+
     }
 }
