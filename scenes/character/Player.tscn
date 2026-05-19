@@ -16,14 +16,14 @@ SpriteRoot = NodePath("SpriteRoot")
 AtkArea = NodePath("AtkArea")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=173865742]
-zoom = Vector2(3, 3)
+zoom = Vector2(5, 5)
 position_smoothing_enabled = true
 
 [node name="SpriteRoot" type="Node2D" parent="." unique_id=700917934]
 
 [node name="Sprite" type="Sprite2D" parent="SpriteRoot" unique_id=13186832]
-position = Vector2(0.18749744, -1.1920929e-07)
-scale = Vector2(0.045616146, 0.045112785)
+position = Vector2(2.3841858e-07, -2.3841858e-07)
+scale = Vector2(0.07879151, 0.07518797)
 texture = ExtResource("2_nkuch")
 
 [node name="AtkArea" type="Area2D" parent="." unique_id=588471765]
