@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://bwctbm6eq64vu"]
 
-[ext_resource type="Script" uid="uid://dpkxkwy3ger5n" path="res://scripts/character/Player.cs" id="1_eq5ko"]
-[ext_resource type="Texture2D" uid="uid://di0q8426y42st" path="res://assets/player_shadiao.png" id="2_eq5ko"]
+[ext_resource type="Script" uid="uid://dpkxkwy3ger5n" path="res://Scripts/Character/Player.cs" id="1_at620"]
+[ext_resource type="Texture2D" uid="uid://di0q8426y42st" path="res://Assets/player_shadiao.png" id="2_nkuch"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_kpjcp"]
 radius = 33.01515
@@ -11,7 +11,7 @@ radius = 5.0
 height = 14.0
 
 [node name="Player" type="CharacterBody2D" unique_id=1144409017 node_paths=PackedStringArray("SpriteRoot", "AtkArea")]
-script = ExtResource("1_eq5ko")
+script = ExtResource("1_at620")
 SpriteRoot = NodePath("SpriteRoot")
 AtkArea = NodePath("AtkArea")
 
@@ -24,7 +24,7 @@ position_smoothing_enabled = true
 [node name="Sprite" type="Sprite2D" parent="SpriteRoot" unique_id=13186832]
 position = Vector2(0.18749744, -1.1920929e-07)
 scale = Vector2(0.045616146, 0.045112785)
-texture = ExtResource("2_eq5ko")
+texture = ExtResource("2_nkuch")
 
 [node name="AtkArea" type="Area2D" parent="." unique_id=588471765]
 

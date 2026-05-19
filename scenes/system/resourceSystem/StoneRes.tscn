@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://3hscp6ujcyfq"]
 
-[ext_resource type="Script" uid="uid://ddg3kin3ho4lw" path="res://scripts/system/resourceSystem/ResourceBase.cs" id="1_xyvff"]
-[ext_resource type="Texture2D" uid="uid://c0t2titgvp3od" path="res://assets/Basic_Grass_Biom_things.png" id="2_u2hfl"]
+[ext_resource type="Script" uid="uid://ddg3kin3ho4lw" path="res://Scripts/System/ResourceSystem/ResourceBase.cs" id="1_xyvff"]
+[ext_resource type="Texture2D" uid="uid://c0t2titgvp3od" path="res://Assets/Basic_Grass_Biom_things.png" id="2_u2hfl"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_20v6o"]
 size = Vector2(10, 9)

@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://c5etro6u3u1vl"]
 
-[ext_resource type="PackedScene" uid="uid://c364av0qjs5rx" path="res://scenes/system/chunkSystem/ChunkManager.tscn" id="1_5poqq"]
+[ext_resource type="PackedScene" uid="uid://c364av0qjs5rx" path="res://Scenes/System/ChunkSystem/ChunkManager.tscn" id="1_5poqq"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_n0uhi"]
 size = Vector2(1, 10000)
