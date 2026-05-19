@@ -1,12 +1,16 @@
-﻿using System;
+﻿using Solo.Scripts.Global;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace solo.Scripts.System.ItemSystem
+namespace Solo.Scripts.System.ItemSystem
 {
-    internal class ItemData
+    public class ItemData
     {
+        public ItemType Type { get; set; }//物品种类
+        public byte MaxCount { get; set; }//堆叠上限
+
     }
 }
