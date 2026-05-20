@@ -1,10 +1,10 @@
-using Solo.Global.Interfaces;
 using Solo.Scripts.Global;
 using Godot;
 using System;
 using System.Collections.Generic;
 using Solo.Global;
 using Solo.Scripts.System.ItemSystem;
+using Solo.Scripts.System.ResourceSystem;
 
 namespace Solo.Scripts.Character
 {
@@ -14,8 +14,9 @@ namespace Solo.Scripts.Character
         Walk,
         Run,
         Dash,
-        Pickup,
         Atk,
+        Capture,
+        Pickup,
         UI,
         Death,
     }
@@ -72,6 +73,9 @@ namespace Solo.Scripts.Character
                 case PlayerState.Atk:
                     UpdateAtk(delta);
                     break;
+                case PlayerState.Capture:
+                    UpdateCapture(delta);
+                    break;
                 case PlayerState.Pickup:
                     UpdatePickup(delta);
                     break;
@@ -101,20 +105,23 @@ namespace Solo.Scripts.Character
                 return;
             }
 
-            if (Input.IsActionJustPressed("Atk"))
+            if (Input.IsActionJustPressed("Action"))
             {
-                _curAtkable = GetNearestAtkable();
-                if(_curAtkable != null)
+                //todo : enemy
+
+                _curResItem = GetNearestResItem();
+                if(_curResItem != null)
                 {
-                    FaceToAtkable();
-                    _curState = PlayerState.Atk;
+                    FaceToNode(_curResItem);
+                    _curState = PlayerState.Capture;
                     ChangeAnim();
                     return;
                 }
+
                 _curDropItem = GetNearestDropItem();
                 if(_curDropItem != null)
                 {
-                    GD.Print("_curDropItem != null");
+                    FaceToNode(_curDropItem);
                     _curState = PlayerState.Pickup;
                     ChangeAnim();
                     return;
@@ -147,19 +154,21 @@ namespace Solo.Scripts.Character
                 return;
             }
 
-            if (Input.IsActionJustPressed("Atk"))
+            if (Input.IsActionJustPressed("Action"))
             {
-                _curAtkable = GetNearestAtkable();
-                if (_curAtkable != null)
+                _curResItem = GetNearestResItem();
+                if (_curResItem != null)
                 {
-                    FaceToAtkable();
-                    _curState = PlayerState.Atk;
+                    FaceToNode(_curResItem);
+                    _curState = PlayerState.Capture;
                     ChangeAnim();
                     return;
                 }
+
                 _curDropItem = GetNearestDropItem();
                 if (_curDropItem != null)
                 {
+                    FaceToNode(_curDropItem);
                     _curState = PlayerState.Pickup;
                     ChangeAnim();
                     return;
@@ -188,19 +197,21 @@ namespace Solo.Scripts.Character
 
         public void UpdateRun(float delta)
         {
-            if (Input.IsActionJustPressed("Atk"))
+            if (Input.IsActionJustPressed("Action"))
             {
-                _curAtkable = GetNearestAtkable();
-                if (_curAtkable != null)
+                _curResItem = GetNearestResItem();
+                if (_curResItem != null)
                 {
-                    FaceToAtkable();
-                    _curState = PlayerState.Atk;
+                    FaceToNode(_curResItem);
+                    _curState = PlayerState.Capture;
                     ChangeAnim();
                     return;
                 }
+
                 _curDropItem = GetNearestDropItem();
                 if (_curDropItem != null)
                 {
+                    FaceToNode(_curDropItem);
                     _curState = PlayerState.Pickup;
                     ChangeAnim();
                     return;
@@ -264,7 +275,7 @@ namespace Solo.Scripts.Character
             }
         }
 
-        public void UpdatePickup(float delta)
+        public void UpdateCapture(float delta)
         {
             //Vector2 input = Input.GetVector("MoveLeft", "MoveRight", "MoveForward", "MoveBack");
             //if (input != Vector2.Zero)
@@ -276,6 +287,10 @@ namespace Solo.Scripts.Character
             //        Velocity = input * moveSpeed / 2;
             //    MoveAndSlide();
             //}
+        }
+
+        public void UpdatePickup(float delta)
+        {
         }
 
         public void UpdateUI(float delta)
@@ -336,15 +351,14 @@ namespace Solo.Scripts.Character
                     _animTween.TweenProperty(BodyRoot, "skew", -0.1f, 0.1f);
                     break;
 
-                case PlayerState.Atk:
+                case PlayerState.Capture:
                     _animTween.Parallel().TweenProperty(BodyRoot, "modulate", Colors.Black, 0.05f);//变黑
                     _animTween.TweenProperty(BodyRoot, "skew", 1f, 0.05);
                     _animTween.TweenCallback(Callable.From(() =>
                     {
-                        GD.Print("atk!!!");
-                        if(_curAtkable != null)
+                        if(_curResItem != null)
                         {
-                            _curAtkable.TakeDamage(Atk);
+                            _curResItem.TakeDamage(Atk);
                         }
                     }));
 
@@ -362,11 +376,9 @@ namespace Solo.Scripts.Character
                     _animTween.TweenProperty(BodyRoot, "skew", 1f, 0.05);
                     _animTween.TweenCallback(Callable.From(() =>
                     {
-                        GD.Print("Pickup!!!");
                         if (_curDropItem != null)
                         {
                             _curDropItem.QueueFree();
-                            //_curAtkable.TakeDamage(Atk);
                         }
                     }));
 
@@ -387,45 +399,44 @@ namespace Solo.Scripts.Character
             }
         }
 
+        //后期加入enemylist
 
-        private List<IAttackable> _atkableList = new List<IAttackable>();
-        private IAttackable _curAtkable;
+        private List<ResItem> _resItemList = new List<ResItem>();
+        private ResItem _curResItem;
         private void TouchArea_BodyEntered(Node2D body)
         {
-            if (body is IAttackable atkTarget)
+            if (body is ResItem resItem)
             {
-                _atkableList.Add(atkTarget);
+                _resItemList.Add(resItem);
             }
-           
         }
         private void TouchArea_BodyExited(Node2D body)
         {
-            if (body is IAttackable atkTarget)
+            if (body is ResItem resItem)
             {
-                _atkableList.Remove(atkTarget);
+                _resItemList.Remove(resItem);
             }
-            
         }
-        private IAttackable GetNearestAtkable()//优先返回敌人, 其次返回资源
+        private ResItem GetNearestResItem()//优先返回敌人, 其次返回资源
         {
             float minDistSq = float.MaxValue; // 先设为一个极大值
-            IAttackable atkTarget = null;
-            foreach (IAttackable curAtkTarget in _atkableList)
+            ResItem resItem = null;
+            foreach (ResItem curResItem in _resItemList)
             {
-                if (curAtkTarget == null)// 安全检查：防止列表里有被销毁的无效对象
+                if (curResItem == null)// 安全检查：防止列表里有被销毁的无效对象
                     continue;
-                float curDistSq = GlobalPosition.DistanceSquaredTo(curAtkTarget.GetPositon());
+                float curDistSq = GlobalPosition.DistanceSquaredTo(curResItem.GlobalPosition);
                 if (curDistSq < minDistSq)
                 {
                     minDistSq = curDistSq;
-                    atkTarget = curAtkTarget;
+                    resItem = curResItem;
                 }
             }
-            return atkTarget;
+            return resItem;
         }
-        private void FaceToAtkable()
+        private void FaceToNode(Node2D targetNode)
         {
-            float directionToTarget = _curAtkable.GetPositon().X - GlobalPosition.X;// 计算从自己指向敌人的向量
+            float directionToTarget = targetNode.GlobalPosition.X - GlobalPosition.X;// 计算从自己指向敌人的向量
             if (directionToTarget < 0)
                 SpriteRoot.Scale = new Vector2(-1, 1); // 目标在左
             else if (directionToTarget > 0)

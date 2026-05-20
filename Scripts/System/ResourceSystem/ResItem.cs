@@ -1,10 +1,9 @@
-using Solo.Global.Interfaces;
 using Godot;
 using System;
 
 namespace Solo.Scripts.System.ResourceSystem
 {
-    public partial class ResItem : Node2D, IAttackable
+    public partial class ResItem : Node2D
     {
         [Export] Node2D BodyRoot; 
         public int MaxHp = 30;
@@ -33,11 +32,6 @@ namespace Solo.Scripts.System.ResourceSystem
                 _curHp = 0;
                 QueueFree();
             }
-        }
-
-        public Vector2 GetPositon()
-        {
-            return GlobalPosition;
         }
     }
 }
