@@ -4,13 +4,17 @@ using Godot;
 using System;
 using System.Collections.Generic;
 using Solo.Global;
+using Solo.Scripts.System.ItemSystem;
 
 namespace Solo.Scripts.Character
 {
     public enum PlayerState
     {
         Idle,
-        Move,
+        Walk,
+        Run,
+        Dash,
+        Pickup,
         Atk,
         UI,
         Death,
@@ -19,10 +23,11 @@ namespace Solo.Scripts.Character
     public partial class Player : CharacterBody2D
     {
         private Vector2 _curDir = Vector2.Right;
-        private PlayerState _curState = PlayerState.Idle;
-        public float moveSpeed = 200;
-        [Export] public Node2D SpriteRoot;
-        [Export] public Area2D AtkArea;
+        private PlayerState _curState;
+        public float moveSpeed = 50;
+        [Export] public Node2D SpriteRoot;//附带上身体之外的交互点, 比如后面拍建筑的定位点, 用于控制功能交互的
+        [Export] public Node2D BodyRoot;//仅仅是身体的根节点, 用于控制动画
+        [Export] public Area2D TouchArea;
         [Export] public Control InventoryView;
         public int Atk = 10;
 
@@ -31,8 +36,12 @@ namespace Solo.Scripts.Character
 
         public override void _Ready()
         {
-            AtkArea.Monitoring = false;
-            AtkArea.BodyEntered += AtkArea_BodyEntered;
+            TouchArea.BodyEntered += TouchArea_BodyEntered;
+            TouchArea.BodyExited += TouchArea_BodyExited;
+            TouchArea.AreaEntered += TouchArea_AreaEntered;
+            TouchArea.AreaExited += TouchArea_AreaExited;
+            _curState = PlayerState.Idle;
+            ChangeAnim();
         }
 
 
@@ -41,6 +50,7 @@ namespace Solo.Scripts.Character
         {
             UpdateState((float)delta);
             //GD.Print($"curTileType : {GameManager.Instance.ChunkManager.GetTileType(GlobalPosition)}");
+            //GD.Print($"_curState : {_curState}");
         }
 
         public void UpdateState(float delta)
@@ -50,11 +60,20 @@ namespace Solo.Scripts.Character
                 case PlayerState.Idle:
                     UpdateIdle(delta);
                     break;
-                case PlayerState.Move:
-                    UpdateMove(delta);
+                case PlayerState.Walk:
+                    UpdateWalk(delta);
+                    break;
+                case PlayerState.Run:
+                    UpdateRun(delta);
+                    break;
+                case PlayerState.Dash:
+                    UpdateDash(delta);
                     break;
                 case PlayerState.Atk:
                     UpdateAtk(delta);
+                    break;
+                case PlayerState.Pickup:
+                    UpdatePickup(delta);
                     break;
                 case PlayerState.UI:
                     UpdateUI(delta);
@@ -71,36 +90,80 @@ namespace Solo.Scripts.Character
             {
                 InventoryView.Visible = true;
                 _curState = PlayerState.UI;
+                ChangeAnim();
+            }
+
+            if (Input.IsActionJustPressed("Dash"))
+            {
+                _dashTimer = 0;
+                _curState = PlayerState.Dash;
+                ChangeAnim();
+                return;
             }
 
             if (Input.IsActionJustPressed("Atk"))
             {
-                _curState = PlayerState.Atk;
-                ChangeAnim();
-                return;
+                _curAtkable = GetNearestAtkable();
+                if(_curAtkable != null)
+                {
+                    FaceToAtkable();
+                    _curState = PlayerState.Atk;
+                    ChangeAnim();
+                    return;
+                }
+                _curDropItem = GetNearestDropItem();
+                if(_curDropItem != null)
+                {
+                    GD.Print("_curDropItem != null");
+                    _curState = PlayerState.Pickup;
+                    ChangeAnim();
+                    return;
+                }
             }
 
             Vector2 input = Input.GetVector("MoveLeft", "MoveRight", "MoveForward", "MoveBack");
             if (input != Vector2.Zero)
             {
-                _curState = PlayerState.Move;
+                _curState = PlayerState.Walk;
                 ChangeAnim();
                 return;
             }
         }
-        public void UpdateMove(float delta)
+
+        public void UpdateWalk(float delta)
         {
             if (Input.IsActionJustPressed("Bag"))
             {
                 InventoryView.Visible = true;
                 _curState = PlayerState.UI;
+                ChangeAnim();
+            }
+
+            if (Input.IsActionJustPressed("Dash"))
+            {
+                _dashTimer = 0;
+                _curState = PlayerState.Dash;
+                ChangeAnim();
+                return;
             }
 
             if (Input.IsActionJustPressed("Atk"))
             {
-                _curState = PlayerState.Atk;
-                ChangeAnim();
-                return;
+                _curAtkable = GetNearestAtkable();
+                if (_curAtkable != null)
+                {
+                    FaceToAtkable();
+                    _curState = PlayerState.Atk;
+                    ChangeAnim();
+                    return;
+                }
+                _curDropItem = GetNearestDropItem();
+                if (_curDropItem != null)
+                {
+                    _curState = PlayerState.Pickup;
+                    ChangeAnim();
+                    return;
+                }
             }
 
             Vector2 input = Input.GetVector("MoveLeft", "MoveRight", "MoveForward", "MoveBack");
@@ -115,19 +178,84 @@ namespace Solo.Scripts.Character
                 SpriteRoot.Scale = new Vector2(-1, 1);
             else if (input.X > 0)
                 SpriteRoot.Scale = new Vector2(1, 1);
-            AtkArea.Rotation = input.Angle();
+            //TouchArea.Rotation = input.Angle();
             if (GameManager.Instance.ChunkManager.GetTileType(GlobalPosition) == TileType.Water)
                 Velocity = input * moveSpeed / 4;
             else
                 Velocity = input * moveSpeed;
             MoveAndSlide();
         }
+
+        public void UpdateRun(float delta)
+        {
+            if (Input.IsActionJustPressed("Atk"))
+            {
+                _curAtkable = GetNearestAtkable();
+                if (_curAtkable != null)
+                {
+                    FaceToAtkable();
+                    _curState = PlayerState.Atk;
+                    ChangeAnim();
+                    return;
+                }
+                _curDropItem = GetNearestDropItem();
+                if (_curDropItem != null)
+                {
+                    _curState = PlayerState.Pickup;
+                    ChangeAnim();
+                    return;
+                }
+            }
+
+            Vector2 input = Input.GetVector("MoveLeft", "MoveRight", "MoveForward", "MoveBack");
+            if (input == Vector2.Zero || Input.IsActionPressed("Dash") == false)
+            {
+                _curState = PlayerState.Idle;
+                ChangeAnim();
+                return;
+            }
+            _curDir = input;
+            if (input.X < 0)
+                SpriteRoot.Scale = new Vector2(-1, 1);
+            else if (input.X > 0)
+                SpriteRoot.Scale = new Vector2(1, 1);
+            //TouchArea.Rotation = input.Angle();
+            if (GameManager.Instance.ChunkManager.GetTileType(GlobalPosition) == TileType.Water)
+                Velocity = input * moveSpeed / 2;
+            else
+                Velocity = input * moveSpeed * 2;
+            MoveAndSlide();
+        }
+
+        private float _dashTimer;
+        private float _dashDuration = 0.15f;
+        private float _dashSpeed = 300;
+        public void UpdateDash(float delta)
+        {
+            _dashTimer += delta;
+            if(_dashTimer >= _dashDuration)
+            {
+                if(Input.IsActionPressed("Dash"))
+                {
+                    _curState = PlayerState.Run;
+                    ChangeAnim();
+                }
+                else
+                {
+                    _curState = PlayerState.Idle;
+                    ChangeAnim();
+                }
+            }
+            Velocity = _curDir * _dashSpeed;
+            MoveAndSlide();
+        }
+
         public void UpdateAtk(float delta)
         {
             Vector2 input = Input.GetVector("MoveLeft", "MoveRight", "MoveForward", "MoveBack");
             if (input != Vector2.Zero)
             {
-                AtkArea.Rotation = input.Angle();
+                //TouchArea.Rotation = input.Angle();
                 if (GameManager.Instance.ChunkManager.GetTileType(GlobalPosition) == TileType.Water)
                     Velocity = input * moveSpeed / 8;
                 else
@@ -135,6 +263,21 @@ namespace Solo.Scripts.Character
                 MoveAndSlide();
             }
         }
+
+        public void UpdatePickup(float delta)
+        {
+            //Vector2 input = Input.GetVector("MoveLeft", "MoveRight", "MoveForward", "MoveBack");
+            //if (input != Vector2.Zero)
+            //{
+            //    //TouchArea.Rotation = input.Angle();
+            //    if (GameManager.Instance.ChunkManager.GetTileType(GlobalPosition) == TileType.Water)
+            //        Velocity = input * moveSpeed / 8;
+            //    else
+            //        Velocity = input * moveSpeed / 2;
+            //    MoveAndSlide();
+            //}
+        }
+
         public void UpdateUI(float delta)
         {
             if (Input.IsActionJustPressed("Bag"))
@@ -143,6 +286,7 @@ namespace Solo.Scripts.Character
                 _curState = PlayerState.Idle;
             }
         }
+
         public void UpdateDeath(float delta)
         {
 
@@ -161,68 +305,82 @@ namespace Solo.Scripts.Character
             {
                 _animTween.Kill();
             }
+
+            //复位
+            BodyRoot.Scale = Vector2.One;
+            BodyRoot.Skew = 0f;
+            BodyRoot.Modulate = Colors.White;
+            BodyRoot.Rotation = 0f;
+            BodyRoot.Modulate = Colors.White;
+
             _animTween = CreateTween().SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out);
             switch (_curState)
             {
                 case PlayerState.Idle:
-                    float currentDir = SpriteRoot.Scale.X > 0 ? 1.0f : -1.0f;
+                case PlayerState.UI:
                     _animTween.SetLoops();
-                    _animTween.TweenProperty(SpriteRoot, "scale", new Vector2(1.05f * currentDir, 0.95f), 0.5f);
-                    _animTween.TweenProperty(SpriteRoot, "scale", new Vector2(1.0f * currentDir, 1.0f), 0.5f);
+                    _animTween.TweenProperty(BodyRoot, "scale", new Vector2(1.2f, 0.8f), 0.5f);
+                    _animTween.TweenProperty(BodyRoot, "scale", new Vector2(1.0f, 1.0f), 0.5f);
                     break;
 
-                case PlayerState.Move:
-                    // 走动效果：左右晃动或轻微拉伸
+                case PlayerState.Walk:
+                case PlayerState.Dash:
                     _animTween.SetLoops();
-                    _animTween.TweenProperty(SpriteRoot, "skew", 0.1f, 0.15f);
-                    _animTween.TweenProperty(SpriteRoot, "skew", -0.1f, 0.15f);
+                    _animTween.TweenProperty(BodyRoot, "skew", 0.1f, 0.3f);// 走动效果：左右晃动或轻微拉伸
+                    _animTween.TweenProperty(BodyRoot, "skew", -0.1f, 0.3f);
+                    break;
+
+                case PlayerState.Run:
+                    _animTween.SetLoops();
+                    _animTween.TweenProperty(BodyRoot, "skew", 0.1f, 0.1f);// 走动效果：左右晃动或轻微拉伸
+                    _animTween.TweenProperty(BodyRoot, "skew", -0.1f, 0.1f);
                     break;
 
                 case PlayerState.Atk:
-                    float dashDistance = 50.0f; // 冲顶距离
-                    Vector2 startPos = Vector2.Zero;
-                    Vector2 attackDir = _curDir;
-                    Vector2 targetPos = attackDir * dashDistance;
-
-                    // 获取当前的镜像方向，用于保持缩放动画不反向
-                    float scaleX = SpriteRoot.Scale.X;
-
-                    // --- 第一阶段：向前冲顶 ---
-                    //_animTween.TweenProperty(Sprite, "position", targetPos, 0.07f).SetTrans(Tween.TransitionType.Cubic).SetEase(Tween.EaseType.Out);
-                    _animTween.Parallel().TweenProperty(SpriteRoot, "modulate", Colors.Black, 0.07f);
-                    // 缩放也要考虑当前的镜像状态
-                    _animTween.Parallel().TweenProperty(SpriteRoot, "scale", new Vector2(1.3f, 2f), 0.07f);
-
-                    // --- 伤害触发 ---
+                    _animTween.Parallel().TweenProperty(BodyRoot, "modulate", Colors.Black, 0.05f);//变黑
+                    _animTween.TweenProperty(BodyRoot, "skew", 1f, 0.05);
                     _animTween.TweenCallback(Callable.From(() =>
                     {
-                        //GD.Print($"朝方向 {attackDir} 触发伤害！");
-                        AtkArea.Monitoring = true;
-                    }));
-                    _animTween.TweenInterval(0.1f);
-                    _animTween.TweenCallback(Callable.From(() =>
-                    {
-                        ApplyDamage();
-                    }));
-
-
-                    // --- 第二阶段：收招归位 ---
-                    //_animTween.TweenProperty(Sprite, "position", startPos, 0.2f).SetTrans(Tween.TransitionType.Sine).SetEase(Tween.EaseType.InOut);
-                    _animTween.Parallel().TweenProperty(SpriteRoot, "modulate", Colors.White, 0.2f);
-                    _animTween.Parallel().TweenProperty(SpriteRoot, "scale", new Vector2(1.0f * Mathf.Sign(scaleX), 1.0f), 0.2f);
-
-                    _animTween.Finished += () => {
-                        if (_curState == PlayerState.Atk)
+                        GD.Print("atk!!!");
+                        if(_curAtkable != null)
                         {
-                            _curState = PlayerState.Idle;
-                            ChangeAnim();
+                            _curAtkable.TakeDamage(Atk);
                         }
+                    }));
+
+                    _animTween.Parallel().TweenProperty(BodyRoot, "modulate", Colors.White, 0.1f);
+                    _animTween.TweenProperty(BodyRoot, "skew", 0f, 0.1f);
+                    _animTween.Finished += () =>
+                    {
+                        _curState = PlayerState.Idle;
+                        ChangeAnim();
+                    };
+                    break;
+
+                case PlayerState.Pickup:
+                    _animTween.Parallel().TweenProperty(BodyRoot, "modulate", Colors.Black, 0.05f);//变黑
+                    _animTween.TweenProperty(BodyRoot, "skew", 1f, 0.05);
+                    _animTween.TweenCallback(Callable.From(() =>
+                    {
+                        GD.Print("Pickup!!!");
+                        if (_curDropItem != null)
+                        {
+                            _curDropItem.QueueFree();
+                            //_curAtkable.TakeDamage(Atk);
+                        }
+                    }));
+
+                    _animTween.Parallel().TweenProperty(BodyRoot, "modulate", Colors.White, 0.1f);
+                    _animTween.TweenProperty(BodyRoot, "skew", 0f, 0.1f);
+                    _animTween.Finished += () =>
+                    {
+                        _curState = PlayerState.Idle;
+                        ChangeAnim();
                     };
                     break;
 
                 case PlayerState.Death:
-                    // 死亡效果：变黑、旋转并消失
-                    _animTween.TweenProperty(SpriteRoot, "modulate", new Color(0, 0, 0, 0), 0.8f);
+                    _animTween.TweenProperty(SpriteRoot, "modulate", new Color(0, 0, 0, 0), 0.8f);// 死亡效果：变黑、旋转并消失
                     _animTween.Parallel().TweenProperty(SpriteRoot, "rotation", Mathf.Pi, 0.8f);
                     _animTween.Finished += () => QueueFree(); // 动画结束删除对象
                     break;
@@ -230,22 +388,84 @@ namespace Solo.Scripts.Character
         }
 
 
-        private List<IAttackable> _atkTargetList = new List<IAttackable>();
-        private void AtkArea_BodyEntered(Node2D body)
+        private List<IAttackable> _atkableList = new List<IAttackable>();
+        private IAttackable _curAtkable;
+        private void TouchArea_BodyEntered(Node2D body)
         {
             if (body is IAttackable atkTarget)
             {
-                _atkTargetList.Add(atkTarget);
+                _atkableList.Add(atkTarget);
+            }
+           
+        }
+        private void TouchArea_BodyExited(Node2D body)
+        {
+            if (body is IAttackable atkTarget)
+            {
+                _atkableList.Remove(atkTarget);
+            }
+            
+        }
+        private IAttackable GetNearestAtkable()//优先返回敌人, 其次返回资源
+        {
+            float minDistSq = float.MaxValue; // 先设为一个极大值
+            IAttackable atkTarget = null;
+            foreach (IAttackable curAtkTarget in _atkableList)
+            {
+                if (curAtkTarget == null)// 安全检查：防止列表里有被销毁的无效对象
+                    continue;
+                float curDistSq = GlobalPosition.DistanceSquaredTo(curAtkTarget.GetPositon());
+                if (curDistSq < minDistSq)
+                {
+                    minDistSq = curDistSq;
+                    atkTarget = curAtkTarget;
+                }
+            }
+            return atkTarget;
+        }
+        private void FaceToAtkable()
+        {
+            float directionToTarget = _curAtkable.GetPositon().X - GlobalPosition.X;// 计算从自己指向敌人的向量
+            if (directionToTarget < 0)
+                SpriteRoot.Scale = new Vector2(-1, 1); // 目标在左
+            else if (directionToTarget > 0)
+                SpriteRoot.Scale = new Vector2(1, 1);  // 目标在右
+        }
+
+        List<DropItem> _dropItemList = new List<DropItem>();
+        DropItem _curDropItem;
+        private void TouchArea_AreaEntered(Area2D area)
+        {
+            if (area.GetParent() is DropItem dropItem)
+            {
+                _dropItemList.Add(dropItem);
+                dropItem.ShowText(true);
             }
         }
-        private void ApplyDamage()
+        private void TouchArea_AreaExited(Area2D area)
         {
-            foreach (var target in _atkTargetList)
+            if (area.GetParent() is DropItem dropItem)
             {
-                target.TakeDamage(Atk);
+                _dropItemList.Remove(dropItem);
+                dropItem.ShowText(false);
             }
-            AtkArea.Monitoring = false;
-            _atkTargetList.Clear();
+        }
+        private DropItem GetNearestDropItem()//返回掉落物
+        {
+            float minDistSq = float.MaxValue; // 先设为一个极大值
+            DropItem nearestDropItem = null;
+            foreach (DropItem curDropItem in _dropItemList)
+            {
+                if (curDropItem == null)// 安全检查：防止列表里有被销毁的无效对象
+                    continue;
+                float curDistSq = GlobalPosition.DistanceSquaredTo(curDropItem.GlobalPosition);
+                if (curDistSq < minDistSq)
+                {
+                    minDistSq = curDistSq;
+                    nearestDropItem = curDropItem;
+                }
+            }
+            return nearestDropItem;
         }
     }
 }

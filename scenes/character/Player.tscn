@@ -6,33 +6,37 @@
 [ext_resource type="PackedScene" uid="uid://557c5e8cwx11" path="res://Scenes/System/InventorySystem/FastInventoryView.tscn" id="4_qg63r"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_kpjcp"]
-radius = 33.01515
+radius = 18.027756
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_kpjcp"]
 radius = 5.0
 height = 14.0
 
-[node name="Player" type="CharacterBody2D" unique_id=1144409017 node_paths=PackedStringArray("SpriteRoot", "AtkArea", "InventoryView")]
+[node name="Player" type="CharacterBody2D" unique_id=1144409017 node_paths=PackedStringArray("SpriteRoot", "BodyRoot", "TouchArea", "InventoryView")]
 script = ExtResource("1_at620")
 SpriteRoot = NodePath("SpriteRoot")
-AtkArea = NodePath("AtkArea")
+BodyRoot = NodePath("SpriteRoot/BodyRoot")
+TouchArea = NodePath("TouchArea")
 InventoryView = NodePath("PlayerUI/Control/InventoryView")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=173865742]
-zoom = Vector2(5, 5)
+zoom = Vector2(3, 3)
 position_smoothing_enabled = true
 
 [node name="SpriteRoot" type="Node2D" parent="." unique_id=700917934]
 
-[node name="Sprite" type="Sprite2D" parent="SpriteRoot" unique_id=13186832]
-position = Vector2(2.3841858e-07, -2.3841858e-07)
-scale = Vector2(0.07879151, 0.07518797)
+[node name="BodyRoot" type="Node2D" parent="SpriteRoot" unique_id=727127429]
+position = Vector2(0, 8)
+
+[node name="Sprite" type="Sprite2D" parent="SpriteRoot/BodyRoot" unique_id=13186832]
+position = Vector2(9.947597e-14, -8.000001)
+rotation = 3.1415927
+scale = Vector2(0.079, -0.075)
 texture = ExtResource("2_nkuch")
 
-[node name="AtkArea" type="Area2D" parent="." unique_id=588471765]
+[node name="TouchArea" type="Area2D" parent="." unique_id=588471765]
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="AtkArea" unique_id=135832409]
-position = Vector2(40, 2)
+[node name="CollisionShape2D" type="CollisionShape2D" parent="TouchArea" unique_id=135832409]
 shape = SubResource("CircleShape2D_kpjcp")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1924437222]

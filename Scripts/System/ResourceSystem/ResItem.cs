@@ -4,9 +4,9 @@ using System;
 
 namespace Solo.Scripts.System.ResourceSystem
 {
-    public partial class ResourceBase : Node2D, IAttackable
+    public partial class ResItem : Node2D, IAttackable
     {
-
+        [Export] Node2D BodyRoot; 
         public int MaxHp = 30;
         private int _curHp;
 
@@ -23,12 +23,21 @@ namespace Solo.Scripts.System.ResourceSystem
         public void TakeDamage(int damage)
         {
             GD.Print("get damage : " + damage);
+            Tween animTween = CreateTween().SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out);
+            animTween.TweenProperty(BodyRoot, "skew", 0.3f, 0.1f);// 走动效果：左右晃动或轻微拉伸
+            animTween.TweenProperty(BodyRoot, "skew", -0.3f, 0.1f);
+            animTween.TweenProperty(BodyRoot, "skew", 0f, 0.1f);
             _curHp -= damage;
             if (_curHp <= 0)
             {
                 _curHp = 0;
                 QueueFree();
             }
+        }
+
+        public Vector2 GetPositon()
+        {
+            return GlobalPosition;
         }
     }
 }
