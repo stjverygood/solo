@@ -7,6 +7,7 @@
 [ext_resource type="PackedScene" uid="uid://qw0q5wipafhq" path="res://Scenes/System/ItemSystem/DropItem.tscn" id="4_qtd3p"]
 
 [node name="ChunkManager" type="Node2D" unique_id=2128049523 node_paths=PackedStringArray("_tileMapLayer")]
+z_index = -10
 script = ExtResource("1_c2qkc")
 _tileMapLayer = NodePath("TileMapLayer")
 TreePs = ExtResource("2_exdkr")

@@ -1,10 +1,11 @@
 using Godot;
+using Solo.Global;
+using Solo.Scripts.Global;
+using Solo.Scripts.System.ItemSystem;
+using Solo.Scripts.System.ResourceSystem;
 using System;
 using System.Collections.Generic;
-using Solo.Scripts.Global;
-using Solo.Global;
-using Solo.Scripts.System.ResourceSystem;
-using Solo.Scripts.System.ItemSystem;
+using static Godot.EditorVcsInterface;
 
 public struct TileInfo
 {
@@ -106,17 +107,18 @@ public partial class ChunkManager : Node2D
 						Vector2 tileWorldPos = new Vector2(globalX * _tileSize, globalY * _tileSize);
 						Vector2 offset = new Vector2(_tileSize / 2f, _tileSize / 2f);// 计算偏移量，使物体位于瓦片中心 (假设 _tileSize 是 16，偏移就是 8)
 						treeRes.GlobalPosition = tileWorldPos + offset;
-						AddChild(treeRes);
+                        GetTree().CurrentScene.AddChild(treeRes);
 
-						
-					}else if(rd < 0.15)
+
+                    }
+                    else if(rd < 0.15)
 					{
-						DropItem woodDropItem = DropItemPs.Instantiate<DropItem>();
+						DropItem goldDropItem = DropItemPs.Instantiate<DropItem>();
 						Vector2 tileWorldPos = new Vector2(globalX * _tileSize, globalY * _tileSize);
 						Vector2 offset = new Vector2(_tileSize / 2f, _tileSize / 2f);// 计算偏移量，使物体位于瓦片中心 (假设 _tileSize 是 16，偏移就是 8)
-						woodDropItem.GlobalPosition = tileWorldPos + offset;
-						AddChild(woodDropItem);
-						woodDropItem.Init(ItemManager.Instance.GetItemData(ItemType.Gold));
+						goldDropItem.GlobalPosition = tileWorldPos + offset;
+                        GetTree().CurrentScene.AddChild(goldDropItem);
+                        goldDropItem.Init(ItemManager.Instance.GetItemData(ItemType.Gold));
 					}
                     _tileMapLayer.SetCell(new Vector2I(globalX, globalY), _tileTypeInfoMap[TileType.Grass].SourceId, _tileTypeInfoMap[TileType.Grass].AtlasCoords);
 				}
@@ -128,8 +130,8 @@ public partial class ChunkManager : Node2D
 						Vector2 tileWorldPos = new Vector2(globalX * _tileSize, globalY * _tileSize);
 						Vector2 offset = new Vector2(_tileSize / 2f, _tileSize / 2f);// 计算偏移量，使物体位于瓦片中心 (假设 _tileSize 是 16，偏移就是 8)
 						stonePs.GlobalPosition = tileWorldPos + offset;
-						AddChild(stonePs);
-					}
+                        GetTree().CurrentScene.AddChild(stonePs);
+                    }
 					_tileMapLayer.SetCell(new Vector2I(globalX, globalY), _tileTypeInfoMap[TileType.Dirt].SourceId, _tileTypeInfoMap[TileType.Dirt].AtlasCoords);
 
 				}

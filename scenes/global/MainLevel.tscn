@@ -3,5 +3,6 @@
 [ext_resource type="PackedScene" uid="uid://c364av0qjs5rx" path="res://Scenes/System/ChunkSystem/ChunkManager.tscn" id="1_5poqq"]
 
 [node name="MainLevel" type="Node2D" unique_id=1442456336]
+z_index = -1
 
 [node name="ChunkManager" parent="." unique_id=2128049523 instance=ExtResource("1_5poqq")]

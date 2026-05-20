@@ -7,6 +7,7 @@
 size = Vector2(8, 8)
 
 [node name="DropItem" type="Node2D" unique_id=874198217 node_paths=PackedStringArray("TextLb", "IconSprite")]
+z_index = -1
 script = ExtResource("1_43lql")
 TextLb = NodePath("Label")
 IconSprite = NodePath("Sprite2D")
