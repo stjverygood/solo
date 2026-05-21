@@ -2,8 +2,8 @@
 
 [ext_resource type="Script" uid="uid://dpkxkwy3ger5n" path="res://Scripts/Character/Player.cs" id="1_at620"]
 [ext_resource type="Texture2D" uid="uid://di0q8426y42st" path="res://Assets/player_shadiao.png" id="2_nkuch"]
-[ext_resource type="PackedScene" uid="uid://cegl0cmno78dg" path="res://Scenes/System/InventorySystem/InventoryView.tscn" id="3_nkuch"]
-[ext_resource type="PackedScene" uid="uid://557c5e8cwx11" path="res://Scenes/System/InventorySystem/FastInventoryView.tscn" id="4_qg63r"]
+[ext_resource type="PackedScene" uid="uid://cegl0cmno78dg" path="res://Scenes/System/InventorySystem/BagInventoryView.tscn" id="3_nkuch"]
+[ext_resource type="PackedScene" uid="uid://557c5e8cwx11" path="res://Scenes/System/InventorySystem/FastBarInventoryView.tscn" id="4_qg63r"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_kpjcp"]
 radius = 16.0
@@ -12,12 +12,13 @@ radius = 16.0
 radius = 5.0
 height = 14.0
 
-[node name="Player" type="CharacterBody2D" unique_id=1144409017 node_paths=PackedStringArray("SpriteRoot", "BodyRoot", "TouchArea", "InventoryView")]
+[node name="Player" type="CharacterBody2D" unique_id=1144409017 node_paths=PackedStringArray("SpriteRoot", "BodyRoot", "TouchArea", "_fastBarInventoryView", "_bagInventoryView")]
 script = ExtResource("1_at620")
 SpriteRoot = NodePath("SpriteRoot")
 BodyRoot = NodePath("SpriteRoot/BodyRoot")
 TouchArea = NodePath("TouchArea")
-InventoryView = NodePath("PlayerUI/Control/InventoryView")
+_fastBarInventoryView = NodePath("PlayerUI/Control/FastBarInventoryViewv")
+_bagInventoryView = NodePath("PlayerUI/Control/BagInventoryView")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=173865742]
 zoom = Vector2(3, 3)
@@ -80,21 +81,7 @@ offset_bottom = -124.0
 grow_horizontal = 2
 grow_vertical = 0
 
-[node name="InventoryView" parent="PlayerUI/Control" unique_id=2038670647 instance=ExtResource("3_nkuch")]
-visible = false
-layout_mode = 1
-anchors_preset = 6
-anchor_left = 1.0
-anchor_top = 0.5
-anchor_right = 1.0
-anchor_bottom = 0.5
-offset_left = -564.0
-offset_top = -209.0
-offset_right = -204.0
-offset_bottom = 151.0
-grow_horizontal = 0
-
-[node name="FastInventoryView" parent="PlayerUI/Control" unique_id=1473412187 instance=ExtResource("4_qg63r")]
+[node name="FastBarInventoryViewv" parent="PlayerUI/Control" unique_id=1473412187 instance=ExtResource("4_qg63r")]
 layout_mode = 1
 anchors_preset = 7
 anchor_left = 0.5
@@ -107,3 +94,16 @@ offset_right = 175.0
 offset_bottom = 0.0
 grow_horizontal = 2
 grow_vertical = 0
+
+[node name="BagInventoryView" parent="PlayerUI/Control" unique_id=2038670647 instance=ExtResource("3_nkuch")]
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -564.0
+offset_top = -209.0
+offset_right = -204.0
+offset_bottom = 151.0
+grow_horizontal = 0

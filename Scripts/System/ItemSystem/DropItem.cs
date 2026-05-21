@@ -1,8 +1,5 @@
 using Godot;
-using Solo.Scripts.Global;
-using System;
-using static System.Net.Mime.MediaTypeNames;
-using static System.Runtime.InteropServices.JavaScript.JSType;
+using Solo.Scripts.System.InventorySystem;
 
 namespace Solo.Scripts.System.ItemSystem
 {
@@ -11,23 +8,23 @@ namespace Solo.Scripts.System.ItemSystem
     {
         [Export] public Label TextLb;
         [Export] public Sprite2D IconSprite;
-        public ItemData Data;
+        public ItemInstance ItemInstance;
 
         public override void _Ready()
         {
-            
+
         }
 
         //public override void _Process(double delta)
         //{
         //}
 
-        public void Init(ItemData data)
+        public void Init(ItemInstance itemInstance)
         {
-            Data = data;
-            TextLb.Text = Data.Type.ToString();
+            ItemInstance = itemInstance;
+            TextLb.Text = ItemInstance.Data.Type.ToString();
             TextLb.Visible = false;
-            Texture2D texture = GD.Load<Texture2D>(Data.IconPath);
+            Texture2D texture = GD.Load<Texture2D>(ItemInstance.Data.IconPath);
             Vector2 targetSize = new Vector2(8, 8);
             Vector2 texSize = texture.GetSize(); // 获取图片实际的像素大小
             IconSprite.Scale = new Vector2(targetSize.X / texSize.X, targetSize.Y / texSize.Y);// 计算缩放比例：目标尺寸 / 图片实际尺寸
@@ -37,6 +34,19 @@ namespace Solo.Scripts.System.ItemSystem
         public void ShowText(bool isShow)
         {
             TextLb.Visible = isShow;
+        }
+
+        public void AddToPlayerInventory(Inventory fastBar, Inventory bag)
+        {
+            ItemInstance.Count -= fastBar.AddItemInstance(ItemInstance);//优先添加到快捷栏
+            if (ItemInstance.Count != 0)//有剩余就添加到背包
+            {
+                ItemInstance.Count -= bag.AddItemInstance(ItemInstance);
+            }
+            if (ItemInstance.Count == 0)//全部添加成功就销毁掉
+            {
+                QueueFree();
+            }
         }
     }
 }

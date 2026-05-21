@@ -1,5 +1,4 @@
 using Godot;
-using System;
 using Solo.Scripts.Character;
 
 
@@ -30,7 +29,6 @@ namespace Solo.Global
             Player = PlayerPs.Instantiate<Player>();
             //layer.GlobalPosition = MapManager.GetRandomCellWorldPosition(CellType.Earth);
             GetTree().CurrentScene.AddChild(Player);
-
             //MapManager.GenerateResource(1000);
         }
 

@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Solo.Scripts.System.ItemSystem
+﻿namespace Solo.Scripts.System.ItemSystem
 {
     public class ItemInstance
     {
+        //对于可堆叠物品, ItemInstance只是个容器, 传递时应该深拷贝
+        //对于不可堆叠物品, ItemInstance是全局唯一的实例, 有独自的状态, 所以传递时只传递引用
+
         public ItemData Data;
         public int CurDur;//当前耐久度(若是工具才有意义)
         public int Count;

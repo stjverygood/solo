@@ -1,7 +1,6 @@
 using Godot;
 using Solo.Scripts.Global;
 using Solo.Scripts.System.ItemSystem;
-using System;
 
 namespace Solo.Scripts.System.ResourceSystem
 {
@@ -25,7 +24,6 @@ namespace Solo.Scripts.System.ResourceSystem
 
         public void TakeDamage(int damage)
         {
-            GD.Print("get damage : " + damage);
             Tween animTween = CreateTween().SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out);
             animTween.TweenProperty(BodyRoot, "skew", 0.3f, 0.1f);// 左右晃动
             animTween.TweenProperty(BodyRoot, "skew", -0.3f, 0.1f);
@@ -37,7 +35,7 @@ namespace Solo.Scripts.System.ResourceSystem
                 DropItem dropItem = DropItemPs.Instantiate<DropItem>();
                 GetTree().CurrentScene.AddChild(dropItem);
                 dropItem.GlobalPosition = GlobalPosition;
-                dropItem.Init(ItemManager.Instance.GetItemData(DropItemType));
+                dropItem.Init(new ItemInstance() { Data = ItemManager.Instance.GetItemData(DropItemType), Count = 2 });//ItemManager.Instance.GetItemData(DropItemType)
                 QueueFree();
             }
         }

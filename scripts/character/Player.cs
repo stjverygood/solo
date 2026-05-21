@@ -1,10 +1,11 @@
-using Solo.Scripts.Global;
 using Godot;
-using System;
-using System.Collections.Generic;
 using Solo.Global;
+using Solo.Scripts.Global;
+using Solo.Scripts.System.InventorySystem;
 using Solo.Scripts.System.ItemSystem;
 using Solo.Scripts.System.ResourceSystem;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Solo.Scripts.Character
 {
@@ -29,11 +30,15 @@ namespace Solo.Scripts.Character
         [Export] public Node2D SpriteRoot;//附带上身体之外的交互点, 比如后面拍建筑的定位点, 用于控制功能交互的
         [Export] public Node2D BodyRoot;//仅仅是身体的根节点, 用于控制动画
         [Export] public Area2D TouchArea;
-        [Export] public Control InventoryView;
         public int Atk = 10;
 
         public int ResCapacity = 1000;//资源存储上限
         private Tween _animTween; // 用于管理当前动画
+
+        [Export] private InventoryView _fastBarInventoryView;
+        [Export] private InventoryView _bagInventoryView;
+        private Inventory _fastBarInventory = new Inventory(4);//快捷栏
+        private Inventory _bagInventory = new Inventory(16);//背包
 
         public override void _Ready()
         {
@@ -43,9 +48,12 @@ namespace Solo.Scripts.Character
             TouchArea.AreaExited += TouchArea_AreaExited;
             _curState = PlayerState.Idle;
             ChangeAnim();
+
+
+            _fastBarInventoryView.Init(_fastBarInventory);
+            _bagInventoryView.Init(_bagInventory);
+            _bagInventoryView.Visible = false;
         }
-
-
 
         public override void _PhysicsProcess(double delta)
         {
@@ -90,9 +98,9 @@ namespace Solo.Scripts.Character
 
         public void UpdateIdle(float delta)
         {
-            if(Input.IsActionJustPressed("Bag"))
+            if (Input.IsActionJustPressed("Bag"))
             {
-                InventoryView.Visible = true;
+                _bagInventoryView.Visible = true;
                 _curState = PlayerState.UI;
                 ChangeAnim();
             }
@@ -110,7 +118,7 @@ namespace Solo.Scripts.Character
                 //todo : enemy
 
                 _curResItem = GetNearestResItem();
-                if(_curResItem != null)
+                if (_curResItem != null)
                 {
                     FaceToNode(_curResItem);
                     _curState = PlayerState.Capture;
@@ -119,7 +127,7 @@ namespace Solo.Scripts.Character
                 }
 
                 _curDropItem = GetNearestDropItem();
-                if(_curDropItem != null)
+                if (_curDropItem != null)
                 {
                     FaceToNode(_curDropItem);
                     _curState = PlayerState.Pickup;
@@ -141,7 +149,7 @@ namespace Solo.Scripts.Character
         {
             if (Input.IsActionJustPressed("Bag"))
             {
-                InventoryView.Visible = true;
+                _bagInventoryView.Visible = true;
                 _curState = PlayerState.UI;
                 ChangeAnim();
             }
@@ -244,9 +252,9 @@ namespace Solo.Scripts.Character
         public void UpdateDash(float delta)
         {
             _dashTimer += delta;
-            if(_dashTimer >= _dashDuration)
+            if (_dashTimer >= _dashDuration)
             {
-                if(Input.IsActionPressed("Dash"))
+                if (Input.IsActionPressed("Dash"))
                 {
                     _curState = PlayerState.Run;
                     ChangeAnim();
@@ -297,7 +305,7 @@ namespace Solo.Scripts.Character
         {
             if (Input.IsActionJustPressed("Bag"))
             {
-                InventoryView.Visible = false;
+                _bagInventoryView.Visible = false;
                 _curState = PlayerState.Idle;
             }
         }
@@ -356,7 +364,7 @@ namespace Solo.Scripts.Character
                     _animTween.TweenProperty(BodyRoot, "skew", 1f, 0.05);
                     _animTween.TweenCallback(Callable.From(() =>
                     {
-                        if(_curResItem != null)
+                        if (_curResItem != null)
                         {
                             _curResItem.TakeDamage(Atk);
                         }
@@ -378,7 +386,18 @@ namespace Solo.Scripts.Character
                     {
                         if (_curDropItem != null)
                         {
-                            _curDropItem.QueueFree();
+                            _curDropItem.AddToPlayerInventory(_fastBarInventory, _bagInventory);
+
+                            // 处理快捷栏数据
+                            var fastBarLogs = _fastBarInventory.ItemInstanceList.Select(item => item == null ? "null" : $"{item.Data.Type}:{item.Count}");
+
+                            // 用 " | " 拼接，只打印一行
+                            GD.Print("--- 快捷栏 --- " + string.Join(" | ", fastBarLogs));
+
+                            // 处理背包数据
+                            var bagLogs = _bagInventory.ItemInstanceList.Select(item => item == null ? "null" : $"{item.Data.Type}:{item.Count}");
+
+                            GD.Print("--- 背  包 --- " + string.Join(" | ", bagLogs));
                         }
                     }));
 

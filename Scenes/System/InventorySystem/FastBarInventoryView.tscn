@@ -1,14 +1,18 @@
 [gd_scene format=3 uid="uid://557c5e8cwx11"]
 
-[ext_resource type="PackedScene" uid="uid://v2bqvrhiyu14" path="res://Scenes/System/InventorySystem/ItemSlotView.tscn" id="1_pqo2i"]
+[ext_resource type="Script" uid="uid://c435ms1p74wxs" path="res://Scripts/System/InventorySystem/InventoryView.cs" id="1_7dvsa"]
+[ext_resource type="PackedScene" uid="uid://v2bqvrhiyu14" path="res://Scenes/System/InventorySystem/InventorySlotView.tscn" id="2_gxlwl"]
 
-[node name="FastInventoryView" type="Control" unique_id=1473412187]
+[node name="FastBarInventoryView" type="Control" unique_id=1473412187 node_paths=PackedStringArray("_gridContainer")]
 custom_minimum_size = Vector2(350, 100)
 layout_mode = 3
 anchor_right = 0.30400002
 anchor_bottom = 0.15400001
 offset_right = -0.20800781
 offset_bottom = 0.20799255
+script = ExtResource("1_7dvsa")
+SlotViewPs = ExtResource("2_gxlwl")
+_gridContainer = NodePath("GridContainer")
 
 [node name="ColorRect" type="ColorRect" parent="." unique_id=1515816353]
 layout_mode = 1
@@ -34,15 +38,3 @@ grow_vertical = 2
 theme_override_constants/h_separation = 2
 theme_override_constants/v_separation = 2
 columns = 4
-
-[node name="ItemSlotView" parent="GridContainer" unique_id=116028700 instance=ExtResource("1_pqo2i")]
-layout_mode = 2
-
-[node name="ItemSlotView2" parent="GridContainer" unique_id=1905689396 instance=ExtResource("1_pqo2i")]
-layout_mode = 2
-
-[node name="ItemSlotView3" parent="GridContainer" unique_id=1626987890 instance=ExtResource("1_pqo2i")]
-layout_mode = 2
-
-[node name="ItemSlotView4" parent="GridContainer" unique_id=1100188919 instance=ExtResource("1_pqo2i")]
-layout_mode = 2
