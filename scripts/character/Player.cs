@@ -36,8 +36,8 @@ namespace Solo.Scripts.Character
 
         [Export] private InventoryView _fastBarInventoryView;
         [Export] private InventoryView _bagInventoryView;
-        private Inventory _fastBarInventory = new Inventory(InventoryType.FastBar, 4);//快捷栏
-        private Inventory _bagInventory = new Inventory(InventoryType.Bag, 16);//背包
+        private Inventory _fastBarInventory = new Inventory(4);//快捷栏
+        private Inventory _bagInventory = new Inventory(16);//背包
 
         public override void _Ready()
         {
@@ -488,6 +488,63 @@ namespace Solo.Scripts.Character
                 }
             }
             return nearestDropItem;
+        }
+
+        public void SwapItemInterInventory(string sourceInvGuid, int sourceIndex, string targetInvGuid, int targetIndex)
+        {
+            Inventory sourceInv = null;
+            Inventory targetInv = null;
+
+            if (sourceInvGuid == _fastBarInventory.GuidStr)
+                sourceInv = _fastBarInventory;
+            else if (sourceInvGuid == _bagInventory.GuidStr)
+                sourceInv = _bagInventory;
+
+            if (targetInvGuid == _fastBarInventory.GuidStr)
+                targetInv = _fastBarInventory;
+            else if (targetInvGuid == _bagInventory.GuidStr)
+                targetInv = _bagInventory;
+
+            if (sourceInv == null || targetInv == null)
+                return;
+
+            if (sourceInv.ItemInstanceList[sourceIndex] == null)
+                return;
+
+            if (targetInv.ItemInstanceList[targetIndex] == null)
+            {
+                targetInv.ItemInstanceList[targetIndex] = sourceInv.ItemInstanceList[sourceIndex];
+                sourceInv.ItemInstanceList[sourceIndex] = null;
+                sourceInv.SlotChanged?.Invoke(sourceIndex);
+                targetInv.SlotChanged?.Invoke(targetIndex);
+                return;
+            }
+
+            if (sourceInv.ItemInstanceList[sourceIndex].Data.Type != targetInv.ItemInstanceList[targetIndex].Data.Type)
+            {
+                ItemInstance temp = sourceInv.ItemInstanceList[sourceIndex];
+                sourceInv.ItemInstanceList[sourceIndex] = targetInv.ItemInstanceList[targetIndex];
+                targetInv.ItemInstanceList[targetIndex] = temp;
+                sourceInv.SlotChanged?.Invoke(sourceIndex);
+                targetInv.SlotChanged?.Invoke(targetIndex);
+            }
+            else
+            {
+                int maxCount = targetInv.ItemInstanceList[targetIndex].Data.MaxCount;
+                int targetCount = targetInv.ItemInstanceList[targetIndex].Count;
+                int sourceCount = sourceInv.ItemInstanceList[sourceIndex].Count;
+                int canAddCount = maxCount - targetCount;
+                if (canAddCount > 0)
+                {
+                    int addCount = sourceCount > canAddCount ? canAddCount : sourceCount;
+                    targetInv.ItemInstanceList[targetIndex].Count += addCount;
+                    sourceInv.ItemInstanceList[sourceIndex].Count -= addCount;
+                    if (sourceInv.ItemInstanceList[sourceIndex].Count <= 0)
+                        sourceInv.ItemInstanceList[sourceIndex] = null;
+                    sourceInv.SlotChanged?.Invoke(sourceIndex);
+                    targetInv.SlotChanged?.Invoke(targetIndex);
+                }
+            }
         }
     }
 }

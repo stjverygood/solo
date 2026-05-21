@@ -60,10 +60,10 @@
 
     }
 
-    public enum InventoryType
-    {
-        FastBar,
-        Bag,
-        Other,
-    }
+    //public enum InventoryType
+    //{
+    //    FastBar,
+    //    Bag,
+    //    Other,
+    //}
 }

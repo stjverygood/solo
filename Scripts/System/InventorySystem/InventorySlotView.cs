@@ -1,6 +1,6 @@
 using Godot;
 using Godot.Collections;
-using Solo.Scripts.Global;
+using Solo.Global;
 using Solo.Scripts.System.ItemSystem;
 
 public partial class InventorySlotView : Control
@@ -63,7 +63,7 @@ public partial class InventorySlotView : Control
 
         Dictionary dict = new Dictionary()
         {
-            {"InventoryType",(int)_parent.Inventory.Type },
+            {"InventoryGuid", _parent.Inventory.GuidStr },
             {"Index",_index },
         };
         return dict;
@@ -77,9 +77,9 @@ public partial class InventorySlotView : Control
     public override void _DropData(Vector2 atPosition, Variant data)
     {
         Dictionary dict = (Dictionary)data;
-        InventoryType sourceInventoryType = (InventoryType)(int)dict["InventoryType"];
+        string sourceInventoryGuid = (string)dict["InventoryGuid"];
         int sourceIndex = (int)dict["Index"];
-        if (sourceInventoryType == _parent.Inventory.Type)//背包内拖动
+        if (sourceInventoryGuid == _parent.Inventory.GuidStr)//背包内拖动
         {
             if (sourceIndex == _index)
                 return;
@@ -87,7 +87,7 @@ public partial class InventorySlotView : Control
         }
         else//跨背包拖动
         {
-
+            GameManager.Instance.Player.SwapItemInterInventory(sourceInventoryGuid, sourceIndex, _parent.Inventory.GuidStr, _index);
         }
 
 

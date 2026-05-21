@@ -1,5 +1,4 @@
-﻿using Solo.Scripts.Global;
-using Solo.Scripts.System.ItemSystem;
+﻿using Solo.Scripts.System.ItemSystem;
 using System;
 using System.Collections.Generic;
 
@@ -7,14 +6,14 @@ namespace Solo.Scripts.System.InventorySystem
 {
     public class Inventory
     {
-        public InventoryType Type;
+        public string GuidStr;
         private int _capacity;
         public List<ItemInstance> ItemInstanceList = new List<ItemInstance>();
         public Action<int> SlotChanged;//用于通知ui哪个格子变了, 修改ui格子数据
 
-        public Inventory(InventoryType type, int capacity)
+        public Inventory(int capacity)
         {
-            Type = type;
+            GuidStr = Guid.NewGuid().ToString();
             _capacity = capacity;
             for (int i = 0; i < _capacity; i++)
             {
