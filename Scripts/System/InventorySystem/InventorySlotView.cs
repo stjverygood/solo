@@ -6,6 +6,7 @@ using Solo.Scripts.System.ItemSystem;
 public partial class InventorySlotView : Control
 {
     [Export] private TextureRect _iconTr;
+    [Export] private Label _nameLb;
     [Export] private Label _countLb;
     private ItemInstance _itemInstance;
     private int _index;
@@ -22,6 +23,7 @@ public partial class InventorySlotView : Control
         _index = index;
         _itemInstance = null;
         _iconTr.Texture = null;
+        _nameLb.Text = "";
         _countLb.Text = "";
     }
 
@@ -30,6 +32,7 @@ public partial class InventorySlotView : Control
         if (itemInstance == null)
         {
             _iconTr.Texture = null;
+            _nameLb.Text = "";
             _countLb.Text = "";
             return;
         }
@@ -37,6 +40,7 @@ public partial class InventorySlotView : Control
         _itemInstance = itemInstance;
         _iconTr.Texture = GD.Load<Texture2D>(_itemInstance.Data.IconPath);
         _countLb.Text = $"{_itemInstance.Count}";
+        _nameLb.Text = $"{_itemInstance.Data.Type}";
     }
 
     public override Variant _GetDragData(Vector2 atPosition)

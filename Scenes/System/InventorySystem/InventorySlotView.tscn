@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://dtg4xwon7uo2j" path="res://Scripts/System/InventorySystem/InventorySlotView.cs" id="1_3pjed"]
 [ext_resource type="Texture2D" uid="uid://d4igqp371y5" path="res://Assets/icon.svg" id="2_vb2wc"]
 
-[node name="InventorySlotView" type="Control" unique_id=116028700 node_paths=PackedStringArray("_iconTr", "_countLb")]
+[node name="InventorySlotView" type="Control" unique_id=116028700 node_paths=PackedStringArray("_iconTr", "_nameLb", "_countLb")]
 custom_minimum_size = Vector2(80, 80)
 layout_mode = 3
 anchor_right = 0.069000006
@@ -13,7 +13,8 @@ offset_bottom = 0.29599762
 mouse_filter = 1
 script = ExtResource("1_3pjed")
 _iconTr = NodePath("TextureRect")
-_countLb = NodePath("Label")
+_nameLb = NodePath("NameLb")
+_countLb = NodePath("CountLb")
 
 [node name="ColorRect" type="ColorRect" parent="." unique_id=2073163080]
 layout_mode = 1
@@ -43,6 +44,19 @@ layout_mode = 2
 mouse_filter = 2
 color = Color(0.4390491, 0.43904912, 0.43904912, 1)
 
+[node name="NameLb" type="Label" parent="." unique_id=1565766912]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -36.0
+offset_right = 36.0
+offset_bottom = 23.0
+grow_horizontal = 2
+text = "asdfasdf"
+horizontal_alignment = 1
+vertical_alignment = 1
+
 [node name="TextureRect" type="TextureRect" parent="." unique_id=1861591422]
 layout_mode = 1
 anchors_preset = 8
@@ -60,7 +74,7 @@ mouse_filter = 2
 texture = ExtResource("2_vb2wc")
 expand_mode = 1
 
-[node name="Label" type="Label" parent="." unique_id=1357458699]
+[node name="CountLb" type="Label" parent="." unique_id=1357458699]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
