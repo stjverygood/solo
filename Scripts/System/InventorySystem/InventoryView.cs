@@ -6,7 +6,7 @@ public partial class InventoryView : Control
 {
     [Export] public PackedScene SlotViewPs;
     [Export] private GridContainer _gridContainer;
-    private Inventory _inventory;
+    public Inventory Inventory;
     private List<InventorySlotView> _slotViewList = new List<InventorySlotView>();
 
     public override void _Ready()
@@ -20,17 +20,17 @@ public partial class InventoryView : Control
 
     public void Init(Inventory inventory)
     {
-        _inventory = inventory;
-        for (int i = 0; i < _inventory.ItemInstanceList.Count; i++)
+        Inventory = inventory;
+        for (int i = 0; i < Inventory.ItemInstanceList.Count; i++)
         {
             InventorySlotView slotView = SlotViewPs.Instantiate<InventorySlotView>();
+            slotView.Init(this, i);
             _gridContainer.AddChild(slotView);
             _slotViewList.Add(slotView);
         }
-        _inventory.SlotChanged += (int index) =>
+        Inventory.SlotChanged += (int index) =>
         {
-            GD.Print("SlotChangedSlotChangedSlotChanged");
-            _slotViewList[index].SetData(GD.Load<Texture2D>(_inventory.ItemInstanceList[index].Data.IconPath), _inventory.ItemInstanceList[index].Count);
+            _slotViewList[index].SetData(Inventory.ItemInstanceList[index]);
         };
     }
 }

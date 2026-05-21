@@ -5,7 +5,6 @@ using Solo.Scripts.System.InventorySystem;
 using Solo.Scripts.System.ItemSystem;
 using Solo.Scripts.System.ResourceSystem;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Solo.Scripts.Character
 {
@@ -37,8 +36,8 @@ namespace Solo.Scripts.Character
 
         [Export] private InventoryView _fastBarInventoryView;
         [Export] private InventoryView _bagInventoryView;
-        private Inventory _fastBarInventory = new Inventory(4);//快捷栏
-        private Inventory _bagInventory = new Inventory(16);//背包
+        private Inventory _fastBarInventory = new Inventory(InventoryType.FastBar, 4);//快捷栏
+        private Inventory _bagInventory = new Inventory(InventoryType.Bag, 16);//背包
 
         public override void _Ready()
         {
@@ -387,17 +386,10 @@ namespace Solo.Scripts.Character
                         if (_curDropItem != null)
                         {
                             _curDropItem.AddToPlayerInventory(_fastBarInventory, _bagInventory);
-
-                            // 处理快捷栏数据
-                            var fastBarLogs = _fastBarInventory.ItemInstanceList.Select(item => item == null ? "null" : $"{item.Data.Type}:{item.Count}");
-
-                            // 用 " | " 拼接，只打印一行
-                            GD.Print("--- 快捷栏 --- " + string.Join(" | ", fastBarLogs));
-
-                            // 处理背包数据
-                            var bagLogs = _bagInventory.ItemInstanceList.Select(item => item == null ? "null" : $"{item.Data.Type}:{item.Count}");
-
-                            GD.Print("--- 背  包 --- " + string.Join(" | ", bagLogs));
+                            //var fastBarLogs = _fastBarInventory.ItemInstanceList.Select(item => item == null ? "null" : $"{item.Data.Type}:{item.Count}");
+                            //GD.Print("--- 快捷栏 --- " + string.Join(" | ", fastBarLogs));
+                            //var bagLogs = _bagInventory.ItemInstanceList.Select(item => item == null ? "null" : $"{item.Data.Type}:{item.Count}");
+                            //GD.Print("--- 背  包 --- " + string.Join(" | ", bagLogs));
                         }
                     }));
 

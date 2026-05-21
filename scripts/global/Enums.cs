@@ -1,11 +1,4 @@
-﻿using Godot;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Solo.Scripts.Global
+﻿namespace Solo.Scripts.Global
 {
     public enum TileType
     {
@@ -65,5 +58,12 @@ namespace Solo.Scripts.Global
         GoldBoot,    // 金鞋
 
 
+    }
+
+    public enum InventoryType
+    {
+        FastBar,
+        Bag,
+        Other,
     }
 }
