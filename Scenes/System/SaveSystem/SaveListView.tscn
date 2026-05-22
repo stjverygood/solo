@@ -1,0 +1,108 @@
+[gd_scene format=3 uid="uid://bu5uihu26jmpm"]
+
+[ext_resource type="Script" uid="uid://crh257iaab68r" path="res://Scripts/System/SaveSystem/SaveListView.cs" id="1_c3ag6"]
+[ext_resource type="PackedScene" uid="uid://7owk5lvrbddy" path="res://Scenes/System/SaveSystem/SaveSlotView.tscn" id="2_gkwdo"]
+
+[node name="SaveListView" type="Control" unique_id=1572162832 node_paths=PackedStringArray("_backBtn", "_delSaveBtn", "_addSaveBtn", "_goBtn", "_slotGc")]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_c3ag6")
+_backBtn = NodePath("ColorRect/BackBtn")
+_delSaveBtn = NodePath("ColorRect/DelSave")
+_addSaveBtn = NodePath("ColorRect/AddSave")
+_goBtn = NodePath("ColorRect/GoBtn")
+_slotGc = NodePath("ColorRect2/ScrollContainer/GridContainer")
+_saveSlotViewPs = ExtResource("2_gkwdo")
+
+[node name="ColorRect" type="ColorRect" parent="." unique_id=326796684]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.44609302, 0.45821655, 0.4513355, 1)
+
+[node name="Label" type="Label" parent="ColorRect" unique_id=127029521]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -178.0
+offset_top = 19.0
+offset_right = 178.0
+offset_bottom = 74.0
+grow_horizontal = 2
+theme_override_font_sizes/font_size = 40
+text = "世界列表"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="BackBtn" type="Button" parent="ColorRect" unique_id=1889448278]
+layout_mode = 0
+offset_left = 144.0
+offset_top = 568.0
+offset_right = 232.0
+offset_bottom = 618.0
+text = "返回主菜单"
+
+[node name="DelSave" type="Button" parent="ColorRect" unique_id=1183667215]
+layout_mode = 0
+offset_left = 362.0
+offset_top = 566.0
+offset_right = 450.0
+offset_bottom = 616.0
+text = "删除世界"
+
+[node name="AddSave" type="Button" parent="ColorRect" unique_id=490352677]
+layout_mode = 0
+offset_left = 613.0
+offset_top = 566.0
+offset_right = 701.0
+offset_bottom = 616.0
+text = "新建世界"
+
+[node name="GoBtn" type="Button" parent="ColorRect" unique_id=721910639]
+layout_mode = 0
+offset_left = 887.0
+offset_top = 570.0
+offset_right = 975.0
+offset_bottom = 620.0
+text = "进入世界"
+
+[node name="ColorRect2" type="ColorRect" parent="." unique_id=1615948342]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -473.5
+offset_top = -240.0
+offset_right = 473.5
+offset_bottom = 240.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.2231029, 0.2231029, 0.22310287, 1)
+
+[node name="ScrollContainer" type="ScrollContainer" parent="ColorRect2" unique_id=189709756]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 39.0
+offset_top = 23.0
+offset_right = -32.0
+offset_bottom = -5.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="GridContainer" type="GridContainer" parent="ColorRect2/ScrollContainer" unique_id=2100360428]
+layout_mode = 2
+theme_override_constants/h_separation = 60
+theme_override_constants/v_separation = 36
+columns = 3

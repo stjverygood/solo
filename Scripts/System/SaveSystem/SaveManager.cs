@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text.Encodings.Web;
 using System.Text.Json;
+using System.Text.Unicode;
 
 namespace Solo.Scripts.System.SaveSystem
 {
@@ -13,7 +15,11 @@ namespace Solo.Scripts.System.SaveSystem
         private static readonly string _savePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "solo", "save"); // C:\Users\用户名\AppData\Local\solo\save
         private static readonly string _saveInfoFileName = Path.Combine(_savePath, "save_info_list.json");// C:\Users\用户名\AppData\Local\solo\save\save_info_list.json
         private static readonly string _saveDataPath = Path.Combine(_savePath, "data");// C:\Users\用户名\AppData\Local\solo\save\
-        private static readonly JsonSerializerOptions _jsonOptions = new() { WriteIndented = true };
+        private static readonly JsonSerializerOptions _jsonOptions = new()
+        {
+            WriteIndented = true,
+            Encoder = JavaScriptEncoder.Create(UnicodeRanges.All)
+        };
 
         private SaveManager()
         {

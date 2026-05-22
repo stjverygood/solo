@@ -1,9 +1,9 @@
 [gd_scene format=3 uid="uid://7owk5lvrbddy"]
 
-[ext_resource type="Script" uid="uid://bcx8k5djj5py4" path="res://Scripts/Levels/SaveSlotView.cs" id="1_uymm3"]
+[ext_resource type="Script" uid="uid://bcx8k5djj5py4" path="res://Scripts/System/SaveSystem/SaveSlotView.cs" id="1_uymm3"]
 [ext_resource type="Texture2D" uid="uid://d4igqp371y5" path="res://Assets/icon.svg" id="2_3xyg0"]
 
-[node name="SaveSlotView" type="Control" unique_id=705344448 node_paths=PackedStringArray("_bgCr", "_animRoot")]
+[node name="SaveSlotView" type="Control" unique_id=705344448 node_paths=PackedStringArray("_bgCr", "_animRoot", "_nameLb", "_levelLb", "_dateLb")]
 custom_minimum_size = Vector2(240, 200)
 layout_mode = 3
 anchors_preset = 15
@@ -16,6 +16,9 @@ grow_vertical = 2
 script = ExtResource("1_uymm3")
 _bgCr = NodePath("BgCr")
 _animRoot = NodePath("BgCr/AnimNode")
+_nameLb = NodePath("BgCr/AnimNode/NameLb")
+_levelLb = NodePath("BgCr/AnimNode/LevelLb")
+_dateLb = NodePath("BgCr/AnimNode/DateLb")
 
 [node name="BgCr" type="ColorRect" parent="." unique_id=1063113961]
 layout_mode = 1
