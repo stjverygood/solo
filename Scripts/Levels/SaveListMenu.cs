@@ -3,7 +3,7 @@ using Solo.Scripts.Global;
 
 namespace Solo.Scripts.Levels
 {
-    public partial class WorldListMenu : Control
+    public partial class SaveListMenu : Control
     {
         [Export] private Button _backBtn;
         public override void _Ready()

@@ -1,9 +1,9 @@
 [gd_scene format=3 uid="uid://bu5uihu26jmpm"]
 
-[ext_resource type="Script" uid="uid://crh257iaab68r" path="res://Scripts/Levels/WorldListMenu.cs" id="1_c3ag6"]
-[ext_resource type="PackedScene" uid="uid://7owk5lvrbddy" path="res://Scenes/Levels/WorldSlotView.tscn" id="2_gkwdo"]
+[ext_resource type="Script" uid="uid://crh257iaab68r" path="res://Scripts/Levels/SaveListMenu.cs" id="1_c3ag6"]
+[ext_resource type="PackedScene" uid="uid://7owk5lvrbddy" path="res://Scenes/Levels/SaveSlotView.tscn" id="2_gkwdo"]
 
-[node name="WorldListMenu" type="Control" unique_id=1572162832 node_paths=PackedStringArray("_backBtn")]
+[node name="SaveListMenu" type="Control" unique_id=1572162832 node_paths=PackedStringArray("_backBtn")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -45,15 +45,23 @@ offset_right = 232.0
 offset_bottom = 618.0
 text = "返回主菜单"
 
-[node name="CreateWorldBtn" type="Button" parent="ColorRect" unique_id=490352677]
+[node name="AddSave" type="Button" parent="ColorRect" unique_id=490352677]
 layout_mode = 0
-offset_left = 532.0
-offset_top = 570.0
-offset_right = 620.0
-offset_bottom = 620.0
+offset_left = 613.0
+offset_top = 566.0
+offset_right = 701.0
+offset_bottom = 616.0
 text = "新建世界"
 
-[node name="GoWorldBtn" type="Button" parent="ColorRect" unique_id=721910639]
+[node name="DelSave" type="Button" parent="ColorRect" unique_id=1183667215]
+layout_mode = 0
+offset_left = 362.0
+offset_top = 566.0
+offset_right = 450.0
+offset_bottom = 616.0
+text = "删除世界"
+
+[node name="GoBtn" type="Button" parent="ColorRect" unique_id=721910639]
 layout_mode = 0
 offset_left = 887.0
 offset_top = 570.0

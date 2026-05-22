@@ -2,20 +2,20 @@ using Godot;
 
 namespace Solo.Scripts.Levels
 {
-    public enum WorldSlotViewState
+    public enum SaveSlotViewState
     {
         Normal,
         Hover,
         Selected,
     }
 
-    public partial class WorldSlotView : Control
+    public partial class SaveSlotView : Control
     {
         private Tween _tween;
         [Export] private ColorRect _bgCr;
         [Export] private Control _animRoot;
 
-        private WorldSlotViewState _curState;
+        private SaveSlotViewState _curState;
 
 
         private Color _bgCrNormalColor;
@@ -31,22 +31,22 @@ namespace Solo.Scripts.Levels
         {
             if (@event is InputEventMouseButton mouseEvent && mouseEvent.Pressed && mouseEvent.ButtonIndex == MouseButton.Left)
             {
-                if (_curState == WorldSlotViewState.Hover)
+                if (_curState == SaveSlotViewState.Hover)
                 {
                     _tween?.Kill();
                     _tween = CreateTween().SetParallel(true).SetTrans(Tween.TransitionType.Cubic).SetEase(Tween.EaseType.Out);
                     _tween.TweenProperty(_animRoot, "scale", new Vector2(0.9f, 0.9f), 0.1);
                     _bgCr.Color = _bgCr.Color = new Color(_bgCrNormalColor.R, _bgCrNormalColor.G, _bgCrNormalColor.B, 0.2f);
-                    _curState = WorldSlotViewState.Selected;
+                    _curState = SaveSlotViewState.Selected;
                     return;
                 }
-                if (_curState == WorldSlotViewState.Selected)
+                if (_curState == SaveSlotViewState.Selected)
                 {
                     _tween?.Kill();
                     _tween = CreateTween().SetParallel(true).SetTrans(Tween.TransitionType.Cubic).SetEase(Tween.EaseType.Out);
                     _tween.TweenProperty(_animRoot, "scale", new Vector2(0.95f, 0.95f), 0.1);
                     _bgCr.Color = new Color(_bgCrNormalColor.R, _bgCrNormalColor.G, _bgCrNormalColor.B, 0.8f);
-                    _curState = WorldSlotViewState.Hover;
+                    _curState = SaveSlotViewState.Hover;
                     return;
                 }
             }
@@ -54,26 +54,26 @@ namespace Solo.Scripts.Levels
 
         private void WorldSlotView_MouseEntered()
         {
-            if (_curState == WorldSlotViewState.Normal)
+            if (_curState == SaveSlotViewState.Normal)
             {
                 _tween?.Kill();
                 _tween = CreateTween().SetParallel(true).SetTrans(Tween.TransitionType.Cubic).SetEase(Tween.EaseType.Out);
                 _tween.TweenProperty(_animRoot, "scale", new Vector2(0.95f, 0.95f), 0.1);
                 _bgCr.Color = new Color(_bgCrNormalColor.R, _bgCrNormalColor.G, _bgCrNormalColor.B, 0.8f);
-                _curState = WorldSlotViewState.Hover;
+                _curState = SaveSlotViewState.Hover;
                 return;
             }
         }
 
         private void WorldSlotView_MouseExited()
         {
-            if (_curState == WorldSlotViewState.Hover)
+            if (_curState == SaveSlotViewState.Hover)
             {
                 _tween?.Kill();
                 _tween = CreateTween().SetParallel(true).SetTrans(Tween.TransitionType.Cubic).SetEase(Tween.EaseType.Out);
                 _tween.TweenProperty(_animRoot, "scale", new Vector2(1f, 1f), 0.1);
                 _bgCr.Color = _bgCrNormalColor;
-                _curState = WorldSlotViewState.Normal;
+                _curState = SaveSlotViewState.Normal;
                 return;
             }
         }

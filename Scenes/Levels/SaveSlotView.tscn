@@ -1,9 +1,9 @@
 [gd_scene format=3 uid="uid://7owk5lvrbddy"]
 
-[ext_resource type="Texture2D" uid="uid://d4igqp371y5" path="res://Assets/icon.svg" id="1_g2gqv"]
-[ext_resource type="Script" uid="uid://bcx8k5djj5py4" path="res://Scripts/Levels/WorldSlotView.cs" id="1_yw4j1"]
+[ext_resource type="Script" uid="uid://bcx8k5djj5py4" path="res://Scripts/Levels/SaveSlotView.cs" id="1_uymm3"]
+[ext_resource type="Texture2D" uid="uid://d4igqp371y5" path="res://Assets/icon.svg" id="2_3xyg0"]
 
-[node name="WorldSlotView" type="Control" unique_id=705344448 node_paths=PackedStringArray("_bgCr", "_animRoot")]
+[node name="SaveSlotView" type="Control" unique_id=705344448 node_paths=PackedStringArray("_bgCr", "_animRoot")]
 custom_minimum_size = Vector2(240, 200)
 layout_mode = 3
 anchors_preset = 15
@@ -13,7 +13,7 @@ offset_right = -912.0
 offset_bottom = -448.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("1_yw4j1")
+script = ExtResource("1_uymm3")
 _bgCr = NodePath("BgCr")
 _animRoot = NodePath("BgCr/AnimNode")
 
@@ -49,7 +49,7 @@ offset_bottom = -40.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-texture = ExtResource("1_g2gqv")
+texture = ExtResource("2_3xyg0")
 
 [node name="NameLb" type="Label" parent="BgCr/AnimNode" unique_id=799869101]
 layout_mode = 1
