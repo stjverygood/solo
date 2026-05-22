@@ -1,0 +1,93 @@
+[gd_scene format=3 uid="uid://b0h5soh7rcqn1"]
+
+[ext_resource type="Script" uid="uid://2tg34jhra5bk" path="res://Scripts/Levels/StartMenu.cs" id="1_aoyix"]
+
+[node name="StartMenu" type="Control" unique_id=771200124 node_paths=PackedStringArray("_startBtn", "_settingBtn", "_collectionBtn", "_aboutBtn", "_exitBtn")]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_aoyix")
+_startBtn = NodePath("ColorRect/StartBtn")
+_settingBtn = NodePath("ColorRect/SettingBtn")
+_collectionBtn = NodePath("ColorRect/CollectionBtn")
+_aboutBtn = NodePath("ColorRect/AboutBtn")
+_exitBtn = NodePath("ColorRect/ExitBtn")
+
+[node name="ColorRect" type="ColorRect" parent="." unique_id=1593247487]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.33660764, 0.3366076, 0.3366076, 1)
+
+[node name="StartBtn" type="Button" parent="ColorRect" unique_id=1038261233]
+layout_mode = 0
+offset_left = 75.0
+offset_top = 214.0
+offset_right = 243.0
+offset_bottom = 279.0
+theme_override_font_sizes/font_size = 40
+text = "开始游戏"
+
+[node name="SettingBtn" type="Button" parent="ColorRect" unique_id=780967780]
+layout_mode = 0
+offset_left = 75.0
+offset_top = 298.0
+offset_right = 242.875
+offset_bottom = 363.0
+theme_override_font_sizes/font_size = 40
+text = "设置"
+
+[node name="CollectionBtn" type="Button" parent="ColorRect" unique_id=1309182682]
+layout_mode = 0
+offset_left = 75.0
+offset_top = 379.0
+offset_right = 243.0
+offset_bottom = 444.0
+theme_override_font_sizes/font_size = 40
+text = "游戏收藏"
+
+[node name="AboutBtn" type="Button" parent="ColorRect" unique_id=1293112212]
+layout_mode = 0
+offset_left = 75.0
+offset_top = 462.0
+offset_right = 243.0
+offset_bottom = 527.0
+theme_override_font_sizes/font_size = 40
+text = "开发团队"
+
+[node name="ExitBtn" type="Button" parent="ColorRect" unique_id=2122446353]
+layout_mode = 0
+offset_left = 75.0
+offset_top = 547.0
+offset_right = 243.0
+offset_bottom = 612.0
+theme_override_font_sizes/font_size = 40
+text = "退出游戏"
+
+[node name="Label" type="Label" parent="ColorRect" unique_id=1159784240]
+layout_mode = 0
+offset_left = 353.0
+offset_top = 27.0
+offset_right = 833.0
+offset_bottom = 181.0
+theme_override_font_sizes/font_size = 96
+text = "我独自修行"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Label2" type="Label" parent="ColorRect" unique_id=362802437]
+layout_mode = 0
+offset_left = 404.0
+offset_top = 153.0
+offset_right = 764.0
+offset_bottom = 285.0
+theme_override_font_sizes/font_size = 96
+text = "SOLO"
+horizontal_alignment = 1
+vertical_alignment = 1

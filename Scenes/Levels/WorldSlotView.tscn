@@ -1,0 +1,100 @@
+[gd_scene format=3 uid="uid://7owk5lvrbddy"]
+
+[ext_resource type="Texture2D" uid="uid://d4igqp371y5" path="res://Assets/icon.svg" id="1_g2gqv"]
+[ext_resource type="Script" uid="uid://bcx8k5djj5py4" path="res://Scripts/Levels/WorldSlotView.cs" id="1_yw4j1"]
+
+[node name="WorldSlotView" type="Control" unique_id=705344448 node_paths=PackedStringArray("_bgCr", "_animRoot")]
+custom_minimum_size = Vector2(240, 200)
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = -912.0
+offset_bottom = -448.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_yw4j1")
+_bgCr = NodePath("BgCr")
+_animRoot = NodePath("BgCr/AnimNode")
+
+[node name="BgCr" type="ColorRect" parent="." unique_id=1063113961]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.16565639, 0.16565642, 0.16565639, 1)
+
+[node name="AnimNode" type="Control" parent="BgCr" unique_id=458829230]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+pivot_offset = Vector2(120, 120)
+mouse_filter = 2
+
+[node name="TextureRect" type="TextureRect" parent="BgCr/AnimNode" unique_id=2070153805]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 9.0
+offset_top = 32.0
+offset_right = -9.0
+offset_bottom = -40.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("1_g2gqv")
+
+[node name="NameLb" type="Label" parent="BgCr/AnimNode" unique_id=799869101]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -55.0
+offset_right = 55.0
+offset_bottom = 34.0
+grow_horizontal = 2
+theme_override_font_sizes/font_size = 24
+text = "修仙世界1"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="LevelLb" type="Label" parent="BgCr/AnimNode" unique_id=30127901]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -39.0
+offset_top = -45.0
+offset_right = 47.0
+offset_bottom = -17.0
+grow_horizontal = 2
+grow_vertical = 0
+text = "筑基期-中期"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="DateLb" type="Label" parent="BgCr/AnimNode" unique_id=28942676]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -68.0
+offset_top = -26.0
+offset_right = 68.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_font_sizes/font_size = 12
+text = "2026年5月22日13点08分"
+horizontal_alignment = 1
+vertical_alignment = 1

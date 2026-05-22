@@ -1,5 +1,4 @@
 using Godot;
-using Solo.Global;
 using Solo.Scripts.Global;
 using Solo.Scripts.System.ItemSystem;
 using Solo.Scripts.System.ResourceSystem;

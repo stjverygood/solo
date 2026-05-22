@@ -1,6 +1,6 @@
 using Godot;
 using Godot.Collections;
-using Solo.Global;
+using Solo.Scripts.Global;
 using Solo.Scripts.System.ItemSystem;
 
 public partial class InventorySlotView : Control

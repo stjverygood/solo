@@ -1,5 +1,4 @@
 using Godot;
-using Solo.Global;
 using Solo.Scripts.Global;
 using Solo.Scripts.System.InventorySystem;
 using Solo.Scripts.System.ItemSystem;
@@ -246,8 +245,8 @@ namespace Solo.Scripts.Character
         }
 
         private float _dashTimer;
-        private float _dashDuration = 0.15f;
-        private float _dashSpeed = 300;
+        private float _dashDuration = 0.2f;
+        private float _dashSpeed = 200;
         public void UpdateDash(float delta)
         {
             _dashTimer += delta;

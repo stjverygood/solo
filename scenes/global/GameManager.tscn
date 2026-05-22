@@ -1,8 +1,12 @@
 [gd_scene format=3 uid="uid://dxpcm8w2n4qa"]
 
 [ext_resource type="Script" uid="uid://dfdmitrwv0kqk" path="res://Scripts/Global/GameManager.cs" id="1_g4tje"]
+[ext_resource type="PackedScene" uid="uid://b0h5soh7rcqn1" path="res://Scenes/Levels/StartMenu.tscn" id="2_6j0h0"]
 [ext_resource type="PackedScene" uid="uid://bwctbm6eq64vu" path="res://Scenes/Character/Player.tscn" id="2_okfta"]
+[ext_resource type="PackedScene" uid="uid://bu5uihu26jmpm" path="res://Scenes/Levels/WorldListMenu.tscn" id="3_enwxu"]
 
 [node name="GameManager" type="Node" unique_id=1034362425]
 script = ExtResource("1_g4tje")
-PlayerPs = ExtResource("2_okfta")
+_startMenuPs = ExtResource("2_6j0h0")
+_worldListMenuPs = ExtResource("3_enwxu")
+_playerPs = ExtResource("2_okfta")

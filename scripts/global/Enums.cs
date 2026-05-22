@@ -1,5 +1,15 @@
 ﻿namespace Solo.Scripts.Global
 {
+    public enum GameState
+    {
+        StartMenu,//开始菜单
+        WorldListMenu,//世界列表
+        SettingMenu,
+        Loading,//加载界面 : 加载世界, 退出并保存世界
+        Play,//游戏中
+        Stop,//按exc暂停游戏
+    }
+
     public enum TileType
     {
         Grass,
@@ -59,11 +69,4 @@
 
 
     }
-
-    //public enum InventoryType
-    //{
-    //    FastBar,
-    //    Bag,
-    //    Other,
-    //}
 }
