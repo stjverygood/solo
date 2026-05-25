@@ -1,5 +1,7 @@
 using Godot;
 using Solo.Scripts.Global;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Solo.Scripts.System.SaveSystem
 {
@@ -12,6 +14,9 @@ namespace Solo.Scripts.System.SaveSystem
         [Export] private GridContainer _slotGc;
         [Export] private PackedScene _saveSlotViewPs;
 
+        private List<SaveSlotView> _slotViewList = new List<SaveSlotView>();
+        private SaveInfo _curSelectedSaveInfo;
+
         public override void _Ready()
         {
             _backBtn.Pressed += () =>
@@ -20,8 +25,8 @@ namespace Solo.Scripts.System.SaveSystem
             };
             _delSaveBtn.Pressed += () =>
             {
-                SaveManager.Instance.RemoveSave(_curSelectedSlotView.SaveInfo.Id);
-                _curSelectedSlotView = null;
+                SaveManager.Instance.RemoveSave(_curSelectedSaveInfo.Id);
+                _curSelectedSaveInfo = null;
                 RefreshSaveSlotList();
             };
             _addSaveBtn.Pressed += () =>
@@ -31,9 +36,9 @@ namespace Solo.Scripts.System.SaveSystem
             };
             _goBtn.Pressed += () =>
             {
-                //GameManager.Instance.ChangeGameState(GameState.StartMenu);
+                SaveManager.Instance.CurSaveInfo = _curSelectedSaveInfo;
+                GameManager.Instance.ChangeGameState(GameState.Loading);
             };
-
             RefreshSaveSlotList();
         }
 
@@ -43,24 +48,48 @@ namespace Solo.Scripts.System.SaveSystem
             {
                 child.QueueFree();
             }
+            _slotViewList.Clear();
             for (int i = 0; i < SaveManager.Instance.SaveInfoList.Count; i++)
             {
                 SaveSlotView slotView = _saveSlotViewPs.Instantiate<SaveSlotView>();
                 slotView.Init(this, SaveManager.Instance.SaveInfoList[i]);
                 _slotGc.AddChild(slotView);
+                _slotViewList.Add(slotView);
+                if (_curSelectedSaveInfo != null && _curSelectedSaveInfo.Id == slotView.SaveInfo.Id)
+                {
+                    slotView.ChangeState(SaveSlotViewState.Selected);
+                }
+            }
+            if (_curSelectedSaveInfo == null)
+            {
+                _delSaveBtn.Disabled = true;
+                _goBtn.Disabled = true;
+            }
+            else
+            {
+                _delSaveBtn.Disabled = false;
+                _goBtn.Disabled = false;
             }
         }
 
-        public override void _Process(double delta)
+        public void ChangeSelectedSaveInfo(SaveInfo newInfo)
         {
-        }
-
-        private SaveSlotView _curSelectedSlotView;
-        public void ChangeSelectedSlot(SaveSlotView newSlot)
-        {
-            if (_curSelectedSlotView != null)
-                _curSelectedSlotView.SelectedToNormal();
-            _curSelectedSlotView = newSlot;
+            if (_curSelectedSaveInfo != null)
+            {
+                SaveSlotView lastSlotView = _slotViewList.First(view => view.SaveInfo.Id == _curSelectedSaveInfo.Id);
+                lastSlotView.ChangeState(SaveSlotViewState.Normal);
+            }
+            _curSelectedSaveInfo = newInfo;
+            if (_curSelectedSaveInfo == null)
+            {
+                _delSaveBtn.Disabled = true;
+                _goBtn.Disabled = true;
+            }
+            else
+            {
+                _delSaveBtn.Disabled = false;
+                _goBtn.Disabled = false;
+            }
         }
     }
 }

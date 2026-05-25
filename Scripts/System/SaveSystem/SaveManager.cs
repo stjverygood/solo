@@ -84,15 +84,13 @@ namespace Solo.Scripts.System.SaveSystem
                 Godot.GD.Print($"[写入存档信息异常] : {e.Message}");
             }
         }
+        public SaveInfo CurSaveInfo = null;
         public SaveData CurSaveData = null;//外部拿这个恢复游戏, 游戏数据改变时也改这个的数据, 最后退出保存时把这个序列化写入本地
-        private string _curSaveDataFileName;
-        public void LoadSaveData(string saveInfoId)
+        public void LoadSaveData()
         {
             try
             {
-                SaveInfo curSaveInfo = SaveInfoList.Find(info => info.Id == saveInfoId);
-                _curSaveDataFileName = curSaveInfo.DataFileName;
-                string json = File.ReadAllText(_curSaveDataFileName);
+                string json = File.ReadAllText(CurSaveInfo.DataFileName);
                 CurSaveData = JsonSerializer.Deserialize<SaveData>(json, _jsonOptions);
             }
             catch (Exception e)
@@ -105,7 +103,7 @@ namespace Solo.Scripts.System.SaveSystem
             try
             {
                 string json = JsonSerializer.Serialize(CurSaveData, _jsonOptions);
-                File.WriteAllText(_curSaveDataFileName, json);
+                File.WriteAllText(CurSaveInfo.DataFileName, json);
             }
             catch (Exception e)
             {

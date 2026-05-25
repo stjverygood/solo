@@ -1,5 +1,6 @@
 using Godot;
 using Solo.Scripts.Character;
+using Solo.Scripts.System.SaveSystem;
 
 namespace Solo.Scripts.Global
 {
@@ -8,12 +9,15 @@ namespace Solo.Scripts.Global
     {
         static private GameManager _instance;
         static public GameManager Instance => _instance;
-
-        [Export] private PackedScene _startMenuPs;
-        [Export] private PackedScene _worldListMenuPs;
         private GameState _curState;
 
+        [Export] private PackedScene _startMenuPs;//todo : 这里等到后面有美术资源了, 开屏变慢了, 要优化成场景路径, 动态加载packedScene
+        [Export] private PackedScene _loadingViewPs;
+        [Export] private PackedScene _saveListMenuPs;
+        [Export] private PackedScene _mainLevelPs;
+        [Export] private PackedScene _ChunkManagerPs;
         [Export] private PackedScene _playerPs;
+
         public Player Player;
         public ChunkManager ChunkManager;
 
@@ -34,22 +38,36 @@ namespace Solo.Scripts.Global
 
         public void ChangeGameState(GameState newState)
         {
+            _curState = newState;
             switch (newState)
             {
                 case GameState.StartMenu:
                     GetTree().ChangeSceneToPacked(_startMenuPs);
                     break;
-                case GameState.WorldListMenu:
-                    GetTree().ChangeSceneToPacked(_worldListMenuPs);
+                case GameState.SaveListMenu:
+                    GetTree().ChangeSceneToPacked(_saveListMenuPs);
                     break;
                 case GameState.Loading:
+                    GetTree().ChangeSceneToPacked(_loadingViewPs);//加载世界
+                    SaveManager.Instance.LoadSaveData();
+                    ChangeGameState(GameState.Play);
                     break;
                 case GameState.Play:
+                    GetTree().ChangeSceneToPacked(_mainLevelPs);
+                    //GD.Print("GetTree().CurrentScene : " + GetTree().CurrentScene);
+                    //GetTree().CurrentScene.AddChild(Player);
+                    //GetTree().CurrentScene.AddChild(ChunkManager);
                     break;
                 case GameState.Stop:
                     break;
             }
         }
+
+        //public void LoadGame(SaveInfo saveInfo)
+        //{
+
+
+        //}
     }
 
 }

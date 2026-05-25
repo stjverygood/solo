@@ -3,7 +3,19 @@
 [ext_resource type="Script" uid="uid://bcx8k5djj5py4" path="res://Scripts/System/SaveSystem/SaveSlotView.cs" id="1_uymm3"]
 [ext_resource type="Texture2D" uid="uid://d4igqp371y5" path="res://Assets/icon.svg" id="2_3xyg0"]
 
-[node name="SaveSlotView" type="Control" unique_id=705344448 node_paths=PackedStringArray("_bgCr", "_animRoot", "_nameLb", "_levelLb", "_dateLb")]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_l4jpc"]
+bg_color = Color(0.13319641, 0.13319641, 0.13319638, 1)
+border_width_left = 8
+border_width_top = 8
+border_width_right = 8
+border_width_bottom = 8
+border_color = Color(1, 1, 1, 0.13725491)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+
+[node name="SaveSlotView" type="Control" unique_id=705344448 node_paths=PackedStringArray("_bgPc", "_animRoot", "_nameLb", "_levelLb", "_dateLb")]
 custom_minimum_size = Vector2(240, 200)
 layout_mode = 3
 anchors_preset = 15
@@ -14,13 +26,13 @@ offset_bottom = -448.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_uymm3")
-_bgCr = NodePath("BgCr")
-_animRoot = NodePath("BgCr/AnimNode")
-_nameLb = NodePath("BgCr/AnimNode/NameLb")
-_levelLb = NodePath("BgCr/AnimNode/LevelLb")
-_dateLb = NodePath("BgCr/AnimNode/DateLb")
+_bgPc = NodePath("PanelContainer")
+_animRoot = NodePath("PanelContainer/AnimNode")
+_nameLb = NodePath("PanelContainer/AnimNode/NameLb")
+_levelLb = NodePath("PanelContainer/AnimNode/LevelLb")
+_dateLb = NodePath("PanelContainer/AnimNode/DateLb")
 
-[node name="BgCr" type="ColorRect" parent="." unique_id=1063113961]
+[node name="PanelContainer" type="PanelContainer" parent="." unique_id=686479147]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -28,19 +40,13 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-color = Color(0.16565639, 0.16565642, 0.16565639, 1)
+theme_override_styles/panel = SubResource("StyleBoxFlat_l4jpc")
 
-[node name="AnimNode" type="Control" parent="BgCr" unique_id=458829230]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-pivot_offset = Vector2(120, 120)
+[node name="AnimNode" type="Control" parent="PanelContainer" unique_id=458829230]
+layout_mode = 2
 mouse_filter = 2
 
-[node name="TextureRect" type="TextureRect" parent="BgCr/AnimNode" unique_id=2070153805]
+[node name="TextureRect" type="TextureRect" parent="PanelContainer/AnimNode" unique_id=2070153805]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -54,7 +60,7 @@ grow_vertical = 2
 mouse_filter = 2
 texture = ExtResource("2_3xyg0")
 
-[node name="NameLb" type="Label" parent="BgCr/AnimNode" unique_id=799869101]
+[node name="NameLb" type="Label" parent="PanelContainer/AnimNode" unique_id=799869101]
 layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
@@ -68,7 +74,7 @@ text = "修仙世界1"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="LevelLb" type="Label" parent="BgCr/AnimNode" unique_id=30127901]
+[node name="LevelLb" type="Label" parent="PanelContainer/AnimNode" unique_id=30127901]
 layout_mode = 1
 anchors_preset = 7
 anchor_left = 0.5
@@ -85,7 +91,7 @@ text = "筑基期-中期"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="DateLb" type="Label" parent="BgCr/AnimNode" unique_id=28942676]
+[node name="DateLb" type="Label" parent="PanelContainer/AnimNode" unique_id=28942676]
 layout_mode = 1
 anchors_preset = 7
 anchor_left = 0.5
@@ -93,7 +99,7 @@ anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
 offset_left = -68.0
-offset_top = -26.0
+offset_top = -25.0
 offset_right = 68.0
 grow_horizontal = 2
 grow_vertical = 0

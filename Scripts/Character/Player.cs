@@ -40,6 +40,8 @@ namespace Solo.Scripts.Character
 
         public override void _Ready()
         {
+            GameManager.Instance.Player = this;
+
             TouchArea.BodyEntered += TouchArea_BodyEntered;
             TouchArea.BodyExited += TouchArea_BodyExited;
             TouchArea.AreaEntered += TouchArea_AreaEntered;

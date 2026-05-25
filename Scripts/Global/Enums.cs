@@ -3,7 +3,7 @@
     public enum GameState
     {
         StartMenu,//开始菜单
-        WorldListMenu,//世界列表
+        SaveListMenu,//世界列表
         SettingMenu,
         Loading,//加载界面 : 加载世界, 退出并保存世界
         Play,//游戏中
