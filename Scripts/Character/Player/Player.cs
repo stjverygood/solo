@@ -34,8 +34,8 @@ namespace Solo.Scripts.Character.Player
         public int ResCapacity = 1000;//资源存储上限
         private Tween _animTween; // 用于管理当前动画
 
-        private Inventory _bagInventory = new Inventory(16);//背包
-        private Inventory _fastBarInventory = new Inventory(4);//快捷栏
+        public Inventory BagInventory = new Inventory();//背包
+        public Inventory FastBarInventory = new Inventory();//快捷栏
         [Export] private InventoryView _bagInventoryView;
         [Export] private InventoryView _fastBarInventoryView;
 
@@ -46,7 +46,10 @@ namespace Solo.Scripts.Character.Player
             GameManager.Instance.Player = this;
 
             GlobalPosition = new Vector2(SaveManager.Instance.CurSaveData.PlayerPosX, SaveManager.Instance.CurSaveData.PlayerPosY);
-
+            BagInventory.GuidStr = SaveManager.Instance.CurSaveData.BagInventoryGuidStr;
+            BagInventory.ItemInstanceList = SaveManager.Instance.CurSaveData.BagInventoryList;
+            FastBarInventory.GuidStr = SaveManager.Instance.CurSaveData.FastBarInventoryGuidStr;
+            FastBarInventory.ItemInstanceList = SaveManager.Instance.CurSaveData.FastBarInventoryList;
 
             TouchArea.BodyEntered += TouchArea_BodyEntered;
             TouchArea.BodyExited += TouchArea_BodyExited;
@@ -55,8 +58,8 @@ namespace Solo.Scripts.Character.Player
             CurState = PlayerState.Idle;
             ChangeAnim();
 
-            _bagInventoryView.Init(_bagInventory);
-            _fastBarInventoryView.Init(_fastBarInventory);
+            _bagInventoryView.Init(BagInventory);
+            _fastBarInventoryView.Init(FastBarInventory);
             _bagInventoryView.Visible = false;
         }
 
@@ -391,7 +394,7 @@ namespace Solo.Scripts.Character.Player
                     {
                         if (_curDropItem != null)
                         {
-                            _curDropItem.AddToPlayerInventory(_fastBarInventory, _bagInventory);
+                            _curDropItem.AddToPlayerInventory(FastBarInventory, BagInventory);
                             //var fastBarLogs = _fastBarInventory.ItemInstanceList.Select(item => item == null ? "null" : $"{item.Data.Type}:{item.Count}");
                             //GD.Print("--- 快捷栏 --- " + string.Join(" | ", fastBarLogs));
                             //var bagLogs = _bagInventory.ItemInstanceList.Select(item => item == null ? "null" : $"{item.Data.Type}:{item.Count}");
@@ -501,15 +504,15 @@ namespace Solo.Scripts.Character.Player
             Inventory sourceInv = null;
             Inventory targetInv = null;
 
-            if (sourceInvGuid == _fastBarInventory.GuidStr)
-                sourceInv = _fastBarInventory;
-            else if (sourceInvGuid == _bagInventory.GuidStr)
-                sourceInv = _bagInventory;
+            if (sourceInvGuid == FastBarInventory.GuidStr)
+                sourceInv = FastBarInventory;
+            else if (sourceInvGuid == BagInventory.GuidStr)
+                sourceInv = BagInventory;
 
-            if (targetInvGuid == _fastBarInventory.GuidStr)
-                targetInv = _fastBarInventory;
-            else if (targetInvGuid == _bagInventory.GuidStr)
-                targetInv = _bagInventory;
+            if (targetInvGuid == FastBarInventory.GuidStr)
+                targetInv = FastBarInventory;
+            else if (targetInvGuid == BagInventory.GuidStr)
+                targetInv = BagInventory;
 
             if (sourceInv == null || targetInv == null)
                 return;

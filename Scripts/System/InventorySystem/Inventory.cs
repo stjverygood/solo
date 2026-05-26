@@ -7,26 +7,17 @@ namespace Solo.Scripts.System.InventorySystem
     public class Inventory
     {
         public string GuidStr;
-        private int _capacity;
         public List<ItemInstance> ItemInstanceList = new List<ItemInstance>();
         public Action<int> SlotChanged;//用于通知ui哪个格子变了, 修改ui格子数据
 
-        public Inventory(int capacity)
-        {
-            GuidStr = Guid.NewGuid().ToString();
-            _capacity = capacity;
-            for (int i = 0; i < _capacity; i++)
-            {
-                ItemInstanceList.Add(null);
-            }
-        }
+        public Inventory() { }
 
         public int AddItemInstance(ItemInstance instance)//自动添加, 比如捡东西, 双击其他背包的物品, 返回成功添加的物品数量
         {
             int remainCount = instance.Count;//记录当前剩余数量
             if (instance.Data.MaxCount != 1)//能堆叠, instance是可合并的
             {
-                for (int i = 0; i < _capacity; i++)//先遍历一次, 尝试合并
+                for (int i = 0; i < ItemInstanceList.Count; i++)//先遍历一次, 尝试合并
                 {
                     ItemInstance curExistInstance = ItemInstanceList[i];
                     if (curExistInstance == null || curExistInstance.Data.Type != instance.Data.Type)
@@ -43,7 +34,7 @@ namespace Solo.Scripts.System.InventorySystem
                             return instance.Count;
                     }
                 }
-                for (int i = 0; i < _capacity; i++)//未能合并的, 遍历找到空格子, 新创建instance
+                for (int i = 0; i < ItemInstanceList.Count; i++)//未能合并的, 遍历找到空格子, 新创建instance
                 {
                     if (ItemInstanceList[i] != null)
                         continue;
@@ -54,7 +45,7 @@ namespace Solo.Scripts.System.InventorySystem
             }
             else//不可堆叠, 实例由外部已经new出来了, 这里浅拷贝就行
             {
-                for (int i = 0; i < _capacity; i++)//未能合并的, 只能自己先创建instance
+                for (int i = 0; i < ItemInstanceList.Count; i++)//未能合并的, 只能自己先创建instance
                 {
                     if (ItemInstanceList[i] != null)
                         continue;

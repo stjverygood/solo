@@ -24,7 +24,8 @@ public partial class InventoryView : Control
         for (int i = 0; i < Inventory.ItemInstanceList.Count; i++)
         {
             InventorySlotView slotView = SlotViewPs.Instantiate<InventorySlotView>();
-            slotView.Init(this, i);
+            slotView.Init(this, i);//SetData
+            slotView.SetData(Inventory.ItemInstanceList[i]);
             _gridContainer.AddChild(slotView);
             _slotViewList.Add(slotView);
         }

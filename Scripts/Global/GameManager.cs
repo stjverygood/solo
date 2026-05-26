@@ -110,11 +110,17 @@ namespace Solo.Scripts.Global
                     {
                         _curState = newState;
                         GetTree().Paused = false;
-                        GetTree().ChangeSceneToPacked(_startMenuPs);
-                        _pauseView.Visible = false;
+
                         SaveManager.Instance.CurSaveData.PlayerPosX = Player.GlobalPosition.X;
                         SaveManager.Instance.CurSaveData.PlayerPosY = Player.GlobalPosition.Y;
+                        SaveManager.Instance.CurSaveData.BagInventoryGuidStr = Player.BagInventory.GuidStr;
+                        SaveManager.Instance.CurSaveData.BagInventoryList = Player.BagInventory.ItemInstanceList;
+                        SaveManager.Instance.CurSaveData.FastBarInventoryGuidStr = Player.FastBarInventory.GuidStr;
+                        SaveManager.Instance.CurSaveData.FastBarInventoryList = Player.FastBarInventory.ItemInstanceList;
                         SaveManager.Instance.WriteCurSaveData();
+
+                        GetTree().ChangeSceneToPacked(_startMenuPs);
+                        _pauseView.Visible = false;
                         return;
                     }
                     break;
