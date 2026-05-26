@@ -1,0 +1,97 @@
+[gd_scene format=3 uid="uid://bwctbm6eq64vu"]
+
+[ext_resource type="Script" uid="uid://dpkxkwy3ger5n" path="res://Scripts/Character/Player/Player.cs" id="1_lxeke"]
+[ext_resource type="Texture2D" uid="uid://di0q8426y42st" path="res://Assets/player_shadiao.png" id="2_y25d7"]
+[ext_resource type="PackedScene" uid="uid://cegl0cmno78dg" path="res://Scenes/System/InventorySystem/BagInventoryView.tscn" id="3_lxeke"]
+[ext_resource type="PackedScene" uid="uid://557c5e8cwx11" path="res://Scenes/System/InventorySystem/FastBarInventoryView.tscn" id="4_y25d7"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_kpjcp"]
+radius = 16.0
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_kpjcp"]
+radius = 5.0
+height = 14.0
+
+[node name="Player" type="CharacterBody2D" unique_id=1144409017 node_paths=PackedStringArray("SpriteRoot", "BodyRoot", "TouchArea", "_bagInventoryView", "_fastBarInventoryView")]
+script = ExtResource("1_lxeke")
+SpriteRoot = NodePath("SpriteRoot")
+BodyRoot = NodePath("SpriteRoot/BodyRoot")
+TouchArea = NodePath("TouchArea")
+_bagInventoryView = NodePath("CanvasLayer/BagInventoryView")
+_fastBarInventoryView = NodePath("CanvasLayer/FastBarInventoryViewv")
+
+[node name="Camera2D" type="Camera2D" parent="." unique_id=173865742]
+zoom = Vector2(3, 3)
+position_smoothing_enabled = true
+
+[node name="SpriteRoot" type="Node2D" parent="." unique_id=700917934]
+
+[node name="BodyRoot" type="Node2D" parent="SpriteRoot" unique_id=727127429]
+position = Vector2(0, 8)
+
+[node name="Sprite" type="Sprite2D" parent="SpriteRoot/BodyRoot" unique_id=13186832]
+position = Vector2(9.947597e-14, -8.000001)
+rotation = 3.1415927
+scale = Vector2(0.079, -0.075)
+texture = ExtResource("2_y25d7")
+
+[node name="TouchArea" type="Area2D" parent="." unique_id=588471765]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="TouchArea" unique_id=135832409]
+shape = SubResource("CircleShape2D_kpjcp")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1924437222]
+shape = SubResource("CapsuleShape2D_kpjcp")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=374399419]
+
+[node name="ColorRect2" type="ColorRect" parent="CanvasLayer" unique_id=915730024]
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = 90.0
+offset_top = -150.0
+offset_right = 174.0
+offset_bottom = -119.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="ColorRect3" type="ColorRect" parent="CanvasLayer" unique_id=577149873]
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -175.0
+offset_top = -150.0
+offset_right = -76.0
+offset_bottom = -124.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="BagInventoryView" parent="CanvasLayer" unique_id=2038670647 instance=ExtResource("3_lxeke")]
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -564.0
+offset_top = -209.0
+offset_right = -204.0
+offset_bottom = 151.0
+grow_horizontal = 0
+
+[node name="FastBarInventoryViewv" parent="CanvasLayer" unique_id=1473412187 instance=ExtResource("4_y25d7")]
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -175.0
+offset_top = -100.0
+offset_right = 175.0
+offset_bottom = 0.0
+grow_horizontal = 2
+grow_vertical = 0

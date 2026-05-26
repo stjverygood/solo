@@ -2,7 +2,7 @@
 
 [ext_resource type="PackedScene" uid="uid://c364av0qjs5rx" path="res://Scenes/System/ChunkSystem/ChunkManager.tscn" id="1_5poqq"]
 [ext_resource type="Script" uid="uid://bg2yewdyov431" path="res://Scripts/Levels/MainLevel.cs" id="1_xatts"]
-[ext_resource type="PackedScene" uid="uid://bwctbm6eq64vu" path="res://Scenes/Character/Player.tscn" id="2_jxtak"]
+[ext_resource type="PackedScene" uid="uid://bwctbm6eq64vu" path="res://Scenes/Character/Player/Player.tscn" id="2_jxtak"]
 
 [node name="MainLevel" type="Node2D" unique_id=1442456336]
 z_index = -1

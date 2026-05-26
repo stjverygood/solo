@@ -3,9 +3,10 @@ using Solo.Scripts.Global;
 using Solo.Scripts.System.InventorySystem;
 using Solo.Scripts.System.ItemSystem;
 using Solo.Scripts.System.ResourceSystem;
+using Solo.Scripts.System.SaveSystem;
 using System.Collections.Generic;
 
-namespace Solo.Scripts.Character
+namespace Solo.Scripts.Character.Player
 {
     public enum PlayerState
     {
@@ -13,17 +14,17 @@ namespace Solo.Scripts.Character
         Walk,
         Run,
         Dash,
-        Atk,
-        Capture,
-        Pickup,
-        UI,
+        Atk,//第一优先级
+        Capture,//第二优先级
+        Pickup,//第三优先级
         Death,
+        BagUI,
     }
 
     public partial class Player : CharacterBody2D
     {
         private Vector2 _curDir = Vector2.Right;
-        private PlayerState _curState;
+        public PlayerState CurState;
         public float moveSpeed = 50;
         [Export] public Node2D SpriteRoot;//附带上身体之外的交互点, 比如后面拍建筑的定位点, 用于控制功能交互的
         [Export] public Node2D BodyRoot;//仅仅是身体的根节点, 用于控制动画
@@ -33,38 +34,41 @@ namespace Solo.Scripts.Character
         public int ResCapacity = 1000;//资源存储上限
         private Tween _animTween; // 用于管理当前动画
 
-        [Export] private InventoryView _fastBarInventoryView;
-        [Export] private InventoryView _bagInventoryView;
-        private Inventory _fastBarInventory = new Inventory(4);//快捷栏
         private Inventory _bagInventory = new Inventory(16);//背包
+        private Inventory _fastBarInventory = new Inventory(4);//快捷栏
+        [Export] private InventoryView _bagInventoryView;
+        [Export] private InventoryView _fastBarInventoryView;
+
 
         public override void _Ready()
         {
+            GD.Print("Player Ready~~~");
             GameManager.Instance.Player = this;
+
+            GlobalPosition = new Vector2(SaveManager.Instance.CurSaveData.PlayerPosX, SaveManager.Instance.CurSaveData.PlayerPosY);
+
 
             TouchArea.BodyEntered += TouchArea_BodyEntered;
             TouchArea.BodyExited += TouchArea_BodyExited;
             TouchArea.AreaEntered += TouchArea_AreaEntered;
             TouchArea.AreaExited += TouchArea_AreaExited;
-            _curState = PlayerState.Idle;
+            CurState = PlayerState.Idle;
             ChangeAnim();
 
-
-            _fastBarInventoryView.Init(_fastBarInventory);
             _bagInventoryView.Init(_bagInventory);
+            _fastBarInventoryView.Init(_fastBarInventory);
             _bagInventoryView.Visible = false;
         }
 
         public override void _PhysicsProcess(double delta)
         {
             UpdateState((float)delta);
-            //GD.Print($"curTileType : {GameManager.Instance.ChunkManager.GetTileType(GlobalPosition)}");
             //GD.Print($"_curState : {_curState}");
         }
 
         public void UpdateState(float delta)
         {
-            switch (_curState)
+            switch (CurState)
             {
                 case PlayerState.Idle:
                     UpdateIdle(delta);
@@ -87,28 +91,39 @@ namespace Solo.Scripts.Character
                 case PlayerState.Pickup:
                     UpdatePickup(delta);
                     break;
-                case PlayerState.UI:
-                    UpdateUI(delta);
-                    break;
                 case PlayerState.Death:
                     UpdateDeath(delta);
+                    break;
+                case PlayerState.BagUI:
+                    UpdateBagUI(delta);
                     break;
             }
         }
 
+
+
+
+
+
         public void UpdateIdle(float delta)
         {
+            //if (Input.IsActionJustPressed("Back"))
+            //{
+            //    //通知暂停
+            //    GameManager.Instance.ChangeState(GameState.Pause);
+            //}
+
             if (Input.IsActionJustPressed("Bag"))
             {
                 _bagInventoryView.Visible = true;
-                _curState = PlayerState.UI;
-                ChangeAnim();
+                CurState = PlayerState.BagUI;
+                return;
             }
 
             if (Input.IsActionJustPressed("Dash"))
             {
                 _dashTimer = 0;
-                _curState = PlayerState.Dash;
+                CurState = PlayerState.Dash;
                 ChangeAnim();
                 return;
             }
@@ -121,7 +136,7 @@ namespace Solo.Scripts.Character
                 if (_curResItem != null)
                 {
                     FaceToNode(_curResItem);
-                    _curState = PlayerState.Capture;
+                    CurState = PlayerState.Capture;
                     ChangeAnim();
                     return;
                 }
@@ -130,7 +145,7 @@ namespace Solo.Scripts.Character
                 if (_curDropItem != null)
                 {
                     FaceToNode(_curDropItem);
-                    _curState = PlayerState.Pickup;
+                    CurState = PlayerState.Pickup;
                     ChangeAnim();
                     return;
                 }
@@ -139,7 +154,7 @@ namespace Solo.Scripts.Character
             Vector2 input = Input.GetVector("MoveLeft", "MoveRight", "MoveForward", "MoveBack");
             if (input != Vector2.Zero)
             {
-                _curState = PlayerState.Walk;
+                CurState = PlayerState.Walk;
                 ChangeAnim();
                 return;
             }
@@ -150,14 +165,14 @@ namespace Solo.Scripts.Character
             if (Input.IsActionJustPressed("Bag"))
             {
                 _bagInventoryView.Visible = true;
-                _curState = PlayerState.UI;
-                ChangeAnim();
+                CurState = PlayerState.BagUI;
+                return;
             }
 
             if (Input.IsActionJustPressed("Dash"))
             {
                 _dashTimer = 0;
-                _curState = PlayerState.Dash;
+                CurState = PlayerState.Dash;
                 ChangeAnim();
                 return;
             }
@@ -168,7 +183,7 @@ namespace Solo.Scripts.Character
                 if (_curResItem != null)
                 {
                     FaceToNode(_curResItem);
-                    _curState = PlayerState.Capture;
+                    CurState = PlayerState.Capture;
                     ChangeAnim();
                     return;
                 }
@@ -177,7 +192,7 @@ namespace Solo.Scripts.Character
                 if (_curDropItem != null)
                 {
                     FaceToNode(_curDropItem);
-                    _curState = PlayerState.Pickup;
+                    CurState = PlayerState.Pickup;
                     ChangeAnim();
                     return;
                 }
@@ -186,7 +201,7 @@ namespace Solo.Scripts.Character
             Vector2 input = Input.GetVector("MoveLeft", "MoveRight", "MoveForward", "MoveBack");
             if (input == Vector2.Zero)
             {
-                _curState = PlayerState.Idle;
+                CurState = PlayerState.Idle;
                 ChangeAnim();
                 return;
             }
@@ -211,7 +226,7 @@ namespace Solo.Scripts.Character
                 if (_curResItem != null)
                 {
                     FaceToNode(_curResItem);
-                    _curState = PlayerState.Capture;
+                    CurState = PlayerState.Capture;
                     ChangeAnim();
                     return;
                 }
@@ -220,7 +235,7 @@ namespace Solo.Scripts.Character
                 if (_curDropItem != null)
                 {
                     FaceToNode(_curDropItem);
-                    _curState = PlayerState.Pickup;
+                    CurState = PlayerState.Pickup;
                     ChangeAnim();
                     return;
                 }
@@ -229,7 +244,7 @@ namespace Solo.Scripts.Character
             Vector2 input = Input.GetVector("MoveLeft", "MoveRight", "MoveForward", "MoveBack");
             if (input == Vector2.Zero || Input.IsActionPressed("Dash") == false)
             {
-                _curState = PlayerState.Idle;
+                CurState = PlayerState.Idle;
                 ChangeAnim();
                 return;
             }
@@ -256,12 +271,12 @@ namespace Solo.Scripts.Character
             {
                 if (Input.IsActionPressed("Dash"))
                 {
-                    _curState = PlayerState.Run;
+                    CurState = PlayerState.Run;
                     ChangeAnim();
                 }
                 else
                 {
-                    _curState = PlayerState.Idle;
+                    CurState = PlayerState.Idle;
                     ChangeAnim();
                 }
             }
@@ -285,34 +300,25 @@ namespace Solo.Scripts.Character
 
         public void UpdateCapture(float delta)
         {
-            //Vector2 input = Input.GetVector("MoveLeft", "MoveRight", "MoveForward", "MoveBack");
-            //if (input != Vector2.Zero)
-            //{
-            //    //TouchArea.Rotation = input.Angle();
-            //    if (GameManager.Instance.ChunkManager.GetTileType(GlobalPosition) == TileType.Water)
-            //        Velocity = input * moveSpeed / 8;
-            //    else
-            //        Velocity = input * moveSpeed / 2;
-            //    MoveAndSlide();
-            //}
         }
 
         public void UpdatePickup(float delta)
         {
         }
 
-        public void UpdateUI(float delta)
-        {
-            if (Input.IsActionJustPressed("Bag"))
-            {
-                _bagInventoryView.Visible = false;
-                _curState = PlayerState.Idle;
-            }
-        }
-
         public void UpdateDeath(float delta)
         {
 
+        }
+
+        public void UpdateBagUI(float delta)
+        {
+            if (Input.IsActionJustPressed("Bag") || Input.IsActionJustPressed("Back"))
+            {
+                _bagInventoryView.Visible = false;
+                CurState = PlayerState.Idle;
+                return;
+            }
         }
 
         private void Move()
@@ -337,10 +343,9 @@ namespace Solo.Scripts.Character
             BodyRoot.Modulate = Colors.White;
 
             _animTween = CreateTween().SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out);
-            switch (_curState)
+            switch (CurState)
             {
                 case PlayerState.Idle:
-                case PlayerState.UI:
                     _animTween.SetLoops();
                     _animTween.TweenProperty(BodyRoot, "scale", new Vector2(1.2f, 0.8f), 0.5f);
                     _animTween.TweenProperty(BodyRoot, "scale", new Vector2(1.0f, 1.0f), 0.5f);
@@ -374,7 +379,7 @@ namespace Solo.Scripts.Character
                     _animTween.TweenProperty(BodyRoot, "skew", 0f, 0.1f);
                     _animTween.Finished += () =>
                     {
-                        _curState = PlayerState.Idle;
+                        CurState = PlayerState.Idle;
                         ChangeAnim();
                     };
                     break;
@@ -398,7 +403,7 @@ namespace Solo.Scripts.Character
                     _animTween.TweenProperty(BodyRoot, "skew", 0f, 0.1f);
                     _animTween.Finished += () =>
                     {
-                        _curState = PlayerState.Idle;
+                        CurState = PlayerState.Idle;
                         ChangeAnim();
                     };
                     break;
@@ -547,6 +552,8 @@ namespace Solo.Scripts.Character
                 }
             }
         }
+
+
     }
 }
 

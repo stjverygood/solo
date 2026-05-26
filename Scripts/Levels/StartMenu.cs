@@ -15,7 +15,7 @@ namespace Solo.Scripts.Levels
         {
             _startBtn.Pressed += () =>
             {
-                GameManager.Instance.ChangeGameState(GameState.SaveListMenu);
+                GameManager.Instance.ChangeState(GameState.SaveListMenu);
             };
             _exitBtn.Pressed += () =>
             {

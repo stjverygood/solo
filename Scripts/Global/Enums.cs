@@ -7,7 +7,7 @@
         SettingMenu,
         Loading,//加载界面 : 加载世界, 退出并保存世界
         Play,//游戏中
-        Stop,//按exc暂停游戏
+        Pause,//按exc暂停游戏
     }
 
     public enum TileType

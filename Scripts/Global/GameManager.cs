@@ -1,5 +1,5 @@
 using Godot;
-using Solo.Scripts.Character;
+using Solo.Scripts.Character.Player;
 using Solo.Scripts.System.SaveSystem;
 
 namespace Solo.Scripts.Global
@@ -15,9 +15,10 @@ namespace Solo.Scripts.Global
         [Export] private PackedScene _loadingViewPs;
         [Export] private PackedScene _saveListMenuPs;
         [Export] private PackedScene _mainLevelPs;
-        [Export] private PackedScene _ChunkManagerPs;
+        [Export] private PackedScene _chunkManagerPs;
         [Export] private PackedScene _playerPs;
 
+        [Export] private PauseView _pauseView;
         public Player Player;
         public ChunkManager ChunkManager;
 
@@ -27,47 +28,98 @@ namespace Solo.Scripts.Global
             GD.Print("Game Start ~~");
             _curState = GameState.StartMenu;
 
-
+            _pauseView.Visible = false;
             //Player = _playerPs.Instantiate<Player>();
             //GetTree().CurrentScene.AddChild(Player);
+            ProcessMode = ProcessModeEnum.Always;
         }
 
-        public override void _Process(double delta)
+        public override void _PhysicsProcess(double delta)
         {
-        }
-
-        public void ChangeGameState(GameState newState)
-        {
-            _curState = newState;
-            switch (newState)
+            switch (_curState)
             {
-                case GameState.StartMenu:
-                    GetTree().ChangeSceneToPacked(_startMenuPs);
-                    break;
-                case GameState.SaveListMenu:
-                    GetTree().ChangeSceneToPacked(_saveListMenuPs);
-                    break;
-                case GameState.Loading:
-                    GetTree().ChangeSceneToPacked(_loadingViewPs);//加载世界
-                    SaveManager.Instance.LoadSaveData();
-                    ChangeGameState(GameState.Play);
-                    break;
                 case GameState.Play:
-                    GetTree().ChangeSceneToPacked(_mainLevelPs);
-                    //GD.Print("GetTree().CurrentScene : " + GetTree().CurrentScene);
-                    //GetTree().CurrentScene.AddChild(Player);
-                    //GetTree().CurrentScene.AddChild(ChunkManager);
+                    if (Input.IsActionJustPressed("Back") && Player.CurState != PlayerState.BagUI)
+                    {
+                        ChangeState(GameState.Pause);
+                        return;
+                    }
                     break;
-                case GameState.Stop:
+                case GameState.Pause:
+                    if (Input.IsActionJustPressed("Back"))
+                    {
+                        ChangeState(GameState.Play);
+                        return;
+                    }
                     break;
             }
         }
 
-        //public void LoadGame(SaveInfo saveInfo)
-        //{
-
-
-        //}
+        public void ChangeState(GameState newState)
+        {
+            switch (_curState)
+            {
+                case GameState.StartMenu:
+                    if (newState == GameState.SaveListMenu)
+                    {
+                        _curState = newState;
+                        GetTree().ChangeSceneToPacked(_saveListMenuPs);
+                        return;
+                    }
+                    break;
+                case GameState.SaveListMenu:
+                    if (newState == GameState.StartMenu)
+                    {
+                        _curState = newState;
+                        GetTree().ChangeSceneToPacked(_startMenuPs);
+                        return;
+                    }
+                    if (newState == GameState.Loading)
+                    {
+                        _curState = newState;
+                        GetTree().ChangeSceneToPacked(_loadingViewPs);//加载世界
+                        SaveManager.Instance.LoadSaveData();
+                        ChangeState(GameState.Play);
+                        return;
+                    }
+                    break;
+                case GameState.Loading:
+                    if (newState == GameState.Play)
+                    {
+                        _curState = newState;
+                        GetTree().ChangeSceneToPacked(_mainLevelPs);
+                    }
+                    break;
+                case GameState.Play:
+                    if (newState == GameState.Pause)
+                    {
+                        _curState = newState;
+                        _pauseView.Visible = true;
+                        GetTree().Paused = true;
+                        return;
+                    }
+                    break;
+                case GameState.Pause:
+                    if (newState == GameState.Play)
+                    {
+                        _curState = newState;
+                        _pauseView.Visible = false;
+                        GetTree().Paused = false;
+                    }
+                    if (newState == GameState.StartMenu)
+                    {
+                        _curState = newState;
+                        GetTree().Paused = false;
+                        GetTree().ChangeSceneToPacked(_startMenuPs);
+                        _pauseView.Visible = false;
+                        SaveManager.Instance.CurSaveData.PlayerPosX = Player.GlobalPosition.X;
+                        SaveManager.Instance.CurSaveData.PlayerPosY = Player.GlobalPosition.Y;
+                        SaveManager.Instance.WriteCurSaveData();
+                        return;
+                    }
+                    break;
+            }
+        }
     }
 
 }

@@ -11,7 +11,7 @@ public partial class InventoryView : Control
 
     public override void _Ready()
     {
-
+        GD.Print("InventoryView Ready~~~");
     }
 
     public override void _Process(double delta)

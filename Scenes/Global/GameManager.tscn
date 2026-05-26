@@ -2,17 +2,22 @@
 
 [ext_resource type="Script" uid="uid://dfdmitrwv0kqk" path="res://Scripts/Global/GameManager.cs" id="1_g4tje"]
 [ext_resource type="PackedScene" uid="uid://b0h5soh7rcqn1" path="res://Scenes/Levels/StartMenu.tscn" id="2_6j0h0"]
-[ext_resource type="PackedScene" uid="uid://bwctbm6eq64vu" path="res://Scenes/Character/Player.tscn" id="2_okfta"]
+[ext_resource type="PackedScene" uid="uid://bwctbm6eq64vu" path="res://Scenes/Character/Player/Player.tscn" id="2_okfta"]
 [ext_resource type="PackedScene" uid="uid://bu5uihu26jmpm" path="res://Scenes/System/SaveSystem/SaveListView.tscn" id="3_enwxu"]
 [ext_resource type="PackedScene" uid="uid://74dd0d5dwyxc" path="res://Scenes/Levels/LoadingView.tscn" id="3_h7we0"]
 [ext_resource type="PackedScene" uid="uid://c5etro6u3u1vl" path="res://Scenes/Levels/MainLevel.tscn" id="5_rssbt"]
-[ext_resource type="PackedScene" uid="uid://c364av0qjs5rx" path="res://Scenes/System/ChunkSystem/ChunkManager.tscn" id="6_xy3kr"]
+[ext_resource type="PackedScene" uid="uid://dx8thbx4w752g" path="res://Scenes/System/UiSystem/PauseView.tscn" id="7_rssbt"]
 
-[node name="GameManager" type="Node" unique_id=1034362425]
+[node name="GameManager" type="Node" unique_id=1034362425 node_paths=PackedStringArray("_pauseView")]
 script = ExtResource("1_g4tje")
 _startMenuPs = ExtResource("2_6j0h0")
 _loadingViewPs = ExtResource("3_h7we0")
 _saveListMenuPs = ExtResource("3_enwxu")
 _mainLevelPs = ExtResource("5_rssbt")
-_ChunkManagerPs = ExtResource("6_xy3kr")
 _playerPs = ExtResource("2_okfta")
+_pauseView = NodePath("CanvasLayer/PauseView")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=606242839]
+layer = 3
+
+[node name="PauseView" parent="CanvasLayer" unique_id=1950812368 instance=ExtResource("7_rssbt")]

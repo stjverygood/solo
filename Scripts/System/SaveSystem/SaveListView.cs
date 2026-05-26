@@ -21,7 +21,7 @@ namespace Solo.Scripts.System.SaveSystem
         {
             _backBtn.Pressed += () =>
             {
-                GameManager.Instance.ChangeGameState(GameState.StartMenu);
+                GameManager.Instance.ChangeState(GameState.StartMenu);
             };
             _delSaveBtn.Pressed += () =>
             {
@@ -37,7 +37,7 @@ namespace Solo.Scripts.System.SaveSystem
             _goBtn.Pressed += () =>
             {
                 SaveManager.Instance.CurSaveInfo = _curSelectedSaveInfo;
-                GameManager.Instance.ChangeGameState(GameState.Loading);
+                GameManager.Instance.ChangeState(GameState.Loading);
             };
             RefreshSaveSlotList();
         }

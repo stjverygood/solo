@@ -1,5 +1,5 @@
 using Godot;
-using Solo.Scripts.Character;
+using Solo.Scripts.Character.Player;
 
 public partial class MainLevel : Node2D
 {
@@ -8,13 +8,10 @@ public partial class MainLevel : Node2D
 
     public override void _Ready()
     {
-        Player player = _playerPs.Instantiate<Player>();
         ChunkManager chunkManager = _ChunkManagerPs.Instantiate<ChunkManager>();
-        AddChild(player);
         AddChild(chunkManager);
-    }
+        Player player = _playerPs.Instantiate<Player>();
+        AddChild(player);
 
-    public override void _Process(double delta)
-    {
     }
 }
