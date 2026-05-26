@@ -14,7 +14,7 @@
     {
         Grass,
         Water,
-        Dirt,
+        Stone,
     }
 
     public enum WorldObjectType
