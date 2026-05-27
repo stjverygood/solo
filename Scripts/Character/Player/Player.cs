@@ -29,6 +29,8 @@ namespace Solo.Scripts.Character.Player
         [Export] public Node2D SpriteRoot;//附带上身体之外的交互点, 比如后面拍建筑的定位点, 用于控制功能交互的
         [Export] public Node2D BodyRoot;//仅仅是身体的根节点, 用于控制动画
         [Export] public Area2D TouchArea;
+        [Export] public BuildingPreview TestStoneBuildingPreview;
+        [Export] public PackedScene TestStoneBuildingPs;
         public int Atk = 10;
 
         public int ResCapacity = 1000;//资源存储上限
@@ -65,8 +67,25 @@ namespace Solo.Scripts.Character.Player
 
         public override void _PhysicsProcess(double delta)
         {
+            //Vector2 placePos = GlobalPosition + Vector2.Down * 20;
+            //Vector2 snapPos = GameManager.Instance.ChunkManager.BuildingManager.SnapToCell(BuildingDataManager.Instance.GetItemData(TestStoneBuildingPreview.Type), placePos);
+            //bool canPlace = GameManager.Instance.ChunkManager.BuildingManager.CanPlaced(BuildingDataManager.Instance.GetItemData(TestStoneBuildingPreview.Type), snapPos);
+            //TestStoneBuildingPreview.SetCanPlace(canPlace);
+            //GD.Print($"snapPos : {snapPos}");
+            //GD.Print($"canPlace : {canPlace}");
+            //TestStoneBuildingPreview.GlobalPosition = snapPos;
+            //if (Input.IsActionJustPressed("Action") && canPlace)
+            //{
+            //    GameManager.Instance.ChunkManager.BuildingManager.Place(BuildingDataManager.Instance.GetItemData(TestStoneBuildingPreview.Type), snapPos);
+            //    Building bd = TestStoneBuildingPs.Instantiate<Building>();
+            //    bd.GlobalPosition = snapPos;
+            //    GetTree().CurrentScene.AddChild(bd);
+            //}
+
+
             UpdateState((float)delta);
             //GD.Print($"_curState : {_curState}");
+            //GD.Print($"GlobalPosition : {GlobalPosition}");
         }
 
         public void UpdateState(float delta)
@@ -135,10 +154,10 @@ namespace Solo.Scripts.Character.Player
             {
                 //todo : enemy
 
-                _curResItem = GetNearestResItem();
-                if (_curResItem != null)
+                _curResObj = GetNearestResObj();
+                if (_curResObj != null)
                 {
-                    FaceToNode(_curResItem);
+                    FaceToNode(_curResObj);
                     CurState = PlayerState.Capture;
                     ChangeAnim();
                     return;
@@ -182,10 +201,10 @@ namespace Solo.Scripts.Character.Player
 
             if (Input.IsActionJustPressed("Action"))
             {
-                _curResItem = GetNearestResItem();
-                if (_curResItem != null)
+                _curResObj = GetNearestResObj();
+                if (_curResObj != null)
                 {
-                    FaceToNode(_curResItem);
+                    FaceToNode(_curResObj);
                     CurState = PlayerState.Capture;
                     ChangeAnim();
                     return;
@@ -225,10 +244,10 @@ namespace Solo.Scripts.Character.Player
         {
             if (Input.IsActionJustPressed("Action"))
             {
-                _curResItem = GetNearestResItem();
-                if (_curResItem != null)
+                _curResObj = GetNearestResObj();
+                if (_curResObj != null)
                 {
-                    FaceToNode(_curResItem);
+                    FaceToNode(_curResObj);
                     CurState = PlayerState.Capture;
                     ChangeAnim();
                     return;
@@ -372,9 +391,9 @@ namespace Solo.Scripts.Character.Player
                     _animTween.TweenProperty(BodyRoot, "skew", 1f, 0.05);
                     _animTween.TweenCallback(Callable.From(() =>
                     {
-                        if (_curResItem != null)
+                        if (_curResObj != null)
                         {
-                            _curResItem.TakeDamage(Atk);
+                            _curResObj.TakeDamage(Atk);
                         }
                     }));
 
@@ -421,38 +440,38 @@ namespace Solo.Scripts.Character.Player
 
         //后期加入enemylist
 
-        private List<ResItem> _resItemList = new List<ResItem>();
-        private ResItem _curResItem;
+        private List<ResObj> _ResObjList = new List<ResObj>();
+        private ResObj _curResObj;
         private void TouchArea_BodyEntered(Node2D body)
         {
-            if (body is ResItem resItem)
+            if (body is ResObj ResObj)
             {
-                _resItemList.Add(resItem);
+                _ResObjList.Add(ResObj);
             }
         }
         private void TouchArea_BodyExited(Node2D body)
         {
-            if (body is ResItem resItem)
+            if (body is ResObj ResObj)
             {
-                _resItemList.Remove(resItem);
+                _ResObjList.Remove(ResObj);
             }
         }
-        private ResItem GetNearestResItem()//优先返回敌人, 其次返回资源
+        private ResObj GetNearestResObj()//优先返回敌人, 其次返回资源
         {
             float minDistSq = float.MaxValue; // 先设为一个极大值
-            ResItem resItem = null;
-            foreach (ResItem curResItem in _resItemList)
+            ResObj ResObj = null;
+            foreach (ResObj curResObj in _ResObjList)
             {
-                if (curResItem == null)// 安全检查：防止列表里有被销毁的无效对象
+                if (curResObj == null)// 安全检查：防止列表里有被销毁的无效对象
                     continue;
-                float curDistSq = GlobalPosition.DistanceSquaredTo(curResItem.GlobalPosition);
+                float curDistSq = GlobalPosition.DistanceSquaredTo(curResObj.GlobalPosition);
                 if (curDistSq < minDistSq)
                 {
                     minDistSq = curDistSq;
-                    resItem = curResItem;
+                    ResObj = curResObj;
                 }
             }
-            return resItem;
+            return ResObj;
         }
         private void FaceToNode(Node2D targetNode)
         {

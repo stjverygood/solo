@@ -1,4 +1,6 @@
-﻿using Solo.Scripts.System.ItemSystem;
+﻿using Godot;
+using Solo.Scripts.System.ChunkSystem;
+using Solo.Scripts.System.ItemSystem;
 using System;
 using System.Collections.Generic;
 
@@ -16,9 +18,12 @@ namespace Solo.Scripts.System.SaveSystem
         public string FastBarInventoryGuidStr { get; set; }
         public List<ItemInstance> FastBarInventoryList { get; set; }
 
+        public Dictionary<Vector2I, ChunkData> ChunkDataMap { get; set; }//所有加载过的区块
+
         public SaveData()
         {
             WorldSeedStr = "test_seed_3";
+            ChunkDataMap = new Dictionary<Vector2I, ChunkData>();
 
             PlayerPosX = 0;
             PlayerPosY = 0;

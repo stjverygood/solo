@@ -4,9 +4,10 @@ using Solo.Scripts.System.ItemSystem;
 
 namespace Solo.Scripts.System.ResourceSystem
 {
-    public partial class ResItem : Node2D
+    public partial class ResObj : Node2D
     {
         [Export] public Node2D BodyRoot;
+        [Export] public ResObjType Type;
         [Export] public ItemType DropItemType;
         [Export] public PackedScene DropItemPs;
         public int MaxHp = 30;

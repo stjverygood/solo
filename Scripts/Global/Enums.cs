@@ -10,6 +10,7 @@
         Pause,//按exc暂停游戏
     }
 
+    //地形类型
     public enum TileType
     {
         Grass,
@@ -17,10 +18,18 @@
         Stone,
     }
 
-    public enum WorldObjectType
+    //资源类型
+    public enum ResObjType
     {
         Tree,
         Stone,
+    }
+    //建筑类型
+    public enum BuildingType
+    {
+        Tree,
+        Stone,
+        Core,//主基地
     }
 
     //记录全游戏物品的type

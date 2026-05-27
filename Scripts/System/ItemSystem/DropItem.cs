@@ -3,7 +3,6 @@ using Solo.Scripts.System.InventorySystem;
 
 namespace Solo.Scripts.System.ItemSystem
 {
-    //全部掉落物scene都用这个脚本
     public partial class DropItem : Node2D
     {
         [Export] public Label TextLb;

@@ -1,5 +1,6 @@
 using Godot;
 using Solo.Scripts.Character.Player;
+using Solo.Scripts.System.ChunkSystem;
 using Solo.Scripts.System.SaveSystem;
 
 namespace Solo.Scripts.Global
