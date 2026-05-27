@@ -61,7 +61,7 @@ namespace Solo.Scripts.System.BuildingSystem
             //_itemMap.Add(ItemType.GoldBoot, new ItemData() { Type = ItemType.GoldBoot, MaxCount = 1 });
         }
 
-        public BuildingData GetItemData(BuildingType type)
+        public BuildingData GetBuildingData(BuildingType type)
         {
             return _BuildingDataMap[type];
         }

@@ -9,7 +9,7 @@ namespace Solo.Scripts.System.BuildingSystem
 
         public override void _Ready()
         {
-            Data = BuildingDataManager.Instance.GetItemData(BuildingType.Stone);
+            Data = BuildingDataManager.Instance.GetBuildingData(BuildingType.Stone);
         }
 
         public override void _Process(double delta)
