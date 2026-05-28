@@ -1,0 +1,10 @@
+[gd_scene format=3 uid="uid://i1axgtnbmeeg"]
+
+[ext_resource type="Script" uid="uid://boci74ho2nxg0" path="res://Scripts/System/BuildingSystem/BuildingPreview.cs" id="1_noonq"]
+[ext_resource type="PackedScene" uid="uid://b2q085r8rtj8b" path="res://Assets/Sprites/TreeSprite.tscn" id="2_4sytk"]
+
+[node name="TreePreview" type="Node2D" unique_id=2000189664 node_paths=PackedStringArray("Sprite")]
+script = ExtResource("1_noonq")
+Sprite = NodePath("TreeSprite")
+
+[node name="TreeSprite" parent="." unique_id=155291358 instance=ExtResource("2_4sytk")]

@@ -53,6 +53,15 @@ namespace Solo.Scripts.System.BuildingSystem
             // 接下来在这里实例化你的建筑场景，把它的 Position 设为 snappedWorldPos 即可
         }
 
+        public void Remove(BuildingData buildingData, Vector2 snapWorldPos)
+        {
+            List<Vector2I> targetCellPosList = GetPlacedCellPosList(buildingData, snapWorldPos);// 1. 获取该建筑占用的所有格子坐标
+            foreach (Vector2I cell in targetCellPosList)// 2. 从已占用集合中将这些格子释放
+            {
+                _placedCellPosSet.Remove(cell);// 使用 Remove，如果存在就移除，不存在也不会报错
+            }
+        }
+
         private List<Vector2I> GetPlacedCellPosList(BuildingData buildingData, Vector2 snapWorldPos)
         {
             List<Vector2I> occupiedCells = new List<Vector2I>();

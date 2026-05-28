@@ -3,7 +3,6 @@ using Solo.Scripts.Character.Player;
 using Solo.Scripts.Global;
 using Solo.Scripts.System.BuildingSystem;
 using Solo.Scripts.System.ItemSystem;
-using Solo.Scripts.System.ResourceSystem;
 using Solo.Scripts.System.SaveSystem;
 using System.Collections.Generic;
 
@@ -29,12 +28,8 @@ namespace Solo.Scripts.System.ChunkSystem
         private int _tileSize = 16;        // 每个瓦片的像素大小
         private int _renderDistance = 1;  // 玩家视野内的区块半径
         private string _seedString;
-        //private Dictionary<Vector2I, List<Node2D>> _curActiveChunkNodeListMap = new Dictionary<Vector2I, List<Node2D>>();
-        //private Dictionary<Vector2I, List<WorldObjectData>> _curActiveChunkObjListMap = new Dictionary<Vector2I, List<WorldObjectData>>();
-        //private HashSet<Vector2I> _curActiveChunkPosSet = new HashSet<Vector2I>();
-        //public Dictionary<Vector2I, List<ResObj>> CurActiveChunkResObjListMap = new Dictionary<Vector2I, List<ResObj>>();//活跃区块的资源物
-        //public Dictionary<Vector2I, List<DropItem>> CurActiveChunkDropItemListMap = new Dictionary<Vector2I, List<DropItem>>();//活跃区块的掉落物
         public Dictionary<Vector2I, Chunk> CurActiveChunkMap = new Dictionary<Vector2I, Chunk>();
+        public Dictionary<Vector2I, ChunkSaveData> ChunkSaveDataMap = new Dictionary<Vector2I, ChunkSaveData>();
 
 
         private double _unLoadChunkTimer = 0;// 卸载计时器，没必要每帧都检测卸载
@@ -58,6 +53,10 @@ namespace Solo.Scripts.System.ChunkSystem
         {
             GameManager.Instance.ChunkManager = this;
             BuildingManager = new BuildingManager(_tileSize);
+            foreach (ChunkSaveData chunkSaveData in SaveManager.Instance.CurSaveData.ChunkSaveDataList)
+            {
+                ChunkSaveDataMap[new Vector2I(chunkSaveData.X, chunkSaveData.Y)] = chunkSaveData;
+            }
             _seedString = SaveManager.Instance.CurSaveData.WorldSeedStr;// 初始化噪声
             _noise.Seed = GD.Hash(_seedString);
             _noise.Frequency = 0.05f;
@@ -70,7 +69,6 @@ namespace Solo.Scripts.System.ChunkSystem
             if (player == null)
                 return;
             Vector2I playerChunkPos = WorldToChunkPos(player.GlobalPosition);// 获取玩家所在的区块坐标
-            //GD.Print($"playerChunkPos : {playerChunkPos}");
             for (int x = -_renderDistance; x <= _renderDistance; x++)//生存区块
             {
                 for (int y = -_renderDistance; y <= _renderDistance; y++)
@@ -107,7 +105,7 @@ namespace Solo.Scripts.System.ChunkSystem
         {
             Chunk curChunk = new Chunk();
             CurActiveChunkMap[chunkPos] = curChunk;
-            if (SaveManager.Instance.CurSaveData.ChunkDataMap.TryGetValue(chunkPos, out ChunkData existChunkData))
+            if (ChunkSaveDataMap.TryGetValue(chunkPos, out ChunkSaveData existChunkData))
             {
                 //恢复区块
                 for (int x = 0; x < _chunkSize; x++)
@@ -132,26 +130,39 @@ namespace Solo.Scripts.System.ChunkSystem
                         }
                     }
                 }
-                foreach (ResObjData resObjData in existChunkData.ResObjDataList)
+                foreach (BuildingSaveData buildingSaveData in existChunkData.BuildingSaveDataList)
                 {
-                    switch (resObjData.Type)
+                    Vector2 snapPos;
+                    switch (buildingSaveData.Type)
                     {
-                        case ResObjType.Tree:
-                            ResObj treeRes = TreePs.Instantiate<ResObj>();
-                            GetTree().CurrentScene.AddChild(treeRes);
-                            treeRes.GlobalPosition = resObjData.Position;
-                            curChunk.ResObjList.Add(treeRes);
+                        case BuildingType.Tree:
+                            snapPos = BuildingManager.SnapToCell(BuildingDataManager.Instance.GetBuildingData(BuildingType.Tree), new Vector2(buildingSaveData.X, buildingSaveData.Y));
+                            if (BuildingManager.CanPlaced(BuildingDataManager.Instance.GetBuildingData(BuildingType.Tree), new Vector2(buildingSaveData.X, buildingSaveData.Y)))
+                            {
+                                BuildingManager.Place(BuildingDataManager.Instance.GetBuildingData(BuildingType.Tree), new Vector2(buildingSaveData.X, buildingSaveData.Y));
+                                BuildingBase tree = TreePs.Instantiate<BuildingBase>();
+                                tree.Data = BuildingDataManager.Instance.GetBuildingData(BuildingType.Tree);
+                                tree.GlobalPosition = snapPos;
+                                GetTree().CurrentScene.AddChild(tree);
+                                curChunk.BuildingList.Add(tree);
+                            }
                             break;
-                        case ResObjType.Stone:
-                            ResObj stoneRes = StonePs.Instantiate<ResObj>();
-                            GetTree().CurrentScene.AddChild(stoneRes);
-                            stoneRes.GlobalPosition = resObjData.Position;
-                            curChunk.ResObjList.Add(stoneRes);
+                        case BuildingType.Stone:
+                            snapPos = BuildingManager.SnapToCell(BuildingDataManager.Instance.GetBuildingData(BuildingType.Stone), new Vector2(buildingSaveData.X, buildingSaveData.Y));
+                            if (BuildingManager.CanPlaced(BuildingDataManager.Instance.GetBuildingData(BuildingType.Stone), new Vector2(buildingSaveData.X, buildingSaveData.Y)))
+                            {
+                                BuildingManager.Place(BuildingDataManager.Instance.GetBuildingData(BuildingType.Stone), new Vector2(buildingSaveData.X, buildingSaveData.Y));
+                                BuildingBase stone = StonePs.Instantiate<BuildingBase>();
+                                stone.Data = BuildingDataManager.Instance.GetBuildingData(BuildingType.Stone);
+                                stone.GlobalPosition = snapPos;
+                                GetTree().CurrentScene.AddChild(stone);
+                                curChunk.BuildingList.Add(stone);
+                            }
                             break;
 
                     }
                 }
-                foreach (DropItemData dropItemData in existChunkData.DropItemDataList)
+                foreach (DropItemSaveData dropItemData in existChunkData.DropItemSaveDataList)
                 {
                     switch (dropItemData.Type)
                     {
@@ -159,7 +170,7 @@ namespace Solo.Scripts.System.ChunkSystem
                             DropItem goldDropItem = DropItemPs.Instantiate<DropItem>();
                             goldDropItem.Init(new ItemInstance() { Data = ItemManager.Instance.GetItemData(ItemType.Gold), Count = 3 });
                             GetTree().CurrentScene.AddChild(goldDropItem);
-                            goldDropItem.GlobalPosition = dropItemData.Position;
+                            goldDropItem.GlobalPosition = new Vector2(dropItemData.X, dropItemData.Y);
                             curChunk.DropItemList.Add(goldDropItem);
                             break;
                     }
@@ -174,7 +185,6 @@ namespace Solo.Scripts.System.ChunkSystem
                     {
                         int globalX = chunkPos.X * _chunkSize + x;
                         int globalY = chunkPos.Y * _chunkSize + y;
-
                         float noiseVal = _noise.GetNoise2D(globalX, globalY);
                         if (noiseVal < 0)//水
                         {
@@ -187,12 +197,17 @@ namespace Solo.Scripts.System.ChunkSystem
                             float rd = GD.Randf();
                             if (rd < 0.1)
                             {
-                                ResObj treeResObj = TreePs.Instantiate<ResObj>();
-                                Vector2 tileWorldPos = new Vector2(globalX * _tileSize, globalY * _tileSize);
-                                Vector2 offset = new Vector2(_tileSize / 2f, _tileSize / 2f);// 计算偏移量，使物体位于瓦片中心 (假设 _tileSize 是 16，偏移就是 8)
-                                treeResObj.GlobalPosition = tileWorldPos + offset;
-                                GetTree().CurrentScene.AddChild(treeResObj);
-                                curChunk.ResObjList.Add(treeResObj);
+                                Vector2 curTilePos = new Vector2(globalX * _tileSize, globalY * _tileSize) + new Vector2(_tileSize / 2f, _tileSize / 2f);
+                                Vector2 snapPos = BuildingManager.SnapToCell(BuildingDataManager.Instance.GetBuildingData(BuildingType.Tree), curTilePos);
+                                if (BuildingManager.CanPlaced(BuildingDataManager.Instance.GetBuildingData(BuildingType.Tree), curTilePos))
+                                {
+                                    BuildingManager.Place(BuildingDataManager.Instance.GetBuildingData(BuildingType.Tree), curTilePos);
+                                    BuildingBase tree = TreePs.Instantiate<BuildingBase>();
+                                    tree.Data = BuildingDataManager.Instance.GetBuildingData(BuildingType.Tree);
+                                    tree.GlobalPosition = snapPos;
+                                    GetTree().CurrentScene.AddChild(tree);
+                                    curChunk.BuildingList.Add(tree);
+                                }
                             }
                             else if (rd < 0.15)
                             {
@@ -209,14 +224,16 @@ namespace Solo.Scripts.System.ChunkSystem
                         else//石
                         {
                             _tileMapLayer.SetCell(new Vector2I(globalX, globalY), _tileTypeInfoMap[TileType.Stone].SourceId, _tileTypeInfoMap[TileType.Stone].AtlasCoords);
-                            if (GD.Randf() < 0.1)
+                            Vector2 curTilePos = new Vector2(globalX * _tileSize, globalY * _tileSize) + new Vector2(_tileSize / 2f, _tileSize / 2f);
+                            Vector2 snapPos = BuildingManager.SnapToCell(BuildingDataManager.Instance.GetBuildingData(BuildingType.Stone), curTilePos);
+                            if (BuildingManager.CanPlaced(BuildingDataManager.Instance.GetBuildingData(BuildingType.Stone), curTilePos))
                             {
-                                ResObj stoneResObj = StonePs.Instantiate<ResObj>();
-                                Vector2 tileWorldPos = new Vector2(globalX * _tileSize, globalY * _tileSize);
-                                Vector2 offset = new Vector2(_tileSize / 2f, _tileSize / 2f);// 计算偏移量，使物体位于瓦片中心 (假设 _tileSize 是 16，偏移就是 8)
-                                stoneResObj.GlobalPosition = tileWorldPos + offset;
-                                GetTree().CurrentScene.AddChild(stoneResObj);
-                                curChunk.ResObjList.Add(stoneResObj);
+                                BuildingManager.Place(BuildingDataManager.Instance.GetBuildingData(BuildingType.Stone), curTilePos);
+                                BuildingBase stone = StonePs.Instantiate<BuildingBase>();
+                                stone.Data = BuildingDataManager.Instance.GetBuildingData(BuildingType.Stone);
+                                stone.GlobalPosition = snapPos;
+                                GetTree().CurrentScene.AddChild(stone);
+                                curChunk.BuildingList.Add(stone);
                             }
                         }
                     }
@@ -237,21 +254,23 @@ namespace Solo.Scripts.System.ChunkSystem
                 }
             }
             //写入savedata
-            ChunkData curChunkData = new ChunkData();
-            foreach (ResObj resObj in curChunk.ResObjList)//移除node
+            ChunkSaveData curChunkData = new ChunkSaveData(chunkPos.X, chunkPos.Y);
+            foreach (BuildingBase building in curChunk.BuildingList)//移除node
             {
-                curChunkData.ResObjDataList.Add(new ResObjData() { Type = resObj.Type, Position = resObj.GlobalPosition });
-                if (IsInstanceValid(resObj))
-                    resObj.QueueFree();
+                curChunkData.BuildingSaveDataList.Add(new BuildingSaveData() { Type = building.Data.Type, X = building.GlobalPosition.X, Y = building.GlobalPosition.Y });
+                BuildingManager.Remove(BuildingDataManager.Instance.GetBuildingData(building.Data.Type), building.GlobalPosition);
+                if (IsInstanceValid(building))
+                    building.QueueFree();
             }
             foreach (DropItem dropItem in curChunk.DropItemList)//移除node
             {
-                curChunkData.DropItemDataList.Add(new DropItemData() { Type = dropItem.ItemInstance.Data.Type, Position = dropItem.GlobalPosition });
+                curChunkData.DropItemSaveDataList.Add(new DropItemSaveData() { Type = dropItem.ItemInstance.Data.Type, X = dropItem.GlobalPosition.X, Y = dropItem.GlobalPosition.Y });
                 if (IsInstanceValid(dropItem))
                     dropItem.QueueFree();
             }
-            SaveManager.Instance.CurSaveData.ChunkDataMap[chunkPos] = curChunkData;
+            ChunkSaveDataMap[chunkPos] = curChunkData;
             CurActiveChunkMap.Remove(chunkPos);
+            GD.Print("UnloadChunk");
         }
 
         public Vector2I WorldToChunkPos(Vector2 worldPos)
@@ -267,6 +286,33 @@ namespace Solo.Scripts.System.ChunkSystem
             int sourceId = _tileMapLayer.GetCellSourceId(mapCoords);// 从 TileMapLayer 获取该坐标下的 SourceID 和 AtlasCoords
             Vector2I atlasCoords = _tileMapLayer.GetCellAtlasCoords(mapCoords);
             return _tileInfoTypeMap[new TileInfo() { SourceId = sourceId, AtlasCoords = atlasCoords }];
+        }
+
+        public override void _ExitTree()
+        {
+            foreach (Vector2I chunkPos in CurActiveChunkMap.Keys)
+            {
+                UnloadChunk(chunkPos);
+            }
+        }
+
+        //未激活区块在卸载时已经保存过了, 这里提供一个接口让激活区块可以保存
+        public void SaveActiveChunk()
+        {
+            foreach (Vector2I chunkPos in CurActiveChunkMap.Keys)
+            {
+                ChunkSaveData chunkSaveData = new ChunkSaveData(chunkPos.X, chunkPos.Y);
+                Chunk chunk = CurActiveChunkMap[chunkPos];
+                foreach (BuildingBase building in chunk.BuildingList)
+                {
+                    chunkSaveData.BuildingSaveDataList.Add(new BuildingSaveData() { Type = building.Data.Type, X = building.GlobalPosition.X, Y = building.GlobalPosition.Y });
+                }
+                foreach (DropItem dropItem in chunk.DropItemList)//移除node
+                {
+                    chunkSaveData.DropItemSaveDataList.Add(new DropItemSaveData() { Type = dropItem.ItemInstance.Data.Type, X = dropItem.GlobalPosition.X, Y = dropItem.GlobalPosition.Y });
+                }
+                ChunkSaveDataMap[chunkPos] = chunkSaveData;
+            }
         }
     }
 }

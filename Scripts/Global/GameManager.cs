@@ -2,6 +2,7 @@ using Godot;
 using Solo.Scripts.Character.Player;
 using Solo.Scripts.System.ChunkSystem;
 using Solo.Scripts.System.SaveSystem;
+using System.Linq;
 
 namespace Solo.Scripts.Global
 {
@@ -118,6 +119,8 @@ namespace Solo.Scripts.Global
                         SaveManager.Instance.CurSaveData.BagInventoryList = Player.BagInventory.ItemInstanceList;
                         SaveManager.Instance.CurSaveData.FastBarInventoryGuidStr = Player.FastBarInventory.GuidStr;
                         SaveManager.Instance.CurSaveData.FastBarInventoryList = Player.FastBarInventory.ItemInstanceList;
+                        ChunkManager.SaveActiveChunk();
+                        SaveManager.Instance.CurSaveData.ChunkSaveDataList = ChunkManager.ChunkSaveDataMap.Values.ToList();
                         SaveManager.Instance.WriteCurSaveData();
 
                         GetTree().ChangeSceneToPacked(_startMenuPs);
