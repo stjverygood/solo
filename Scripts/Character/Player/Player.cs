@@ -1,8 +1,8 @@
 using Godot;
 using Solo.Scripts.Global;
+using Solo.Scripts.System.BuildingSystem;
 using Solo.Scripts.System.InventorySystem;
 using Solo.Scripts.System.ItemSystem;
-using Solo.Scripts.System.ResourceSystem;
 using Solo.Scripts.System.SaveSystem;
 using System.Collections.Generic;
 
@@ -15,7 +15,7 @@ namespace Solo.Scripts.Character.Player
         Run,
         Dash,
         Atk,//第一优先级
-        Capture,//第二优先级
+        //Capture,//第二优先级
         Pickup,//第三优先级
         Death,
         BagUI,
@@ -109,9 +109,6 @@ namespace Solo.Scripts.Character.Player
                 case PlayerState.Atk:
                     UpdateAtk(delta);
                     break;
-                case PlayerState.Capture:
-                    UpdateCapture(delta);
-                    break;
                 case PlayerState.Pickup:
                     UpdatePickup(delta);
                     break;
@@ -156,12 +153,12 @@ namespace Solo.Scripts.Character.Player
             if (Input.IsActionJustPressed("Action"))
             {
                 //todo : enemy
-
-                _curResObj = GetNearestResObj();
-                if (_curResObj != null)
+                //优先级通过_curTargetBuilding来区分, _curTargetEnemy不为空就先打敌人, 不然就是打建筑
+                _curTargetBuilding = GetNearestBuilding();
+                if (_curTargetBuilding != null)
                 {
-                    FaceToNode(_curResObj);
-                    CurState = PlayerState.Capture;
+                    FaceToNode(_curTargetBuilding);
+                    CurState = PlayerState.Atk;
                     ChangeAnim();
                     return;
                 }
@@ -205,11 +202,11 @@ namespace Solo.Scripts.Character.Player
 
             if (Input.IsActionJustPressed("Action"))
             {
-                _curResObj = GetNearestResObj();
-                if (_curResObj != null)
+                _curTargetBuilding = GetNearestBuilding();
+                if (_curTargetBuilding != null)
                 {
-                    FaceToNode(_curResObj);
-                    CurState = PlayerState.Capture;
+                    FaceToNode(_curTargetBuilding);
+                    CurState = PlayerState.Atk;
                     ChangeAnim();
                     return;
                 }
@@ -248,11 +245,11 @@ namespace Solo.Scripts.Character.Player
         {
             if (Input.IsActionJustPressed("Action"))
             {
-                _curResObj = GetNearestResObj();
-                if (_curResObj != null)
+                _curTargetBuilding = GetNearestBuilding();
+                if (_curTargetBuilding != null)
                 {
-                    FaceToNode(_curResObj);
-                    CurState = PlayerState.Capture;
+                    FaceToNode(_curTargetBuilding);
+                    CurState = PlayerState.Atk;
                     ChangeAnim();
                     return;
                 }
@@ -391,14 +388,14 @@ namespace Solo.Scripts.Character.Player
                     _animTween.TweenProperty(BodyRoot, "skew", -0.1f, 0.1f);
                     break;
 
-                case PlayerState.Capture:
+                case PlayerState.Atk:
                     _animTween.Parallel().TweenProperty(BodyRoot, "modulate", Colors.Black, 0.05f);//变黑
                     _animTween.TweenProperty(BodyRoot, "skew", 1f, 0.05);
                     _animTween.TweenCallback(Callable.From(() =>
                     {
-                        if (_curResObj != null)
+                        if (_curTargetBuilding != null)
                         {
-                            _curResObj.TakeDamage(Atk);
+                            _curTargetBuilding.TakeDamage(Atk);
                         }
                     }));
 
@@ -445,46 +442,38 @@ namespace Solo.Scripts.Character.Player
 
         //后期加入enemylist
 
-        private List<ResObj> _ResObjList = new List<ResObj>();
-        private ResObj _curResObj;
+        private List<BuildingBase> _buildingList = new List<BuildingBase>();
+        private BuildingBase _curTargetBuilding;
         private void TouchArea_BodyEntered(Node2D body)
         {
-            if (body is ResObj ResObj)
+            if (body is BuildingBase building)
             {
-                _ResObjList.Add(ResObj);
+                _buildingList.Add(building);
             }
         }
         private void TouchArea_BodyExited(Node2D body)
         {
-            if (body is ResObj ResObj)
+            if (body is BuildingBase building)
             {
-                _ResObjList.Remove(ResObj);
+                _buildingList.Remove(building);
             }
         }
-        private ResObj GetNearestResObj()//优先返回敌人, 其次返回资源
+        private BuildingBase GetNearestBuilding()
         {
             float minDistSq = float.MaxValue; // 先设为一个极大值
-            ResObj ResObj = null;
-            foreach (ResObj curResObj in _ResObjList)
+            BuildingBase targetBuilding = null;
+            foreach (BuildingBase curBuilding in _buildingList)
             {
-                if (curResObj == null)// 安全检查：防止列表里有被销毁的无效对象
+                if (curBuilding == null)// 安全检查：防止列表里有被销毁的无效对象
                     continue;
-                float curDistSq = GlobalPosition.DistanceSquaredTo(curResObj.GlobalPosition);
+                float curDistSq = GlobalPosition.DistanceSquaredTo(curBuilding.GlobalPosition);
                 if (curDistSq < minDistSq)
                 {
                     minDistSq = curDistSq;
-                    ResObj = curResObj;
+                    targetBuilding = curBuilding;
                 }
             }
-            return ResObj;
-        }
-        private void FaceToNode(Node2D targetNode)
-        {
-            float directionToTarget = targetNode.GlobalPosition.X - GlobalPosition.X;// 计算从自己指向敌人的向量
-            if (directionToTarget < 0)
-                SpriteRoot.Scale = new Vector2(-1, 1); // 目标在左
-            else if (directionToTarget > 0)
-                SpriteRoot.Scale = new Vector2(1, 1);  // 目标在右
+            return targetBuilding;
         }
 
         List<DropItem> _dropItemList = new List<DropItem>();
@@ -521,6 +510,15 @@ namespace Solo.Scripts.Character.Player
                 }
             }
             return nearestDropItem;
+        }
+
+        private void FaceToNode(Node2D targetNode)
+        {
+            float directionToTarget = targetNode.GlobalPosition.X - GlobalPosition.X;// 计算从自己指向敌人的向量
+            if (directionToTarget < 0)
+                SpriteRoot.Scale = new Vector2(-1, 1); // 目标在左
+            else if (directionToTarget > 0)
+                SpriteRoot.Scale = new Vector2(1, 1);  // 目标在右
         }
 
         public void SwapItemInterInventory(string sourceInvGuid, int sourceIndex, string targetInvGuid, int targetIndex)

@@ -25,6 +25,7 @@ _bagInventoryView = NodePath("CanvasLayer/BagInventoryView")
 _fastBarInventoryView = NodePath("CanvasLayer/FastBarInventoryViewv")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=173865742]
+zoom = Vector2(3, 3)
 position_smoothing_enabled = true
 
 [node name="SpriteRoot" type="Node2D" parent="." unique_id=700917934]

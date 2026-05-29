@@ -26,7 +26,7 @@ namespace Solo.Scripts.System.ChunkSystem
         private FastNoiseLite _noise = new FastNoiseLite();
         private int _chunkSize = 8;       // 每个区块的瓦片数量
         private int _tileSize = 16;        // 每个瓦片的像素大小
-        private int _renderDistance = 1;  // 玩家视野内的区块半径
+        private int _renderDistance = 4;  // 玩家视野内的区块半径
         private string _seedString;
         public Dictionary<Vector2I, Chunk> CurActiveChunkMap = new Dictionary<Vector2I, Chunk>();
         public Dictionary<Vector2I, ChunkSaveData> ChunkSaveDataMap = new Dictionary<Vector2I, ChunkSaveData>();
