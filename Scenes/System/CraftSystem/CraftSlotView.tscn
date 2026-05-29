@@ -1,0 +1,41 @@
+[gd_scene format=3 uid="uid://btoyhdgviw66m"]
+
+[ext_resource type="Script" uid="uid://dx1ewbpnlbrhq" path="res://Scripts/System/CraftSystem/CraftSlotView.cs" id="1_h650u"]
+[ext_resource type="Texture2D" uid="uid://d4igqp371y5" path="res://Assets/icon.svg" id="2_7p3ma"]
+
+[node name="CraftSlotView" type="Control" unique_id=1976074717 node_paths=PackedStringArray("_toggleBtn", "_iconTr")]
+custom_minimum_size = Vector2(70, 70)
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = -1082.0
+offset_bottom = -578.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_h650u")
+_toggleBtn = NodePath("Button")
+_iconTr = NodePath("Button/TextureRect")
+
+[node name="Button" type="Button" parent="." unique_id=849197930]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+toggle_mode = true
+
+[node name="TextureRect" type="TextureRect" parent="Button" unique_id=228327673]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 4.0
+offset_top = 5.0
+offset_right = -5.0
+offset_bottom = -7.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_7p3ma")
+expand_mode = 1

@@ -1,0 +1,124 @@
+[gd_scene format=3 uid="uid://cfu7wy1op48g5"]
+
+[ext_resource type="Script" uid="uid://dft3ce0x6et2c" path="res://Scripts/System/CraftSystem/CraftView.cs" id="1_05l1g"]
+[ext_resource type="PackedScene" uid="uid://btoyhdgviw66m" path="res://Scenes/System/CraftSystem/CraftSlotView.tscn" id="2_yhgba"]
+[ext_resource type="ButtonGroup" uid="uid://sf3o1ct34uct" path="res://Scenes/System/CraftSystem/BasicCraftSlotGroup.tres" id="3_klejn"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_2k2bd"]
+bg_color = Color(0.16862746, 0.16862746, 0.16862746, 1)
+
+[node name="CraftView" type="Control" unique_id=1489113954 node_paths=PackedStringArray("_slotGc", "_selectedItemNameLb", "_selectedItemRequiredLb")]
+custom_minimum_size = Vector2(300, 360)
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = -852.0
+offset_bottom = -288.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_05l1g")
+_slotGc = NodePath("Panel/ScrollContainer/GridContainer")
+_slotViewPs = ExtResource("2_yhgba")
+_btnGroup = ExtResource("3_klejn")
+_selectedItemNameLb = NodePath("Panel/SelectedItemNameLb")
+_selectedItemRequiredLb = NodePath("Panel/SelectedItemRequiredLb")
+
+[node name="Panel" type="Panel" parent="." unique_id=1371153688]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_2k2bd")
+
+[node name="ScrollContainer" type="ScrollContainer" parent="Panel" unique_id=1038971939]
+layout_mode = 0
+offset_left = 38.0
+offset_top = 16.0
+offset_right = 277.0
+offset_bottom = 244.0
+
+[node name="GridContainer" type="GridContainer" parent="Panel/ScrollContainer" unique_id=1642263865]
+layout_mode = 2
+columns = 3
+
+[node name="CraftSlotView" parent="Panel/ScrollContainer/GridContainer" unique_id=1976074717 instance=ExtResource("2_yhgba")]
+layout_mode = 2
+
+[node name="CraftSlotView2" parent="Panel/ScrollContainer/GridContainer" unique_id=303459510 instance=ExtResource("2_yhgba")]
+layout_mode = 2
+
+[node name="CraftSlotView3" parent="Panel/ScrollContainer/GridContainer" unique_id=1919368449 instance=ExtResource("2_yhgba")]
+layout_mode = 2
+
+[node name="CraftSlotView4" parent="Panel/ScrollContainer/GridContainer" unique_id=1133410809 instance=ExtResource("2_yhgba")]
+layout_mode = 2
+
+[node name="CraftSlotView5" parent="Panel/ScrollContainer/GridContainer" unique_id=1123622207 instance=ExtResource("2_yhgba")]
+layout_mode = 2
+
+[node name="CraftSlotView6" parent="Panel/ScrollContainer/GridContainer" unique_id=349837499 instance=ExtResource("2_yhgba")]
+layout_mode = 2
+
+[node name="CraftSlotView7" parent="Panel/ScrollContainer/GridContainer" unique_id=1683097 instance=ExtResource("2_yhgba")]
+layout_mode = 2
+
+[node name="CraftSlotView8" parent="Panel/ScrollContainer/GridContainer" unique_id=1588118813 instance=ExtResource("2_yhgba")]
+layout_mode = 2
+
+[node name="CraftSlotView9" parent="Panel/ScrollContainer/GridContainer" unique_id=1342799680 instance=ExtResource("2_yhgba")]
+layout_mode = 2
+
+[node name="CraftSlotView10" parent="Panel/ScrollContainer/GridContainer" unique_id=1034361714 instance=ExtResource("2_yhgba")]
+layout_mode = 2
+
+[node name="CraftSlotView11" parent="Panel/ScrollContainer/GridContainer" unique_id=172777698 instance=ExtResource("2_yhgba")]
+layout_mode = 2
+
+[node name="CraftSlotView12" parent="Panel/ScrollContainer/GridContainer" unique_id=2074547498 instance=ExtResource("2_yhgba")]
+layout_mode = 2
+
+[node name="CraftSlotView13" parent="Panel/ScrollContainer/GridContainer" unique_id=410489020 instance=ExtResource("2_yhgba")]
+layout_mode = 2
+
+[node name="CraftSlotView14" parent="Panel/ScrollContainer/GridContainer" unique_id=1629171558 instance=ExtResource("2_yhgba")]
+layout_mode = 2
+
+[node name="CraftSlotView15" parent="Panel/ScrollContainer/GridContainer" unique_id=390562330 instance=ExtResource("2_yhgba")]
+layout_mode = 2
+
+[node name="CraftSlotView16" parent="Panel/ScrollContainer/GridContainer" unique_id=1659682866 instance=ExtResource("2_yhgba")]
+layout_mode = 2
+
+[node name="SelectedItemNameLb" type="Label" parent="Panel" unique_id=1592311818]
+layout_mode = 0
+offset_left = 53.0
+offset_top = 240.0
+offset_right = 231.0
+offset_bottom = 272.0
+text = "木剑"
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 3
+
+[node name="SelectedItemRequiredLb" type="Label" parent="Panel" unique_id=1236956057]
+layout_mode = 0
+offset_left = 52.0
+offset_top = 270.0
+offset_right = 251.0
+offset_bottom = 309.0
+theme_override_font_sizes/font_size = 12
+text = "所需材料 : 木头*10, 石头*100(绿色可合成, 红色不可)"
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 3
+
+[node name="Button" type="Button" parent="Panel" unique_id=1587829795]
+layout_mode = 0
+offset_left = 105.0
+offset_top = 311.0
+offset_right = 203.0
+offset_bottom = 351.0
+text = "合成"

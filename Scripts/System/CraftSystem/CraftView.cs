@@ -1,0 +1,72 @@
+using Godot;
+using Solo.Scripts.Global;
+using System.Collections.Generic;
+
+namespace Solo.Scripts.System.CraftSystem
+{
+    //物品合成台的类型
+    public enum CraftViewType
+    {
+        Basic,//直接能打开
+        Building,//合成建筑的, 需要在建筑合成台交互
+        Seed,//合成种子的
+        Weapon, //剑, 弓
+        Tool,//镐,斧,壶, 鱼竿
+        Defend,//盔甲鞋
+    }
+
+    public partial class CraftView : Control
+    {
+        [Export] public CraftViewType Type;
+        [Export] private GridContainer _slotGc;
+        [Export] private PackedScene _slotViewPs;
+        [Export] private ButtonGroup _btnGroup;
+        [Export] private Label _selectedItemNameLb;
+        [Export] private Label _selectedItemRequiredLb;
+        private List<CraftItem> CraftItemList = new List<CraftItem>();
+
+        //public void RefreshCraftItem(CraftViewType craftType)
+        //{
+
+        //}
+
+        public override void _Ready()
+        {
+            foreach (Node child in _slotGc.GetChildren())// 先清空grid
+                child.QueueFree();
+
+            switch (Type)
+            {
+                case CraftViewType.Basic://徒手的只能做木套
+                    CraftItemList.Add(new CraftItem(ItemType.WoodSword, new List<(ItemType, int)>() { (ItemType.Wood, 6), (ItemType.Rope, 20) }));
+                    CraftItemList.Add(new CraftItem(ItemType.WoodBow, new List<(ItemType, int)>() { (ItemType.Wood, 4), (ItemType.Rope, 8) }));
+                    CraftItemList.Add(new CraftItem(ItemType.WoodPickaxe, new List<(ItemType, int)>() { (ItemType.Wood, 4), (ItemType.Rope, 20) }));
+                    CraftItemList.Add(new CraftItem(ItemType.WoodAxe, new List<(ItemType, int)>() { (ItemType.Wood, 5), (ItemType.Rope, 20) }));
+                    CraftItemList.Add(new CraftItem(ItemType.WoodPot, new List<(ItemType, int)>() { (ItemType.Wood, 6), (ItemType.Rope, 20) }));
+                    CraftItemList.Add(new CraftItem(ItemType.WoodFishingRod, new List<(ItemType, int)>() { (ItemType.Wood, 12), (ItemType.Rope, 20) }));
+                    CraftItemList.Add(new CraftItem(ItemType.WoodHelmet, new List<(ItemType, int)>() { (ItemType.Wood, 8), (ItemType.Rope, 20), (ItemType.Silk, 10) }));
+                    CraftItemList.Add(new CraftItem(ItemType.WoodArmor, new List<(ItemType, int)>() { (ItemType.Wood, 12), (ItemType.Rope, 20), (ItemType.Silk, 10) }));
+                    CraftItemList.Add(new CraftItem(ItemType.WoodBoot, new List<(ItemType, int)>() { (ItemType.Wood, 6), (ItemType.Rope, 20), (ItemType.Silk, 10) }));
+                    break;
+            }
+
+            for (int i = 0; i < CraftItemList.Count; i++)
+            {
+                CraftSlotView slotView = _slotViewPs.Instantiate<CraftSlotView>();
+                slotView.Init(i, _btnGroup, CraftItemList[i]);
+                slotView.Toggled += (selectedSlotView) =>
+                {
+                    //被选中的逻辑
+                    _selectedItemNameLb.Text = selectedSlotView.CraftItem.Type.ToString();
+                    string requiredStr = "所需材料 : ";
+                    foreach ((ItemType, int) t in selectedSlotView.CraftItem.RequiredItemList)
+                    {
+                        requiredStr += $"{t.Item1} * {t.Item2}; ";
+                    }
+                    _selectedItemRequiredLb.Text = requiredStr;
+                };
+                _slotGc.AddChild(slotView);
+            }
+        }
+    }
+}

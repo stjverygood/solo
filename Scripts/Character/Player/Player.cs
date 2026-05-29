@@ -38,6 +38,7 @@ namespace Solo.Scripts.Character.Player
 
         public Inventory BagInventory = new Inventory();//背包
         public Inventory FastBarInventory = new Inventory();//快捷栏
+        [Export] private SelfView _selfView;
         [Export] private InventoryView _bagInventoryView;
         [Export] private InventoryView _fastBarInventoryView;
 
@@ -60,6 +61,7 @@ namespace Solo.Scripts.Character.Player
             CurState = PlayerState.Idle;
             ChangeAnim();
 
+            _selfView.Visible = false;
             _bagInventoryView.Init(BagInventory);
             _fastBarInventoryView.Init(FastBarInventory);
             _bagInventoryView.Visible = false;
@@ -137,6 +139,7 @@ namespace Solo.Scripts.Character.Player
 
             if (Input.IsActionJustPressed("Bag"))
             {
+                _selfView.Visible = true;
                 _bagInventoryView.Visible = true;
                 CurState = PlayerState.BagUI;
                 return;
@@ -186,6 +189,7 @@ namespace Solo.Scripts.Character.Player
         {
             if (Input.IsActionJustPressed("Bag"))
             {
+                _selfView.Visible = true;
                 _bagInventoryView.Visible = true;
                 CurState = PlayerState.BagUI;
                 return;
@@ -337,6 +341,7 @@ namespace Solo.Scripts.Character.Player
         {
             if (Input.IsActionJustPressed("Bag") || Input.IsActionJustPressed("Back"))
             {
+                _selfView.Visible = false;
                 _bagInventoryView.Visible = false;
                 CurState = PlayerState.Idle;
                 return;
@@ -548,7 +553,7 @@ namespace Solo.Scripts.Character.Player
                 return;
             }
 
-            if (sourceInv.ItemInstanceList[sourceIndex].Data.Type != targetInv.ItemInstanceList[targetIndex].Data.Type)
+            if (sourceInv.ItemInstanceList[sourceIndex].Type != targetInv.ItemInstanceList[targetIndex].Type)
             {
                 ItemInstance temp = sourceInv.ItemInstanceList[sourceIndex];
                 sourceInv.ItemInstanceList[sourceIndex] = targetInv.ItemInstanceList[targetIndex];
@@ -558,7 +563,7 @@ namespace Solo.Scripts.Character.Player
             }
             else
             {
-                int maxCount = targetInv.ItemInstanceList[targetIndex].Data.MaxCount;
+                int maxCount = ItemManager.Instance.GetItemData(targetInv.ItemInstanceList[targetIndex].Type).MaxCount;
                 int targetCount = targetInv.ItemInstanceList[targetIndex].Count;
                 int sourceCount = sourceInv.ItemInstanceList[sourceIndex].Count;
                 int canAddCount = maxCount - targetCount;

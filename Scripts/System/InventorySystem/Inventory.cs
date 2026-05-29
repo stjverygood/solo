@@ -15,17 +15,17 @@ namespace Solo.Scripts.System.InventorySystem
         public int AddItemInstance(ItemInstance instance)//自动添加, 比如捡东西, 双击其他背包的物品, 返回成功添加的物品数量
         {
             int remainCount = instance.Count;//记录当前剩余数量
-            if (instance.Data.MaxCount != 1)//能堆叠, instance是可合并的
+            if (ItemManager.Instance.GetItemData(instance.Type).MaxCount != 1)//能堆叠, instance是可合并的
             {
                 for (int i = 0; i < ItemInstanceList.Count; i++)//先遍历一次, 尝试合并
                 {
                     ItemInstance curExistInstance = ItemInstanceList[i];
-                    if (curExistInstance == null || curExistInstance.Data.Type != instance.Data.Type)
+                    if (curExistInstance == null || curExistInstance.Type != instance.Type)
                         continue;
 
-                    if (curExistInstance.Count < instance.Data.MaxCount)//未满
+                    if (curExistInstance.Count < ItemManager.Instance.GetItemData(instance.Type).MaxCount)//未满
                     {
-                        int canAddCount = instance.Data.MaxCount - curExistInstance.Count;//能加的
+                        int canAddCount = ItemManager.Instance.GetItemData(instance.Type).MaxCount - curExistInstance.Count;//能加的
                         int addCount = remainCount > canAddCount ? canAddCount : remainCount;//实际加的
                         remainCount -= addCount;
                         curExistInstance.Count += addCount;
@@ -38,7 +38,7 @@ namespace Solo.Scripts.System.InventorySystem
                 {
                     if (ItemInstanceList[i] != null)
                         continue;
-                    ItemInstanceList[i] = new ItemInstance() { Data = instance.Data, Count = remainCount };
+                    ItemInstanceList[i] = new ItemInstance() { Type = instance.Type, Count = remainCount };
                     SlotChanged?.Invoke(i);
                     return instance.Count;
                 }
@@ -77,7 +77,7 @@ namespace Solo.Scripts.System.InventorySystem
                 return;
             }
 
-            if (ItemInstanceList[sourceIndex].Data.Type != ItemInstanceList[targetIndex].Data.Type)// 两个物品类型不同，交互位置（单纯的对调）
+            if (ItemInstanceList[sourceIndex].Type != ItemInstanceList[targetIndex].Type)// 两个物品类型不同，交互位置（单纯的对调）
             {
                 ItemInstance temp = ItemInstanceList[sourceIndex];
                 ItemInstanceList[sourceIndex] = ItemInstanceList[targetIndex];
@@ -87,7 +87,7 @@ namespace Solo.Scripts.System.InventorySystem
             }
             else// 两个物品类型相同，尝试堆叠
             {
-                int maxCount = ItemInstanceList[targetIndex].Data.MaxCount;
+                int maxCount = ItemManager.Instance.GetItemData(ItemInstanceList[targetIndex].Type).MaxCount;
                 int targetCount = ItemInstanceList[targetIndex].Count;
                 int sourceCount = ItemInstanceList[sourceIndex].Count;
                 int canAddCount = maxCount - targetCount;// 目标格子还能放多少个

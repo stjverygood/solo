@@ -36,7 +36,7 @@ namespace Solo.Scripts.System.ResourceSystem
                 DropItem dropItem = DropItemPs.Instantiate<DropItem>();
                 GetTree().CurrentScene.AddChild(dropItem);
                 dropItem.GlobalPosition = GlobalPosition;
-                dropItem.Init(new ItemInstance() { Data = ItemManager.Instance.GetItemData(DropItemType), Count = 2 });//ItemManager.Instance.GetItemData(DropItemType)
+                dropItem.Init(new ItemInstance() { Type = DropItemType, Count = 2 });//ItemManager.Instance.GetItemData(DropItemType)
                 QueueFree();
             }
         }

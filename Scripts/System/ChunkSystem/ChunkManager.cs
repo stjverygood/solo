@@ -168,7 +168,7 @@ namespace Solo.Scripts.System.ChunkSystem
                     {
                         case ItemType.Gold:
                             DropItem goldDropItem = DropItemPs.Instantiate<DropItem>();
-                            goldDropItem.Init(new ItemInstance() { Data = ItemManager.Instance.GetItemData(ItemType.Gold), Count = 3 });
+                            goldDropItem.Init(new ItemInstance() { Type = ItemType.Gold, Count = 3 });
                             GetTree().CurrentScene.AddChild(goldDropItem);
                             goldDropItem.GlobalPosition = new Vector2(dropItemData.X, dropItemData.Y);
                             curChunk.DropItemList.Add(goldDropItem);
@@ -216,7 +216,7 @@ namespace Solo.Scripts.System.ChunkSystem
                                 Vector2 offset = new Vector2(_tileSize / 2f, _tileSize / 2f);// 计算偏移量，使物体位于瓦片中心 (假设 _tileSize 是 16，偏移就是 8)
                                 goldDropItem.GlobalPosition = tileWorldPos + offset;
                                 GetTree().CurrentScene.AddChild(goldDropItem);
-                                goldDropItem.Init(new ItemInstance() { Data = ItemManager.Instance.GetItemData(ItemType.Gold), Count = 3 });
+                                goldDropItem.Init(new ItemInstance() { Type = ItemType.Gold, Count = 3 });
                                 curChunk.DropItemList.Add(goldDropItem);
                             }
 
@@ -264,13 +264,13 @@ namespace Solo.Scripts.System.ChunkSystem
             }
             foreach (DropItem dropItem in curChunk.DropItemList)//移除node
             {
-                curChunkData.DropItemSaveDataList.Add(new DropItemSaveData() { Type = dropItem.ItemInstance.Data.Type, X = dropItem.GlobalPosition.X, Y = dropItem.GlobalPosition.Y });
+                curChunkData.DropItemSaveDataList.Add(new DropItemSaveData() { Type = dropItem.ItemInstance.Type, X = dropItem.GlobalPosition.X, Y = dropItem.GlobalPosition.Y });
                 if (IsInstanceValid(dropItem))
                     dropItem.QueueFree();
             }
             ChunkSaveDataMap[chunkPos] = curChunkData;
             CurActiveChunkMap.Remove(chunkPos);
-            GD.Print("UnloadChunk");
+            //GD.Print("UnloadChunk");
         }
 
         public Vector2I WorldToChunkPos(Vector2 worldPos)
@@ -309,7 +309,7 @@ namespace Solo.Scripts.System.ChunkSystem
                 }
                 foreach (DropItem dropItem in chunk.DropItemList)//移除node
                 {
-                    chunkSaveData.DropItemSaveDataList.Add(new DropItemSaveData() { Type = dropItem.ItemInstance.Data.Type, X = dropItem.GlobalPosition.X, Y = dropItem.GlobalPosition.Y });
+                    chunkSaveData.DropItemSaveDataList.Add(new DropItemSaveData() { Type = dropItem.ItemInstance.Type, X = dropItem.GlobalPosition.X, Y = dropItem.GlobalPosition.Y });
                 }
                 ChunkSaveDataMap[chunkPos] = chunkSaveData;
             }

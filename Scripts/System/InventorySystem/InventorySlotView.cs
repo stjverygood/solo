@@ -38,9 +38,9 @@ public partial class InventorySlotView : Control
         }
 
         _itemInstance = itemInstance;
-        _iconTr.Texture = GD.Load<Texture2D>(_itemInstance.Data.IconPath);
+        _iconTr.Texture = GD.Load<Texture2D>(ItemManager.Instance.GetItemData(_itemInstance.Type).IconPath);
         _countLb.Text = $"{_itemInstance.Count}";
-        _nameLb.Text = $"{_itemInstance.Data.Type}";
+        _nameLb.Text = $"{_itemInstance.Type}";
     }
 
     public override Variant _GetDragData(Vector2 atPosition)

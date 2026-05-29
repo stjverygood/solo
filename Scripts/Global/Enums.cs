@@ -32,50 +32,77 @@
         Core,//主基地
     }
 
+
+
     //记录全游戏物品的type
     public enum ItemType
     {
-        Wood,       // 木头
-        Stone,      // 石头
-        Iron,       // 铁
-        Gold,       // 金
+        Silk,//丝绸
+        Leather,//皮革, 这里可以拓展成各种皮革, 各种妖兽皮
+        Grass,//草
+        Rope,//绳子
+        Stone,//石头
+
+
+
+        Wood,//木头
+        IronRaw,//粗铁
+        Iron,//钢, 乌黑色
+        CopperRaw,//粗铜
+        Copper,//铜
+        SilverRaw,//粗银
+        Silver,//银, 银白色
+        Gold,//金, 直接捡的, 不用冶炼
 
         WoodSword,  // 木剑
         WoodBow,    // 木弓
         WoodPickaxe,// 木镐
         WoodAxe,    // 木斧
-        PotAxe,     // 木壶
-        WoodHelmet, // 木盔
+        WoodPot,     // 木壶
+        WoodFishingRod,//木鱼竿
+        WoodHelmet, // 木盔, 防具影响移动速度
         WoodArmor,  // 木甲
         WoodBoot,   // 木鞋
-
-        StoneSword,  // 石剑
-        StoneBow,    // 石弓
-        StonePickaxe,// 石镐
-        StoneAxe,    // 石斧
-        StonePot,    // 石壶
-        StoneHelmet, // 石盔
-        StoneArmor,  // 石甲
-        StoneBoot,   // 石鞋
 
         IronSword,   // 铁剑
         IronBow,     // 铁弓
         IronPickaxe, // 铁镐
         IronAxe,     // 铁斧
         IronPot,     // 铁壶
+        IronFishingRod,//铁鱼竿
         IronHelmet,  // 铁盔
         IronArmor,   // 铁甲
         IronBoot,    // 铁鞋
+
+        CopperSword,   // 铜剑
+        CopperBow,     // 铜弓
+        CopperPickaxe, // 铜镐
+        CopperAxe,     // 铜斧
+        CopperPot,     // 铜壶
+        CopperFishingRod,//铜鱼竿
+        CopperHelmet,  // 铜盔
+        CopperArmor,   // 铜甲
+        CopperBoot,    // 铜鞋
+
+        SilverSword,   // 银剑
+        SilverBow,     // 银弓
+        SilverPickaxe, // 银镐
+        SilverAxe,     // 银斧
+        SilverPot,     // 银壶
+        SilverFishingRod,//银鱼竿
+        SilverHelmet,  // 银盔
+        SilverArmor,   // 银甲
+        SilverBoot,    // 银鞋
 
         GoldSword,   // 金剑
         GoldBow,     // 金弓
         GoldPickaxe, // 金镐
         GoldAxe,     // 金斧
         GoldPot,     // 金壶
+        GoldFishingRod,//金鱼竿
         GoldHelmet,  // 金盔
         GoldArmor,   // 金甲
         GoldBoot,    // 金鞋
-
 
     }
 }

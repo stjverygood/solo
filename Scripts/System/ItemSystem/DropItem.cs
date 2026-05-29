@@ -21,9 +21,9 @@ namespace Solo.Scripts.System.ItemSystem
         public void Init(ItemInstance itemInstance)
         {
             ItemInstance = itemInstance;
-            TextLb.Text = ItemInstance.Data.Type.ToString();
+            TextLb.Text = ItemInstance.Type.ToString();
             TextLb.Visible = false;
-            Texture2D texture = GD.Load<Texture2D>(ItemInstance.Data.IconPath);
+            Texture2D texture = GD.Load<Texture2D>(ItemManager.Instance.GetItemData(ItemInstance.Type).IconPath);
             Vector2 targetSize = new Vector2(8, 8);
             Vector2 texSize = texture.GetSize(); // 获取图片实际的像素大小
             IconSprite.Scale = new Vector2(targetSize.X / texSize.X, targetSize.Y / texSize.Y);// 计算缩放比例：目标尺寸 / 图片实际尺寸
