@@ -38,6 +38,9 @@ namespace Solo.Scripts.Character.Player
 
         public Inventory BagInventory = new Inventory();//背包
         public Inventory FastBarInventory = new Inventory();//快捷栏
+        public int CurFastBarIndex;
+        public ItemType? CurItemType = null;//玩家当前手持的物品, 攻击时要把这个连同攻击力一起传过去给受击者, 让受击者处理受多少伤害, 工具不对要大打折扣
+
         [Export] private SelfView _selfView;
         [Export] private InventoryView _bagInventoryView;
         [Export] private InventoryView _fastBarInventoryView;
@@ -53,6 +56,7 @@ namespace Solo.Scripts.Character.Player
             BagInventory.ItemInstanceList = SaveManager.Instance.CurSaveData.BagInventoryList;
             FastBarInventory.GuidStr = SaveManager.Instance.CurSaveData.FastBarInventoryGuidStr;
             FastBarInventory.ItemInstanceList = SaveManager.Instance.CurSaveData.FastBarInventoryList;
+            CurFastBarIndex = SaveManager.Instance.CurSaveData.FastBarIndex;
 
             TouchArea.BodyEntered += TouchArea_BodyEntered;
             TouchArea.BodyExited += TouchArea_BodyExited;
@@ -65,6 +69,7 @@ namespace Solo.Scripts.Character.Player
             _bagInventoryView.Init(BagInventory);
             _fastBarInventoryView.Init(FastBarInventory);
             _bagInventoryView.Visible = false;
+            _fastBarInventoryView.SetSelected(CurFastBarIndex, true);
         }
 
         public override void _PhysicsProcess(double delta)
@@ -128,11 +133,16 @@ namespace Solo.Scripts.Character.Player
 
         public void UpdateIdle(float delta)
         {
-            //if (Input.IsActionJustPressed("Back"))
-            //{
-            //    //通知暂停
-            //    GameManager.Instance.ChangeState(GameState.Pause);
-            //}
+            if (Input.IsActionJustPressed("Pre"))
+            {
+                //通知暂停
+                ChangeCurFastBarIndex(false);
+            }
+            if (Input.IsActionJustPressed("Next"))
+            {
+                //通知暂停
+                ChangeCurFastBarIndex(true);
+            }
 
             if (Input.IsActionJustPressed("Bag"))
             {
@@ -574,7 +584,25 @@ namespace Solo.Scripts.Character.Player
             }
         }
 
-
+        private void ChangeCurFastBarIndex(bool isNext)
+        {
+            if (isNext)
+            {
+                // 如果已经是最后一个格子，直接返回，不作任何操作
+                if (CurFastBarIndex >= FastBarInventory.ItemInstanceList.Count - 1)
+                    return;
+                _fastBarInventoryView.SetSelected(CurFastBarIndex, false);
+                CurFastBarIndex++;
+            }
+            else
+            {
+                if (CurFastBarIndex <= 0)
+                    return;
+                _fastBarInventoryView.SetSelected(CurFastBarIndex, false);
+                CurFastBarIndex--;
+            }
+            _fastBarInventoryView.SetSelected(CurFastBarIndex, true);
+        }
     }
 }
 

@@ -34,4 +34,9 @@ public partial class InventoryView : Control
             _slotViewList[index].SetData(Inventory.ItemInstanceList[index]);
         };
     }
+
+    public void SetSelected(int index, bool isSelected)
+    {
+        _slotViewList[index].SetSelected(isSelected);
+    }
 }

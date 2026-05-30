@@ -25,6 +25,7 @@ namespace Solo.Scripts.System.SaveSystem
         public string BagInventoryGuidStr { get; set; }
         public List<ItemInstance> BagInventoryList { get; set; }
         public string FastBarInventoryGuidStr { get; set; }
+        public int FastBarIndex { get; set; }
         public List<ItemInstance> FastBarInventoryList { get; set; }
 
         //public Dictionary<Int2, ChunkSaveData> ChunkDataMap { get; set; }//所有加载过的区块
@@ -51,6 +52,7 @@ namespace Solo.Scripts.System.SaveSystem
             {
                 FastBarInventoryList.Add(null);
             }
+            FastBarIndex = 0;
         }
     }
 

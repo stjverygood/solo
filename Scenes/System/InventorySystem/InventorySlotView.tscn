@@ -1,9 +1,11 @@
 [gd_scene format=3 uid="uid://v2bqvrhiyu14"]
 
 [ext_resource type="Script" uid="uid://dtg4xwon7uo2j" path="res://Scripts/System/InventorySystem/InventorySlotView.cs" id="1_3pjed"]
+[ext_resource type="StyleBox" uid="uid://cxn5v7tffhfii" path="res://Scenes/System/InventorySystem/InvSlotViewBgPanelNormalStyle.tres" id="2_8kxf3"]
 [ext_resource type="Texture2D" uid="uid://d4igqp371y5" path="res://Assets/icon.svg" id="2_vb2wc"]
+[ext_resource type="StyleBox" uid="uid://5ux3lcepebu0" path="res://Scenes/System/InventorySystem/InvSlotViewBgPanelSelectedStyle.tres" id="2_y0b75"]
 
-[node name="InventorySlotView" type="Control" unique_id=116028700 node_paths=PackedStringArray("_iconTr", "_nameLb", "_countLb")]
+[node name="InventorySlotView" type="Control" unique_id=116028700 node_paths=PackedStringArray("_bgPanel", "_iconTr", "_nameLb", "_countLb")]
 custom_minimum_size = Vector2(80, 80)
 layout_mode = 3
 anchor_right = 0.069000006
@@ -12,11 +14,14 @@ offset_right = 0.5119934
 offset_bottom = 0.29599762
 mouse_filter = 1
 script = ExtResource("1_3pjed")
-_iconTr = NodePath("TextureRect")
-_nameLb = NodePath("NameLb")
-_countLb = NodePath("CountLb")
+_bgPanel = NodePath("BgPanel")
+_iconTr = NodePath("BgPanel/TextureRect")
+_nameLb = NodePath("BgPanel/NameLb")
+_countLb = NodePath("BgPanel/CountLb")
+_normalStyle = ExtResource("2_8kxf3")
+_selectedStyle = ExtResource("2_y0b75")
 
-[node name="ColorRect" type="ColorRect" parent="." unique_id=2073163080]
+[node name="BgPanel" type="Panel" parent="." unique_id=1290696358]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -24,9 +29,8 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-color = Color(0.55193883, 0, 0.21454144, 1)
 
-[node name="MarginContainer" type="MarginContainer" parent="." unique_id=72867136]
+[node name="MarginContainer" type="MarginContainer" parent="BgPanel" unique_id=72867136]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -39,12 +43,7 @@ theme_override_constants/margin_top = 4
 theme_override_constants/margin_right = 4
 theme_override_constants/margin_bottom = 4
 
-[node name="ColorRect2" type="ColorRect" parent="MarginContainer" unique_id=1284788263]
-layout_mode = 2
-mouse_filter = 2
-color = Color(0.4390491, 0.43904912, 0.43904912, 1)
-
-[node name="NameLb" type="Label" parent="." unique_id=1565766912]
+[node name="NameLb" type="Label" parent="BgPanel" unique_id=1565766912]
 layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
@@ -59,7 +58,7 @@ text = "asdfasdf"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="TextureRect" type="TextureRect" parent="." unique_id=1861591422]
+[node name="TextureRect" type="TextureRect" parent="BgPanel" unique_id=1861591422]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -76,7 +75,7 @@ mouse_filter = 2
 texture = ExtResource("2_vb2wc")
 expand_mode = 1
 
-[node name="CountLb" type="Label" parent="." unique_id=1357458699]
+[node name="CountLb" type="Label" parent="BgPanel" unique_id=1357458699]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0

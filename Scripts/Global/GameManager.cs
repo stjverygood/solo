@@ -121,6 +121,7 @@ namespace Solo.Scripts.Global
                         SaveManager.Instance.CurSaveData.BagInventoryList = Player.BagInventory.ItemInstanceList;
                         SaveManager.Instance.CurSaveData.FastBarInventoryGuidStr = Player.FastBarInventory.GuidStr;
                         SaveManager.Instance.CurSaveData.FastBarInventoryList = Player.FastBarInventory.ItemInstanceList;
+                        SaveManager.Instance.CurSaveData.FastBarIndex = Player.CurFastBarIndex;
                         ChunkManager.SaveActiveChunk();
                         SaveManager.Instance.CurSaveData.ChunkSaveDataList = ChunkManager.ChunkSaveDataMap.Values.ToList();
                         SaveManager.Instance.WriteCurSaveData();

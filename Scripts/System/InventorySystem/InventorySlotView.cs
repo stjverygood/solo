@@ -5,17 +5,15 @@ using Solo.Scripts.System.ItemSystem;
 
 public partial class InventorySlotView : Control
 {
+    [Export] private Panel _bgPanel;
     [Export] private TextureRect _iconTr;
     [Export] private Label _nameLb;
     [Export] private Label _countLb;
     private ItemInstance _itemInstance;
     private int _index;
     private InventoryView _parent;
-
-    //public override void _Ready()
-    //{
-
-    //}
+    [Export] private StyleBoxFlat _normalStyle;
+    [Export] private StyleBoxFlat _selectedStyle;
 
     public void Init(InventoryView parent, int index)
     {
@@ -25,10 +23,13 @@ public partial class InventorySlotView : Control
         _iconTr.Texture = null;
         _nameLb.Text = "";
         _countLb.Text = "";
+        SetSelected(false);
+        PivotOffset = Size / 2;
     }
 
     public void SetData(ItemInstance itemInstance)
     {
+
         if (itemInstance == null)
         {
             _iconTr.Texture = null;
@@ -91,5 +92,20 @@ public partial class InventorySlotView : Control
         }
 
 
+    }
+
+    public void SetSelected(bool isSelected)
+    {
+        if (isSelected)
+        {
+            Tween animTween = CreateTween().SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out);
+            animTween.TweenProperty(this, "scale", new Vector2(0.8f, 0.8f), 0.1f);
+            animTween.TweenProperty(this, "scale", Vector2.One, 0.1f);
+            _bgPanel.AddThemeStyleboxOverride("panel", _selectedStyle);
+        }
+        else
+        {
+            _bgPanel.AddThemeStyleboxOverride("panel", _normalStyle);
+        }
     }
 }

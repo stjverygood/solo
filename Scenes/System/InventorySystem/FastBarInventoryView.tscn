@@ -3,6 +3,18 @@
 [ext_resource type="Script" uid="uid://c435ms1p74wxs" path="res://Scripts/System/InventorySystem/InventoryView.cs" id="1_7dvsa"]
 [ext_resource type="PackedScene" uid="uid://v2bqvrhiyu14" path="res://Scenes/System/InventorySystem/InventorySlotView.tscn" id="2_gxlwl"]
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_m3113"]
+bg_color = Color(0, 0, 0, 0.3)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0, 0, 0, 0.6)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+
 [node name="FastBarInventoryView" type="Control" unique_id=1473412187 node_paths=PackedStringArray("_gridContainer")]
 custom_minimum_size = Vector2(350, 100)
 layout_mode = 3
@@ -12,17 +24,18 @@ offset_right = -0.20800781
 offset_bottom = 0.20799255
 script = ExtResource("1_7dvsa")
 SlotViewPs = ExtResource("2_gxlwl")
-_gridContainer = NodePath("GridContainer")
+_gridContainer = NodePath("BgPanel/GridContainer")
 
-[node name="ColorRect" type="ColorRect" parent="." unique_id=1515816353]
+[node name="BgPanel" type="Panel" parent="." unique_id=725387211]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_m3113")
 
-[node name="GridContainer" type="GridContainer" parent="." unique_id=1516157962]
+[node name="GridContainer" type="GridContainer" parent="BgPanel" unique_id=1516157962]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
