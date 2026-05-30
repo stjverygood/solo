@@ -31,7 +31,7 @@ namespace Solo.Scripts.Character.Player
         [Export] public Area2D TouchArea;
         [Export] public BuildingPreview TestStoneBuildingPreview;
         [Export] public PackedScene TestStoneBuildingPs;
-        public int Atk = 10;
+        public int Atk = 35;
 
         public int ResCapacity = 1000;//资源存储上限
         private Tween _animTween; // 用于管理当前动画
@@ -416,10 +416,6 @@ namespace Solo.Scripts.Character.Player
                         if (_curDropItem != null)
                         {
                             _curDropItem.AddToPlayerInventory(FastBarInventory, BagInventory);
-                            //var fastBarLogs = _fastBarInventory.ItemInstanceList.Select(item => item == null ? "null" : $"{item.Data.Type}:{item.Count}");
-                            //GD.Print("--- 快捷栏 --- " + string.Join(" | ", fastBarLogs));
-                            //var bagLogs = _bagInventory.ItemInstanceList.Select(item => item == null ? "null" : $"{item.Data.Type}:{item.Count}");
-                            //GD.Print("--- 背  包 --- " + string.Join(" | ", bagLogs));
                         }
                     }));
 
@@ -561,7 +557,7 @@ namespace Solo.Scripts.Character.Player
             }
             else
             {
-                int maxCount = ItemManager.Instance.GetItemData(targetInv.ItemInstanceList[targetIndex].Type).MaxCount;
+                int maxCount = ItemDataManager.Instance.GetItemData(targetInv.ItemInstanceList[targetIndex].Type).MaxCount;
                 int targetCount = targetInv.ItemInstanceList[targetIndex].Count;
                 int sourceCount = sourceInv.ItemInstanceList[sourceIndex].Count;
                 int canAddCount = maxCount - targetCount;

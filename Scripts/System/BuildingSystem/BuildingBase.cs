@@ -6,7 +6,7 @@ namespace Solo.Scripts.System.BuildingSystem
 {
     public partial class BuildingBase : Node2D
     {
-        public BuildingData Data;
+        public BuildingType Type;
         [Export] public int MaxHp = 100;
         [Export] public ItemType DropItemType;
         [Export] public int MinDropCount;
@@ -16,9 +16,13 @@ namespace Solo.Scripts.System.BuildingSystem
         private int _curHp;
 
 
-        public override void _Ready()
+        public virtual void Init(BuildingType type, Vector2 snapPos)
         {
+            Type = type;
+            Position = snapPos;
             _curHp = MaxHp;
+            GameManager.Instance.BuildingManager.Place(BuildingDataManager.Instance.GetBuildingData(Type), snapPos);
+            GameManager.Instance.ChunkManager.AddItem(this, Position);
         }
 
         public override void _Process(double delta)
@@ -34,11 +38,11 @@ namespace Solo.Scripts.System.BuildingSystem
             _curHp -= damage;
             if (_curHp <= 0)
             {
+                GameManager.Instance.ChunkManager.RemoveItem(this, GlobalPosition);
                 _curHp = 0;
                 DropItem dropItem = DropItemPs.Instantiate<DropItem>();
                 GetTree().CurrentScene.AddChild(dropItem);
-                dropItem.GlobalPosition = GlobalPosition;
-                dropItem.Init(new ItemInstance() { Type = DropItemType, Count = 2 });
+                dropItem.Init(DropItemType, 2, Position);
                 QueueFree();
             }
         }

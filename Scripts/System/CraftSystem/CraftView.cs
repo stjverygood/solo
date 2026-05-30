@@ -1,5 +1,6 @@
 using Godot;
 using Solo.Scripts.Global;
+using Solo.Scripts.System.ItemSystem;
 using System.Collections.Generic;
 
 namespace Solo.Scripts.System.CraftSystem
@@ -57,11 +58,11 @@ namespace Solo.Scripts.System.CraftSystem
                 slotView.Toggled += (selectedSlotView) =>
                 {
                     //被选中的逻辑
-                    _selectedItemNameLb.Text = selectedSlotView.CraftItem.Type.ToString();
+                    _selectedItemNameLb.Text = ItemDataManager.Instance.GetItemData(selectedSlotView.CraftItem.Type).Name;
                     string requiredStr = "所需材料 : ";
                     foreach ((ItemType, int) t in selectedSlotView.CraftItem.RequiredItemList)
                     {
-                        requiredStr += $"{t.Item1} * {t.Item2}; ";
+                        requiredStr += $"{ItemDataManager.Instance.GetItemData(t.Item1).Name} * {t.Item2}, ";
                     }
                     _selectedItemRequiredLb.Text = requiredStr;
                 };

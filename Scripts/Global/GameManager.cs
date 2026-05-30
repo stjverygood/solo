@@ -1,5 +1,6 @@
 using Godot;
 using Solo.Scripts.Character.Player;
+using Solo.Scripts.System.BuildingSystem;
 using Solo.Scripts.System.ChunkSystem;
 using Solo.Scripts.System.SaveSystem;
 using System.Linq;
@@ -23,6 +24,7 @@ namespace Solo.Scripts.Global
         [Export] private PauseView _pauseView;
         public Player Player;
         public ChunkManager ChunkManager;
+        public BuildingManager BuildingManager;
 
         public override void _Ready()
         {
