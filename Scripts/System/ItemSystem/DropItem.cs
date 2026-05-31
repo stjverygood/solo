@@ -1,6 +1,5 @@
 using Godot;
 using Solo.Scripts.Global;
-using Solo.Scripts.System.InventorySystem;
 
 namespace Solo.Scripts.System.ItemSystem
 {
@@ -31,18 +30,17 @@ namespace Solo.Scripts.System.ItemSystem
             TextLb.Visible = isShow;
         }
 
-        public void AddToPlayerInventory(Inventory fastBar, Inventory bag)
+        public void Pickup()
         {
-            ItemInstance itemInstance = new ItemInstance() { Type = Type, Count = Count };
-            itemInstance.Count -= fastBar.AddItemInstance(itemInstance);//优先添加到快捷栏
-            if (itemInstance.Count != 0)//有剩余就添加到背包
-            {
-                itemInstance.Count -= bag.AddItemInstance(itemInstance);
-            }
-            if (itemInstance.Count == 0)//全部添加成功就销毁掉
+            int remainCount = GameManager.Instance.Player.AddItemToInventory(new ItemInstance() { Type = Type, Count = Count });
+            if (remainCount == 0)
             {
                 GameManager.Instance.ChunkManager.RemoveItem(this, Position);
                 QueueFree();
+            }
+            else
+            {
+                Count = remainCount;
             }
         }
     }

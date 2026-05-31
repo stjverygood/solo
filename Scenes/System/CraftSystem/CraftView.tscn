@@ -7,7 +7,7 @@
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_2k2bd"]
 bg_color = Color(0.16862746, 0.16862746, 0.16862746, 1)
 
-[node name="CraftView" type="Control" unique_id=1489113954 node_paths=PackedStringArray("_slotGc", "_selectedItemNameLb", "_selectedItemRequiredLb")]
+[node name="CraftView" type="Control" unique_id=1489113954 node_paths=PackedStringArray("_slotGc", "_selectedItemNameLb", "_selectedItemRequiredLb", "_craftBtn")]
 custom_minimum_size = Vector2(300, 360)
 layout_mode = 3
 anchors_preset = 15
@@ -23,6 +23,7 @@ _slotViewPs = ExtResource("2_yhgba")
 _btnGroup = ExtResource("3_klejn")
 _selectedItemNameLb = NodePath("Panel/SelectedItemNameLb")
 _selectedItemRequiredLb = NodePath("Panel/SelectedItemRequiredLb")
+_craftBtn = NodePath("Panel/Button")
 
 [node name="Panel" type="Panel" parent="." unique_id=1371153688]
 layout_mode = 1

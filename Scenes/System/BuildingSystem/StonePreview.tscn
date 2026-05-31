@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://bede0yg4wialo"]
 
 [ext_resource type="Script" uid="uid://boci74ho2nxg0" path="res://Scripts/System/BuildingSystem/BuildingPreview.cs" id="1_02suh"]
-[ext_resource type="PackedScene" uid="uid://2lo073ucc6un" path="res://Assets/Sprites/StoneSprite.tscn" id="2_cuxjj"]
+[ext_resource type="PackedScene" uid="uid://2lo073ucc6un" path="res://Assets/SpriteNodes/StoneNode.tscn" id="2_cuxjj"]
 
 [node name="StonePreview" type="Node2D" unique_id=1553826081 node_paths=PackedStringArray("Sprite")]
 z_index = 50

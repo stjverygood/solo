@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://c5jw4j3sl5jtj"]
 
 [ext_resource type="Script" uid="uid://4bce462ak6u8" path="res://Scripts/System/BuildingSystem/BuildingBase.cs" id="1_mn4ub"]
-[ext_resource type="PackedScene" uid="uid://2lo073ucc6un" path="res://Assets/Sprites/StoneSprite.tscn" id="2_mn4ub"]
+[ext_resource type="PackedScene" uid="uid://2lo073ucc6un" path="res://Assets/SpriteNodes/StoneNode.tscn" id="2_mn4ub"]
 [ext_resource type="PackedScene" uid="uid://qw0q5wipafhq" path="res://Scenes/System/ItemSystem/DropItem.tscn" id="2_w052s"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_w052s"]

@@ -44,7 +44,6 @@
         Stone,//石头
 
 
-
         Wood,//木头
         IronRaw,//粗铁
         Iron,//钢, 乌黑色
@@ -54,6 +53,9 @@
         Silver,//银, 银白色
         Gold,//金, 直接捡的, 不用冶炼
 
+
+
+        //灵木->玄铁->庚金->仙玉
         WoodSword,  // 木剑
         WoodBow,    // 木弓
         WoodPickaxe,// 木镐
@@ -74,26 +76,6 @@
         IronArmor,   // 铁甲
         IronBoot,    // 铁鞋
 
-        CopperSword,   // 铜剑
-        CopperBow,     // 铜弓
-        CopperPickaxe, // 铜镐
-        CopperAxe,     // 铜斧
-        CopperPot,     // 铜壶
-        CopperFishingRod,//铜鱼竿
-        CopperHelmet,  // 铜盔
-        CopperArmor,   // 铜甲
-        CopperBoot,    // 铜鞋
-
-        SilverSword,   // 银剑
-        SilverBow,     // 银弓
-        SilverPickaxe, // 银镐
-        SilverAxe,     // 银斧
-        SilverPot,     // 银壶
-        SilverFishingRod,//银鱼竿
-        SilverHelmet,  // 银盔
-        SilverArmor,   // 银甲
-        SilverBoot,    // 银鞋
-
         GoldSword,   // 金剑
         GoldBow,     // 金弓
         GoldPickaxe, // 金镐
@@ -104,5 +86,14 @@
         GoldArmor,   // 金甲
         GoldBoot,    // 金鞋
 
+        JadeSword,   // 玉剑
+        JadeBow,     // 玉弓
+        JadePickaxe, // 玉镐
+        JadeAxe,     // 玉斧
+        JadePot,     // 玉壶
+        JadeFishingRod,//玉鱼竿
+        JadeHelmet,  // 玉盔
+        JadeArmor,   // 玉甲
+        JadeBoot,    // 玉鞋
     }
 }

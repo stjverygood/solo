@@ -1,4 +1,5 @@
 using Godot;
+using Solo.Scripts.System.ItemSystem;
 using System;
 
 namespace Solo.Scripts.System.CraftSystem
@@ -16,6 +17,7 @@ namespace Solo.Scripts.System.CraftSystem
         {
             Index = index;
             CraftItem = craftItem;
+            _iconTr.Texture = GD.Load<Texture2D>(ItemDataManager.Instance.GetItemData(CraftItem.Type).IconPath);
             _toggleBtn.ButtonGroup = btnGroup;
             _toggleBtn.Toggled += _toggleBtn_Toggled;
         }
@@ -26,6 +28,12 @@ namespace Solo.Scripts.System.CraftSystem
             {
                 Toggled?.Invoke(this);
             }
+        }
+
+        public void SetSelected()
+        {
+            _toggleBtn.ButtonPressed = true;
+            Toggled?.Invoke(this);
         }
     }
 }

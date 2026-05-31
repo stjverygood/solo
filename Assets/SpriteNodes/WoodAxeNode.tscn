@@ -1,0 +1,11 @@
+[gd_scene format=3 uid="uid://cnps14a8lma3g"]
+
+[ext_resource type="Texture2D" uid="uid://o4hfa45sxt1m" path="res://Assets/AtlasTextures/WoodAxe.tres" id="1_xttpi"]
+
+[node name="WoodAxeNode" type="Node2D" unique_id=1064100871]
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=579850567]
+position = Vector2(1, -2)
+rotation = 0.7853982
+scale = Vector2(-1, 1)
+texture = ExtResource("1_xttpi")

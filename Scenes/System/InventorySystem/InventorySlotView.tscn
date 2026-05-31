@@ -1,9 +1,9 @@
 [gd_scene format=3 uid="uid://v2bqvrhiyu14"]
 
 [ext_resource type="Script" uid="uid://dtg4xwon7uo2j" path="res://Scripts/System/InventorySystem/InventorySlotView.cs" id="1_3pjed"]
-[ext_resource type="StyleBox" uid="uid://cxn5v7tffhfii" path="res://Scenes/System/InventorySystem/InvSlotViewBgPanelNormalStyle.tres" id="2_8kxf3"]
+[ext_resource type="StyleBox" uid="uid://cxn5v7tffhfii" path="res://Assets/Styles/ItemSlotNormalStyle.tres" id="2_8kxf3"]
 [ext_resource type="Texture2D" uid="uid://d4igqp371y5" path="res://Assets/icon.svg" id="2_vb2wc"]
-[ext_resource type="StyleBox" uid="uid://5ux3lcepebu0" path="res://Scenes/System/InventorySystem/InvSlotViewBgPanelSelectedStyle.tres" id="2_y0b75"]
+[ext_resource type="StyleBox" uid="uid://5ux3lcepebu0" path="res://Assets/Styles/ItemSlotViewSelectedStyle.tres" id="2_y0b75"]
 
 [node name="InventorySlotView" type="Control" unique_id=116028700 node_paths=PackedStringArray("_bgPanel", "_iconTr", "_nameLb", "_countLb")]
 custom_minimum_size = Vector2(80, 80)

@@ -24,8 +24,9 @@ namespace Solo.Scripts.System.CraftSystem
         [Export] private ButtonGroup _btnGroup;
         [Export] private Label _selectedItemNameLb;
         [Export] private Label _selectedItemRequiredLb;
+        [Export] private Button _craftBtn;
         private List<CraftItem> CraftItemList = new List<CraftItem>();
-
+        private CraftItem _curCraftItem;
         //public void RefreshCraftItem(CraftViewType craftType)
         //{
 
@@ -39,6 +40,7 @@ namespace Solo.Scripts.System.CraftSystem
             switch (Type)
             {
                 case CraftViewType.Basic://徒手的只能做木套
+                    CraftItemList.Add(new CraftItem(ItemType.Rope, new List<(ItemType, int)>() { (ItemType.Wood, 6), (ItemType.Rope, 20) }));
                     CraftItemList.Add(new CraftItem(ItemType.WoodSword, new List<(ItemType, int)>() { (ItemType.Wood, 6), (ItemType.Rope, 20) }));
                     CraftItemList.Add(new CraftItem(ItemType.WoodBow, new List<(ItemType, int)>() { (ItemType.Wood, 4), (ItemType.Rope, 8) }));
                     CraftItemList.Add(new CraftItem(ItemType.WoodPickaxe, new List<(ItemType, int)>() { (ItemType.Wood, 4), (ItemType.Rope, 20) }));
@@ -58,6 +60,7 @@ namespace Solo.Scripts.System.CraftSystem
                 slotView.Toggled += (selectedSlotView) =>
                 {
                     //被选中的逻辑
+                    _curCraftItem = selectedSlotView.CraftItem;
                     _selectedItemNameLb.Text = ItemDataManager.Instance.GetItemData(selectedSlotView.CraftItem.Type).Name;
                     string requiredStr = "所需材料 : ";
                     foreach ((ItemType, int) t in selectedSlotView.CraftItem.RequiredItemList)
@@ -67,7 +70,14 @@ namespace Solo.Scripts.System.CraftSystem
                     _selectedItemRequiredLb.Text = requiredStr;
                 };
                 _slotGc.AddChild(slotView);
+                if (i == 0)
+                    slotView.SetSelected();
             }
+            _craftBtn.Pressed += () =>
+            {
+                GD.Print("_craftBtn Pressed!!!");
+                GameManager.Instance.Player.AddItemToInventory(new ItemInstance() { Type = _curCraftItem.Type, Count = 1 });
+            };
         }
     }
 }

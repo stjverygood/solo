@@ -39,7 +39,7 @@ namespace Solo.Scripts.Character.Player
         public Inventory BagInventory = new Inventory();//背包
         public Inventory FastBarInventory = new Inventory();//快捷栏
         public int CurFastBarIndex;
-        public ItemType? CurItemType = null;//玩家当前手持的物品, 攻击时要把这个连同攻击力一起传过去给受击者, 让受击者处理受多少伤害, 工具不对要大打折扣
+
 
         [Export] private SelfView _selfView;
         [Export] private InventoryView _bagInventoryView;
@@ -70,6 +70,7 @@ namespace Solo.Scripts.Character.Player
             _fastBarInventoryView.Init(FastBarInventory);
             _bagInventoryView.Visible = false;
             _fastBarInventoryView.SetSelected(CurFastBarIndex, true);
+            RefreshHeadNode();
         }
 
         public override void _PhysicsProcess(double delta)
@@ -135,12 +136,10 @@ namespace Solo.Scripts.Character.Player
         {
             if (Input.IsActionJustPressed("Pre"))
             {
-                //通知暂停
                 ChangeCurFastBarIndex(false);
             }
             if (Input.IsActionJustPressed("Next"))
             {
-                //通知暂停
                 ChangeCurFastBarIndex(true);
             }
 
@@ -194,6 +193,15 @@ namespace Solo.Scripts.Character.Player
 
         public void UpdateWalk(float delta)
         {
+            if (Input.IsActionJustPressed("Pre"))
+            {
+                ChangeCurFastBarIndex(false);
+            }
+            if (Input.IsActionJustPressed("Next"))
+            {
+                ChangeCurFastBarIndex(true);
+            }
+
             if (Input.IsActionJustPressed("Bag"))
             {
                 _selfView.Visible = true;
@@ -253,6 +261,15 @@ namespace Solo.Scripts.Character.Player
 
         public void UpdateRun(float delta)
         {
+            if (Input.IsActionJustPressed("Pre"))
+            {
+                ChangeCurFastBarIndex(false);
+            }
+            if (Input.IsActionJustPressed("Next"))
+            {
+                ChangeCurFastBarIndex(true);
+            }
+
             if (Input.IsActionJustPressed("Action"))
             {
                 _curTargetBuilding = GetNearestBuilding();
@@ -299,6 +316,15 @@ namespace Solo.Scripts.Character.Player
         private float _dashSpeed = 200;
         public void UpdateDash(float delta)
         {
+            if (Input.IsActionJustPressed("Pre"))
+            {
+                ChangeCurFastBarIndex(false);
+            }
+            if (Input.IsActionJustPressed("Next"))
+            {
+                ChangeCurFastBarIndex(true);
+            }
+
             _dashTimer += delta;
             if (_dashTimer >= _dashDuration)
             {
@@ -399,8 +425,9 @@ namespace Solo.Scripts.Character.Player
                     break;
 
                 case PlayerState.Atk:
-                    _animTween.Parallel().TweenProperty(BodyRoot, "modulate", Colors.Black, 0.05f);//变黑
-                    _animTween.TweenProperty(BodyRoot, "skew", 1f, 0.05);
+                    //_animTween.Parallel().TweenProperty(BodyRoot, "modulate", Colors.Red, 0.05f);
+                    _animTween.TweenProperty(BodyRoot, "scale", new Vector2(0.8f, 0.8f), 0.05f); // 砍出去时身体拉伸
+                    _animTween.TweenProperty(_handNode, "rotation", 1.3f, 0.05f); // 砍中目标的目标角度
                     _animTween.TweenCallback(Callable.From(() =>
                     {
                         if (_curTargetBuilding != null)
@@ -410,7 +437,8 @@ namespace Solo.Scripts.Character.Player
                     }));
 
                     _animTween.Parallel().TweenProperty(BodyRoot, "modulate", Colors.White, 0.1f);
-                    _animTween.TweenProperty(BodyRoot, "skew", 0f, 0.1f);
+                    _animTween.TweenProperty(BodyRoot, "scale", new Vector2(1f, 1f), 0.1f);
+                    _animTween.TweenProperty(_handNode, "rotation", 0, 0.1f);
                     _animTween.Finished += () =>
                     {
                         CurState = PlayerState.Idle;
@@ -425,7 +453,7 @@ namespace Solo.Scripts.Character.Player
                     {
                         if (_curDropItem != null)
                         {
-                            _curDropItem.AddToPlayerInventory(FastBarInventory, BagInventory);
+                            _curDropItem.Pickup();
                         }
                     }));
 
@@ -584,6 +612,11 @@ namespace Solo.Scripts.Character.Player
             }
         }
 
+        [Export] private Node2D _handNode;
+        [Export] private PackedScene WoodAxeNodePs;
+        [Export] private PackedScene WoodSwordNodePs;
+        private Node2D _curEquipmentNode = null;
+        public ItemType? CurItemType = null;//玩家当前手持的物品, 攻击时要把这个连同攻击力一起传过去给受击者, 让受击者处理受多少伤害, 工具不对要大打折扣
         private void ChangeCurFastBarIndex(bool isNext)
         {
             if (isNext)
@@ -602,6 +635,36 @@ namespace Solo.Scripts.Character.Player
                 CurFastBarIndex--;
             }
             _fastBarInventoryView.SetSelected(CurFastBarIndex, true);
+            RefreshHeadNode();
+        }
+
+        private void RefreshHeadNode()
+        {
+            if (FastBarInventory.ItemInstanceList[CurFastBarIndex] == null)
+                return;
+            _curEquipmentNode?.QueueFree();
+            _curEquipmentNode = null;
+            switch (FastBarInventory.ItemInstanceList[CurFastBarIndex].Type)
+            {
+                case ItemType.WoodSword:
+                    _curEquipmentNode = WoodSwordNodePs.Instantiate<Node2D>();
+                    break;
+                case ItemType.WoodAxe:
+                    _curEquipmentNode = WoodAxeNodePs.Instantiate<Node2D>();
+                    break;
+            }
+            if (_curEquipmentNode != null)
+                _handNode.AddChild(_curEquipmentNode);
+        }
+
+        public int AddItemToInventory(ItemInstance itemInstance)
+        {
+            itemInstance.Count -= FastBarInventory.AddItemInstance(itemInstance);//优先添加到快捷栏
+            if (itemInstance.Count != 0)//有剩余就添加到背包
+            {
+                itemInstance.Count -= BagInventory.AddItemInstance(itemInstance);
+            }
+            return itemInstance.Count;
         }
     }
 }
