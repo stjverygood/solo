@@ -7,13 +7,13 @@ namespace Solo.Scripts.System.BuildingSystem
     public partial class BuildingBase : Node2D
     {
         public BuildingType Type;
-        [Export] public int MaxHp = 100;
+        [Export] public float MaxHp = 100;
         [Export] public ItemType DropItemType;
         [Export] public int MinDropCount;
         [Export] public int MaxDropCount;
         [Export] public Node2D BodyRoot;
         [Export] public PackedScene DropItemPs;
-        private int _curHp;
+        private float _curHp;
 
 
         public virtual void Init(BuildingType type, Vector2 snapPos)
@@ -29,13 +29,14 @@ namespace Solo.Scripts.System.BuildingSystem
         {
         }
 
-        public void TakeDamage(int damage)
+        public virtual void TakeDamage(ItemType? dmgItemType, float damage)
         {
             Tween animTween = CreateTween().SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out);
             animTween.TweenProperty(BodyRoot, "skew", 0.3f, 0.1f);// 左右晃动
             animTween.TweenProperty(BodyRoot, "skew", -0.3f, 0.1f);
             animTween.TweenProperty(BodyRoot, "skew", 0f, 0.1f);
             _curHp -= damage;
+            GD.Print("damage : " + damage);
             if (_curHp <= 0)
             {
                 GameManager.Instance.ChunkManager.RemoveItem(this, GlobalPosition);

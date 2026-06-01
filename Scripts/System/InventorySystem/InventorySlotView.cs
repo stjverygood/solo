@@ -57,6 +57,7 @@ public partial class InventorySlotView : Control
         previewIconTr.Size = Size;
 
         Control previewContainer = new Control();
+        previewContainer.ZIndex = 100;
         previewContainer.AddChild(previewIconTr);
         previewIconTr.Position = -atPosition;
 

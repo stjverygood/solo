@@ -31,14 +31,13 @@ namespace Solo.Scripts.Character.Player
         [Export] public Area2D TouchArea;
         [Export] public BuildingPreview TestStoneBuildingPreview;
         [Export] public PackedScene TestStoneBuildingPs;
-        public int Atk = 35;
+        public float Atk = 10;
 
         public int ResCapacity = 1000;//资源存储上限
         private Tween _animTween; // 用于管理当前动画
 
         public Inventory BagInventory = new Inventory();//背包
         public Inventory FastBarInventory = new Inventory();//快捷栏
-        public int CurFastBarIndex;
 
 
         [Export] private SelfView _selfView;
@@ -70,7 +69,7 @@ namespace Solo.Scripts.Character.Player
             _fastBarInventoryView.Init(FastBarInventory);
             _bagInventoryView.Visible = false;
             _fastBarInventoryView.SetSelected(CurFastBarIndex, true);
-            RefreshHeadNode();
+            RefreshHandNode();
         }
 
         public override void _PhysicsProcess(double delta)
@@ -432,7 +431,7 @@ namespace Solo.Scripts.Character.Player
                     {
                         if (_curTargetBuilding != null)
                         {
-                            _curTargetBuilding.TakeDamage(Atk);
+                            _curTargetBuilding.TakeDamage(FastBarInventory.ItemInstanceList[CurFastBarIndex]?.Type, Atk);
                         }
                     }));
 
@@ -612,11 +611,11 @@ namespace Solo.Scripts.Character.Player
             }
         }
 
+        public int CurFastBarIndex;//玩家当前手持的物品, 攻击时要把这个连同攻击力一起传过去给受击者, 让受击者处理受多少伤害, 工具不对要大打折扣
         [Export] private Node2D _handNode;
         [Export] private PackedScene WoodAxeNodePs;
         [Export] private PackedScene WoodSwordNodePs;
         private Node2D _curEquipmentNode = null;
-        public ItemType? CurItemType = null;//玩家当前手持的物品, 攻击时要把这个连同攻击力一起传过去给受击者, 让受击者处理受多少伤害, 工具不对要大打折扣
         private void ChangeCurFastBarIndex(bool isNext)
         {
             if (isNext)
@@ -635,15 +634,15 @@ namespace Solo.Scripts.Character.Player
                 CurFastBarIndex--;
             }
             _fastBarInventoryView.SetSelected(CurFastBarIndex, true);
-            RefreshHeadNode();
+            RefreshHandNode();
         }
 
-        private void RefreshHeadNode()
+        private void RefreshHandNode()
         {
-            if (FastBarInventory.ItemInstanceList[CurFastBarIndex] == null)
-                return;
             _curEquipmentNode?.QueueFree();
             _curEquipmentNode = null;
+            if (FastBarInventory.ItemInstanceList[CurFastBarIndex] == null)
+                return;
             switch (FastBarInventory.ItemInstanceList[CurFastBarIndex].Type)
             {
                 case ItemType.WoodSword:
@@ -664,6 +663,7 @@ namespace Solo.Scripts.Character.Player
             {
                 itemInstance.Count -= BagInventory.AddItemInstance(itemInstance);
             }
+            RefreshHandNode();
             return itemInstance.Count;
         }
     }

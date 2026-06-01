@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://c5jw4j3sl5jtj"]
 
-[ext_resource type="Script" uid="uid://4bce462ak6u8" path="res://Scripts/System/BuildingSystem/BuildingBase.cs" id="1_mn4ub"]
+[ext_resource type="Script" uid="uid://cksrcdel22ywl" path="res://Scripts/System/BuildingSystem/Buildings/Stone.cs" id="1_nbvde"]
 [ext_resource type="PackedScene" uid="uid://2lo073ucc6un" path="res://Assets/SpriteNodes/StoneNode.tscn" id="2_mn4ub"]
 [ext_resource type="PackedScene" uid="uid://qw0q5wipafhq" path="res://Scenes/System/ItemSystem/DropItem.tscn" id="2_w052s"]
 
@@ -8,10 +8,10 @@
 size = Vector2(32, 32)
 
 [node name="Stone" type="StaticBody2D" unique_id=1133804511 node_paths=PackedStringArray("BodyRoot")]
-script = ExtResource("1_mn4ub")
+script = ExtResource("1_nbvde")
 DropItemType = 4
 MinDropCount = 1
-MaxDropCount = 10
+MaxDropCount = 2
 BodyRoot = NodePath("StoneSprite")
 DropItemPs = ExtResource("2_w052s")
 

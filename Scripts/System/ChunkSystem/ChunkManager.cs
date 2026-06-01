@@ -314,7 +314,7 @@ namespace Solo.Scripts.System.ChunkSystem
                 }
                 foreach (DropItem dropItem in chunk.DropItemList)//移除node
                 {
-                    chunkSaveData.DropItemSaveDataList.Add(new DropItemSaveData() { Type = dropItem.Type, X = dropItem.GlobalPosition.X, Y = dropItem.GlobalPosition.Y });
+                    chunkSaveData.DropItemSaveDataList.Add(new DropItemSaveData() { Type = dropItem.Type, Count = dropItem.Count, X = dropItem.GlobalPosition.X, Y = dropItem.GlobalPosition.Y });
                 }
                 ChunkSaveDataMap[chunkPos] = chunkSaveData;
             }

@@ -1,8 +1,8 @@
 [gd_scene format=4 uid="uid://c364av0qjs5rx"]
 
 [ext_resource type="Script" uid="uid://scul4uk12av0" path="res://Scripts/System/ChunkSystem/ChunkManager.cs" id="1_c2qkc"]
-[ext_resource type="PackedScene" uid="uid://c61sslqbtwcoe" path="res://Scenes/System/BuildingSystem/Tree.tscn" id="2_qtd3p"]
-[ext_resource type="PackedScene" uid="uid://c5jw4j3sl5jtj" path="res://Scenes/System/BuildingSystem/Stone.tscn" id="3_cqtpm"]
+[ext_resource type="PackedScene" uid="uid://c61sslqbtwcoe" path="res://Scenes/System/BuildingSystem/Buildings/Tree.tscn" id="2_qtd3p"]
+[ext_resource type="PackedScene" uid="uid://c5jw4j3sl5jtj" path="res://Scenes/System/BuildingSystem/Buildings/Stone.tscn" id="3_cqtpm"]
 [ext_resource type="TileSet" uid="uid://r1ghkbiqrc1b" path="res://Assets/Tileset/tileset.tres" id="4_hijxa"]
 [ext_resource type="PackedScene" uid="uid://qw0q5wipafhq" path="res://Scenes/System/ItemSystem/DropItem.tscn" id="4_qtd3p"]
 
