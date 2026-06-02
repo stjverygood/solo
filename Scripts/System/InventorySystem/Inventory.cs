@@ -1,4 +1,5 @@
-﻿using Solo.Scripts.System.ItemSystem;
+﻿using Solo.Scripts.Global;
+using Solo.Scripts.System.ItemSystem;
 using System;
 using System.Collections.Generic;
 
@@ -106,6 +107,21 @@ namespace Solo.Scripts.System.InventorySystem
                     SlotChanged?.Invoke(targetIndex);
                 }
             }
+        }
+
+        public int GetItemCount(ItemType itemType)//查询某个物品类型的总数量
+        {
+            int count = 0;
+            foreach (ItemInstance instance in ItemInstanceList)
+            {
+                if (instance == null)
+                    continue;
+                if (itemType == instance.Type)
+                {
+                    count += instance.Count;
+                }
+            }
+            return count;
         }
     }
 }

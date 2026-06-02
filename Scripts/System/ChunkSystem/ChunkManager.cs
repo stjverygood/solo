@@ -199,7 +199,7 @@ namespace Solo.Scripts.System.ChunkSystem
                                 Vector2 offset = new Vector2(_tileSize / 2f, _tileSize / 2f);// 计算偏移量，使物体位于瓦片中心 (假设 _tileSize 是 16，偏移就是 8)
                                 DropItem goldDropItem = DropItemPs.Instantiate<DropItem>();
                                 GetTree().CurrentScene.AddChild(goldDropItem);
-                                goldDropItem.Init(ItemType.Gold, 3, tileWorldPos + offset);
+                                goldDropItem.Init(ItemType.Grass, 3, tileWorldPos + offset);
                             }
 
                         }

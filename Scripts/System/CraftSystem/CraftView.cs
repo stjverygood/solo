@@ -27,12 +27,8 @@ namespace Solo.Scripts.System.CraftSystem
         [Export] private Button _craftBtn;
         private List<CraftItem> CraftItemList = new List<CraftItem>();
         private CraftItem _curCraftItem;
-        //public void RefreshCraftItem(CraftViewType craftType)
-        //{
 
-        //}
-
-        public override void _Ready()
+        public void Init()
         {
             foreach (Node child in _slotGc.GetChildren())// 先清空grid
                 child.QueueFree();
@@ -40,7 +36,7 @@ namespace Solo.Scripts.System.CraftSystem
             switch (Type)
             {
                 case CraftViewType.Basic://徒手的只能做木套
-                    CraftItemList.Add(new CraftItem(ItemType.Rope, new List<(ItemType, int)>() { (ItemType.Wood, 6), (ItemType.Rope, 20) }));
+                    CraftItemList.Add(new CraftItem(ItemType.Rope, new List<(ItemType, int)>() { (ItemType.Grass, 2) }));
                     CraftItemList.Add(new CraftItem(ItemType.WoodSword, new List<(ItemType, int)>() { (ItemType.Wood, 6), (ItemType.Rope, 20) }));
                     CraftItemList.Add(new CraftItem(ItemType.WoodBow, new List<(ItemType, int)>() { (ItemType.Wood, 4), (ItemType.Rope, 8) }));
                     CraftItemList.Add(new CraftItem(ItemType.WoodPickaxe, new List<(ItemType, int)>() { (ItemType.Wood, 4), (ItemType.Rope, 20) }));
@@ -68,6 +64,7 @@ namespace Solo.Scripts.System.CraftSystem
                         requiredStr += $"{ItemDataManager.Instance.GetItemData(t.Item1).Name} * {t.Item2}, ";
                     }
                     _selectedItemRequiredLb.Text = requiredStr;
+                    CheckCanCraft();
                 };
                 _slotGc.AddChild(slotView);
                 if (i == 0)
@@ -78,6 +75,20 @@ namespace Solo.Scripts.System.CraftSystem
                 GD.Print("_craftBtn Pressed!!!");
                 GameManager.Instance.Player.AddItemToInventory(new ItemInstance() { Type = _curCraftItem.Type, Count = 1, CurDur = ItemDataManager.Instance.GetItemData(_curCraftItem.Type).MaxDur });
             };
+        }
+
+        private void CheckCanCraft()
+        {
+            foreach ((ItemType, int) t in _curCraftItem.RequiredItemList)
+            {
+                int count = GameManager.Instance.Player.FastBarInventory.GetItemCount(t.Item1) + GameManager.Instance.Player.BagInventory.GetItemCount(t.Item1);
+                if (count < t.Item2)
+                {
+                    _craftBtn.Disabled = true;
+                    return;
+                }
+            }
+            _craftBtn.Disabled = false;
         }
     }
 }

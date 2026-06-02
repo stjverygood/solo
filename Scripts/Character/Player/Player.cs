@@ -64,6 +64,7 @@ namespace Solo.Scripts.Character.Player
             CurState = PlayerState.Idle;
             ChangeAnim();
 
+            _selfView.BasicCraftView.Init();
             _selfView.Visible = false;
             _bagInventoryView.Init(BagInventory);
             _fastBarInventoryView.Init(FastBarInventory);
