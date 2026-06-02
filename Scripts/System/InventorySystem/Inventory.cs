@@ -55,6 +55,12 @@ namespace Solo.Scripts.System.InventorySystem
             return instance.Count - remainCount;
         }
 
+        public void RemoveItem(int index)//整个移除掉
+        {
+            ItemInstanceList[index] = null;
+            SlotChanged?.Invoke(index);
+        }
+
         public bool SetSlot(int index, ItemInstance instance)
         {
             ItemInstanceList[index] = instance;

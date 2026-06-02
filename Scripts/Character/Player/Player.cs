@@ -437,12 +437,22 @@ namespace Solo.Scripts.Character.Player
                             }
                             else
                             {
+                                _curTargetBuilding.TakeDamage(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type, Atk);
                                 if (ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).MaxDur != -1)
                                 {
                                     FastBarInventory.ItemInstanceList[CurFastBarIndex].CurDur--;
+                                    FastBarInventory.ItemInstanceList[CurFastBarIndex].CurDur--;
+                                    FastBarInventory.ItemInstanceList[CurFastBarIndex].CurDur--;
+                                    FastBarInventory.ItemInstanceList[CurFastBarIndex].CurDur--;
+                                    FastBarInventory.ItemInstanceList[CurFastBarIndex].CurDur--;
+                                    if (FastBarInventory.ItemInstanceList[CurFastBarIndex].CurDur <= 0)
+                                    {
+                                        FastBarInventory.RemoveItem(CurFastBarIndex);
+                                        RefreshHandNode();
+                                    }
                                     _fastBarInventoryView.RefreshSlot(CurFastBarIndex);
                                 }
-                                _curTargetBuilding.TakeDamage(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type, Atk);
+
                             }
                         }
                     }));
