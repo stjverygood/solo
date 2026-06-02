@@ -3,18 +3,26 @@
 [ext_resource type="PackedScene" uid="uid://b2q085r8rtj8b" path="res://Assets/SpriteNodes/TreeNode.tscn" id="1_l0c5x"]
 [ext_resource type="Script" uid="uid://cda82x5oh4p1h" path="res://Scripts/System/BuildingSystem/Buildings/Tree.cs" id="1_mimmo"]
 [ext_resource type="PackedScene" uid="uid://qw0q5wipafhq" path="res://Scenes/System/ItemSystem/DropItem.tscn" id="2_1mx48"]
+[ext_resource type="PackedScene" uid="uid://dbnfhhfpkqht2" path="res://Scenes/Global/HpBarControl.tscn" id="4_ojq6a"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ebtgs"]
 size = Vector2(16, 16)
 
-[node name="Tree" type="StaticBody2D" unique_id=173891570 node_paths=PackedStringArray("BodyRoot")]
+[node name="Tree" type="StaticBody2D" unique_id=173891570 node_paths=PackedStringArray("BodyRoot", "_hpBarControl")]
 script = ExtResource("1_mimmo")
 DropItemType = 5
 BodyRoot = NodePath("TreeSprite")
 DropItemPs = ExtResource("2_1mx48")
+_hpBarControl = NodePath("HpBarControl")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=123052844]
 position = Vector2(0, 8)
 shape = SubResource("RectangleShape2D_ebtgs")
 
 [node name="TreeSprite" parent="." unique_id=155291358 instance=ExtResource("1_l0c5x")]
+
+[node name="HpBarControl" parent="." unique_id=1940445632 instance=ExtResource("4_ojq6a")]
+offset_left = -28.0
+offset_top = -28.0
+offset_right = 172.0
+offset_bottom = -8.0

@@ -21,7 +21,8 @@ GameManager="*uid://dxpcm8w2n4qa"
 
 [display]
 
-window/stretch/mode="canvas_items"
+window/stretch/mode="viewport"
+window/stretch/scale_mode="integer"
 
 [dotnet]
 

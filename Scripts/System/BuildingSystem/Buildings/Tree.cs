@@ -1,12 +1,14 @@
-﻿using Solo.Scripts.Global;
+﻿using Godot;
+using Solo.Scripts.Global;
 
 namespace Solo.Scripts.System.BuildingSystem.BuildingSystem
 {
     internal partial class Tree : BuildingBase
     {
-        public override void _Ready()
+        public override void Init(BuildingType type, Vector2 snapPos)
         {
-            MaxHp = 100;
+            MaxHp = 120;
+            base.Init(type, snapPos);
         }
 
         public override void TakeDamage(ItemType? dmgItemType, float damage)

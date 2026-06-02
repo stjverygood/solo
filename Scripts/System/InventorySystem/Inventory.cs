@@ -10,8 +10,6 @@ namespace Solo.Scripts.System.InventorySystem
         public List<ItemInstance> ItemInstanceList = new List<ItemInstance>();
         public Action<int> SlotChanged;//用于通知ui哪个格子变了, 修改ui格子数据
 
-        public Inventory() { }
-
         public int AddItemInstance(ItemInstance instance)//自动添加, 比如捡东西, 双击其他背包的物品, 返回成功添加的物品数量
         {
             int remainCount = instance.Count;//记录当前剩余数量
@@ -43,13 +41,13 @@ namespace Solo.Scripts.System.InventorySystem
                     return instance.Count;
                 }
             }
-            else//不可堆叠, 实例由外部已经new出来了, 这里浅拷贝就行
+            else//不可堆叠
             {
-                for (int i = 0; i < ItemInstanceList.Count; i++)//未能合并的, 只能自己先创建instance
+                for (int i = 0; i < ItemInstanceList.Count; i++)
                 {
                     if (ItemInstanceList[i] != null)
                         continue;
-                    ItemInstanceList[i] = instance;
+                    ItemInstanceList[i] = new ItemInstance() { Type = instance.Type, Count = instance.Count, CurDur = instance.CurDur };
                     SlotChanged?.Invoke(i);
                     return 1;
                 }

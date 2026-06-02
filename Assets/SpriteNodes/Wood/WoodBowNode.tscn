@@ -1,0 +1,11 @@
+[gd_scene format=3 uid="uid://tmi3tvixc3m0"]
+
+[ext_resource type="Texture2D" uid="uid://4bptxhgjov0l" path="res://Assets/AtlasTextures/WoodSword.tres" id="1_nykik"]
+
+[node name="WoodBowNode" type="Node2D" unique_id=1064100871]
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=579850567]
+position = Vector2(1, -1.9999998)
+rotation = 0.7853982
+scale = Vector2(-1, 1)
+texture = ExtResource("1_nykik")

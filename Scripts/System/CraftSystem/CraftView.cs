@@ -46,7 +46,7 @@ namespace Solo.Scripts.System.CraftSystem
                     CraftItemList.Add(new CraftItem(ItemType.WoodPickaxe, new List<(ItemType, int)>() { (ItemType.Wood, 4), (ItemType.Rope, 20) }));
                     CraftItemList.Add(new CraftItem(ItemType.WoodAxe, new List<(ItemType, int)>() { (ItemType.Wood, 5), (ItemType.Rope, 20) }));
                     CraftItemList.Add(new CraftItem(ItemType.WoodPot, new List<(ItemType, int)>() { (ItemType.Wood, 6), (ItemType.Rope, 20) }));
-                    CraftItemList.Add(new CraftItem(ItemType.WoodFishingRod, new List<(ItemType, int)>() { (ItemType.Wood, 12), (ItemType.Rope, 20) }));
+                    CraftItemList.Add(new CraftItem(ItemType.WoodRod, new List<(ItemType, int)>() { (ItemType.Wood, 12), (ItemType.Rope, 20) }));
                     CraftItemList.Add(new CraftItem(ItemType.WoodHelmet, new List<(ItemType, int)>() { (ItemType.Wood, 8), (ItemType.Rope, 20), (ItemType.Silk, 10) }));
                     CraftItemList.Add(new CraftItem(ItemType.WoodArmor, new List<(ItemType, int)>() { (ItemType.Wood, 12), (ItemType.Rope, 20), (ItemType.Silk, 10) }));
                     CraftItemList.Add(new CraftItem(ItemType.WoodBoot, new List<(ItemType, int)>() { (ItemType.Wood, 6), (ItemType.Rope, 20), (ItemType.Silk, 10) }));
@@ -76,7 +76,7 @@ namespace Solo.Scripts.System.CraftSystem
             _craftBtn.Pressed += () =>
             {
                 GD.Print("_craftBtn Pressed!!!");
-                GameManager.Instance.Player.AddItemToInventory(new ItemInstance() { Type = _curCraftItem.Type, Count = 1 });
+                GameManager.Instance.Player.AddItemToInventory(new ItemInstance() { Type = _curCraftItem.Type, Count = 1, CurDur = ItemDataManager.Instance.GetItemData(_curCraftItem.Type).MaxDur });
             };
         }
     }

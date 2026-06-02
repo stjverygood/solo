@@ -61,7 +61,7 @@
         WoodPickaxe,// 木镐
         WoodAxe,    // 木斧
         WoodPot,     // 木壶
-        WoodFishingRod,//木鱼竿
+        WoodRod,//木鱼竿
         WoodHelmet, // 木盔, 防具影响移动速度
         WoodArmor,  // 木甲
         WoodBoot,   // 木鞋
@@ -71,7 +71,7 @@
         IronPickaxe, // 铁镐
         IronAxe,     // 铁斧
         IronPot,     // 铁壶
-        IronFishingRod,//铁鱼竿
+        IronRod,//铁鱼竿
         IronHelmet,  // 铁盔
         IronArmor,   // 铁甲
         IronBoot,    // 铁鞋
@@ -81,7 +81,7 @@
         GoldPickaxe, // 金镐
         GoldAxe,     // 金斧
         GoldPot,     // 金壶
-        GoldFishingRod,//金鱼竿
+        GoldRod,//金鱼竿
         GoldHelmet,  // 金盔
         GoldArmor,   // 金甲
         GoldBoot,    // 金鞋
@@ -91,7 +91,7 @@
         JadePickaxe, // 玉镐
         JadeAxe,     // 玉斧
         JadePot,     // 玉壶
-        JadeFishingRod,//玉鱼竿
+        JadeRod,//玉鱼竿
         JadeHelmet,  // 玉盔
         JadeArmor,   // 玉甲
         JadeBoot,    // 玉鞋

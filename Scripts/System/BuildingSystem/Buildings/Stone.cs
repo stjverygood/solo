@@ -1,16 +1,14 @@
+using Godot;
 using Solo.Scripts.Global;
 
 namespace Solo.Scripts.System.BuildingSystem
 {
     public partial class Stone : BuildingBase
     {
-        //public override void _Ready()
-        //{
-        //}
-
-        //public override void _Process(double delta)
-        //{
-        //}
+        public override void Init(BuildingType type, Vector2 snapPos)
+        {
+            base.Init(type, snapPos);
+        }
 
         public override void TakeDamage(ItemType? dmgItemType, float damage)
         {

@@ -429,9 +429,21 @@ namespace Solo.Scripts.Character.Player
                     _animTween.TweenProperty(_handNode, "rotation", 1.3f, 0.05f); // 砍中目标的目标角度
                     _animTween.TweenCallback(Callable.From(() =>
                     {
-                        if (_curTargetBuilding != null)
+                        if (_curTargetBuilding != null)//todo : 如果是工具就扣耐久
                         {
-                            _curTargetBuilding.TakeDamage(FastBarInventory.ItemInstanceList[CurFastBarIndex]?.Type, Atk);
+                            if (FastBarInventory.ItemInstanceList[CurFastBarIndex] == null)//空手
+                            {
+                                _curTargetBuilding.TakeDamage(null, Atk);
+                            }
+                            else
+                            {
+                                if (ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).MaxDur != -1)
+                                {
+                                    FastBarInventory.ItemInstanceList[CurFastBarIndex].CurDur--;
+                                    _fastBarInventoryView.RefreshSlot(CurFastBarIndex);
+                                }
+                                _curTargetBuilding.TakeDamage(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type, Atk);
+                            }
                         }
                     }));
 
@@ -611,10 +623,21 @@ namespace Solo.Scripts.Character.Player
             }
         }
 
+        public int AddItemToInventory(ItemInstance itemInstance)
+        {
+            itemInstance.Count -= FastBarInventory.AddItemInstance(itemInstance);//优先添加到快捷栏
+            if (itemInstance.Count != 0)//有剩余就添加到背包
+            {
+                itemInstance.Count -= BagInventory.AddItemInstance(itemInstance);
+            }
+            RefreshHandNode();
+            return itemInstance.Count;
+        }
+
+
         public int CurFastBarIndex;//玩家当前手持的物品, 攻击时要把这个连同攻击力一起传过去给受击者, 让受击者处理受多少伤害, 工具不对要大打折扣
         [Export] private Node2D _handNode;
-        [Export] private PackedScene WoodAxeNodePs;
-        [Export] private PackedScene WoodSwordNodePs;
+        [Export] private Sprite2D _handSprite;
         private Node2D _curEquipmentNode = null;
         private void ChangeCurFastBarIndex(bool isNext)
         {
@@ -639,33 +662,12 @@ namespace Solo.Scripts.Character.Player
 
         private void RefreshHandNode()
         {
-            _curEquipmentNode?.QueueFree();
-            _curEquipmentNode = null;
+            _handSprite.Texture = null;
             if (FastBarInventory.ItemInstanceList[CurFastBarIndex] == null)
                 return;
-            switch (FastBarInventory.ItemInstanceList[CurFastBarIndex].Type)
-            {
-                case ItemType.WoodSword:
-                    _curEquipmentNode = WoodSwordNodePs.Instantiate<Node2D>();
-                    break;
-                case ItemType.WoodAxe:
-                    _curEquipmentNode = WoodAxeNodePs.Instantiate<Node2D>();
-                    break;
-            }
-            if (_curEquipmentNode != null)
-                _handNode.AddChild(_curEquipmentNode);
+            _handSprite.Texture = GD.Load<Texture2D>(ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).IconPath);
         }
 
-        public int AddItemToInventory(ItemInstance itemInstance)
-        {
-            itemInstance.Count -= FastBarInventory.AddItemInstance(itemInstance);//优先添加到快捷栏
-            if (itemInstance.Count != 0)//有剩余就添加到背包
-            {
-                itemInstance.Count -= BagInventory.AddItemInstance(itemInstance);
-            }
-            RefreshHandNode();
-            return itemInstance.Count;
-        }
     }
 }
 

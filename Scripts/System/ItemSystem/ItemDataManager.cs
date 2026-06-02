@@ -12,65 +12,65 @@ namespace Solo.Scripts.System.ItemSystem
         private ItemDataManager()
         {
             //材料
-            _itemDataMap.Add(ItemType.Silk, new ItemData() { Name = "丝绸", MaxCount = 16, IconPath = "res://Assets/AtlasTextures/milk_icon.tres" });
-            _itemDataMap.Add(ItemType.Leather, new ItemData() { Name = "皮", MaxCount = 16, IconPath = "res://Assets/AtlasTextures/milk_icon.tres" });
-            _itemDataMap.Add(ItemType.Grass, new ItemData() { Name = "草", MaxCount = 16, IconPath = "res://Assets/AtlasTextures/milk_icon.tres" });
-            _itemDataMap.Add(ItemType.Rope, new ItemData() { Name = "绳", MaxCount = 16, IconPath = "res://Assets/AtlasTextures/milk_icon.tres" });
-            _itemDataMap.Add(ItemType.Stone, new ItemData() { Name = "石头", MaxCount = 16, IconPath = "res://Assets/AtlasTextures/milk_icon.tres" });
+            _itemDataMap.Add(ItemType.Silk, new ItemData("丝绸", 99, "res://Assets/AtlasTextures/milk_icon.tres", -1));
+            _itemDataMap.Add(ItemType.Leather, new ItemData("皮", 99, "res://Assets/AtlasTextures/milk_icon.tres", -1));
+            _itemDataMap.Add(ItemType.Grass, new ItemData("草", 99, "res://Assets/AtlasTextures/milk_icon.tres", -1));
+            _itemDataMap.Add(ItemType.Rope, new ItemData("绳", 99, "res://Assets/AtlasTextures/milk_icon.tres", -1));
+            _itemDataMap.Add(ItemType.Stone, new ItemData("石", 99, "res://Assets/AtlasTextures/milk_icon.tres", -1));
 
-            _itemDataMap.Add(ItemType.Wood, new ItemData() { Name = "木头", MaxCount = 16, IconPath = "res://Assets/AtlasTextures/milk_icon.tres" });
-            _itemDataMap.Add(ItemType.IronRaw, new ItemData() { Name = "粗铁", MaxCount = 16, IconPath = "res://Assets/AtlasTextures/milk_icon.tres" });
-            _itemDataMap.Add(ItemType.Iron, new ItemData() { Name = "铁块", MaxCount = 16, IconPath = "res://Assets/AtlasTextures/milk_icon.tres" });
-            _itemDataMap.Add(ItemType.CopperRaw, new ItemData() { Name = "粗铜", MaxCount = 16, IconPath = "res://Assets/AtlasTextures/milk_icon.tres" });
-            _itemDataMap.Add(ItemType.Copper, new ItemData() { Name = "铜块", MaxCount = 16, IconPath = "res://Assets/AtlasTextures/milk_icon.tres" });
-            _itemDataMap.Add(ItemType.SilverRaw, new ItemData() { Name = "粗银", MaxCount = 16, IconPath = "res://Assets/AtlasTextures/milk_icon.tres" });
-            _itemDataMap.Add(ItemType.Silver, new ItemData() { Name = "银块", MaxCount = 16, IconPath = "res://Assets/AtlasTextures/milk_icon.tres" });
-            _itemDataMap.Add(ItemType.Gold, new ItemData() { Name = "黄金", MaxCount = 16, IconPath = "res://Assets/AtlasTextures/milk_icon.tres" });
+            _itemDataMap.Add(ItemType.Wood, new ItemData("木", 99, "res://Assets/AtlasTextures/milk_icon.tres", -1));
+            _itemDataMap.Add(ItemType.IronRaw, new ItemData("粗铁", 16, "res://Assets/AtlasTextures/milk_icon.tres", -1));
+            _itemDataMap.Add(ItemType.Iron, new ItemData("铁块", 16, "res://Assets/AtlasTextures/milk_icon.tres", -1));
+            _itemDataMap.Add(ItemType.CopperRaw, new ItemData("粗铜", 16, "res://Assets/AtlasTextures/milk_icon.tres", -1));
+            _itemDataMap.Add(ItemType.Copper, new ItemData("铜块", 16, "res://Assets/AtlasTextures/milk_icon.tres", -1));
+            _itemDataMap.Add(ItemType.SilverRaw, new ItemData("粗银", 16, "res://Assets/AtlasTextures/milk_icon.tres", -1));
+            _itemDataMap.Add(ItemType.Silver, new ItemData("银块", 16, "res://Assets/AtlasTextures/milk_icon.tres", -1));
+            _itemDataMap.Add(ItemType.Gold, new ItemData("黄金", 16, "res://Assets/AtlasTextures/milk_icon.tres", -1));
 
 
             //木制套装
-            _itemDataMap.Add(ItemType.WoodSword, new ItemData() { Name = "木剑", MaxCount = 1, IconPath = "res://Assets/AtlasTextures/WoodSword.tres" });
-            _itemDataMap.Add(ItemType.WoodBow, new ItemData() { Name = "木弓", MaxCount = 1, IconPath = "res://Assets/AtlasTextures/WoodAxe.tres" });
-            _itemDataMap.Add(ItemType.WoodPickaxe, new ItemData() { Name = "木稿", MaxCount = 1, IconPath = "res://Assets/AtlasTextures/WoodAxe.tres" });
-            _itemDataMap.Add(ItemType.WoodAxe, new ItemData() { Name = "木斧", MaxCount = 1, IconPath = "res://Assets/AtlasTextures/WoodAxe.tres" });
-            _itemDataMap.Add(ItemType.WoodPot, new ItemData() { Name = "木壶", MaxCount = 1, IconPath = "res://Assets/AtlasTextures/WoodAxe.tres" });
-            _itemDataMap.Add(ItemType.WoodFishingRod, new ItemData() { Name = "木竿", MaxCount = 1, IconPath = "res://Assets/AtlasTextures/WoodAxe.tres" });
-            _itemDataMap.Add(ItemType.WoodHelmet, new ItemData() { Name = "木盔", MaxCount = 1, IconPath = "res://Assets/AtlasTextures/WoodAxe.tres" });
-            _itemDataMap.Add(ItemType.WoodArmor, new ItemData() { Name = "木甲", MaxCount = 1, IconPath = "res://Assets/AtlasTextures/WoodAxe.tres" });
-            _itemDataMap.Add(ItemType.WoodBoot, new ItemData() { Name = "木鞋", MaxCount = 1, IconPath = "res://Assets/AtlasTextures/WoodAxe.tres" });
+            _itemDataMap.Add(ItemType.WoodSword, new ItemData("木剑", 1, "res://Assets/AtlasTextures/WoodSword.tres", 100));
+            _itemDataMap.Add(ItemType.WoodBow, new ItemData("木弓", 1, "res://Assets/AtlasTextures/WoodAxe.tres", 100));
+            _itemDataMap.Add(ItemType.WoodPickaxe, new ItemData("木稿", 1, "res://Assets/AtlasTextures/WoodAxe.tres", 100));
+            _itemDataMap.Add(ItemType.WoodAxe, new ItemData("木斧", 1, "res://Assets/AtlasTextures/WoodAxe.tres", 100));
+            _itemDataMap.Add(ItemType.WoodPot, new ItemData("木壶", 1, "res://Assets/AtlasTextures/WoodAxe.tres", 100));
+            _itemDataMap.Add(ItemType.WoodRod, new ItemData("木竿", 1, "res://Assets/AtlasTextures/WoodAxe.tres", 100));
+            _itemDataMap.Add(ItemType.WoodHelmet, new ItemData("木盔", 1, "res://Assets/AtlasTextures/WoodAxe.tres", 100));
+            _itemDataMap.Add(ItemType.WoodArmor, new ItemData("木甲", 1, "res://Assets/AtlasTextures/WoodAxe.tres", 100));
+            _itemDataMap.Add(ItemType.WoodBoot, new ItemData("木鞋", 1, "res://Assets/AtlasTextures/WoodAxe.tres", 100));
 
             //铁制套装
-            _itemDataMap.Add(ItemType.IronSword, new ItemData() { Name = "铁剑", MaxCount = 1, IconPath = "res://Assets/AtlasTextures/WoodAxe.tres" });
-            _itemDataMap.Add(ItemType.IronBow, new ItemData() { Name = "铁弓", MaxCount = 1, IconPath = "res://Assets/AtlasTextures/WoodAxe.tres" });
-            _itemDataMap.Add(ItemType.IronPickaxe, new ItemData() { Name = "铁稿", MaxCount = 1, IconPath = "res://Assets/AtlasTextures/milk_icon.tres" });
-            _itemDataMap.Add(ItemType.IronAxe, new ItemData() { Name = "铁斧", MaxCount = 1, IconPath = "res://Assets/AtlasTextures/WoodAxe.tres" });
-            _itemDataMap.Add(ItemType.IronPot, new ItemData() { Name = "铁壶", MaxCount = 1, IconPath = "res://Assets/AtlasTextures/WoodAxe.tres" });
-            _itemDataMap.Add(ItemType.IronFishingRod, new ItemData() { Name = "铁竿", MaxCount = 1, IconPath = "res://Assets/AtlasTextures/WoodAxe.tres" });
-            _itemDataMap.Add(ItemType.IronHelmet, new ItemData() { Name = "铁盔", MaxCount = 1, IconPath = "res://Assets/AtlasTextures/WoodAxe.tres" });
-            _itemDataMap.Add(ItemType.IronArmor, new ItemData() { Name = "铁甲", MaxCount = 1, IconPath = "res://Assets/AtlasTextures/WoodAxe.tres" });
-            _itemDataMap.Add(ItemType.IronBoot, new ItemData() { Name = "铁鞋", MaxCount = 1, IconPath = "res://Assets/AtlasTextures/WoodAxe.tres" });
+            _itemDataMap.Add(ItemType.IronSword, new ItemData("铁剑", 1, "res://Assets/AtlasTextures/WoodAxe.tres", 100));
+            _itemDataMap.Add(ItemType.IronBow, new ItemData("铁弓", 1, "res://Assets/AtlasTextures/WoodAxe.tres", 100));
+            _itemDataMap.Add(ItemType.IronPickaxe, new ItemData("铁稿", 1, "res://Assets/AtlasTextures/milk_icon.tres", 100));
+            _itemDataMap.Add(ItemType.IronAxe, new ItemData("铁斧", 1, "res://Assets/AtlasTextures/WoodAxe.tres", 100));
+            _itemDataMap.Add(ItemType.IronPot, new ItemData("铁壶", 1, "res://Assets/AtlasTextures/WoodAxe.tres", 100));
+            _itemDataMap.Add(ItemType.IronRod, new ItemData("铁竿", 1, "res://Assets/AtlasTextures/WoodAxe.tres", 100));
+            _itemDataMap.Add(ItemType.IronHelmet, new ItemData("铁盔", 1, "res://Assets/AtlasTextures/WoodAxe.tres", 100));
+            _itemDataMap.Add(ItemType.IronArmor, new ItemData("铁甲", 1, "res://Assets/AtlasTextures/WoodAxe.tres", 100));
+            _itemDataMap.Add(ItemType.IronBoot, new ItemData("铁鞋", 1, "res://Assets/AtlasTextures/WoodAxe.tres", 100));
 
             //金制装备
-            _itemDataMap.Add(ItemType.GoldSword, new ItemData() { Name = "金剑", MaxCount = 1, IconPath = "res://Assets/AtlasTextures/WoodAxe.tres" });
-            _itemDataMap.Add(ItemType.GoldBow, new ItemData() { Name = "金弓", MaxCount = 1, IconPath = "res://Assets/AtlasTextures/WoodAxe.tres" });
-            _itemDataMap.Add(ItemType.GoldPickaxe, new ItemData() { Name = "金稿", MaxCount = 1, IconPath = "res://Assets/AtlasTextures/WoodAxe.tres" });
-            _itemDataMap.Add(ItemType.GoldAxe, new ItemData() { Name = "金斧", MaxCount = 1, IconPath = "res://Assets/AtlasTextures/WoodAxe.tres" });
-            _itemDataMap.Add(ItemType.GoldPot, new ItemData() { Name = "金壶", MaxCount = 1, IconPath = "res://Assets/AtlasTextures/WoodAxe.tres" });
-            _itemDataMap.Add(ItemType.GoldFishingRod, new ItemData() { Name = "金竿", MaxCount = 1, IconPath = "res://Assets/AtlasTextures/WoodAxe.tres" });
-            _itemDataMap.Add(ItemType.GoldHelmet, new ItemData() { Name = "金盔", MaxCount = 1, IconPath = "res://Assets/AtlasTextures/WoodAxe.tres" });
-            _itemDataMap.Add(ItemType.GoldArmor, new ItemData() { Name = "金甲", MaxCount = 1, IconPath = "res://Assets/AtlasTextures/WoodAxe.tres" });
-            _itemDataMap.Add(ItemType.GoldBoot, new ItemData() { Name = "金鞋", MaxCount = 1, IconPath = "res://Assets/AtlasTextures/WoodAxe.tres" });
+            _itemDataMap.Add(ItemType.GoldSword, new ItemData("金剑", 1, "res://Assets/AtlasTextures/WoodAxe.tres", 100));
+            _itemDataMap.Add(ItemType.GoldBow, new ItemData("金弓", 1, "res://Assets/AtlasTextures/WoodAxe.tres", 100));
+            _itemDataMap.Add(ItemType.GoldPickaxe, new ItemData("金稿", 1, "res://Assets/AtlasTextures/WoodAxe.tres", 100));
+            _itemDataMap.Add(ItemType.GoldAxe, new ItemData("金斧", 1, "res://Assets/AtlasTextures/WoodAxe.tres", 100));
+            _itemDataMap.Add(ItemType.GoldPot, new ItemData("金壶", 1, "res://Assets/AtlasTextures/WoodAxe.tres", 100));
+            _itemDataMap.Add(ItemType.GoldRod, new ItemData("金竿", 1, "res://Assets/AtlasTextures/WoodAxe.tres", 100));
+            _itemDataMap.Add(ItemType.GoldHelmet, new ItemData("金盔", 1, "res://Assets/AtlasTextures/WoodAxe.tres", 100));
+            _itemDataMap.Add(ItemType.GoldArmor, new ItemData("金甲", 1, "res://Assets/AtlasTextures/WoodAxe.tres", 100));
+            _itemDataMap.Add(ItemType.GoldBoot, new ItemData("金鞋", 1, "res://Assets/AtlasTextures/WoodAxe.tres", 100));
 
             //玉制套装
-            _itemDataMap.Add(ItemType.JadeSword, new ItemData() { Name = "玉剑", MaxCount = 1, IconPath = "res://Assets/AtlasTextures/WoodAxe.tres" });
-            _itemDataMap.Add(ItemType.JadeBow, new ItemData() { Name = "玉弓", MaxCount = 1, IconPath = "res://Assets/AtlasTextures/WoodAxe.tres" });
-            _itemDataMap.Add(ItemType.JadePickaxe, new ItemData() { Name = "玉稿", MaxCount = 1, IconPath = "res://Assets/AtlasTextures/WoodAxe.tres" });
-            _itemDataMap.Add(ItemType.JadeAxe, new ItemData() { Name = "玉斧", MaxCount = 1, IconPath = "res://Assets/AtlasTextures/WoodAxe.tres" });
-            _itemDataMap.Add(ItemType.JadePot, new ItemData() { Name = "玉壶", MaxCount = 1, IconPath = "res://Assets/AtlasTextures/WoodAxe.tres" });
-            _itemDataMap.Add(ItemType.JadeFishingRod, new ItemData() { Name = "玉竿", MaxCount = 1, IconPath = "res://Assets/AtlasTextures/WoodAxe.tres" });
-            _itemDataMap.Add(ItemType.JadeHelmet, new ItemData() { Name = "玉盔", MaxCount = 1, IconPath = "res://Assets/AtlasTextures/WoodAxe.tres" });
-            _itemDataMap.Add(ItemType.JadeArmor, new ItemData() { Name = "玉甲", MaxCount = 1, IconPath = "res://Assets/AtlasTextures/WoodAxe.tres" });
-            _itemDataMap.Add(ItemType.JadeBoot, new ItemData() { Name = "玉鞋", MaxCount = 1, IconPath = "res://Assets/AtlasTextures/WoodAxe.tres" });
+            _itemDataMap.Add(ItemType.JadeSword, new ItemData("玉剑", 1, "res://Assets/AtlasTextures/WoodAxe.tres", 100));
+            _itemDataMap.Add(ItemType.JadeBow, new ItemData("玉弓", 1, "res://Assets/AtlasTextures/WoodAxe.tres", 100));
+            _itemDataMap.Add(ItemType.JadePickaxe, new ItemData("玉稿", 1, "res://Assets/AtlasTextures/WoodAxe.tres", 100));
+            _itemDataMap.Add(ItemType.JadeAxe, new ItemData("玉斧", 1, "res://Assets/AtlasTextures/WoodAxe.tres", 100));
+            _itemDataMap.Add(ItemType.JadePot, new ItemData("玉壶", 1, "res://Assets/AtlasTextures/WoodAxe.tres", 100));
+            _itemDataMap.Add(ItemType.JadeRod, new ItemData("玉竿", 1, "res://Assets/AtlasTextures/WoodAxe.tres", 100));
+            _itemDataMap.Add(ItemType.JadeHelmet, new ItemData("玉盔", 1, "res://Assets/AtlasTextures/WoodAxe.tres", 100));
+            _itemDataMap.Add(ItemType.JadeArmor, new ItemData("玉甲", 1, "res://Assets/AtlasTextures/WoodAxe.tres", 100));
+            _itemDataMap.Add(ItemType.JadeBoot, new ItemData("玉鞋", 1, "res://Assets/AtlasTextures/WoodAxe.tres", 100));
         }
 
         public ItemData GetItemData(ItemType type)

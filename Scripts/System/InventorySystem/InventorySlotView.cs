@@ -9,6 +9,7 @@ public partial class InventorySlotView : Control
     [Export] private TextureRect _iconTr;
     [Export] private Label _nameLb;
     [Export] private Label _countLb;
+    [Export] private ProgressBar _durPb;
     private ItemInstance _itemInstance;
     private int _index;
     private InventoryView _parent;
@@ -20,9 +21,7 @@ public partial class InventorySlotView : Control
         _parent = parent;
         _index = index;
         _itemInstance = null;
-        _iconTr.Texture = null;
-        _nameLb.Text = "";
-        _countLb.Text = "";
+        SetData(null);
         SetSelected(false);
         PivotOffset = Size / 2;
     }
@@ -35,13 +34,21 @@ public partial class InventorySlotView : Control
             _iconTr.Texture = null;
             _nameLb.Text = "";
             _countLb.Text = "";
+            _durPb.Visible = false;
             return;
         }
 
         _itemInstance = itemInstance;
-        _iconTr.Texture = GD.Load<Texture2D>(ItemDataManager.Instance.GetItemData(_itemInstance.Type).IconPath);
-        _countLb.Text = $"{_itemInstance.Count}";
-        _nameLb.Text = $"{ItemDataManager.Instance.GetItemData(_itemInstance.Type).Name}";
+        ItemData itemData = ItemDataManager.Instance.GetItemData(_itemInstance.Type);
+        _iconTr.Texture = GD.Load<Texture2D>(itemData.IconPath);
+        _countLb.Text = itemData.MaxCount == 1 ? "" : $"{_itemInstance.Count}";
+        _nameLb.Text = $"{itemData.Name}";
+        if (itemData.MaxDur != -1)
+        {
+            _durPb.Visible = true;
+            _durPb.MaxValue = itemData.MaxDur;
+            _durPb.Value = itemInstance.CurDur;
+        }
     }
 
     public override Variant _GetDragData(Vector2 atPosition)

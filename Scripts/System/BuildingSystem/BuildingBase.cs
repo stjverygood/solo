@@ -13,6 +13,8 @@ namespace Solo.Scripts.System.BuildingSystem
         [Export] public int MaxDropCount;
         [Export] public Node2D BodyRoot;
         [Export] public PackedScene DropItemPs;
+        [Export] public HpBarControl _hpBarControl;
+
         private float _curHp;
 
 
@@ -21,6 +23,8 @@ namespace Solo.Scripts.System.BuildingSystem
             Type = type;
             Position = snapPos;
             _curHp = MaxHp;
+            _hpBarControl.Refresh(MaxHp, _curHp);
+            _hpBarControl.Visible = false;
             GameManager.Instance.BuildingManager.Place(BuildingDataManager.Instance.GetBuildingData(Type), snapPos);
             GameManager.Instance.ChunkManager.AddItem(this, Position);
         }
@@ -36,7 +40,7 @@ namespace Solo.Scripts.System.BuildingSystem
             animTween.TweenProperty(BodyRoot, "skew", -0.3f, 0.1f);
             animTween.TweenProperty(BodyRoot, "skew", 0f, 0.1f);
             _curHp -= damage;
-            GD.Print("damage : " + damage);
+            _hpBarControl.Refresh(MaxHp, _curHp);
             if (_curHp <= 0)
             {
                 GameManager.Instance.ChunkManager.RemoveItem(this, GlobalPosition);
