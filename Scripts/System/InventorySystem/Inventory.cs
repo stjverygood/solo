@@ -135,6 +135,19 @@ namespace Solo.Scripts.System.InventorySystem
             return count - remainCount;
         }
 
+        public int RemoveItemByIndex(int index, int count)//根据index删物品, 返回剩余物品数量
+        {
+            ItemInstanceList[index].Count -= count;
+            if (ItemInstanceList[index].Count == 0)
+            {
+                ItemInstanceList[index] = null;
+                SlotChanged?.Invoke(index);
+                return 0;
+            }
+            SlotChanged?.Invoke(index);
+            return ItemInstanceList[index].Count;
+        }
+
         public int GetItemCount(ItemType itemType)//查询某个物品类型的总数量
         {
             int count = 0;

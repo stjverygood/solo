@@ -11,9 +11,9 @@ namespace Solo.Scripts.System.BuildingSystem
 
         private BuildingDataManager()
         {
-            _BuildingDataMap.Add(BuildingType.Tree, new BuildingData() { Type = BuildingType.Tree, Width = 1, Height = 2 });
-            _BuildingDataMap.Add(BuildingType.Stone, new BuildingData() { Type = BuildingType.Stone, Width = 2, Height = 2 });
-            _BuildingDataMap.Add(BuildingType.Core, new BuildingData() { Type = BuildingType.Core, Width = 4, Height = 4 });
+            _BuildingDataMap.Add(BuildingType.Tree, new BuildingData() { Type = BuildingType.Tree, Width = 1, Height = 2, PsPath = "" });
+            _BuildingDataMap.Add(BuildingType.Stone, new BuildingData() { Type = BuildingType.Stone, Width = 2, Height = 2, PsPath = "" });
+            _BuildingDataMap.Add(BuildingType.MainBase, new BuildingData() { Type = BuildingType.MainBase, Width = 4, Height = 4, PsPath = "res://Scenes/System/BuildingSystem/Buildings/MainBase.tscn" });
         }
 
         public BuildingData GetBuildingData(BuildingType type)

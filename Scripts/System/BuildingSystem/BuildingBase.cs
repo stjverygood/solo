@@ -22,7 +22,7 @@ namespace Solo.Scripts.System.BuildingSystem
         public virtual void Init(BuildingType type, Vector2 snapPos)
         {
             Type = type;
-            Position = snapPos;
+            GlobalPosition = snapPos;
             _curHp = MaxHp;
             _hpBarControl.Refresh(MaxHp, _curHp);
             _hpBarControl.Visible = false;

@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://dpkxkwy3ger5n" path="res://Scripts/Character/Player/Player.cs" id="1_lxeke"]
 [ext_resource type="Texture2D" uid="uid://di0q8426y42st" path="res://Assets/player_shadiao.png" id="2_y25d7"]
+[ext_resource type="PackedScene" uid="uid://das8eij0ua5tt" path="res://Scenes/System/BuildingSystem/BuildingPreview.tscn" id="3_f0b02"]
 [ext_resource type="PackedScene" uid="uid://cegl0cmno78dg" path="res://Scenes/System/InventorySystem/BagInventoryView.tscn" id="3_lxeke"]
 [ext_resource type="Texture2D" uid="uid://o4hfa45sxt1m" path="res://Assets/AtlasTextures/WoodAxe.tres" id="4_3gn43"]
 [ext_resource type="PackedScene" uid="uid://557c5e8cwx11" path="res://Scenes/System/InventorySystem/FastBarInventoryView.tscn" id="4_y25d7"]
@@ -35,6 +36,7 @@ _bagInventoryView = NodePath("CanvasLayer/BagInventoryView")
 _fastBarInventoryView = NodePath("CanvasLayer/FastBarInventoryViewv")
 _handNode = NodePath("SpriteRoot/HandNode")
 _handSprite = NodePath("SpriteRoot/HandNode/Sprite2D")
+_buildingPreviewPs = ExtResource("3_f0b02")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1924437222]
 shape = SubResource("CapsuleShape2D_kpjcp")

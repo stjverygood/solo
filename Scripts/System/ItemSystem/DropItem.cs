@@ -15,7 +15,7 @@ namespace Solo.Scripts.System.ItemSystem
         {
             Type = type;
             Count = count;
-            Position = pos;
+            GlobalPosition = pos;
             TextLb.Text = ItemDataManager.Instance.GetItemData(Type).Name;
             TextLb.Visible = false;
             Texture2D texture = GD.Load<Texture2D>(ItemDataManager.Instance.GetItemData(Type).IconPath);

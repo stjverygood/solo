@@ -16,6 +16,7 @@ namespace Solo.Scripts.Character.Player
         Dash,
         Atk,//近战攻击
         RangeAtk,//远程攻击
+        Build,//建造状态
         Death,
         BagUI,
     }
@@ -66,8 +67,17 @@ namespace Solo.Scripts.Character.Player
             RangeAtkArea.BodyEntered += RangeAtkArea_BodyEntered;
             RangeAtkArea.BodyExited += RangeAtkArea_BodyExited;
 
-            CurState = PlayerState.Idle;
-            ChangeAnim();
+
+            if (FastBarInventory.ItemInstanceList[CurFastBarIndex] != null && ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).isBuilding)
+            {
+                CurState = PlayerState.Build;
+            }
+            else
+            {
+                CurState = PlayerState.Idle;
+                ChangeAnim();
+            }
+
 
             _selfView.BasicCraftView.Init();
             _selfView.Visible = false;
@@ -82,24 +92,8 @@ namespace Solo.Scripts.Character.Player
 
         public override void _PhysicsProcess(double delta)
         {
-            //Vector2 placePos = GlobalPosition + Vector2.Down * 20;
-            //Vector2 snapPos = GameManager.Instance.ChunkManager.BuildingManager.SnapToCell(BuildingDataManager.Instance.GetItemData(TestStoneBuildingPreview.Type), placePos);
-            //bool canPlace = GameManager.Instance.ChunkManager.BuildingManager.CanPlaced(BuildingDataManager.Instance.GetItemData(TestStoneBuildingPreview.Type), snapPos);
-            //TestStoneBuildingPreview.SetCanPlace(canPlace);
-            //GD.Print($"snapPos : {snapPos}");
-            //GD.Print($"canPlace : {canPlace}");
-            //TestStoneBuildingPreview.GlobalPosition = snapPos;
-            //if (Input.IsActionJustPressed("Action") && canPlace)
-            //{
-            //    GameManager.Instance.ChunkManager.BuildingManager.Place(BuildingDataManager.Instance.GetItemData(TestStoneBuildingPreview.Type), snapPos);
-            //    Building bd = TestStoneBuildingPs.Instantiate<Building>();
-            //    bd.GlobalPosition = snapPos;
-            //    GetTree().CurrentScene.AddChild(bd);
-            //}
-
-
             UpdateState((float)delta);
-            //GD.Print($"_curState : {_curState}");
+            GD.Print($"CurState : {CurState}");
             //GD.Print($"GlobalPosition : {GlobalPosition}");
         }
 
@@ -122,9 +116,12 @@ namespace Solo.Scripts.Character.Player
                 case PlayerState.Atk:
                     UpdateAtk(delta);
                     break;
-                //case PlayerState.Pickup:
-                //    UpdatePickup(delta);
-                //    break;
+                case PlayerState.RangeAtk:
+                    UpdateRangeAtk(delta);
+                    break;
+                case PlayerState.Build:
+                    UpdateBuild(delta);
+                    break;
                 case PlayerState.Death:
                     UpdateDeath(delta);
                     break;
@@ -151,10 +148,20 @@ namespace Solo.Scripts.Character.Player
             if (Input.IsActionJustPressed("Pre"))
             {
                 ChangeCurFastBarIndex(false);
+                if (FastBarInventory.ItemInstanceList[CurFastBarIndex] != null && ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).isBuilding)
+                {
+                    CurState = PlayerState.Build;
+                    return;
+                }
             }
             if (Input.IsActionJustPressed("Next"))
             {
                 ChangeCurFastBarIndex(true);
+                if (FastBarInventory.ItemInstanceList[CurFastBarIndex] != null && ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).isBuilding)
+                {
+                    CurState = PlayerState.Build;
+                    return;
+                }
             }
 
             if (Input.IsActionJustPressed("Bag"))
@@ -221,10 +228,20 @@ namespace Solo.Scripts.Character.Player
             if (Input.IsActionJustPressed("Pre"))
             {
                 ChangeCurFastBarIndex(false);
+                if (FastBarInventory.ItemInstanceList[CurFastBarIndex] != null && ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).isBuilding)
+                {
+                    CurState = PlayerState.Build;
+                    return;
+                }
             }
             if (Input.IsActionJustPressed("Next"))
             {
                 ChangeCurFastBarIndex(true);
+                if (FastBarInventory.ItemInstanceList[CurFastBarIndex] != null && ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).isBuilding)
+                {
+                    CurState = PlayerState.Build;
+                    return;
+                }
             }
 
             if (Input.IsActionJustPressed("Bag"))
@@ -264,7 +281,6 @@ namespace Solo.Scripts.Character.Player
                 SpriteRoot.Scale = new Vector2(-1, 1);
             else if (input.X > 0)
                 SpriteRoot.Scale = new Vector2(1, 1);
-            //TouchArea.Rotation = input.Angle();
             if (GameManager.Instance.ChunkManager.GetTileType(GlobalPosition) == TileType.Water)
                 Velocity = input * moveSpeed / 4;
             else
@@ -284,10 +300,20 @@ namespace Solo.Scripts.Character.Player
             if (Input.IsActionJustPressed("Pre"))
             {
                 ChangeCurFastBarIndex(false);
+                if (FastBarInventory.ItemInstanceList[CurFastBarIndex] != null && ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).isBuilding)
+                {
+                    CurState = PlayerState.Build;
+                    return;
+                }
             }
             if (Input.IsActionJustPressed("Next"))
             {
                 ChangeCurFastBarIndex(true);
+                if (FastBarInventory.ItemInstanceList[CurFastBarIndex] != null && ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).isBuilding)
+                {
+                    CurState = PlayerState.Build;
+                    return;
+                }
             }
 
             CheckAtkTarget();
@@ -334,10 +360,20 @@ namespace Solo.Scripts.Character.Player
             if (Input.IsActionJustPressed("Pre"))
             {
                 ChangeCurFastBarIndex(false);
+                if (FastBarInventory.ItemInstanceList[CurFastBarIndex] != null && ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).isBuilding)
+                {
+                    CurState = PlayerState.Build;
+                    return;
+                }
             }
             if (Input.IsActionJustPressed("Next"))
             {
                 ChangeCurFastBarIndex(true);
+                if (FastBarInventory.ItemInstanceList[CurFastBarIndex] != null && ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).isBuilding)
+                {
+                    CurState = PlayerState.Build;
+                    return;
+                }
             }
 
             _dashTimer += delta;
@@ -372,6 +408,74 @@ namespace Solo.Scripts.Character.Player
             }
         }
 
+        public void UpdateRangeAtk(float delta)
+        {
+            //Vector2 input = Input.GetVector("MoveLeft", "MoveRight", "MoveForward", "MoveBack");
+            //if (input != Vector2.Zero)
+            //{
+            //    //TouchArea.Rotation = input.Angle();
+            //    if (GameManager.Instance.ChunkManager.GetTileType(GlobalPosition) == TileType.Water)
+            //        Velocity = input * moveSpeed / 8;
+            //    else
+            //        Velocity = input * moveSpeed / 2;
+            //    MoveAndSlide();
+            //}
+        }
+
+
+        public void UpdateBuild(float delta)
+        {
+            if (Input.IsActionJustPressed("Pre"))
+            {
+                ChangeCurFastBarIndex(false);
+                if (FastBarInventory.ItemInstanceList[CurFastBarIndex] == null || ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).isBuilding == false)
+                {
+                    CurState = PlayerState.Idle;
+                    return;
+                }
+            }
+            if (Input.IsActionJustPressed("Next"))
+            {
+                ChangeCurFastBarIndex(true);
+                if (FastBarInventory.ItemInstanceList[CurFastBarIndex] == null || ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).isBuilding == false)
+                {
+                    CurState = PlayerState.Idle;
+                    return;
+                }
+            }
+
+            Vector2 input = Input.GetVector("MoveLeft", "MoveRight", "MoveForward", "MoveBack");
+            if (input != Vector2.Zero)
+                _curDir = input;
+            if (input.X < 0)
+                SpriteRoot.Scale = new Vector2(-1, 1);
+            else if (input.X > 0)
+                SpriteRoot.Scale = new Vector2(1, 1);
+            if (GameManager.Instance.ChunkManager.GetTileType(GlobalPosition) == TileType.Water)
+                Velocity = input * moveSpeed / 4;
+            else
+                Velocity = input * moveSpeed;
+            MoveAndSlide();
+
+            if (Input.IsActionJustPressed("Atk"))
+            {
+                bool isBuild = _curBuildingPreview.Build();                if (isBuild)
+                {
+                    int remainCount = FastBarInventory.RemoveItemByIndex(CurFastBarIndex, 1);
+
+                    if (remainCount == 0)
+                    {
+                        RefreshHandNode();
+                        //todo : count--, 若count = 0, 空手, 并且切到Idle
+                        CurState = PlayerState.Idle;
+                        return;
+                    }
+                }
+
+            }
+        }
+
+
         public void UpdateCapture(float delta)
         {
         }
@@ -391,16 +495,19 @@ namespace Solo.Scripts.Character.Player
             {
                 _selfView.Visible = false;
                 _bagInventoryView.Visible = false;
-                CurState = PlayerState.Idle;
-                return;
+                if (FastBarInventory.ItemInstanceList[CurFastBarIndex] != null && ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).isBuilding)
+                {
+                    CurState = PlayerState.Build;
+                }
+                else
+                {
+                    CurState = PlayerState.Idle;
+                    ChangeAnim();
+                }
+
             }
-        }
-
-        private void Move()
-        {
 
         }
-
 
         private void ChangeAnim()
         {
@@ -655,6 +762,8 @@ namespace Solo.Scripts.Character.Player
         public int CurFastBarIndex;//玩家当前手持的物品, 攻击时要把这个连同攻击力一起传过去给受击者, 让受击者处理受多少伤害, 工具不对要大打折扣
         [Export] private Node2D _handNode;
         [Export] private Sprite2D _handSprite;
+        [Export] private PackedScene _buildingPreviewPs;
+        private BuildingPreview _curBuildingPreview;
         private Node2D _curEquipmentNode = null;
         private void ChangeCurFastBarIndex(bool isNext)
         {
@@ -680,9 +789,23 @@ namespace Solo.Scripts.Character.Player
         private void RefreshHandNode()
         {
             _handSprite.Texture = null;
+            if (IsInstanceValid(_curBuildingPreview))
+            {
+                _curBuildingPreview.QueueFree();
+                _curBuildingPreview = null; // 记得置空
+            }
             if (FastBarInventory.ItemInstanceList[CurFastBarIndex] == null)
                 return;
-            _handSprite.Texture = GD.Load<Texture2D>(ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).IconPath);
+            if (ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).isBuilding)
+            {
+                _curBuildingPreview = _buildingPreviewPs.Instantiate<BuildingPreview>();
+                _handNode.AddChild(_curBuildingPreview);
+                _curBuildingPreview.Init(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type, ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).IconPath, _handNode.GlobalPosition);
+            }
+            else
+            {
+                _handSprite.Texture = GD.Load<Texture2D>(ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).IconPath);
+            }
         }
 
     }

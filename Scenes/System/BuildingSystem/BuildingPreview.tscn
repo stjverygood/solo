@@ -1,0 +1,9 @@
+[gd_scene format=3 uid="uid://das8eij0ua5tt"]
+
+[ext_resource type="Script" uid="uid://boci74ho2nxg0" path="res://Scripts/System/BuildingSystem/BuildingPreview.cs" id="1_rrcyd"]
+
+[node name="BuildingPreview" type="Node2D" unique_id=1507914055 node_paths=PackedStringArray("_sprite")]
+script = ExtResource("1_rrcyd")
+_sprite = NodePath("Sprite2D")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1064485870]

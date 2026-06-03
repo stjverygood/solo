@@ -29,7 +29,13 @@
     {
         Tree,
         Stone,
-        Core,//主基地
+        MainBase,//聚灵之源
+        Flag,//法旗
+        BuildingCraft,//建筑合成台
+        ToolCraft,//工具合成台
+        ArmorCraft,//防具合成台
+        Crucible,//熔炉
+        ItemBox,//储物箱
     }
 
 

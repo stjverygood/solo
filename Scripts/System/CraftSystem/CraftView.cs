@@ -36,16 +36,17 @@ namespace Solo.Scripts.System.CraftSystem
             switch (Type)
             {
                 case CraftViewType.Basic://徒手的只能做木套
-                    CraftItemList.Add(new CraftItem(ItemType.Rope, new List<(ItemType, int)>() { (ItemType.Grass, 2) }));
-                    CraftItemList.Add(new CraftItem(ItemType.WoodSword, new List<(ItemType, int)>() { (ItemType.Wood, 6), (ItemType.Rope, 20) }));
-                    CraftItemList.Add(new CraftItem(ItemType.WoodBow, new List<(ItemType, int)>() { (ItemType.Wood, 4), (ItemType.Rope, 8) }));
-                    CraftItemList.Add(new CraftItem(ItemType.WoodPickaxe, new List<(ItemType, int)>() { (ItemType.Wood, 4), (ItemType.Rope, 20) }));
-                    CraftItemList.Add(new CraftItem(ItemType.WoodAxe, new List<(ItemType, int)>() { (ItemType.Wood, 5), (ItemType.Rope, 20) }));
-                    CraftItemList.Add(new CraftItem(ItemType.WoodPot, new List<(ItemType, int)>() { (ItemType.Wood, 6), (ItemType.Rope, 20) }));
-                    CraftItemList.Add(new CraftItem(ItemType.WoodRod, new List<(ItemType, int)>() { (ItemType.Wood, 12), (ItemType.Rope, 20) }));
-                    CraftItemList.Add(new CraftItem(ItemType.WoodHelmet, new List<(ItemType, int)>() { (ItemType.Wood, 8), (ItemType.Rope, 20), (ItemType.Silk, 10) }));
-                    CraftItemList.Add(new CraftItem(ItemType.WoodArmor, new List<(ItemType, int)>() { (ItemType.Wood, 12), (ItemType.Rope, 20), (ItemType.Silk, 10) }));
-                    CraftItemList.Add(new CraftItem(ItemType.WoodBoot, new List<(ItemType, int)>() { (ItemType.Wood, 6), (ItemType.Rope, 20), (ItemType.Silk, 10) }));
+                    CraftItemList.Add(new CraftItem(ItemType.MainBase, new List<(ItemType, int)>() { (ItemType.MainBaseStone, 0), (ItemType.Wood, 0), (ItemType.Stone, 0) }));
+                    CraftItemList.Add(new CraftItem(ItemType.Rope, new List<(ItemType, int)>() { (ItemType.Grass, 1) }));
+                    CraftItemList.Add(new CraftItem(ItemType.WoodSword, new List<(ItemType, int)>() { (ItemType.Wood, 3), (ItemType.Rope, 5) }));
+                    CraftItemList.Add(new CraftItem(ItemType.WoodBow, new List<(ItemType, int)>() { (ItemType.Wood, 4), (ItemType.Rope, 5) }));
+                    CraftItemList.Add(new CraftItem(ItemType.WoodPickaxe, new List<(ItemType, int)>() { (ItemType.Wood, 4), (ItemType.Rope, 5) }));
+                    CraftItemList.Add(new CraftItem(ItemType.WoodAxe, new List<(ItemType, int)>() { (ItemType.Wood, 3), (ItemType.Rope, 5) }));
+                    CraftItemList.Add(new CraftItem(ItemType.WoodPot, new List<(ItemType, int)>() { (ItemType.Wood, 4), (ItemType.Rope, 5) }));
+                    CraftItemList.Add(new CraftItem(ItemType.WoodRod, new List<(ItemType, int)>() { (ItemType.Wood, 3), (ItemType.Rope, 5) }));
+                    CraftItemList.Add(new CraftItem(ItemType.WoodHelmet, new List<(ItemType, int)>() { (ItemType.Wood, 4), (ItemType.Rope, 5), (ItemType.Silk, 5) }));
+                    CraftItemList.Add(new CraftItem(ItemType.WoodArmor, new List<(ItemType, int)>() { (ItemType.Wood, 3), (ItemType.Rope, 5), (ItemType.Silk, 5) }));
+                    CraftItemList.Add(new CraftItem(ItemType.WoodBoot, new List<(ItemType, int)>() { (ItemType.Wood, 4), (ItemType.Rope, 5), (ItemType.Silk, 5) }));
                     break;
             }
 
