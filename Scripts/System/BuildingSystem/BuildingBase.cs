@@ -41,10 +41,17 @@ namespace Solo.Scripts.System.BuildingSystem
             AutoHeal((float)delta);
         }
 
+        private float _damageCooldownTimer = 0; // 受伤后的冷却计时器
+        private const float _healDelayAfterDamage = 3.0f; // 受伤后等待 3 秒才开始回血
         private float _healTimer = 0;
         private float _healDuration = 1;
         private void AutoHeal(float delta)
         {
+            if (_damageCooldownTimer < _healDelayAfterDamage)
+            {
+                _damageCooldownTimer += delta;
+                return;// 如果距离上次受伤还没过去 3 秒，就累加时间并直接返回（不回血）
+            }
             _healTimer += delta;
             if (_healTimer < _healDuration)
                 return;
@@ -62,6 +69,8 @@ namespace Solo.Scripts.System.BuildingSystem
             animTween.TweenProperty(Sprite, "skew", -0.3f, 0.1f);
             animTween.TweenProperty(Sprite, "skew", 0f, 0.1f);
             _curHp -= damage;
+            _damageCooldownTimer = 0f;
+            _healTimer = 0f;
             _hpBarControl.Refresh(MaxHp, _curHp);
             if (_curHp <= 0)
             {
