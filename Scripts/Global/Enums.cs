@@ -95,5 +95,12 @@
         JadeHelmet,  // 玉盔
         JadeArmor,   // 玉甲
         JadeBoot,    // 玉鞋
+
+        //建筑物品
+        Core,//核心
+        Flag,//阵旗
+        BuildingCraft,//建筑合成台
+        ToolCraft,//工具合成台
+        ArmorCraft,//防具合成台
     }
 }

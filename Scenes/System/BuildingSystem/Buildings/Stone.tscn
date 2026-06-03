@@ -1,23 +1,27 @@
 [gd_scene format=3 uid="uid://c5jw4j3sl5jtj"]
 
 [ext_resource type="Script" uid="uid://cksrcdel22ywl" path="res://Scripts/System/BuildingSystem/Buildings/Stone.cs" id="1_nbvde"]
-[ext_resource type="PackedScene" uid="uid://2lo073ucc6un" path="res://Assets/SpriteNodes/StoneNode.tscn" id="2_mn4ub"]
 [ext_resource type="PackedScene" uid="uid://qw0q5wipafhq" path="res://Scenes/System/ItemSystem/DropItem.tscn" id="2_w052s"]
+[ext_resource type="Shader" uid="uid://i3lcvke3ll2n" path="res://Assets/Shaders/Outline.gdshader" id="4_iij6g"]
 [ext_resource type="PackedScene" uid="uid://dbnfhhfpkqht2" path="res://Scenes/Global/HpBarControl.tscn" id="4_kclqx"]
+[ext_resource type="Texture2D" uid="uid://c0t2titgvp3od" path="res://Assets/Basic_Grass_Biom_things.png" id="5_iij6g"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_w052s"]
 size = Vector2(32, 32)
 
-[node name="Stone" type="StaticBody2D" unique_id=1133804511 node_paths=PackedStringArray("BodyRoot", "_hpBarControl")]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_g3tj1"]
+shader = ExtResource("4_iij6g")
+shader_parameter/outline_color = Color(1, 1, 1, 1)
+shader_parameter/outline_width = 1.0
+
+[node name="Stone" type="StaticBody2D" unique_id=1133804511 node_paths=PackedStringArray("Sprite", "_hpBarControl")]
 script = ExtResource("1_nbvde")
 DropItemType = 4
 MinDropCount = 1
 MaxDropCount = 2
-BodyRoot = NodePath("StoneSprite")
+Sprite = NodePath("Sprite2D")
 DropItemPs = ExtResource("2_w052s")
 _hpBarControl = NodePath("HpBarControl")
-
-[node name="StoneSprite" parent="." unique_id=478787431 instance=ExtResource("2_mn4ub")]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=2120550186]
 shape = SubResource("RectangleShape2D_w052s")
@@ -27,3 +31,11 @@ offset_left = -28.0
 offset_top = -23.999998
 offset_right = 172.0
 offset_bottom = -3.999998
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=2099608940]
+material = SubResource("ShaderMaterial_g3tj1")
+position = Vector2(-4.7683716e-07, 4.7683716e-07)
+scale = Vector2(2, 2)
+texture = ExtResource("5_iij6g")
+region_enabled = true
+region_rect = Rect2(128, 16, 16, 16)

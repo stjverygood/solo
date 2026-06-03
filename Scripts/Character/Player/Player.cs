@@ -14,9 +14,8 @@ namespace Solo.Scripts.Character.Player
         Walk,
         Run,
         Dash,
-        Atk,//第一优先级
-        //Capture,//第二优先级
-        Pickup,//第三优先级
+        Atk,//近战攻击
+        RangeAtk,//远程攻击
         Death,
         BagUI,
     }
@@ -28,7 +27,9 @@ namespace Solo.Scripts.Character.Player
         public float moveSpeed = 50;
         [Export] public Node2D SpriteRoot;//附带上身体之外的交互点, 比如后面拍建筑的定位点, 用于控制功能交互的
         [Export] public Node2D BodyRoot;//仅仅是身体的根节点, 用于控制动画
-        [Export] public Area2D TouchArea;
+        [Export] public Area2D InteractArea;
+        [Export] public Area2D AtkArea;
+        [Export] public Area2D RangeAtkArea;
         [Export] public BuildingPreview TestStoneBuildingPreview;
         [Export] public PackedScene TestStoneBuildingPs;
         public float Atk = 10;
@@ -57,10 +58,14 @@ namespace Solo.Scripts.Character.Player
             FastBarInventory.ItemInstanceList = SaveManager.Instance.CurSaveData.FastBarInventoryList;
             CurFastBarIndex = SaveManager.Instance.CurSaveData.FastBarIndex;
 
-            TouchArea.BodyEntered += TouchArea_BodyEntered;
-            TouchArea.BodyExited += TouchArea_BodyExited;
-            TouchArea.AreaEntered += TouchArea_AreaEntered;
-            TouchArea.AreaExited += TouchArea_AreaExited;
+
+            InteractArea.BodyEntered += InteractArea_BodyEntered;
+            InteractArea.BodyExited += InteractArea_BodyExited;
+            AtkArea.BodyEntered += AtkArea_BodyEntered;
+            AtkArea.BodyExited += AtkArea_BodyExited;
+            RangeAtkArea.BodyEntered += RangeAtkArea_BodyEntered;
+            RangeAtkArea.BodyExited += RangeAtkArea_BodyExited;
+
             CurState = PlayerState.Idle;
             ChangeAnim();
 
@@ -72,6 +77,8 @@ namespace Solo.Scripts.Character.Player
             _fastBarInventoryView.SetSelected(CurFastBarIndex, true);
             RefreshHandNode();
         }
+
+
 
         public override void _PhysicsProcess(double delta)
         {
@@ -115,9 +122,9 @@ namespace Solo.Scripts.Character.Player
                 case PlayerState.Atk:
                     UpdateAtk(delta);
                     break;
-                case PlayerState.Pickup:
-                    UpdatePickup(delta);
-                    break;
+                //case PlayerState.Pickup:
+                //    UpdatePickup(delta);
+                //    break;
                 case PlayerState.Death:
                     UpdateDeath(delta);
                     break;
@@ -134,6 +141,13 @@ namespace Solo.Scripts.Character.Player
 
         public void UpdateIdle(float delta)
         {
+            CheckInteractTarget();
+            if (Input.IsActionJustPressed("Interact") && _curInteractTargetNode != null)
+            {
+                if (_curInteractTargetNode is DropItem dropItem)
+                    dropItem.Pickup();
+            }
+
             if (Input.IsActionJustPressed("Pre"))
             {
                 ChangeCurFastBarIndex(false);
@@ -159,29 +173,33 @@ namespace Solo.Scripts.Character.Player
                 return;
             }
 
-            if (Input.IsActionJustPressed("Action"))
+            CheckAtkTarget();
+            if (Input.IsActionJustPressed("Atk") && _curAtkTargetNode != null)
             {
-                //todo : enemy
-                //优先级通过_curTargetBuilding来区分, _curTargetEnemy不为空就先打敌人, 不然就是打建筑
-                _curTargetBuilding = GetNearestBuilding();
-                if (_curTargetBuilding != null)
-                {
-                    FaceToNode(_curTargetBuilding);
-                    CurState = PlayerState.Atk;
-                    ChangeAnim();
-                    return;
-                }
-
-                _curDropItem = GetNearestDropItem();
-                if (_curDropItem != null)
-                {
-                    FaceToNode(_curDropItem);
-                    CurState = PlayerState.Pickup;
-                    ChangeAnim();
-                    return;
-                }
+                FaceToNode(_curAtkTargetNode);
+                CurState = PlayerState.Atk;
+                ChangeAnim();
+                return;
             }
+            //todo : enemy
+            //优先级通过_curTargetBuilding来区分, _curTargetEnemy不为空就先打敌人, 不然就是打建筑
+            //_curTargetBuilding = GetNearestNode();
+            //if (_curTargetBuilding != null)
+            //{
+            //    FaceToNode(_curTargetBuilding);
+            //    CurState = PlayerState.Atk;
+            //    ChangeAnim();
+            //    return;
+            //}
 
+            //_curDropItem = GetNearestDropItem();
+            //if (_curDropItem != null)
+            //{
+            //    FaceToNode(_curDropItem);
+            //    CurState = PlayerState.Pickup;
+            //    ChangeAnim();
+            //    return;
+            //}
             Vector2 input = Input.GetVector("MoveLeft", "MoveRight", "MoveForward", "MoveBack");
             if (input != Vector2.Zero)
             {
@@ -193,6 +211,13 @@ namespace Solo.Scripts.Character.Player
 
         public void UpdateWalk(float delta)
         {
+            CheckInteractTarget();
+            if (Input.IsActionJustPressed("Interact") && _curInteractTargetNode != null)
+            {
+                if (_curInteractTargetNode is DropItem dropItem)
+                    dropItem.Pickup();
+            }
+
             if (Input.IsActionJustPressed("Pre"))
             {
                 ChangeCurFastBarIndex(false);
@@ -218,25 +243,13 @@ namespace Solo.Scripts.Character.Player
                 return;
             }
 
-            if (Input.IsActionJustPressed("Action"))
+            CheckAtkTarget();
+            if (Input.IsActionJustPressed("Atk") && _curAtkTargetNode != null)
             {
-                _curTargetBuilding = GetNearestBuilding();
-                if (_curTargetBuilding != null)
-                {
-                    FaceToNode(_curTargetBuilding);
-                    CurState = PlayerState.Atk;
-                    ChangeAnim();
-                    return;
-                }
-
-                _curDropItem = GetNearestDropItem();
-                if (_curDropItem != null)
-                {
-                    FaceToNode(_curDropItem);
-                    CurState = PlayerState.Pickup;
-                    ChangeAnim();
-                    return;
-                }
+                FaceToNode(_curAtkTargetNode);
+                CurState = PlayerState.Atk;
+                ChangeAnim();
+                return;
             }
 
             Vector2 input = Input.GetVector("MoveLeft", "MoveRight", "MoveForward", "MoveBack");
@@ -261,6 +274,13 @@ namespace Solo.Scripts.Character.Player
 
         public void UpdateRun(float delta)
         {
+            CheckInteractTarget();
+            if (Input.IsActionJustPressed("Interact") && _curInteractTargetNode != null)
+            {
+                if (_curInteractTargetNode is DropItem dropItem)
+                    dropItem.Pickup();
+            }
+
             if (Input.IsActionJustPressed("Pre"))
             {
                 ChangeCurFastBarIndex(false);
@@ -270,25 +290,13 @@ namespace Solo.Scripts.Character.Player
                 ChangeCurFastBarIndex(true);
             }
 
-            if (Input.IsActionJustPressed("Action"))
+            CheckAtkTarget();
+            if (Input.IsActionJustPressed("Atk") && _curAtkTargetNode != null)
             {
-                _curTargetBuilding = GetNearestBuilding();
-                if (_curTargetBuilding != null)
-                {
-                    FaceToNode(_curTargetBuilding);
-                    CurState = PlayerState.Atk;
-                    ChangeAnim();
-                    return;
-                }
-
-                _curDropItem = GetNearestDropItem();
-                if (_curDropItem != null)
-                {
-                    FaceToNode(_curDropItem);
-                    CurState = PlayerState.Pickup;
-                    ChangeAnim();
-                    return;
-                }
+                FaceToNode(_curAtkTargetNode);
+                CurState = PlayerState.Atk;
+                ChangeAnim();
+                return;
             }
 
             Vector2 input = Input.GetVector("MoveLeft", "MoveRight", "MoveForward", "MoveBack");
@@ -316,6 +324,13 @@ namespace Solo.Scripts.Character.Player
         private float _dashSpeed = 200;
         public void UpdateDash(float delta)
         {
+            CheckInteractTarget();
+            if (Input.IsActionJustPressed("Interact") && _curInteractTargetNode != null)
+            {
+                if (_curInteractTargetNode is DropItem dropItem)
+                    dropItem.Pickup();
+            }
+
             if (Input.IsActionJustPressed("Pre"))
             {
                 ChangeCurFastBarIndex(false);
@@ -361,9 +376,9 @@ namespace Solo.Scripts.Character.Player
         {
         }
 
-        public void UpdatePickup(float delta)
-        {
-        }
+        //public void UpdatePickup(float delta)
+        //{
+        //}
 
         public void UpdateDeath(float delta)
         {
@@ -430,57 +445,39 @@ namespace Solo.Scripts.Character.Player
                     _animTween.TweenProperty(_handNode, "rotation", 1.3f, 0.05f); // 砍中目标的目标角度
                     _animTween.TweenCallback(Callable.From(() =>
                     {
-                        if (_curTargetBuilding != null)//todo : 如果是工具就扣耐久
+                        if (_curAtkTargetNode != null)//todo : 如果是工具就扣耐久
                         {
-                            if (FastBarInventory.ItemInstanceList[CurFastBarIndex] == null)//空手
+                            if (_curAtkTargetNode is BuildingBase building)
                             {
-                                _curTargetBuilding.TakeDamage(null, Atk);
-                            }
-                            else
-                            {
-                                _curTargetBuilding.TakeDamage(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type, Atk);
-                                if (ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).MaxDur != -1)
+                                if (FastBarInventory.ItemInstanceList[CurFastBarIndex] == null)//空手
                                 {
-                                    FastBarInventory.ItemInstanceList[CurFastBarIndex].CurDur--;
-                                    FastBarInventory.ItemInstanceList[CurFastBarIndex].CurDur--;
-                                    FastBarInventory.ItemInstanceList[CurFastBarIndex].CurDur--;
-                                    FastBarInventory.ItemInstanceList[CurFastBarIndex].CurDur--;
-                                    FastBarInventory.ItemInstanceList[CurFastBarIndex].CurDur--;
-                                    if (FastBarInventory.ItemInstanceList[CurFastBarIndex].CurDur <= 0)
-                                    {
-                                        FastBarInventory.RemoveItem(CurFastBarIndex);
-                                        RefreshHandNode();
-                                    }
-                                    _fastBarInventoryView.RefreshSlot(CurFastBarIndex);
+                                    building.TakeDamage(null, Atk);
                                 }
+                                else
+                                {
+                                    building.TakeDamage(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type, Atk);
+                                    if (ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).MaxDur != -1)
+                                    {
+                                        FastBarInventory.ItemInstanceList[CurFastBarIndex].CurDur--;
+                                        FastBarInventory.ItemInstanceList[CurFastBarIndex].CurDur--;
+                                        FastBarInventory.ItemInstanceList[CurFastBarIndex].CurDur--;
+                                        if (FastBarInventory.ItemInstanceList[CurFastBarIndex].CurDur <= 0)
+                                        {
+                                            FastBarInventory.RemoveItem(CurFastBarIndex);
+                                            RefreshHandNode();
+                                        }
+                                        _fastBarInventoryView.RefreshSlot(CurFastBarIndex);
+                                    }
 
+                                }
                             }
+                            //if is enemy
                         }
                     }));
 
                     _animTween.Parallel().TweenProperty(BodyRoot, "modulate", Colors.White, 0.1f);
                     _animTween.TweenProperty(BodyRoot, "scale", new Vector2(1f, 1f), 0.1f);
                     _animTween.TweenProperty(_handNode, "rotation", 0, 0.1f);
-                    _animTween.Finished += () =>
-                    {
-                        CurState = PlayerState.Idle;
-                        ChangeAnim();
-                    };
-                    break;
-
-                case PlayerState.Pickup:
-                    _animTween.Parallel().TweenProperty(BodyRoot, "modulate", Colors.Black, 0.05f);//变黑
-                    _animTween.TweenProperty(BodyRoot, "skew", 1f, 0.05);
-                    _animTween.TweenCallback(Callable.From(() =>
-                    {
-                        if (_curDropItem != null)
-                        {
-                            _curDropItem.Pickup();
-                        }
-                    }));
-
-                    _animTween.Parallel().TweenProperty(BodyRoot, "modulate", Colors.White, 0.1f);
-                    _animTween.TweenProperty(BodyRoot, "skew", 0f, 0.1f);
                     _animTween.Finished += () =>
                     {
                         CurState = PlayerState.Idle;
@@ -496,76 +493,85 @@ namespace Solo.Scripts.Character.Player
             }
         }
 
-        //后期加入enemylist
 
-        private List<BuildingBase> _buildingList = new List<BuildingBase>();
-        private BuildingBase _curTargetBuilding;
-        private void TouchArea_BodyEntered(Node2D body)
+
+        private List<Node2D> _interactTargetNodeList = new List<Node2D>();
+        private Node2D _curInteractTargetNode;
+        private void InteractArea_BodyEntered(Node2D body)
         {
-            if (body is BuildingBase building)
+            if (body is DropItem dropItem)
             {
-                _buildingList.Add(building);
+                _interactTargetNodeList.Add(dropItem);
             }
         }
-        private void TouchArea_BodyExited(Node2D body)
+        private void InteractArea_BodyExited(Node2D body)
         {
-            if (body is BuildingBase building)
+            if (body is DropItem dropItem)
             {
-                _buildingList.Remove(building);
+                _interactTargetNodeList.Remove(dropItem);
             }
         }
-        private BuildingBase GetNearestBuilding()
+        private void CheckInteractTarget()
         {
-            float minDistSq = float.MaxValue; // 先设为一个极大值
-            BuildingBase targetBuilding = null;
-            foreach (BuildingBase curBuilding in _buildingList)
+            Node2D oldInteractTargetNode = _curInteractTargetNode;
+            Node2D newInteractTargetNode = GlobalHelper.GetNearestNode(GlobalPosition, _interactTargetNodeList);
+            if (oldInteractTargetNode != newInteractTargetNode)// 1. 只有当最近的物体“发生改变”时，才处理开关逻辑
             {
-                if (curBuilding == null)// 安全检查：防止列表里有被销毁的无效对象
-                    continue;
-                float curDistSq = GlobalPosition.DistanceSquaredTo(curBuilding.GlobalPosition);
-                if (curDistSq < minDistSq)
+                if (IsInstanceValid(oldInteractTargetNode) && oldInteractTargetNode is DropItem oldDropItem)// 2. 关掉旧目标的文本（如果旧目标还存在的话）
                 {
-                    minDistSq = curDistSq;
-                    targetBuilding = curBuilding;
+                    oldDropItem.ShowText(false);
                 }
+                if (IsInstanceValid(newInteractTargetNode) && newInteractTargetNode is DropItem newDropItem)// 3. 开启新目标的文本（如果新目标存在的话）
+                {
+                    newDropItem.ShowText(true);
+                }
+                _curInteractTargetNode = newInteractTargetNode;// 4. 交接变量，完成记忆更新
             }
-            return targetBuilding;
         }
 
-        List<DropItem> _dropItemList = new List<DropItem>();
-        DropItem _curDropItem;
-        private void TouchArea_AreaEntered(Area2D area)
+        private List<Node2D> _atkTargetNodeList = new List<Node2D>();
+        private Node2D _curAtkTargetNode;
+        private void AtkArea_BodyEntered(Node2D body)
         {
-            if (area.GetParent() is DropItem dropItem)
+            if (body is BuildingBase building)//todo : enemy
             {
-                _dropItemList.Add(dropItem);
-                dropItem.ShowText(true);
+                _atkTargetNodeList.Add(building);
+
             }
         }
-        private void TouchArea_AreaExited(Area2D area)
+        private void AtkArea_BodyExited(Node2D body)
         {
-            if (area.GetParent() is DropItem dropItem)
+            if (body is BuildingBase building)//todo : enemy
             {
-                _dropItemList.Remove(dropItem);
-                dropItem.ShowText(false);
+                _atkTargetNodeList.Remove(building);
             }
         }
-        private DropItem GetNearestDropItem()//返回掉落物
+        private void CheckAtkTarget()
         {
-            float minDistSq = float.MaxValue; // 先设为一个极大值
-            DropItem nearestDropItem = null;
-            foreach (DropItem curDropItem in _dropItemList)
+            Node2D oldAtkTargetNode = _curAtkTargetNode;
+            Node2D newAtkTargetNode = GlobalHelper.GetNearestNode(GlobalPosition, _atkTargetNodeList);
+            if (oldAtkTargetNode != newAtkTargetNode)// 1. 只有当最近的物体“发生改变”时，才处理开关逻辑
             {
-                if (curDropItem == null)// 安全检查：防止列表里有被销毁的无效对象
-                    continue;
-                float curDistSq = GlobalPosition.DistanceSquaredTo(curDropItem.GlobalPosition);
-                if (curDistSq < minDistSq)
+                if (IsInstanceValid(oldAtkTargetNode) && oldAtkTargetNode is BuildingBase oldBuilding)// 2. 关掉旧目标的文本（如果旧目标还存在的话）
                 {
-                    minDistSq = curDistSq;
-                    nearestDropItem = curDropItem;
+                    oldBuilding.ShowOutline(false);
                 }
+                if (IsInstanceValid(newAtkTargetNode) && newAtkTargetNode is BuildingBase newBuilding)// 3. 开启新目标的文本（如果新目标存在的话）
+                {
+                    newBuilding.ShowOutline(true);
+                }
+                _curAtkTargetNode = newAtkTargetNode;// 4. 交接变量，完成记忆更新
             }
-            return nearestDropItem;
+        }
+
+        private void RangeAtkArea_BodyExited(Node2D body)
+        {
+            //throw new global::System.NotImplementedException();
+        }
+
+        private void RangeAtkArea_BodyEntered(Node2D body)
+        {
+            //throw new global::System.NotImplementedException();
         }
 
         private void FaceToNode(Node2D targetNode)

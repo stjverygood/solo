@@ -8,25 +8,36 @@
 [ext_resource type="PackedScene" uid="uid://c5jw4j3sl5jtj" path="res://Scenes/System/BuildingSystem/Buildings/Stone.tscn" id="5_y25d7"]
 [ext_resource type="PackedScene" uid="uid://bv36kio2oi60f" path="res://Scenes/Character/Player/SelfView.tscn" id="6_7qy38"]
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_kpjcp"]
-radius = 16.0
-
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_kpjcp"]
 radius = 5.0
 height = 14.0
 
-[node name="Player" type="CharacterBody2D" unique_id=1144409017 node_paths=PackedStringArray("SpriteRoot", "BodyRoot", "TouchArea", "_selfView", "_bagInventoryView", "_fastBarInventoryView", "_handNode", "_handSprite")]
+[sub_resource type="CircleShape2D" id="CircleShape2D_3gn43"]
+radius = 22.022715
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_kpjcp"]
+radius = 16.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_f0b02"]
+radius = 61.0
+
+[node name="Player" type="CharacterBody2D" unique_id=1144409017 node_paths=PackedStringArray("SpriteRoot", "BodyRoot", "InteractArea", "AtkArea", "RangeAtkArea", "_selfView", "_bagInventoryView", "_fastBarInventoryView", "_handNode", "_handSprite")]
 z_index = 100
 script = ExtResource("1_lxeke")
 SpriteRoot = NodePath("SpriteRoot")
 BodyRoot = NodePath("SpriteRoot/BodyRoot")
-TouchArea = NodePath("TouchArea")
+InteractArea = NodePath("InteractArea")
+AtkArea = NodePath("AtkArea")
+RangeAtkArea = NodePath("RangeAtkArea")
 TestStoneBuildingPs = ExtResource("5_y25d7")
 _selfView = NodePath("CanvasLayer/SelfView")
 _bagInventoryView = NodePath("CanvasLayer/BagInventoryView")
 _fastBarInventoryView = NodePath("CanvasLayer/FastBarInventoryViewv")
 _handNode = NodePath("SpriteRoot/HandNode")
 _handSprite = NodePath("SpriteRoot/HandNode/Sprite2D")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1924437222]
+shape = SubResource("CapsuleShape2D_kpjcp")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=173865742]
 zoom = Vector2(2, 2)
@@ -50,13 +61,23 @@ position = Vector2(4, 5)
 position = Vector2(3, -4)
 texture = ExtResource("4_3gn43")
 
-[node name="TouchArea" type="Area2D" parent="." unique_id=588471765]
+[node name="InteractArea" type="Area2D" parent="." unique_id=1100036687]
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="TouchArea" unique_id=135832409]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="InteractArea" unique_id=1331086004]
+shape = SubResource("CircleShape2D_3gn43")
+debug_color = Color(0, 0.60038817, 0.70000815, 0.07300001)
+
+[node name="AtkArea" type="Area2D" parent="." unique_id=588471765]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="AtkArea" unique_id=135832409]
 shape = SubResource("CircleShape2D_kpjcp")
+debug_color = Color(0.8232569, 0.37342674, 0.38560182, 0.14400001)
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1924437222]
-shape = SubResource("CapsuleShape2D_kpjcp")
+[node name="RangeAtkArea" type="Area2D" parent="." unique_id=789042574]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="RangeAtkArea" unique_id=1554103456]
+shape = SubResource("CircleShape2D_f0b02")
+debug_color = Color(0.7723388, 0.4222509, 0.37342674, 0)
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=374399419]
 

@@ -1,17 +1,23 @@
 [gd_scene format=3 uid="uid://c61sslqbtwcoe"]
 
-[ext_resource type="PackedScene" uid="uid://b2q085r8rtj8b" path="res://Assets/SpriteNodes/TreeNode.tscn" id="1_l0c5x"]
 [ext_resource type="Script" uid="uid://cda82x5oh4p1h" path="res://Scripts/System/BuildingSystem/Buildings/Tree.cs" id="1_mimmo"]
 [ext_resource type="PackedScene" uid="uid://qw0q5wipafhq" path="res://Scenes/System/ItemSystem/DropItem.tscn" id="2_1mx48"]
+[ext_resource type="Shader" uid="uid://i3lcvke3ll2n" path="res://Assets/Shaders/Outline.gdshader" id="4_g0p4k"]
 [ext_resource type="PackedScene" uid="uid://dbnfhhfpkqht2" path="res://Scenes/Global/HpBarControl.tscn" id="4_ojq6a"]
+[ext_resource type="Texture2D" uid="uid://c0t2titgvp3od" path="res://Assets/Basic_Grass_Biom_things.png" id="5_g0p4k"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ebtgs"]
 size = Vector2(16, 16)
 
-[node name="Tree" type="StaticBody2D" unique_id=173891570 node_paths=PackedStringArray("BodyRoot", "_hpBarControl")]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_t862x"]
+shader = ExtResource("4_g0p4k")
+shader_parameter/outline_color = Color(1, 1, 1, 1)
+shader_parameter/outline_width = 1.0
+
+[node name="Tree" type="StaticBody2D" unique_id=173891570 node_paths=PackedStringArray("Sprite", "_hpBarControl")]
 script = ExtResource("1_mimmo")
 DropItemType = 5
-BodyRoot = NodePath("TreeSprite")
+Sprite = NodePath("Sprite2D")
 DropItemPs = ExtResource("2_1mx48")
 _hpBarControl = NodePath("HpBarControl")
 
@@ -19,10 +25,14 @@ _hpBarControl = NodePath("HpBarControl")
 position = Vector2(0, 8)
 shape = SubResource("RectangleShape2D_ebtgs")
 
-[node name="TreeSprite" parent="." unique_id=155291358 instance=ExtResource("1_l0c5x")]
-
 [node name="HpBarControl" parent="." unique_id=1940445632 instance=ExtResource("4_ojq6a")]
 offset_left = -28.0
 offset_top = -28.0
 offset_right = 172.0
 offset_bottom = -8.0
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=264772235]
+material = SubResource("ShaderMaterial_t862x")
+texture = ExtResource("5_g0p4k")
+region_enabled = true
+region_rect = Rect2(0, 0, 16, 32)

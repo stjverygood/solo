@@ -1,16 +1,25 @@
 [gd_scene format=3 uid="uid://qw0q5wipafhq"]
 
 [ext_resource type="Script" uid="uid://cfoeu50uirmhc" path="res://Scripts/System/ItemSystem/DropItem.cs" id="1_43lql"]
-[ext_resource type="Texture2D" uid="uid://d4igqp371y5" path="res://Assets/icon.svg" id="1_uk141"]
+[ext_resource type="Shader" uid="uid://i3lcvke3ll2n" path="res://Assets/Shaders/Outline.gdshader" id="2_2xro6"]
+[ext_resource type="Texture2D" uid="uid://sahby4yoq4f2" path="res://Assets/AtlasTextures/milk_icon.tres" id="3_2xro6"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_43lql"]
-size = Vector2(8, 8)
+size = Vector2(6, 4)
 
-[node name="DropItem" type="Node2D" unique_id=874198217 node_paths=PackedStringArray("TextLb", "IconSprite")]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_2xro6"]
+shader = ExtResource("2_2xro6")
+shader_parameter/outline_color = Color(1, 1, 1, 1)
+shader_parameter/outline_width = 1.0000000475
+
+[node name="DropItem" type="StaticBody2D" unique_id=1224854140 node_paths=PackedStringArray("TextLb", "IconSprite")]
 z_index = -1
 script = ExtResource("1_43lql")
 TextLb = NodePath("Label")
 IconSprite = NodePath("Sprite2D")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=751436325]
+shape = SubResource("RectangleShape2D_43lql")
 
 [node name="Label" type="Label" parent="." unique_id=1286302052]
 offset_left = -13.0
@@ -23,11 +32,7 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=1694164295]
+material = SubResource("ShaderMaterial_2xro6")
 position = Vector2(4.7683716e-07, 0)
 scale = Vector2(0.029296873, 0.0234375)
-texture = ExtResource("1_uk141")
-
-[node name="Area2D" type="Area2D" parent="." unique_id=272145251]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D" unique_id=673190590]
-shape = SubResource("RectangleShape2D_43lql")
+texture = ExtResource("3_2xro6")
