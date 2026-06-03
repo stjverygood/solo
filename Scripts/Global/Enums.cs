@@ -37,6 +37,7 @@
     //记录全游戏物品的type
     public enum ItemType
     {
+        MainBaseStone,//太古源石, 用于合成主基地
         Silk,//丝绸
         Leather,//皮革, 这里可以拓展成各种皮革, 各种妖兽皮
         Grass,//草
@@ -97,10 +98,13 @@
         JadeBoot,    // 玉鞋
 
         //建筑物品
-        Core,//核心
-        Flag,//阵旗
+        MainBase,//聚灵之源
+        Flag,//法旗
         BuildingCraft,//建筑合成台
         ToolCraft,//工具合成台
         ArmorCraft,//防具合成台
+        Crucible,//熔炉
+        ItemBox,//储物箱
+
     }
 }

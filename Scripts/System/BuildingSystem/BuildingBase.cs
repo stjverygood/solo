@@ -36,8 +36,23 @@ namespace Solo.Scripts.System.BuildingSystem
             GameManager.Instance.ChunkManager.AddItem(this, Position);
         }
 
-        public override void _Process(double delta)
+        public override void _PhysicsProcess(double delta)
         {
+            AutoHeal((float)delta);
+        }
+
+        private float _healTimer = 0;
+        private float _healDuration = 1;
+        private void AutoHeal(float delta)
+        {
+            _healTimer += delta;
+            if (_healTimer < _healDuration)
+                return;
+            _healTimer = 0;
+            _curHp++;
+            if (_curHp > MaxHp)
+                _curHp = MaxHp;
+            _hpBarControl.Refresh(MaxHp, _curHp);
         }
 
         public virtual void TakeDamage(ItemType? dmgItemType, float damage)

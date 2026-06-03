@@ -220,6 +220,21 @@ namespace Solo.Scripts.System.ChunkSystem
                         }
                     }
                 }
+
+                // 第一个区块(0,0)首次生成时，必定掉落1个太古源石，位置随机
+                if (chunkPos == Vector2I.Zero)
+                {
+                    float randomX = (float)GD.RandRange(0, _chunkSize * _tileSize);
+                    float randomY = (float)GD.RandRange(0, _chunkSize * _tileSize);
+                    Vector2 randomPos = new Vector2(
+                        chunkPos.X * _chunkSize * _tileSize + randomX,
+                        chunkPos.Y * _chunkSize * _tileSize + randomY
+                    );
+                    DropItem stoneDrop = DropItemPs.Instantiate<DropItem>();
+                    GetTree().CurrentScene.AddChild(stoneDrop);
+                    stoneDrop.Init(ItemType.MainBaseStone, 1, randomPos);
+                }
+
             }
         }
 

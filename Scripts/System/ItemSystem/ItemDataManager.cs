@@ -12,6 +12,7 @@ namespace Solo.Scripts.System.ItemSystem
         private ItemDataManager()
         {
             //材料
+            _itemDataMap.Add(ItemType.MainBaseStone, new ItemData("太古源石", 1, "res://Assets/AtlasTextures/MainBaseStone.tres", -1));
             _itemDataMap.Add(ItemType.Silk, new ItemData("丝绸", 99, "res://Assets/AtlasTextures/milk_icon.tres", -1));
             _itemDataMap.Add(ItemType.Leather, new ItemData("皮", 99, "res://Assets/AtlasTextures/milk_icon.tres", -1));
             _itemDataMap.Add(ItemType.Grass, new ItemData("草", 99, "res://Assets/AtlasTextures/milk_icon.tres", -1));
@@ -71,6 +72,14 @@ namespace Solo.Scripts.System.ItemSystem
             _itemDataMap.Add(ItemType.JadeHelmet, new ItemData("玉盔", 1, "res://Assets/AtlasTextures/WoodAxe.tres", 100));
             _itemDataMap.Add(ItemType.JadeArmor, new ItemData("玉甲", 1, "res://Assets/AtlasTextures/WoodAxe.tres", 100));
             _itemDataMap.Add(ItemType.JadeBoot, new ItemData("玉鞋", 1, "res://Assets/AtlasTextures/WoodAxe.tres", 100));
+
+            //建筑
+            _itemDataMap.Add(ItemType.MainBase, new ItemData("聚灵之源", 1, "res://Assets/AtlasTextures/WoodAxe.tres", -1));
+            _itemDataMap.Add(ItemType.Flag, new ItemData("法旗", 1, "res://Assets/AtlasTextures/WoodAxe.tres", -1));
+            _itemDataMap.Add(ItemType.BuildingCraft, new ItemData("天工殿", 1, "res://Assets/AtlasTextures/WoodAxe.tres", -1));
+            _itemDataMap.Add(ItemType.ToolCraft, new ItemData("锻器台", 1, "res://Assets/AtlasTextures/WoodAxe.tres", -1));
+            _itemDataMap.Add(ItemType.ArmorCraft, new ItemData("织锦阁", 1, "res://Assets/AtlasTextures/WoodAxe.tres", -1));
+            _itemDataMap.Add(ItemType.ItemBox, new ItemData("乾坤箱", 1, "res://Assets/AtlasTextures/WoodAxe.tres", -1));
         }
 
         public ItemData GetItemData(ItemType type)

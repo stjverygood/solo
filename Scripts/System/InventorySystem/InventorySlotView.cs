@@ -43,7 +43,11 @@ public partial class InventorySlotView : Control
         _iconTr.Texture = GD.Load<Texture2D>(itemData.IconPath);
         _countLb.Text = itemData.MaxCount == 1 ? "" : $"{_itemInstance.Count}";
         _nameLb.Text = $"{itemData.Name}";
-        if (itemData.MaxDur != -1)
+        if (itemData.MaxDur == -1)
+        {
+            _durPb.Visible = false;
+        }
+        else
         {
             _durPb.Visible = true;
             _durPb.MaxValue = itemData.MaxDur;

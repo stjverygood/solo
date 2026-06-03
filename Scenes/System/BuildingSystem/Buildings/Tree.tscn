@@ -16,7 +16,7 @@ shader_parameter/outline_width = 1.0
 
 [node name="Tree" type="StaticBody2D" unique_id=173891570 node_paths=PackedStringArray("Sprite", "_hpBarControl")]
 script = ExtResource("1_mimmo")
-DropItemType = 5
+DropItemType = 6
 Sprite = NodePath("Sprite2D")
 DropItemPs = ExtResource("2_1mx48")
 _hpBarControl = NodePath("HpBarControl")

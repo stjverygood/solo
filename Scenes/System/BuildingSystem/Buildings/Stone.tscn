@@ -16,7 +16,7 @@ shader_parameter/outline_width = 1.0
 
 [node name="Stone" type="StaticBody2D" unique_id=1133804511 node_paths=PackedStringArray("Sprite", "_hpBarControl")]
 script = ExtResource("1_nbvde")
-DropItemType = 4
+DropItemType = 5
 MinDropCount = 1
 MaxDropCount = 2
 Sprite = NodePath("Sprite2D")

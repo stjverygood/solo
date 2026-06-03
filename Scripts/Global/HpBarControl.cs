@@ -12,15 +12,20 @@ namespace Solo.Scripts.Global
 
         public void Refresh(float maxHp, float curHp)
         {
+            if (maxHp == curHp)
+            {
+                Visible = false;
+                return;
+            }
             Visible = true;
             _hpPb.MaxValue = maxHp;
             _hpPb.Value = curHp;
             _hpLb.Text = $"{curHp}";
 
-            if (_hideTween != null && _hideTween.IsValid())
-                _hideTween.Kill();
-            _hideTween = CreateTween();
-            _hideTween.TweenCallback(Callable.From(() => Visible = false)).SetDelay(3.0f);
+            //if (_hideTween != null && _hideTween.IsValid())
+            //    _hideTween.Kill();
+            //_hideTween = CreateTween();
+            //_hideTween.TweenCallback(Callable.From(() => Visible = false)).SetDelay(3.0f);
         }
     }
 }
