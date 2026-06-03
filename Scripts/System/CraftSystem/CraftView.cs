@@ -72,8 +72,14 @@ namespace Solo.Scripts.System.CraftSystem
             }
             _craftBtn.Pressed += () =>
             {
-                GD.Print("_craftBtn Pressed!!!");
+                foreach ((ItemType, int) t in _curCraftItem.RequiredItemList)
+                {
+                    int remain = t.Item2;
+                    remain -= GameManager.Instance.Player.BagInventory.RemoveItemByType(t.Item1, remain);
+                    GameManager.Instance.Player.FastBarInventory.RemoveItemByType(t.Item1, remain);
+                }
                 GameManager.Instance.Player.AddItemToInventory(new ItemInstance() { Type = _curCraftItem.Type, Count = 1, CurDur = ItemDataManager.Instance.GetItemData(_curCraftItem.Type).MaxDur });
+                CheckCanCraft();
             };
         }
 

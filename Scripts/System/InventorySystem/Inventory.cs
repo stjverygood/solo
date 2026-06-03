@@ -109,6 +109,32 @@ namespace Solo.Scripts.System.InventorySystem
             }
         }
 
+        public int RemoveItemByType(ItemType itemType, int count)//扣除指定数量的某类物品, 返回实际扣除了多少
+        {
+            int remainCount = count;
+            for (int i = 0; i < ItemInstanceList.Count; i++)
+            {
+                ItemInstance instance = ItemInstanceList[i];
+                if (instance == null || instance.Type != itemType)
+                    continue;
+
+                if (instance.Count > remainCount)
+                {
+                    instance.Count -= remainCount;
+                    remainCount = 0;
+                    SlotChanged?.Invoke(i);
+                    break;
+                }
+                else
+                {
+                    remainCount -= instance.Count;
+                    ItemInstanceList[i] = null;
+                    SlotChanged?.Invoke(i);
+                }
+            }
+            return count - remainCount;
+        }
+
         public int GetItemCount(ItemType itemType)//查询某个物品类型的总数量
         {
             int count = 0;
