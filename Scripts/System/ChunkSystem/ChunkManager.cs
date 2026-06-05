@@ -5,7 +5,6 @@ using Solo.Scripts.System.BuildingSystem;
 using Solo.Scripts.System.ItemSystem;
 using Solo.Scripts.System.SaveSystem;
 using System.Collections.Generic;
-using Tree = Solo.Scripts.System.BuildingSystem.BuildingSystem.Tree;
 
 namespace Solo.Scripts.System.ChunkSystem
 {
@@ -19,8 +18,7 @@ namespace Solo.Scripts.System.ChunkSystem
     public partial class ChunkManager : Node2D
     {
         [Export] private TileMapLayer _tileMapLayer;
-        [Export] public PackedScene TreePs;
-        [Export] public PackedScene StonePs;
+        [Export] private PackedScene _buildingPs;
         [Export] public PackedScene DropItemPs;
 
         //public BuildingManager BuildingManager;
@@ -134,26 +132,13 @@ namespace Solo.Scripts.System.ChunkSystem
                 foreach (BuildingSaveData buildingSaveData in existChunkData.BuildingSaveDataList)
                 {
                     Vector2 snapPos;
-                    switch (buildingSaveData.Type)
+                    BuildingData buildingData = BuildingDataManager.Instance.GetBuildingData(buildingSaveData.Type);
+                    snapPos = GameManager.Instance.BuildingManager.SnapToCell(buildingSaveData.Type, new Vector2(buildingSaveData.X, buildingSaveData.Y));
+                    if (GameManager.Instance.BuildingManager.CanPlaced(buildingSaveData.Type, new Vector2(buildingSaveData.X, buildingSaveData.Y)) && WorldToChunkPos(snapPos) == chunkPos)//可放置且不越界
                     {
-                        case BuildingType.Tree:
-                            snapPos = GameManager.Instance.BuildingManager.SnapToCell(BuildingDataManager.Instance.GetBuildingData(BuildingType.Tree), new Vector2(buildingSaveData.X, buildingSaveData.Y));
-                            if (GameManager.Instance.BuildingManager.CanPlaced(BuildingDataManager.Instance.GetBuildingData(BuildingType.Tree), new Vector2(buildingSaveData.X, buildingSaveData.Y)) && WorldToChunkPos(snapPos) == chunkPos)
-                            {
-                                Tree tree = TreePs.Instantiate<Tree>();
-                                GetTree().CurrentScene.AddChild(tree);
-                                tree.Init(BuildingType.Tree, snapPos);
-                            }
-                            break;
-                        case BuildingType.Stone:
-                            snapPos = GameManager.Instance.BuildingManager.SnapToCell(BuildingDataManager.Instance.GetBuildingData(BuildingType.Stone), new Vector2(buildingSaveData.X, buildingSaveData.Y));
-                            if (GameManager.Instance.BuildingManager.CanPlaced(BuildingDataManager.Instance.GetBuildingData(BuildingType.Stone), new Vector2(buildingSaveData.X, buildingSaveData.Y)) && WorldToChunkPos(snapPos) == chunkPos)
-                            {
-                                Stone stone = StonePs.Instantiate<Stone>();
-                                GetTree().CurrentScene.AddChild(stone);
-                                stone.Init(BuildingType.Stone, snapPos);
-                            }
-                            break;
+                        Building building = _buildingPs.Instantiate<Building>();
+                        GetTree().CurrentScene.AddChild(building);
+                        building.Init(buildingSaveData.Type, snapPos);
                     }
                 }
                 foreach (DropItemSaveData dropItemData in existChunkData.DropItemSaveDataList)
@@ -185,10 +170,10 @@ namespace Solo.Scripts.System.ChunkSystem
                             if (rd < 0.1)
                             {
                                 Vector2 curTilePos = new Vector2(globalX * _tileSize, globalY * _tileSize) + new Vector2(_tileSize / 2f, _tileSize / 2f);
-                                Vector2 snapPos = GameManager.Instance.BuildingManager.SnapToCell(BuildingDataManager.Instance.GetBuildingData(BuildingType.Tree), curTilePos);
-                                if (GameManager.Instance.BuildingManager.CanPlaced(BuildingDataManager.Instance.GetBuildingData(BuildingType.Tree), snapPos) && WorldToChunkPos(snapPos) == chunkPos)
+                                Vector2 snapPos = GameManager.Instance.BuildingManager.SnapToCell(BuildingType.Tree, curTilePos);
+                                if (GameManager.Instance.BuildingManager.CanPlaced(BuildingType.Tree, snapPos) && WorldToChunkPos(snapPos) == chunkPos)
                                 {
-                                    Tree tree = TreePs.Instantiate<Tree>();
+                                    Building tree = _buildingPs.Instantiate<Building>();
                                     GetTree().CurrentScene.AddChild(tree);
                                     tree.Init(BuildingType.Tree, snapPos);
                                 }
@@ -209,10 +194,10 @@ namespace Solo.Scripts.System.ChunkSystem
                             if (GD.Randf() < 0.2)
                             {
                                 Vector2 curTilePos = new Vector2(globalX * _tileSize, globalY * _tileSize) + new Vector2(_tileSize / 2f, _tileSize / 2f);
-                                Vector2 snapPos = GameManager.Instance.BuildingManager.SnapToCell(BuildingDataManager.Instance.GetBuildingData(BuildingType.Stone), curTilePos);
-                                if (GameManager.Instance.BuildingManager.CanPlaced(BuildingDataManager.Instance.GetBuildingData(BuildingType.Stone), curTilePos) && WorldToChunkPos(snapPos) == chunkPos)
+                                Vector2 snapPos = GameManager.Instance.BuildingManager.SnapToCell(BuildingType.Stone, curTilePos);
+                                if (GameManager.Instance.BuildingManager.CanPlaced(BuildingType.Stone, curTilePos) && WorldToChunkPos(snapPos) == chunkPos)
                                 {
-                                    Stone stone = StonePs.Instantiate<Stone>();
+                                    Building stone = _buildingPs.Instantiate<Building>();
                                     GetTree().CurrentScene.AddChild(stone);
                                     stone.Init(BuildingType.Stone, snapPos);
                                 }
@@ -252,7 +237,7 @@ namespace Solo.Scripts.System.ChunkSystem
             }
             //写入savedata
             ChunkSaveData curChunkData = new ChunkSaveData(chunkPos.X, chunkPos.Y);
-            foreach (BuildingBase building in curChunk.BuildingList)//移除node
+            foreach (Building building in curChunk.BuildingList)//移除node
             {
                 curChunkData.BuildingSaveDataList.Add(new BuildingSaveData() { Type = building.Type, X = building.GlobalPosition.X, Y = building.GlobalPosition.Y });
                 GameManager.Instance.BuildingManager.Remove(BuildingDataManager.Instance.GetBuildingData(building.Type), building.GlobalPosition);
@@ -287,7 +272,7 @@ namespace Solo.Scripts.System.ChunkSystem
         public void AddItem(Node2D node, Vector2 worldPos)
         {
             Vector2I chunkPos = WorldToChunkPos(worldPos);
-            if (node is BuildingBase building)
+            if (node is Building building)
             {
                 CurActiveChunkMap[chunkPos].BuildingList.Add(building);
             }
@@ -299,7 +284,7 @@ namespace Solo.Scripts.System.ChunkSystem
         public void RemoveItem(Node2D node, Vector2 worldPos)
         {
             Vector2I chunkPos = WorldToChunkPos(worldPos);
-            if (node is BuildingBase building)
+            if (node is Building building)
             {
                 CurActiveChunkMap[chunkPos].BuildingList.Remove(building);
             }
@@ -324,7 +309,7 @@ namespace Solo.Scripts.System.ChunkSystem
             {
                 ChunkSaveData chunkSaveData = new ChunkSaveData(chunkPos.X, chunkPos.Y);
                 Chunk chunk = CurActiveChunkMap[chunkPos];
-                foreach (BuildingBase building in chunk.BuildingList)
+                foreach (Building building in chunk.BuildingList)
                 {
                     chunkSaveData.BuildingSaveDataList.Add(new BuildingSaveData() { Type = building.Type, X = building.GlobalPosition.X, Y = building.GlobalPosition.Y });
                 }

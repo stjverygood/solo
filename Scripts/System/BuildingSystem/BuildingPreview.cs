@@ -6,9 +6,10 @@ public partial class BuildingPreview : Node2D
 {
     public BuildingType Type;
     [Export] private Sprite2D _sprite;
-    private PackedScene _buildingBasePs;
+    [Export] private PackedScene _buildingPs;
+    private Vector2 _curDir = Vector2.Down;
 
-    public void Init(ItemType itemType, string spritePath, Vector2 handPos)
+    public void Init(ItemType itemType)
     {
         switch (itemType)
         {
@@ -34,34 +35,66 @@ public partial class BuildingPreview : Node2D
                 Type = BuildingType.ItemBox;
                 break;
         }
-        _sprite.Texture = GD.Load<Texture2D>(spritePath);
-        _buildingBasePs = GD.Load<PackedScene>(BuildingDataManager.Instance.GetBuildingData(Type).PsPath);
+        BuildingData buildingData = BuildingDataManager.Instance.GetBuildingData(Type);
+        _sprite.Texture = GD.Load<Texture2D>(buildingData.TexturePath);
     }
 
-    public override void _PhysicsProcess(double delta)
+    //public override void _PhysicsProcess(double delta)
+    //{
+
+    //}
+
+
+    public void Update(Vector2 playerPos)
     {
-        Vector2 snapPos = GameManager.Instance.BuildingManager.SnapToCell(BuildingDataManager.Instance.GetBuildingData(Type), GlobalPosition);
-        bool canPlace = GameManager.Instance.BuildingManager.CanPlaced(BuildingDataManager.Instance.GetBuildingData(Type), snapPos);
-        _sprite.Modulate = canPlace ? new Color(0, 1, 0) : new Color(1, 0, 0);
+        BuildingData buildingData = BuildingDataManager.Instance.GetBuildingData(Type);
+        Vector2 worldPos = playerPos + new Vector2(_curDir.X * buildingData.Width / 2 * 20, _curDir.Y * buildingData.Height / 2 * 20);
+        Vector2 snapPos = GameManager.Instance.BuildingManager.SnapToCell(Type, worldPos);
+        bool canPlace = GameManager.Instance.BuildingManager.CanPlaced(Type, snapPos);
+        GlobalPosition = snapPos;
+        _sprite.Modulate = canPlace ? new Color(0, 1, 0, 0.2f) : new Color(1, 0, 0, 0.2f);
+    }
+
+    public void ChangeDir()
+    {
+        if (_curDir == Vector2.Down)
+        {
+            _curDir = Vector2.Left;
+            return;
+        }
+        if (_curDir == Vector2.Left)
+        {
+            _curDir = Vector2.Up;
+            return;
+        }
+        if (_curDir == Vector2.Up)
+        {
+            _curDir = Vector2.Right;
+            return;
+        }
+        if (_curDir == Vector2.Right)
+        {
+            _curDir = Vector2.Down;
+            return;
+        }
     }
 
     public bool Build()
     {
-        Vector2 snapPos = GameManager.Instance.BuildingManager.SnapToCell(BuildingDataManager.Instance.GetBuildingData(Type), GlobalPosition);
-        bool canPlace = GameManager.Instance.BuildingManager.CanPlaced(BuildingDataManager.Instance.GetBuildingData(Type), snapPos);
+        Vector2 snapPos = GameManager.Instance.BuildingManager.SnapToCell(Type, GlobalPosition);
+        bool canPlace = GameManager.Instance.BuildingManager.CanPlaced(Type, snapPos);
         if (canPlace)
         {
-            GameManager.Instance.BuildingManager.Place(BuildingDataManager.Instance.GetBuildingData(Type), snapPos);
+            GameManager.Instance.BuildingManager.Place(Type, snapPos);
 
             switch (Type)
             {
                 case BuildingType.MainBase:
-                    BuildingBase bd = _buildingBasePs.Instantiate<BuildingBase>();
+                    Building bd = _buildingPs.Instantiate<Building>();
                     bd.Init(Type, snapPos);//没有特殊功能的, 用buildingBase脚本, 走普通初始化函数
                     GetTree().CurrentScene.AddChild(bd);
                     break;
             }
-            QueueFree();
             return true;
         }
         return false;

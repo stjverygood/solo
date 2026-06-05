@@ -1,6 +1,5 @@
 using Godot;
 using Solo.Scripts.Global;
-using Solo.Scripts.System.BuildingSystem;
 using Solo.Scripts.System.InventorySystem;
 using Solo.Scripts.System.ItemSystem;
 using Solo.Scripts.System.SaveSystem;
@@ -70,14 +69,13 @@ namespace Solo.Scripts.Character.Player
 
             if (FastBarInventory.ItemInstanceList[CurFastBarIndex] != null && ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).isBuilding)
             {
-                CurState = PlayerState.Build;
+                ChangeState(PlayerState.Build);
             }
             else
             {
-                CurState = PlayerState.Idle;
-                ChangeAnim();
+                ChangeState(PlayerState.Idle);
             }
-
+            ChangeState(PlayerState.Idle);
 
             _selfView.BasicCraftView.Init();
             _selfView.Visible = false;
@@ -93,11 +91,50 @@ namespace Solo.Scripts.Character.Player
         public override void _PhysicsProcess(double delta)
         {
             UpdateState((float)delta);
-            GD.Print($"CurState : {CurState}");
-            //GD.Print($"GlobalPosition : {GlobalPosition}");
+            //GD.Print($"CurState : {CurState}");
+            GD.Print($"GlobalPosition : {GlobalPosition}");
         }
 
-        public void UpdateState(float delta)
+        private void ChangeState(PlayerState newState)
+        {
+            CurState = newState;
+            EnterState(newState);
+        }
+
+        private void EnterState(PlayerState state)
+        {
+            switch (state)
+            {
+                case PlayerState.Idle:
+                    EnterIdle();
+                    break;
+                case PlayerState.Walk:
+                    EnterWalk();
+                    break;
+                case PlayerState.Run:
+                    EnterRun();
+                    break;
+                case PlayerState.Dash:
+                    EnterDash();
+                    break;
+                case PlayerState.Atk:
+                    EnterAtk();
+                    break;
+                case PlayerState.RangeAtk:
+                    EnterRangeAtk();
+                    break;
+                case PlayerState.Build:
+                    EnterBuild();
+                    break;
+                case PlayerState.Death:
+                    EnterDeath();
+                    break;
+                case PlayerState.BagUI:
+                    EnterBagUI();
+                    break;
+            }
+        }
+        private void UpdateState(float delta)
         {
             switch (CurState)
             {
@@ -131,26 +168,22 @@ namespace Solo.Scripts.Character.Player
             }
         }
 
-
-
-
-
-
-        public void UpdateIdle(float delta)
+        #region idle
+        private void EnterIdle()
         {
-            CheckInteractTarget();
-            if (Input.IsActionJustPressed("Interact") && _curInteractTargetNode != null)
-            {
-                if (_curInteractTargetNode is DropItem dropItem)
-                    dropItem.Pickup();
-            }
-
+            ResetAnim();
+            _animTween = CreateTween().SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out).SetLoops();
+            _animTween.TweenProperty(BodyRoot, "scale", new Vector2(1.2f, 0.8f), 0.5f);
+            _animTween.TweenProperty(BodyRoot, "scale", new Vector2(1.0f, 1.0f), 0.5f);
+        }
+        private void UpdateIdle(float delta)
+        {
             if (Input.IsActionJustPressed("Pre"))
             {
                 ChangeCurFastBarIndex(false);
                 if (FastBarInventory.ItemInstanceList[CurFastBarIndex] != null && ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).isBuilding)
                 {
-                    CurState = PlayerState.Build;
+                    ChangeState(PlayerState.Build);
                     return;
                 }
             }
@@ -159,78 +192,62 @@ namespace Solo.Scripts.Character.Player
                 ChangeCurFastBarIndex(true);
                 if (FastBarInventory.ItemInstanceList[CurFastBarIndex] != null && ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).isBuilding)
                 {
-                    CurState = PlayerState.Build;
+                    ChangeState(PlayerState.Build);
                     return;
                 }
             }
 
             if (Input.IsActionJustPressed("Bag"))
             {
-                _selfView.Visible = true;
-                _bagInventoryView.Visible = true;
-                CurState = PlayerState.BagUI;
+                ChangeState(PlayerState.BagUI);
                 return;
             }
 
             if (Input.IsActionJustPressed("Dash"))
             {
-                _dashTimer = 0;
-                CurState = PlayerState.Dash;
-                ChangeAnim();
+                ChangeState(PlayerState.Dash);
                 return;
             }
 
             CheckAtkTarget();
             if (Input.IsActionJustPressed("Atk") && _curAtkTargetNode != null)
             {
-                FaceToNode(_curAtkTargetNode);
-                CurState = PlayerState.Atk;
-                ChangeAnim();
+                ChangeState(PlayerState.Atk);
                 return;
             }
-            //todo : enemy
-            //优先级通过_curTargetBuilding来区分, _curTargetEnemy不为空就先打敌人, 不然就是打建筑
-            //_curTargetBuilding = GetNearestNode();
-            //if (_curTargetBuilding != null)
-            //{
-            //    FaceToNode(_curTargetBuilding);
-            //    CurState = PlayerState.Atk;
-            //    ChangeAnim();
-            //    return;
-            //}
 
-            //_curDropItem = GetNearestDropItem();
-            //if (_curDropItem != null)
-            //{
-            //    FaceToNode(_curDropItem);
-            //    CurState = PlayerState.Pickup;
-            //    ChangeAnim();
-            //    return;
-            //}
             Vector2 input = Input.GetVector("MoveLeft", "MoveRight", "MoveForward", "MoveBack");
             if (input != Vector2.Zero)
             {
-                CurState = PlayerState.Walk;
-                ChangeAnim();
+                ChangeState(PlayerState.Walk);
                 return;
             }
-        }
 
-        public void UpdateWalk(float delta)
-        {
             CheckInteractTarget();
             if (Input.IsActionJustPressed("Interact") && _curInteractTargetNode != null)
             {
                 if (_curInteractTargetNode is DropItem dropItem)
                     dropItem.Pickup();
             }
+        }
+        #endregion
 
+        #region walk
+        private void EnterWalk()
+        {
+            ResetAnim();
+            _animTween = CreateTween().SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out).SetLoops();
+            _animTween.TweenProperty(BodyRoot, "skew", 0.1f, 0.3f);// 走动效果：左右晃动或轻微拉伸
+            _animTween.TweenProperty(BodyRoot, "skew", -0.1f, 0.3f);
+        }
+        private void UpdateWalk(float delta)
+        {
             if (Input.IsActionJustPressed("Pre"))
             {
                 ChangeCurFastBarIndex(false);
                 if (FastBarInventory.ItemInstanceList[CurFastBarIndex] != null && ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).isBuilding)
                 {
-                    CurState = PlayerState.Build;
+                    ChangeState(PlayerState.Build);
                     return;
                 }
             }
@@ -239,41 +256,40 @@ namespace Solo.Scripts.Character.Player
                 ChangeCurFastBarIndex(true);
                 if (FastBarInventory.ItemInstanceList[CurFastBarIndex] != null && ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).isBuilding)
                 {
-                    CurState = PlayerState.Build;
+                    ChangeState(PlayerState.Build);
                     return;
                 }
             }
 
             if (Input.IsActionJustPressed("Bag"))
             {
-                _selfView.Visible = true;
-                _bagInventoryView.Visible = true;
-                CurState = PlayerState.BagUI;
+                ChangeState(PlayerState.BagUI);
                 return;
             }
 
             if (Input.IsActionJustPressed("Dash"))
             {
-                _dashTimer = 0;
-                CurState = PlayerState.Dash;
-                ChangeAnim();
+                ChangeState(PlayerState.Dash);
                 return;
             }
 
             CheckAtkTarget();
             if (Input.IsActionJustPressed("Atk") && _curAtkTargetNode != null)
             {
-                FaceToNode(_curAtkTargetNode);
-                CurState = PlayerState.Atk;
-                ChangeAnim();
+                ChangeState(PlayerState.Atk);
                 return;
+            }
+            CheckInteractTarget();
+            if (Input.IsActionJustPressed("Interact") && _curInteractTargetNode != null)
+            {
+                if (_curInteractTargetNode is DropItem dropItem)
+                    dropItem.Pickup();
             }
 
             Vector2 input = Input.GetVector("MoveLeft", "MoveRight", "MoveForward", "MoveBack");
             if (input == Vector2.Zero)
             {
-                CurState = PlayerState.Idle;
-                ChangeAnim();
+                ChangeState(PlayerState.Idle);
                 return;
             }
             _curDir = input;
@@ -287,22 +303,24 @@ namespace Solo.Scripts.Character.Player
                 Velocity = input * moveSpeed;
             MoveAndSlide();
         }
+        #endregion
 
-        public void UpdateRun(float delta)
+        #region run
+        private void EnterRun()
         {
-            CheckInteractTarget();
-            if (Input.IsActionJustPressed("Interact") && _curInteractTargetNode != null)
-            {
-                if (_curInteractTargetNode is DropItem dropItem)
-                    dropItem.Pickup();
-            }
-
+            ResetAnim();
+            _animTween = CreateTween().SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out).SetLoops();
+            _animTween.TweenProperty(BodyRoot, "skew", 0.1f, 0.1f);// 走动效果：左右晃动或轻微拉伸
+            _animTween.TweenProperty(BodyRoot, "skew", -0.1f, 0.1f);
+        }
+        private void UpdateRun(float delta)
+        {
             if (Input.IsActionJustPressed("Pre"))
             {
                 ChangeCurFastBarIndex(false);
                 if (FastBarInventory.ItemInstanceList[CurFastBarIndex] != null && ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).isBuilding)
                 {
-                    CurState = PlayerState.Build;
+                    ChangeState(PlayerState.Build);
                     return;
                 }
             }
@@ -311,25 +329,28 @@ namespace Solo.Scripts.Character.Player
                 ChangeCurFastBarIndex(true);
                 if (FastBarInventory.ItemInstanceList[CurFastBarIndex] != null && ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).isBuilding)
                 {
-                    CurState = PlayerState.Build;
+                    ChangeState(PlayerState.Build);
                     return;
                 }
             }
 
+            CheckInteractTarget();
+            if (Input.IsActionJustPressed("Interact") && _curInteractTargetNode != null)
+            {
+                if (_curInteractTargetNode is DropItem dropItem)
+                    dropItem.Pickup();
+            }
             CheckAtkTarget();
             if (Input.IsActionJustPressed("Atk") && _curAtkTargetNode != null)
             {
-                FaceToNode(_curAtkTargetNode);
-                CurState = PlayerState.Atk;
-                ChangeAnim();
+                ChangeState(PlayerState.Atk);
                 return;
             }
 
             Vector2 input = Input.GetVector("MoveLeft", "MoveRight", "MoveForward", "MoveBack");
             if (input == Vector2.Zero || Input.IsActionPressed("Dash") == false)
             {
-                CurState = PlayerState.Idle;
-                ChangeAnim();
+                ChangeState(PlayerState.Idle);
                 return;
             }
             _curDir = input;
@@ -344,11 +365,21 @@ namespace Solo.Scripts.Character.Player
                 Velocity = input * moveSpeed * 2;
             MoveAndSlide();
         }
+        #endregion
 
+        #region dash
         private float _dashTimer;
         private float _dashDuration = 0.2f;
         private float _dashSpeed = 200;
-        public void UpdateDash(float delta)
+        private void EnterDash()
+        {
+            ResetAnim();
+            _animTween = CreateTween().SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out).SetLoops();
+            _animTween.TweenProperty(BodyRoot, "skew", 0.1f, 0.3f);// 走动效果：左右晃动或轻微拉伸
+            _animTween.TweenProperty(BodyRoot, "skew", -0.1f, 0.3f);
+            _dashTimer = 0;
+        }
+        private void UpdateDash(float delta)
         {
             CheckInteractTarget();
             if (Input.IsActionJustPressed("Interact") && _curInteractTargetNode != null)
@@ -362,7 +393,7 @@ namespace Solo.Scripts.Character.Player
                 ChangeCurFastBarIndex(false);
                 if (FastBarInventory.ItemInstanceList[CurFastBarIndex] != null && ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).isBuilding)
                 {
-                    CurState = PlayerState.Build;
+                    ChangeState(PlayerState.Build);
                     return;
                 }
             }
@@ -371,7 +402,7 @@ namespace Solo.Scripts.Character.Player
                 ChangeCurFastBarIndex(true);
                 if (FastBarInventory.ItemInstanceList[CurFastBarIndex] != null && ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).isBuilding)
                 {
-                    CurState = PlayerState.Build;
+                    ChangeState(PlayerState.Build);
                     return;
                 }
             }
@@ -381,25 +412,69 @@ namespace Solo.Scripts.Character.Player
             {
                 if (Input.IsActionPressed("Dash"))
                 {
-                    CurState = PlayerState.Run;
-                    ChangeAnim();
+                    ChangeState(PlayerState.Run);
+                    return;
                 }
                 else
                 {
-                    CurState = PlayerState.Idle;
-                    ChangeAnim();
+                    ChangeState(PlayerState.Idle);
+                    return;
                 }
             }
+
             Velocity = _curDir * _dashSpeed;
             MoveAndSlide();
         }
+        #endregion
 
-        public void UpdateAtk(float delta)
+        #region atk
+        private void EnterAtk()
+        {
+            ResetAnim();
+            FaceToNode(_curAtkTargetNode);
+            _animTween = CreateTween().SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out);
+            _animTween.Parallel().TweenProperty(BodyRoot, "scale", new Vector2(0.8f, 0.8f), 0.05f);//出手动画
+            _animTween.TweenProperty(_handNode, "rotation", 1.3f, 0.05f);
+            _animTween.TweenCallback(Callable.From(() =>
+            {
+                //if (_curAtkTargetNode == null)
+                //    return;
+                if (_curAtkTargetNode is Building building)
+                {
+                    if (FastBarInventory.ItemInstanceList[CurFastBarIndex] == null)//空手
+                    {
+                        building.TakeDamage(null, Atk);
+                    }
+                    else//工具, 要扣耐久
+                    {
+                        building.TakeDamage(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type, Atk);
+                        if (ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).MaxDur != -1)
+                        {
+                            FastBarInventory.ItemInstanceList[CurFastBarIndex].CurDur--;
+                            if (FastBarInventory.ItemInstanceList[CurFastBarIndex].CurDur <= 0)
+                            {
+                                FastBarInventory.RemoveItem(CurFastBarIndex);
+                                RefreshHandNode();
+                            }
+                            _fastBarInventoryView.RefreshSlot(CurFastBarIndex);
+                        }
+                    }
+                }
+                //else if is enemy
+            }));
+
+            _animTween.Parallel().TweenProperty(BodyRoot, "scale", new Vector2(1f, 1f), 0.1f);
+            _animTween.TweenProperty(_handNode, "rotation", 0, 0.1f);
+            _animTween.Finished += () =>
+            {
+                ChangeState(PlayerState.Idle);
+            };
+        }
+        private void UpdateAtk(float delta)
         {
             Vector2 input = Input.GetVector("MoveLeft", "MoveRight", "MoveForward", "MoveBack");
             if (input != Vector2.Zero)
             {
-                //TouchArea.Rotation = input.Angle();
                 if (GameManager.Instance.ChunkManager.GetTileType(GlobalPosition) == TileType.Water)
                     Velocity = input * moveSpeed / 8;
                 else
@@ -407,30 +482,39 @@ namespace Solo.Scripts.Character.Player
                 MoveAndSlide();
             }
         }
+        #endregion
 
-        public void UpdateRangeAtk(float delta)
+        #region rangeAtk
+        private void EnterRangeAtk()
         {
-            //Vector2 input = Input.GetVector("MoveLeft", "MoveRight", "MoveForward", "MoveBack");
-            //if (input != Vector2.Zero)
-            //{
-            //    //TouchArea.Rotation = input.Angle();
-            //    if (GameManager.Instance.ChunkManager.GetTileType(GlobalPosition) == TileType.Water)
-            //        Velocity = input * moveSpeed / 8;
-            //    else
-            //        Velocity = input * moveSpeed / 2;
-            //    MoveAndSlide();
-            //}
+            ResetAnim();
         }
+        private void UpdateRangeAtk(float delta)
+        {
+        }
+        #endregion
 
-
-        public void UpdateBuild(float delta)
+        #region build
+        [Export] private PackedScene _buildingPreviewPs;
+        private BuildingPreview _curBuildingPreview;
+        private void EnterBuild()
+        {
+            ResetAnim();
+            _animTween = CreateTween().SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out).SetLoops();
+            _animTween.TweenProperty(BodyRoot, "skew", 0.1f, 0.3f);// 走动效果：左右晃动或轻微拉伸
+            _animTween.TweenProperty(BodyRoot, "skew", -0.1f, 0.3f);
+            _curBuildingPreview = _buildingPreviewPs.Instantiate<BuildingPreview>();
+            GetTree().CurrentScene.AddChild(_curBuildingPreview);
+            _curBuildingPreview.Init(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type);
+        }
+        private void UpdateBuild(float delta)
         {
             if (Input.IsActionJustPressed("Pre"))
             {
                 ChangeCurFastBarIndex(false);
                 if (FastBarInventory.ItemInstanceList[CurFastBarIndex] == null || ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).isBuilding == false)
                 {
-                    CurState = PlayerState.Idle;
+                    ChangeState(PlayerState.Idle);
                     return;
                 }
             }
@@ -439,7 +523,7 @@ namespace Solo.Scripts.Character.Player
                 ChangeCurFastBarIndex(true);
                 if (FastBarInventory.ItemInstanceList[CurFastBarIndex] == null || ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).isBuilding == false)
                 {
-                    CurState = PlayerState.Idle;
+                    ChangeState(PlayerState.Idle);
                     return;
                 }
             }
@@ -463,33 +547,46 @@ namespace Solo.Scripts.Character.Player
                 {
                     int remainCount = FastBarInventory.RemoveItemByIndex(CurFastBarIndex, 1);
 
-                    if (remainCount == 0)
+                    if (remainCount == 0)//count = 0, 空手, 并且切到Idle
                     {
-                        RefreshHandNode();
-                        //todo : count--, 若count = 0, 空手, 并且切到Idle
-                        CurState = PlayerState.Idle;
+                        ChangeState(PlayerState.Idle);
                         return;
                     }
                 }
 
             }
+
+            if (Input.IsActionJustPressed("Interact"))
+            {
+                _curBuildingPreview.ChangeDir();
+            }
+
+            _curBuildingPreview.Update(GlobalPosition);
         }
+        #endregion
 
-
-        public void UpdateCapture(float delta)
+        #region death
+        private void EnterDeath()
         {
+            ResetAnim();
         }
-
-        //public void UpdatePickup(float delta)
-        //{
-        //}
-
-        public void UpdateDeath(float delta)
+        private void UpdateDeath(float delta)
         {
 
         }
+        #endregion
 
-        public void UpdateBagUI(float delta)
+        #region bagUI
+        private void EnterBagUI()
+        {
+            ResetAnim();
+            _animTween = CreateTween().SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out).SetLoops();
+            _animTween.TweenProperty(BodyRoot, "scale", new Vector2(1.2f, 0.8f), 0.5f);
+            _animTween.TweenProperty(BodyRoot, "scale", new Vector2(1.0f, 1.0f), 0.5f);
+            _selfView.Visible = true;
+            _bagInventoryView.Visible = true;
+        }
+        private void UpdateBagUI(float delta)
         {
             if (Input.IsActionJustPressed("Bag") || Input.IsActionJustPressed("Back"))
             {
@@ -497,110 +594,31 @@ namespace Solo.Scripts.Character.Player
                 _bagInventoryView.Visible = false;
                 if (FastBarInventory.ItemInstanceList[CurFastBarIndex] != null && ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).isBuilding)
                 {
-                    CurState = PlayerState.Build;
+                    ChangeState(PlayerState.Build);
+                    return;
                 }
                 else
                 {
-                    CurState = PlayerState.Idle;
-                    ChangeAnim();
+                    ChangeState(PlayerState.Idle);
+                    return;
                 }
-
             }
-
         }
+        #endregion
 
-        private void ChangeAnim()
+
+
+
+        private void ResetAnim()
         {
-
-            if (_animTween != null && _animTween.IsRunning())//如果有正在运行的动画，先停止它
-            {
+            if (_animTween != null && _animTween.IsRunning())
                 _animTween.Kill();
-            }
-
-            //复位
             BodyRoot.Scale = Vector2.One;
             BodyRoot.Skew = 0f;
             BodyRoot.Modulate = Colors.White;
             BodyRoot.Rotation = 0f;
             BodyRoot.Modulate = Colors.White;
-
-            _animTween = CreateTween().SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out);
-            switch (CurState)
-            {
-                case PlayerState.Idle:
-                    _animTween.SetLoops();
-                    _animTween.TweenProperty(BodyRoot, "scale", new Vector2(1.2f, 0.8f), 0.5f);
-                    _animTween.TweenProperty(BodyRoot, "scale", new Vector2(1.0f, 1.0f), 0.5f);
-                    break;
-
-                case PlayerState.Walk:
-                case PlayerState.Dash:
-                    _animTween.SetLoops();
-                    _animTween.TweenProperty(BodyRoot, "skew", 0.1f, 0.3f);// 走动效果：左右晃动或轻微拉伸
-                    _animTween.TweenProperty(BodyRoot, "skew", -0.1f, 0.3f);
-                    break;
-
-                case PlayerState.Run:
-                    _animTween.SetLoops();
-                    _animTween.TweenProperty(BodyRoot, "skew", 0.1f, 0.1f);// 走动效果：左右晃动或轻微拉伸
-                    _animTween.TweenProperty(BodyRoot, "skew", -0.1f, 0.1f);
-                    break;
-
-                case PlayerState.Atk:
-                    //_animTween.Parallel().TweenProperty(BodyRoot, "modulate", Colors.Red, 0.05f);
-                    _animTween.TweenProperty(BodyRoot, "scale", new Vector2(0.8f, 0.8f), 0.05f); // 砍出去时身体拉伸
-                    _animTween.TweenProperty(_handNode, "rotation", 1.3f, 0.05f); // 砍中目标的目标角度
-                    _animTween.TweenCallback(Callable.From(() =>
-                    {
-                        if (_curAtkTargetNode != null)//todo : 如果是工具就扣耐久
-                        {
-                            if (_curAtkTargetNode is BuildingBase building)
-                            {
-                                if (FastBarInventory.ItemInstanceList[CurFastBarIndex] == null)//空手
-                                {
-                                    building.TakeDamage(null, Atk);
-                                }
-                                else
-                                {
-                                    building.TakeDamage(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type, Atk);
-                                    if (ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).MaxDur != -1)
-                                    {
-                                        FastBarInventory.ItemInstanceList[CurFastBarIndex].CurDur--;
-                                        FastBarInventory.ItemInstanceList[CurFastBarIndex].CurDur--;
-                                        FastBarInventory.ItemInstanceList[CurFastBarIndex].CurDur--;
-                                        if (FastBarInventory.ItemInstanceList[CurFastBarIndex].CurDur <= 0)
-                                        {
-                                            FastBarInventory.RemoveItem(CurFastBarIndex);
-                                            RefreshHandNode();
-                                        }
-                                        _fastBarInventoryView.RefreshSlot(CurFastBarIndex);
-                                    }
-
-                                }
-                            }
-                            //if is enemy
-                        }
-                    }));
-
-                    _animTween.Parallel().TweenProperty(BodyRoot, "modulate", Colors.White, 0.1f);
-                    _animTween.TweenProperty(BodyRoot, "scale", new Vector2(1f, 1f), 0.1f);
-                    _animTween.TweenProperty(_handNode, "rotation", 0, 0.1f);
-                    _animTween.Finished += () =>
-                    {
-                        CurState = PlayerState.Idle;
-                        ChangeAnim();
-                    };
-                    break;
-
-                case PlayerState.Death:
-                    _animTween.TweenProperty(SpriteRoot, "modulate", new Color(0, 0, 0, 0), 0.8f);// 死亡效果：变黑、旋转并消失
-                    _animTween.Parallel().TweenProperty(SpriteRoot, "rotation", Mathf.Pi, 0.8f);
-                    _animTween.Finished += () => QueueFree(); // 动画结束删除对象
-                    break;
-            }
         }
-
-
 
         private List<Node2D> _interactTargetNodeList = new List<Node2D>();
         private Node2D _curInteractTargetNode;
@@ -640,7 +658,7 @@ namespace Solo.Scripts.Character.Player
         private Node2D _curAtkTargetNode;
         private void AtkArea_BodyEntered(Node2D body)
         {
-            if (body is BuildingBase building)//todo : enemy
+            if (body is Building building)//todo : enemy
             {
                 _atkTargetNodeList.Add(building);
 
@@ -648,7 +666,7 @@ namespace Solo.Scripts.Character.Player
         }
         private void AtkArea_BodyExited(Node2D body)
         {
-            if (body is BuildingBase building)//todo : enemy
+            if (body is Building building)//todo : enemy
             {
                 _atkTargetNodeList.Remove(building);
             }
@@ -659,11 +677,11 @@ namespace Solo.Scripts.Character.Player
             Node2D newAtkTargetNode = GlobalHelper.GetNearestNode(GlobalPosition, _atkTargetNodeList);
             if (oldAtkTargetNode != newAtkTargetNode)// 1. 只有当最近的物体“发生改变”时，才处理开关逻辑
             {
-                if (IsInstanceValid(oldAtkTargetNode) && oldAtkTargetNode is BuildingBase oldBuilding)// 2. 关掉旧目标的文本（如果旧目标还存在的话）
+                if (IsInstanceValid(oldAtkTargetNode) && oldAtkTargetNode is Building oldBuilding)// 2. 关掉旧目标的文本（如果旧目标还存在的话）
                 {
                     oldBuilding.ShowOutline(false);
                 }
-                if (IsInstanceValid(newAtkTargetNode) && newAtkTargetNode is BuildingBase newBuilding)// 3. 开启新目标的文本（如果新目标存在的话）
+                if (IsInstanceValid(newAtkTargetNode) && newAtkTargetNode is Building newBuilding)// 3. 开启新目标的文本（如果新目标存在的话）
                 {
                     newBuilding.ShowOutline(true);
                 }
@@ -762,8 +780,7 @@ namespace Solo.Scripts.Character.Player
         public int CurFastBarIndex;//玩家当前手持的物品, 攻击时要把这个连同攻击力一起传过去给受击者, 让受击者处理受多少伤害, 工具不对要大打折扣
         [Export] private Node2D _handNode;
         [Export] private Sprite2D _handSprite;
-        [Export] private PackedScene _buildingPreviewPs;
-        private BuildingPreview _curBuildingPreview;
+
         private Node2D _curEquipmentNode = null;
         private void ChangeCurFastBarIndex(bool isNext)
         {
@@ -789,22 +806,12 @@ namespace Solo.Scripts.Character.Player
         private void RefreshHandNode()
         {
             _handSprite.Texture = null;
-            if (IsInstanceValid(_curBuildingPreview))
-            {
-                _curBuildingPreview.QueueFree();
-                _curBuildingPreview = null; // 记得置空
-            }
             if (FastBarInventory.ItemInstanceList[CurFastBarIndex] == null)
                 return;
-            if (ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).isBuilding)
-            {
-                _curBuildingPreview = _buildingPreviewPs.Instantiate<BuildingPreview>();
-                _handNode.AddChild(_curBuildingPreview);
-                _curBuildingPreview.Init(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type, ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).IconPath, _handNode.GlobalPosition);
-            }
-            else
+            if (ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).isBuilding == false)
             {
                 _handSprite.Texture = GD.Load<Texture2D>(ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).IconPath);
+
             }
         }
 

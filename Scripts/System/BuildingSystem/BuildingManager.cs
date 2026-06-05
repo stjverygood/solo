@@ -1,4 +1,5 @@
 ﻿using Godot;
+using Solo.Scripts.Global;
 using System.Collections.Generic;
 
 namespace Solo.Scripts.System.BuildingSystem
@@ -12,8 +13,9 @@ namespace Solo.Scripts.System.BuildingSystem
             _cellSize = gridSize;
         }
 
-        public Vector2 SnapToCell(BuildingData buildingData, Vector2 worldPos)
+        public Vector2 SnapToCell(BuildingType buildingType, Vector2 worldPos)
         {
+            BuildingData buildingData = BuildingDataManager.Instance.GetBuildingData(buildingType);
             Vector2 snappedPos = Vector2.Zero;
             // X 轴吸附逻辑
             if (buildingData.Width % 2 == 1) // 奇数尺寸（1, 3, 5...）-> 吸附到格子中心
@@ -29,8 +31,9 @@ namespace Solo.Scripts.System.BuildingSystem
             return snappedPos;
         }
 
-        public bool CanPlaced(BuildingData buildingData, Vector2 snapWorldPos)
+        public bool CanPlaced(BuildingType buildingType, Vector2 snapWorldPos)
         {
+            BuildingData buildingData = BuildingDataManager.Instance.GetBuildingData(buildingType);
             List<Vector2I> placedCellPosList = GetPlacedCellPosList(buildingData, snapWorldPos);
             foreach (Vector2I cellPos in placedCellPosList)
             {
@@ -40,10 +43,10 @@ namespace Solo.Scripts.System.BuildingSystem
             return true;
         }
 
-        public void Place(BuildingData buildingData, Vector2 snapWorldPos)
+        public void Place(BuildingType buildingType, Vector2 snapWorldPos)
         {
-            if (!CanPlaced(buildingData, snapWorldPos)) return;
-
+            if (!CanPlaced(buildingType, snapWorldPos)) return;
+            BuildingData buildingData = BuildingDataManager.Instance.GetBuildingData(buildingType);
             List<Vector2I> targetCellPosList = GetPlacedCellPosList(buildingData, snapWorldPos);
             foreach (Vector2I cell in targetCellPosList)
             {
