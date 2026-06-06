@@ -84,6 +84,7 @@ public partial class Building : StaticBody2D
                 DropItem dropItem = DropItemPs.Instantiate<DropItem>();
                 GetTree().CurrentScene.AddChild(dropItem);
                 dropItem.Init(tuple.Item1, Random.Shared.Next(tuple.Item2, tuple.Item3 + 1), Position);
+                dropItem.ApplyForce();
             }
             QueueFree();
         }

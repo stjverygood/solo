@@ -3,7 +3,7 @@ using Solo.Scripts.Global;
 
 namespace Solo.Scripts.System.ItemSystem
 {
-    public partial class DropItem : Node2D
+    public partial class DropItem : Area2D
     {
         public ItemType Type;
         public int Count;
@@ -30,6 +30,35 @@ namespace Solo.Scripts.System.ItemSystem
             }
             ShowText(false);
             GameManager.Instance.ChunkManager.AddItem(this, Position);
+        }
+
+        public void ApplyForce()
+        {
+            //ApplyCentralImpulse(new Vector2(10, 10));
+
+            // 2. 视觉层：用 Tween 做一个纯视觉的“抛物线”弹跳
+            float duration = 0.5f; // 整个弹跳持续时间
+            float jumpHeight = (float)GD.RandRange(30f, 50f); // 向上跳跃的高度
+
+            Tween airTween = CreateTween();
+
+            // 前半段：往上冲 (Y 轴为负)
+            airTween.TweenProperty(IconSprite, "position:y", -jumpHeight, duration * 0.5f)
+                    .SetTrans(Tween.TransitionType.Quad)
+                    .SetEase(Tween.EaseType.Out);
+
+            // 后后半段：落回地面 (Y 轴归零)
+            airTween.TweenProperty(IconSprite, "position:y", 0f, duration * 0.5f)
+                    .SetTrans(Tween.TransitionType.Quad)
+                    .SetEase(Tween.EaseType.In);
+
+            // 落地后再微微弹一下，更有动感
+            airTween.TweenCallback(Callable.From(() =>
+            {
+                Tween bounceTween = CreateTween();
+                bounceTween.TweenProperty(IconSprite, "position:y", -8f, 0.1f).SetEase(Tween.EaseType.Out);
+                bounceTween.TweenProperty(IconSprite, "position:y", 0f, 0.1f).SetEase(Tween.EaseType.In);
+            }));
         }
 
         public void ShowText(bool isShow)

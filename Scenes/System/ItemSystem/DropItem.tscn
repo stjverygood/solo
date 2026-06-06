@@ -11,7 +11,7 @@ shader = ExtResource("2_2xro6")
 shader_parameter/outline_color = Color(1, 1, 1, 1)
 shader_parameter/outline_width = 1.0000000475
 
-[node name="DropItem" type="StaticBody2D" unique_id=1224854140 node_paths=PackedStringArray("TextLb", "IconSprite")]
+[node name="DropItem" type="Area2D" unique_id=664154850 node_paths=PackedStringArray("TextLb", "IconSprite")]
 z_index = -1
 script = ExtResource("1_43lql")
 TextLb = NodePath("Label")

@@ -58,7 +58,8 @@ namespace Solo.Scripts.Character.Player
             FastBarInventory.ItemInstanceList = SaveManager.Instance.CurSaveData.FastBarInventoryList;
             CurFastBarIndex = SaveManager.Instance.CurSaveData.FastBarIndex;
 
-
+            InteractArea.AreaEntered += InteractArea_AreaEntered;
+            InteractArea.AreaExited += InteractArea_AreaExited;
             InteractArea.BodyEntered += InteractArea_BodyEntered;
             InteractArea.BodyExited += InteractArea_BodyExited;
             AtkArea.BodyEntered += AtkArea_BodyEntered;
@@ -505,7 +506,7 @@ namespace Solo.Scripts.Character.Player
             _animTween.TweenProperty(BodyRoot, "skew", -0.1f, 0.3f);
             _curBuildingPreview = _buildingPreviewPs.Instantiate<BuildingPreview>();
             GetTree().CurrentScene.AddChild(_curBuildingPreview);
-            _curBuildingPreview.Init(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type);
+            _curBuildingPreview.Init(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type, GlobalPosition);
         }
         private void UpdateBuild(float delta)
         {
@@ -514,6 +515,7 @@ namespace Solo.Scripts.Character.Player
                 ChangeCurFastBarIndex(false);
                 if (FastBarInventory.ItemInstanceList[CurFastBarIndex] == null || ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).isBuilding == false)
                 {
+                    _curBuildingPreview.QueueFree();
                     ChangeState(PlayerState.Idle);
                     return;
                 }
@@ -523,6 +525,7 @@ namespace Solo.Scripts.Character.Player
                 ChangeCurFastBarIndex(true);
                 if (FastBarInventory.ItemInstanceList[CurFastBarIndex] == null || ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).isBuilding == false)
                 {
+                    _curBuildingPreview.QueueFree();
                     ChangeState(PlayerState.Idle);
                     return;
                 }
@@ -549,6 +552,7 @@ namespace Solo.Scripts.Character.Player
 
                     if (remainCount == 0)//count = 0, 空手, 并且切到Idle
                     {
+                        _curBuildingPreview.QueueFree();
                         ChangeState(PlayerState.Idle);
                         return;
                     }
@@ -622,19 +626,33 @@ namespace Solo.Scripts.Character.Player
 
         private List<Node2D> _interactTargetNodeList = new List<Node2D>();
         private Node2D _curInteractTargetNode;
-        private void InteractArea_BodyEntered(Node2D body)
+        private void InteractArea_AreaEntered(Area2D area)
         {
-            if (body is DropItem dropItem)
+            if (area is DropItem dropItem)
             {
                 _interactTargetNodeList.Add(dropItem);
             }
         }
-        private void InteractArea_BodyExited(Node2D body)
+        private void InteractArea_AreaExited(Area2D area)
         {
-            if (body is DropItem dropItem)
+            if (area is DropItem dropItem)
             {
                 _interactTargetNodeList.Remove(dropItem);
             }
+        }
+        private void InteractArea_BodyEntered(Node2D body)
+        {
+            //if (body is DropItem dropItem)
+            //{
+            //    _interactTargetNodeList.Add(dropItem);
+            //}
+        }
+        private void InteractArea_BodyExited(Node2D body)
+        {
+            //if (body is DropItem dropItem)
+            //{
+            //    _interactTargetNodeList.Remove(dropItem);
+            //}
         }
         private void CheckInteractTarget()
         {

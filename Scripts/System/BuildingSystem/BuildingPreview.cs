@@ -9,7 +9,7 @@ public partial class BuildingPreview : Node2D
     [Export] private PackedScene _buildingPs;
     private Vector2 _curDir = Vector2.Down;
 
-    public void Init(ItemType itemType)
+    public void Init(ItemType itemType, Vector2 playerPos)
     {
         switch (itemType)
         {
@@ -37,6 +37,7 @@ public partial class BuildingPreview : Node2D
         }
         BuildingData buildingData = BuildingDataManager.Instance.GetBuildingData(Type);
         _sprite.Texture = GD.Load<Texture2D>(buildingData.TexturePath);
+        Update(playerPos);
     }
 
     //public override void _PhysicsProcess(double delta)
