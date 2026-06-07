@@ -1,0 +1,18 @@
+[gd_scene format=3 uid="uid://ddos2w52gxb06"]
+
+[ext_resource type="FontFile" uid="uid://chelxpn5elvbb" path="res://Assets/zpix.ttf" id="1_d3duy"]
+[ext_resource type="Script" uid="uid://bduq7owfuttwg" path="res://Scripts/Global/FloatTextLb.cs" id="2_w61fg"]
+
+[node name="FloatTextLb" type="Label" unique_id=1780256027]
+offset_left = -9.0
+offset_top = -6.0
+offset_right = 9.0
+offset_bottom = 6.0
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_fonts/font = ExtResource("1_d3duy")
+theme_override_font_sizes/font_size = 12
+text = "-10"
+horizontal_alignment = 1
+vertical_alignment = 1
+script = ExtResource("2_w61fg")

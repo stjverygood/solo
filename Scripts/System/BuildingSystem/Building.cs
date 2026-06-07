@@ -77,6 +77,10 @@ public partial class Building : StaticBody2D
         animTween.TweenProperty(_animRoot, "skew", -0.2f, 0.1f);
         animTween.Parallel().TweenProperty(_sprite.Material, "shader_parameter/flash_modifier", 0.0f, 0.1f);
         animTween.TweenProperty(_animRoot, "skew", 0f, 0.1f);
+        FloatTextLb floatTextLb = GameManager.Instance.FloatTextLbPs.Instantiate<FloatTextLb>();
+        GetTree().CurrentScene.AddChild(floatTextLb);
+        floatTextLb.Init($"-{damage}", GlobalPosition);
+        GameManager.Instance.Player.TriggerScreenShake(5f);
         _curHp -= damage;
         _damageCooldownTimer = 0f;
         _healTimer = 0f;

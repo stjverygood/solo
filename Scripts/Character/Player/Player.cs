@@ -30,8 +30,7 @@ namespace Solo.Scripts.Character.Player
         [Export] public Area2D InteractArea;
         [Export] public Area2D AtkArea;
         [Export] public Area2D RangeAtkArea;
-        [Export] public BuildingPreview TestStoneBuildingPreview;
-        [Export] public PackedScene TestStoneBuildingPs;
+        [Export] private Camera2D _camera;
         public float Atk = 10;
 
         public int ResCapacity = 1000;//资源存储上限
@@ -833,6 +832,29 @@ namespace Solo.Scripts.Character.Player
             }
         }
 
+
+        private Tween _shakeTween;
+        public void TriggerScreenShake(float amount)
+        {
+            if (_shakeTween != null && _shakeTween.IsValid())
+            {
+                _shakeTween.Kill();
+            }
+            _shakeTween = CreateTween();
+            _shakeTween.SetParallel(false);
+            int shakeCount = 6;          // 震动来回摆动的次数
+            float duration = 0.05f;      // 每次摆动花费的时间（秒）
+            float currentAmount = amount; // 当前强度的副本，用于逐步衰减
+            for (int i = 0; i < shakeCount; i++)
+            {
+                float randomX = (GD.Randf() * 2.0f - 1.0f) * currentAmount;
+                float randomY = (GD.Randf() * 2.0f - 1.0f) * currentAmount;
+                Vector2 targetOffset = new Vector2(randomX, randomY);
+                _shakeTween.TweenProperty(_camera, "offset", targetOffset, duration).SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out);
+                currentAmount *= 0.7f;
+            }
+            _shakeTween.TweenProperty(_camera, "offset", Vector2.Zero, duration);
+        }
     }
 }
 

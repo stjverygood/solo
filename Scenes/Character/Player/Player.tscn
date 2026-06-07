@@ -21,7 +21,7 @@ radius = 16.0
 [sub_resource type="CircleShape2D" id="CircleShape2D_f0b02"]
 radius = 61.0
 
-[node name="Player" type="CharacterBody2D" unique_id=1144409017 node_paths=PackedStringArray("SpriteRoot", "BodyRoot", "InteractArea", "AtkArea", "RangeAtkArea", "_selfView", "_bagInventoryView", "_fastBarInventoryView", "_handNode", "_handSprite")]
+[node name="Player" type="CharacterBody2D" unique_id=1144409017 node_paths=PackedStringArray("SpriteRoot", "BodyRoot", "InteractArea", "AtkArea", "RangeAtkArea", "_camera", "_selfView", "_bagInventoryView", "_fastBarInventoryView", "_handNode", "_handSprite")]
 z_index = 100
 script = ExtResource("1_lxeke")
 SpriteRoot = NodePath("SpriteRoot")
@@ -29,6 +29,7 @@ BodyRoot = NodePath("SpriteRoot/BodyRoot")
 InteractArea = NodePath("InteractArea")
 AtkArea = NodePath("AtkArea")
 RangeAtkArea = NodePath("RangeAtkArea")
+_camera = NodePath("Camera2D")
 _selfView = NodePath("CanvasLayer/SelfView")
 _bagInventoryView = NodePath("CanvasLayer/BagInventoryView")
 _fastBarInventoryView = NodePath("CanvasLayer/FastBarInventoryViewv")
