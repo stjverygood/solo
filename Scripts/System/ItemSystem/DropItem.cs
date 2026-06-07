@@ -19,7 +19,7 @@ namespace Solo.Scripts.System.ItemSystem
             TextLb.Text = ItemDataManager.Instance.GetItemData(Type).Name;
             TextLb.Visible = false;
             Texture2D texture = GD.Load<Texture2D>(ItemDataManager.Instance.GetItemData(Type).IconPath);
-            Vector2 targetSize = new Vector2(8, 8);
+            Vector2 targetSize = new Vector2(16, 16);
             Vector2 texSize = texture.GetSize(); // 获取图片实际的像素大小
             IconSprite.Scale = new Vector2(targetSize.X / texSize.X, targetSize.Y / texSize.Y);// 计算缩放比例：目标尺寸 / 图片实际尺寸
             IconSprite.Texture = texture;

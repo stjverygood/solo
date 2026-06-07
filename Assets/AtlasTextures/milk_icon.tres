@@ -1,7 +1,7 @@
 [gd_resource type="AtlasTexture" format=3 uid="uid://sahby4yoq4f2"]
 
-[ext_resource type="Texture2D" uid="uid://bk7fptuskhv0c" path="res://Assetsraw/Sprout Lands - Sprites - Basic pack/Objects/Simple_Milk_and_grass_item.png" id="1_pjpa2"]
+[ext_resource type="Texture2D" uid="uid://b4b4tkbxuo1e5" path="res://Assets/Png/item.png" id="1_gwwu5"]
 
 [resource]
-atlas = ExtResource("1_pjpa2")
-region = Rect2(32, 0, 16, 16)
+atlas = ExtResource("1_gwwu5")
+region = Rect2(144, 112, 16, 16)

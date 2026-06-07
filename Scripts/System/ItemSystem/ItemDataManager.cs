@@ -15,11 +15,11 @@ namespace Solo.Scripts.System.ItemSystem
             _itemDataMap.Add(ItemType.MainBaseStone, new ItemData { Name = "太古源石", MaxCount = 99, IconPath = "res://Assets/AtlasTextures/MainBaseStone.tres" });
             _itemDataMap.Add(ItemType.Silk, new ItemData { Name = "丝绸", MaxCount = 99, IconPath = "res://Assets/AtlasTextures/milk_icon.tres" });
             _itemDataMap.Add(ItemType.Leather, new ItemData { Name = "皮", MaxCount = 99, IconPath = "res://Assets/AtlasTextures/milk_icon.tres" });
-            _itemDataMap.Add(ItemType.Grass, new ItemData { Name = "草", MaxCount = 99, IconPath = "res://Assets/AtlasTextures/milk_icon.tres" });
+            _itemDataMap.Add(ItemType.Grass, new ItemData { Name = "草", MaxCount = 99, IconPath = "res://Assets/AtlasTextures/Grass.tres" });
             _itemDataMap.Add(ItemType.Rope, new ItemData { Name = "绳", MaxCount = 99, IconPath = "res://Assets/AtlasTextures/milk_icon.tres" });
-            _itemDataMap.Add(ItemType.Stone, new ItemData { Name = "石", MaxCount = 99, IconPath = "res://Assets/AtlasTextures/milk_icon.tres" });
+            _itemDataMap.Add(ItemType.Stone, new ItemData { Name = "石", MaxCount = 99, IconPath = "res://Assets/AtlasTextures/StoneItem.tres" });
 
-            _itemDataMap.Add(ItemType.Wood, new ItemData { Name = "木", MaxCount = 99, IconPath = "res://Assets/AtlasTextures/milk_icon.tres" });
+            _itemDataMap.Add(ItemType.Wood, new ItemData { Name = "木", MaxCount = 99, IconPath = "res://Assets/AtlasTextures/Wood.tres" });
             _itemDataMap.Add(ItemType.IronRaw, new ItemData { Name = "粗铁", MaxCount = 99, IconPath = "res://Assets/AtlasTextures/milk_icon.tres" });
             _itemDataMap.Add(ItemType.Iron, new ItemData { Name = "铁块", MaxCount = 99, IconPath = "res://Assets/AtlasTextures/milk_icon.tres" });
             _itemDataMap.Add(ItemType.CopperRaw, new ItemData { Name = "粗铜", MaxCount = 99, IconPath = "res://Assets/AtlasTextures/milk_icon.tres" });
@@ -32,7 +32,7 @@ namespace Solo.Scripts.System.ItemSystem
             //木制套装
             _itemDataMap.Add(ItemType.WoodSword, new ItemData { Name = "木剑", IconPath = "res://Assets/AtlasTextures/WoodSword.tres", MaxDur = 100 });
             _itemDataMap.Add(ItemType.WoodBow, new ItemData { Name = "木弓", IconPath = "res://Assets/AtlasTextures/WoodAxe.tres", MaxDur = 100 });
-            _itemDataMap.Add(ItemType.WoodPickaxe, new ItemData { Name = "木稿", IconPath = "res://Assets/AtlasTextures/WoodAxe.tres", MaxDur = 100 });
+            _itemDataMap.Add(ItemType.WoodPickaxe, new ItemData { Name = "木稿", IconPath = "res://Assets/AtlasTextures/WoodPickaxe.tres", MaxDur = 100 });
             _itemDataMap.Add(ItemType.WoodAxe, new ItemData { Name = "木斧", IconPath = "res://Assets/AtlasTextures/WoodAxe.tres", MaxDur = 100 });
             _itemDataMap.Add(ItemType.WoodPot, new ItemData { Name = "木壶", IconPath = "res://Assets/AtlasTextures/WoodAxe.tres", MaxDur = 100 });
             _itemDataMap.Add(ItemType.WoodRod, new ItemData { Name = "木竿", IconPath = "res://Assets/AtlasTextures/WoodAxe.tres", MaxDur = 100 });

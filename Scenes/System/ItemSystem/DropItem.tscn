@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://cfoeu50uirmhc" path="res://Scripts/System/ItemSystem/DropItem.cs" id="1_43lql"]
 [ext_resource type="Shader" uid="uid://i3lcvke3ll2n" path="res://Assets/Shaders/Outline.gdshader" id="2_2xro6"]
+[ext_resource type="FontFile" uid="uid://chelxpn5elvbb" path="res://Assets/zpix.ttf" id="2_byhkn"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_43lql"]
 size = Vector2(6, 4)
@@ -21,11 +22,15 @@ IconSprite = NodePath("Sprite2D")
 shape = SubResource("RectangleShape2D_43lql")
 
 [node name="Label" type="Label" parent="." unique_id=1286302052]
-offset_left = -13.0
-offset_top = -11.0
-offset_right = 73.0
-offset_bottom = 12.0
-scale = Vector2(0.3, 0.3)
+offset_left = -20.000002
+offset_top = -20.0
+offset_right = 31.999998
+offset_bottom = 4.0
+scale = Vector2(0.815, 0.815)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 3
+theme_override_fonts/font = ExtResource("2_byhkn")
+theme_override_font_sizes/font_size = 12
 text = "木材"
 horizontal_alignment = 1
 vertical_alignment = 1

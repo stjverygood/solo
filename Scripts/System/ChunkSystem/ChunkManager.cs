@@ -4,16 +4,18 @@ using Solo.Scripts.Global;
 using Solo.Scripts.System.BuildingSystem;
 using Solo.Scripts.System.ItemSystem;
 using Solo.Scripts.System.SaveSystem;
+using System;
 using System.Collections.Generic;
 
 namespace Solo.Scripts.System.ChunkSystem
 {
 
-    public struct TileInfo
-    {
-        public int SourceId;
-        public Vector2I AtlasCoords;
-    }
+    //public struct TileInfo
+    //{
+    //    //public TileType Type;
+    //    public int SourceId;
+    //    public Vector2I AtlasCoords;
+    //}
 
     public partial class ChunkManager : Node2D
     {
@@ -34,19 +36,14 @@ namespace Solo.Scripts.System.ChunkSystem
         private double _unLoadChunkTimer = 0;// 卸载计时器，没必要每帧都检测卸载
         private double _unloadChunkCd = 1.0; // 每秒检查一次卸载
 
-        private Dictionary<TileInfo, TileType> _tileInfoTypeMap = new Dictionary<TileInfo, TileType>()
-        {
-            { new TileInfo() { SourceId = 0, AtlasCoords = new Vector2I(1, 1) }, TileType.Grass },
-            { new TileInfo() { SourceId = 1, AtlasCoords = new Vector2I(0, 0) }, TileType.Water },
-            { new TileInfo() { SourceId = 3, AtlasCoords = new Vector2I(9, 19) }, TileType.Stone },
-        };
-        private Dictionary<TileType, TileInfo> _tileTypeInfoMap = new Dictionary<TileType, TileInfo>()
-        {
-            { TileType.Grass,new TileInfo() { SourceId = 0, AtlasCoords = new Vector2I(1, 1) }  },
-            { TileType.Water,new TileInfo() { SourceId = 1, AtlasCoords = new Vector2I(0, 0) } },
-            { TileType.Stone, new TileInfo() { SourceId = 3, AtlasCoords = new Vector2I(9, 19) } },
-        };
 
+        private Dictionary<TileType, List<Vector2I>> TileCoordsListMap = new Dictionary<TileType, List<Vector2I>>()
+        {
+            { TileType.Grass, new List<Vector2I>(){ new Vector2I(10, 8), new Vector2I(10, 8)}},
+            { TileType.Water, new List<Vector2I>(){ new Vector2I(9, 10)}},
+            { TileType.Stone, new List<Vector2I>(){new Vector2I(10, 4)}},
+        };
+        private Dictionary<Vector2I, TileType> TileTypeMap = new Dictionary<Vector2I, TileType>();//用于反查
 
         public override void _Ready()
         {
@@ -60,6 +57,11 @@ namespace Solo.Scripts.System.ChunkSystem
             _noise.Seed = GD.Hash(_seedString);
             _noise.Frequency = 0.05f;
             _noise.NoiseType = FastNoiseLite.NoiseTypeEnum.Perlin;
+            foreach (var kvp in TileCoordsListMap)
+            {
+                foreach (Vector2I tileCoords in kvp.Value)
+                    TileTypeMap[tileCoords] = kvp.Key;
+            }
         }
 
         public override void _PhysicsProcess(double delta)
@@ -117,15 +119,21 @@ namespace Solo.Scripts.System.ChunkSystem
                         float noiseVal = _noise.GetNoise2D(globalX, globalY);
                         if (noiseVal < 0)//水
                         {
-                            _tileMapLayer.SetCell(new Vector2I(globalX, globalY), _tileTypeInfoMap[TileType.Water].SourceId, _tileTypeInfoMap[TileType.Water].AtlasCoords);
+                            Vector2I rdTileCoords = TileCoordsListMap[TileType.Water][Random.Shared.Next(TileCoordsListMap[TileType.Water].Count)];
+                            _tileMapLayer.SetCell(new Vector2I(globalX, globalY), 0, rdTileCoords);
+                            //_tileMapLayer.SetCell(new Vector2I(globalX, globalY), _tileTypeInfoMap[TileType.Water].SourceId, _tileTypeInfoMap[TileType.Water].AtlasCoords);
                         }
                         else if (noiseVal < 0.35)//草
                         {
-                            _tileMapLayer.SetCell(new Vector2I(globalX, globalY), _tileTypeInfoMap[TileType.Grass].SourceId, _tileTypeInfoMap[TileType.Grass].AtlasCoords);
+                            Vector2I rdTileCoords = TileCoordsListMap[TileType.Grass][Random.Shared.Next(TileCoordsListMap[TileType.Grass].Count)];
+                            _tileMapLayer.SetCell(new Vector2I(globalX, globalY), 0, rdTileCoords);
+                            //_tileMapLayer.SetCell(new Vector2I(globalX, globalY), _tileTypeInfoMap[TileType.Grass].SourceId, _tileTypeInfoMap[TileType.Grass].AtlasCoords);
                         }
                         else//石
                         {
-                            _tileMapLayer.SetCell(new Vector2I(globalX, globalY), _tileTypeInfoMap[TileType.Stone].SourceId, _tileTypeInfoMap[TileType.Stone].AtlasCoords);
+                            Vector2I rdTileCoords = TileCoordsListMap[TileType.Stone][Random.Shared.Next(TileCoordsListMap[TileType.Stone].Count)];
+                            _tileMapLayer.SetCell(new Vector2I(globalX, globalY), 0, rdTileCoords);
+                            //_tileMapLayer.SetCell(new Vector2I(globalX, globalY), _tileTypeInfoMap[TileType.Stone].SourceId, _tileTypeInfoMap[TileType.Stone].AtlasCoords);
                         }
                     }
                 }
@@ -160,11 +168,14 @@ namespace Solo.Scripts.System.ChunkSystem
                         float noiseVal = _noise.GetNoise2D(globalX, globalY);
                         if (noiseVal < 0)//水
                         {
-                            _tileMapLayer.SetCell(new Vector2I(globalX, globalY), _tileTypeInfoMap[TileType.Water].SourceId, _tileTypeInfoMap[TileType.Water].AtlasCoords);
+
+                            Vector2I rdTileCoords = TileCoordsListMap[TileType.Water][Random.Shared.Next(TileCoordsListMap[TileType.Water].Count)];
+                            _tileMapLayer.SetCell(new Vector2I(globalX, globalY), 0, rdTileCoords);
                         }
                         else if (noiseVal < 0.35)//草
                         {
-                            _tileMapLayer.SetCell(new Vector2I(globalX, globalY), _tileTypeInfoMap[TileType.Grass].SourceId, _tileTypeInfoMap[TileType.Grass].AtlasCoords);
+                            Vector2I rdTileCoords = TileCoordsListMap[TileType.Grass][Random.Shared.Next(TileCoordsListMap[TileType.Grass].Count)];
+                            _tileMapLayer.SetCell(new Vector2I(globalX, globalY), 0, rdTileCoords);
                             //随机生成
                             float rd = GD.Randf();
                             if (rd < 0.1)
@@ -190,7 +201,9 @@ namespace Solo.Scripts.System.ChunkSystem
                         }
                         else//石
                         {
-                            _tileMapLayer.SetCell(new Vector2I(globalX, globalY), _tileTypeInfoMap[TileType.Stone].SourceId, _tileTypeInfoMap[TileType.Stone].AtlasCoords);
+                            Vector2I rdTileCoords = TileCoordsListMap[TileType.Stone][Random.Shared.Next(TileCoordsListMap[TileType.Stone].Count)];
+                            _tileMapLayer.SetCell(new Vector2I(globalX, globalY), 0, rdTileCoords);
+                            //_tileMapLayer.SetCell(new Vector2I(globalX, globalY), _tileTypeInfoMap[TileType.Stone].SourceId, _tileTypeInfoMap[TileType.Stone].AtlasCoords);
                             if (GD.Randf() < 0.2)
                             {
                                 Vector2 curTilePos = new Vector2(globalX * _tileSize, globalY * _tileSize) + new Vector2(_tileSize / 2f, _tileSize / 2f);
@@ -240,7 +253,7 @@ namespace Solo.Scripts.System.ChunkSystem
             foreach (Building building in curChunk.BuildingList)//移除node
             {
                 curChunkData.BuildingSaveDataList.Add(new BuildingSaveData() { Type = building.Type, X = building.GlobalPosition.X, Y = building.GlobalPosition.Y });
-                GameManager.Instance.BuildingManager.Remove(BuildingDataManager.Instance.GetBuildingData(building.Type), building.GlobalPosition);
+                GameManager.Instance.BuildingManager.Remove(building.Type, building.GlobalPosition);
                 if (IsInstanceValid(building))
                     building.QueueFree();
             }
@@ -264,9 +277,9 @@ namespace Solo.Scripts.System.ChunkSystem
         public TileType GetTileType(Vector2 worldPos)
         {
             Vector2I mapCoords = _tileMapLayer.LocalToMap(_tileMapLayer.ToLocal(worldPos));
-            int sourceId = _tileMapLayer.GetCellSourceId(mapCoords);// 从 TileMapLayer 获取该坐标下的 SourceID 和 AtlasCoords
+            //int sourceId = _tileMapLayer.GetCellSourceId(mapCoords);// 从 TileMapLayer 获取该坐标下的 SourceID 和 AtlasCoords
             Vector2I atlasCoords = _tileMapLayer.GetCellAtlasCoords(mapCoords);
-            return _tileInfoTypeMap[new TileInfo() { SourceId = sourceId, AtlasCoords = atlasCoords }];
+            return TileTypeMap[atlasCoords];
         }
 
         public void AddItem(Node2D node, Vector2 worldPos)

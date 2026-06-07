@@ -9,6 +9,7 @@ public partial class Building : StaticBody2D
 {
     public BuildingType Type;
     [Export] private CollisionShape2D _collisionShape;
+    [Export] private Node2D _animRoot;
     [Export] private Sprite2D _sprite;
     [Export] public ProgressBar _hpPb;
     [Export] public PackedScene DropItemPs;
@@ -25,8 +26,12 @@ public partial class Building : StaticBody2D
         MaxHp = buildingData.MaxHp;
         _curHp = MaxHp;
         _dropItemList = buildingData.DropItemList;
-        RectangleShape2D rectShape = _collisionShape.Shape as RectangleShape2D;
-        rectShape.Size = new Vector2(buildingData.Width * 16, buildingData.Height * 16);
+        if (_collisionShape.Shape is RectangleShape2D rectShape)
+        {
+            RectangleShape2D uniqueShape = (RectangleShape2D)rectShape.Duplicate();// 关键：复制一份 Shape 资源，确保当前建筑的碰撞体独立
+            uniqueShape.Size = new Vector2(buildingData.Width * 16, buildingData.Height * 16);// 赋予新的尺寸
+            _collisionShape.Shape = uniqueShape;// 把独立后的 Shape 重新赋给当前建筑的 CollisionShape2D
+        }
         _sprite.Texture = GD.Load<Texture2D>(buildingData.TexturePath);
         if (_sprite.Material is ShaderMaterial shaderMat)
         {
@@ -35,7 +40,7 @@ public partial class Building : StaticBody2D
         }
         ShowOutline(false);
         GameManager.Instance.BuildingManager.Place(Type, snapPos);
-        GameManager.Instance.ChunkManager.AddItem(this, Position);
+        GameManager.Instance.ChunkManager.AddItem(this, GlobalPosition);
     }
 
     public override void _Process(double delta)
@@ -67,9 +72,11 @@ public partial class Building : StaticBody2D
     public virtual void TakeDamage(ItemType? dmgItemType, float damage)
     {
         Tween animTween = CreateTween().SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out);
-        animTween.TweenProperty(_sprite, "skew", 0.3f, 0.1f);// 左右晃动
-        animTween.TweenProperty(_sprite, "skew", -0.3f, 0.1f);
-        animTween.TweenProperty(_sprite, "skew", 0f, 0.1f);
+        animTween.TweenProperty(_animRoot, "skew", 0.2f, 0.1f);
+        animTween.Parallel().TweenProperty(_sprite.Material, "shader_parameter/flash_modifier", 1.0f, 0.1f);
+        animTween.TweenProperty(_animRoot, "skew", -0.2f, 0.1f);
+        animTween.Parallel().TweenProperty(_sprite.Material, "shader_parameter/flash_modifier", 0.0f, 0.1f);
+        animTween.TweenProperty(_animRoot, "skew", 0f, 0.1f);
         _curHp -= damage;
         _damageCooldownTimer = 0f;
         _healTimer = 0f;
@@ -87,6 +94,8 @@ public partial class Building : StaticBody2D
                 dropItem.ApplyForce();
             }
             QueueFree();
+            GameManager.Instance.BuildingManager.Remove(Type, GlobalPosition);
+            GameManager.Instance.ChunkManager.RemoveItem(this, GlobalPosition);
         }
     }
 

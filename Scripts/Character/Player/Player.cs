@@ -93,7 +93,7 @@ namespace Solo.Scripts.Character.Player
         {
             UpdateState((float)delta);
             //GD.Print($"CurState : {CurState}");
-            GD.Print($"GlobalPosition : {GlobalPosition}");
+            //GD.Print($"GlobalPosition : {GlobalPosition}");
         }
 
         private void ChangeState(PlayerState newState)

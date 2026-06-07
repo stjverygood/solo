@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://bkhix5ewbrx8a" path="res://Scripts/System/BuildingSystem/Building.cs" id="1_ve38v"]
 [ext_resource type="PackedScene" uid="uid://qw0q5wipafhq" path="res://Scenes/System/ItemSystem/DropItem.tscn" id="2_ldljy"]
 [ext_resource type="Shader" uid="uid://i3lcvke3ll2n" path="res://Assets/Shaders/Outline.gdshader" id="3_ldljy"]
+[ext_resource type="Texture2D" uid="uid://c8bqlw3qj8bok" path="res://Assets/AtlasTextures/Tree.tres" id="4_10igi"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_a72gv"]
 
@@ -10,21 +11,30 @@
 shader = ExtResource("3_ldljy")
 shader_parameter/outline_color = Color(1, 1, 1, 1)
 shader_parameter/outline_width = 1.0
+shader_parameter/flash_modifier = 0.0
+shader_parameter/flash_color = Color(1, 1, 1, 1)
 
-[node name="Building" type="StaticBody2D" unique_id=972007456 node_paths=PackedStringArray("_collisionShape", "_sprite", "_hpPb")]
+[node name="Building" type="StaticBody2D" unique_id=972007456 node_paths=PackedStringArray("_collisionShape", "_animRoot", "_sprite", "_hpPb")]
 script = ExtResource("1_ve38v")
 _collisionShape = NodePath("CollisionShape2D")
-_sprite = NodePath("Sprite2D")
+_animRoot = NodePath("AnimRoot")
+_sprite = NodePath("AnimRoot/Sprite2D")
 _hpPb = NodePath("ProgressBar")
 DropItemPs = ExtResource("2_ldljy")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1443277281]
 shape = SubResource("RectangleShape2D_a72gv")
 
-[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1800112651]
+[node name="AnimRoot" type="Node2D" parent="." unique_id=748198720]
+position = Vector2(0, 17)
+
+[node name="Sprite2D" type="Sprite2D" parent="AnimRoot" unique_id=1800112651]
 material = SubResource("ShaderMaterial_10igi")
+position = Vector2(0, -17)
+texture = ExtResource("4_10igi")
 
 [node name="ProgressBar" type="ProgressBar" parent="." unique_id=194993633]
+visible = false
 offset_left = -10.0
 offset_top = -19.0
 offset_right = 199.99997
