@@ -16,7 +16,7 @@ namespace Solo.Scripts.System.ItemSystem
             _itemDataMap.Add(ItemType.Silk, new ItemData { Name = "丝绸", MaxCount = 99, IconPath = "res://Assets/AtlasTextures/milk_icon.tres" });
             _itemDataMap.Add(ItemType.Leather, new ItemData { Name = "皮", MaxCount = 99, IconPath = "res://Assets/AtlasTextures/milk_icon.tres" });
             _itemDataMap.Add(ItemType.Grass, new ItemData { Name = "草", MaxCount = 99, IconPath = "res://Assets/AtlasTextures/Grass.tres" });
-            _itemDataMap.Add(ItemType.Rope, new ItemData { Name = "绳", MaxCount = 99, IconPath = "res://Assets/AtlasTextures/milk_icon.tres" });
+            _itemDataMap.Add(ItemType.Rope, new ItemData { Name = "绳", MaxCount = 99, IconPath = "res://Assets/AtlasTextures/Rope.tres" });
             _itemDataMap.Add(ItemType.Stone, new ItemData { Name = "石", MaxCount = 99, IconPath = "res://Assets/AtlasTextures/StoneItem.tres" });
 
             _itemDataMap.Add(ItemType.Wood, new ItemData { Name = "木", MaxCount = 99, IconPath = "res://Assets/AtlasTextures/Wood.tres" });

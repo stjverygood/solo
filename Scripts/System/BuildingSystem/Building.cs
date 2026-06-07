@@ -12,6 +12,7 @@ public partial class Building : StaticBody2D
     [Export] private Node2D _animRoot;
     [Export] private Sprite2D _sprite;
     [Export] public ProgressBar _hpPb;
+    [Export] public Label _hpLb;
     [Export] public PackedScene DropItemPs;
     public float MaxHp = 100;
     private List<(ItemType, int, int)> _dropItemList;//掉落物类型, 最小掉落数量, 最大掉落数量
@@ -38,6 +39,7 @@ public partial class Building : StaticBody2D
             _shaderMaterial = (ShaderMaterial)shaderMat.Duplicate();// 关键：复制一份材质，确保每个实例的材质相互独立
             _sprite.Material = _shaderMaterial;// 记得把复制后的独立材质重新赋给当前的 Sprite2D
         }
+        RefreshHpBar();
         ShowOutline(false);
         GameManager.Instance.BuildingManager.Place(Type, snapPos);
         GameManager.Instance.ChunkManager.AddItem(this, GlobalPosition);
@@ -51,7 +53,7 @@ public partial class Building : StaticBody2D
     private float _damageCooldownTimer = 0; // 受伤后的冷却计时器
     private const float _healDelayAfterDamage = 3.0f; // 受伤后等待 3 秒才开始回血
     private float _healTimer = 0;
-    private float _healDuration = 1;
+    private float _healDuration = 0.1f;
     private void AutoHeal(float delta)
     {
         if (_damageCooldownTimer < _healDelayAfterDamage)
@@ -66,7 +68,7 @@ public partial class Building : StaticBody2D
         _curHp++;
         if (_curHp > MaxHp)
             _curHp = MaxHp;
-        //_hpBarControl.Refresh(MaxHp, _curHp);
+        RefreshHpBar();
     }
 
     public virtual void TakeDamage(ItemType? dmgItemType, float damage)
@@ -84,7 +86,7 @@ public partial class Building : StaticBody2D
         _curHp -= damage;
         _damageCooldownTimer = 0f;
         _healTimer = 0f;
-        //_hpBarControl.Refresh(MaxHp, _curHp);
+        RefreshHpBar();
         if (_curHp <= 0)
         {
             GameManager.Instance.ChunkManager.RemoveItem(this, GlobalPosition);
@@ -114,5 +116,19 @@ public partial class Building : StaticBody2D
         {
             _shaderMaterial.SetShaderParameter("outline_width", 0.0f);
         }
+    }
+
+    private void RefreshHpBar()
+    {
+        if (_curHp == MaxHp)
+        {
+            _hpPb.Visible = false;
+            return;
+        }
+        _hpPb.Position = new Vector2(_hpPb.Position.X, -(BuildingDataManager.Instance.GetBuildingData(Type).Height * 16 / 2 + 8));
+        _hpPb.Visible = true;
+        _hpPb.MaxValue = MaxHp;
+        _hpPb.Value = _curHp;
+        _hpLb.Text = $"{_curHp:f0}/{MaxHp:f0}";
     }
 }

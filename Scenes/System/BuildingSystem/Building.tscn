@@ -4,6 +4,7 @@
 [ext_resource type="PackedScene" uid="uid://qw0q5wipafhq" path="res://Scenes/System/ItemSystem/DropItem.tscn" id="2_ldljy"]
 [ext_resource type="Shader" uid="uid://i3lcvke3ll2n" path="res://Assets/Shaders/Outline.gdshader" id="3_ldljy"]
 [ext_resource type="Texture2D" uid="uid://c8bqlw3qj8bok" path="res://Assets/AtlasTextures/Tree.tres" id="4_10igi"]
+[ext_resource type="FontFile" uid="uid://chelxpn5elvbb" path="res://Assets/zpix.ttf" id="5_y7ho7"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_a72gv"]
 
@@ -14,12 +15,37 @@ shader_parameter/outline_width = 1.0
 shader_parameter/flash_modifier = 0.0
 shader_parameter/flash_color = Color(1, 1, 1, 1)
 
-[node name="Building" type="StaticBody2D" unique_id=972007456 node_paths=PackedStringArray("_collisionShape", "_animRoot", "_sprite", "_hpPb")]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_4hhkt"]
+bg_color = Color(0, 0, 0, 0)
+border_width_left = 16
+border_width_top = 16
+border_width_right = 16
+border_width_bottom = 16
+border_color = Color(0.12156863, 0.05490196, 0.10980392, 1)
+corner_radius_top_left = 65
+corner_radius_top_right = 65
+corner_radius_bottom_right = 65
+corner_radius_bottom_left = 65
+expand_margin_left = 16.0
+expand_margin_top = 16.0
+expand_margin_right = 16.0
+expand_margin_bottom = 16.0
+anti_aliasing = false
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_y7ho7"]
+bg_color = Color(0.89411765, 0.5803922, 0.22745098, 1)
+corner_radius_top_left = 64
+corner_radius_top_right = 64
+corner_radius_bottom_right = 64
+corner_radius_bottom_left = 64
+
+[node name="Building" type="StaticBody2D" unique_id=972007456 node_paths=PackedStringArray("_collisionShape", "_animRoot", "_sprite", "_hpPb", "_hpLb")]
 script = ExtResource("1_ve38v")
 _collisionShape = NodePath("CollisionShape2D")
 _animRoot = NodePath("AnimRoot")
 _sprite = NodePath("AnimRoot/Sprite2D")
 _hpPb = NodePath("ProgressBar")
+_hpLb = NodePath("ProgressBar/Label")
 DropItemPs = ExtResource("2_ldljy")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1443277281]
@@ -34,10 +60,28 @@ position = Vector2(0, -17)
 texture = ExtResource("4_10igi")
 
 [node name="ProgressBar" type="ProgressBar" parent="." unique_id=194993633]
-visible = false
-offset_left = -10.0
-offset_top = -19.0
-offset_right = 199.99997
-offset_bottom = 31.0
+z_index = 277
+offset_left = -15.365
+offset_top = -24.7
+offset_right = 294.63498
+offset_bottom = 45.3
 scale = Vector2(0.1, 0.1)
-value = 16.0
+theme_override_styles/background = SubResource("StyleBoxFlat_4hhkt")
+theme_override_styles/fill = SubResource("StyleBoxFlat_y7ho7")
+value = 68.91
+show_percentage = false
+
+[node name="Label" type="Label" parent="ProgressBar" unique_id=1652552688]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 28
+theme_override_fonts/font = ExtResource("5_y7ho7")
+theme_override_font_sizes/font_size = 76
+text = "90/100"
+horizontal_alignment = 1
+vertical_alignment = 1

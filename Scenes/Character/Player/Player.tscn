@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://bwctbm6eq64vu"]
 
 [ext_resource type="Script" uid="uid://dpkxkwy3ger5n" path="res://Scripts/Character/Player/Player.cs" id="1_lxeke"]
-[ext_resource type="Texture2D" uid="uid://di0q8426y42st" path="res://Assets/player_shadiao.png" id="2_y25d7"]
+[ext_resource type="Texture2D" uid="uid://cmlghpyvrsitg" path="res://Assets/AtlasTextures/Player.tres" id="3_3gn43"]
 [ext_resource type="PackedScene" uid="uid://das8eij0ua5tt" path="res://Scenes/System/BuildingSystem/BuildingPreview.tscn" id="3_f0b02"]
 [ext_resource type="PackedScene" uid="uid://cegl0cmno78dg" path="res://Scenes/System/InventorySystem/BagInventoryView.tscn" id="3_lxeke"]
 [ext_resource type="Texture2D" uid="uid://o4hfa45sxt1m" path="res://Assets/AtlasTextures/WoodAxe.tres" id="4_3gn43"]
@@ -51,15 +51,13 @@ position = Vector2(0, 8)
 
 [node name="Sprite" type="Sprite2D" parent="SpriteRoot/BodyRoot" unique_id=13186832]
 position = Vector2(9.947597e-14, -8.000001)
-rotation = 3.1415927
-scale = Vector2(0.079, -0.075)
-texture = ExtResource("2_y25d7")
+texture = ExtResource("3_3gn43")
 
 [node name="HandNode" type="Node2D" parent="SpriteRoot" unique_id=129208459]
-position = Vector2(4, 5)
+position = Vector2(7, 5)
 
 [node name="Sprite2D" type="Sprite2D" parent="SpriteRoot/HandNode" unique_id=216393619]
-position = Vector2(3, -4)
+position = Vector2(3, -3)
 texture = ExtResource("4_3gn43")
 
 [node name="InteractArea" type="Area2D" parent="." unique_id=1100036687]

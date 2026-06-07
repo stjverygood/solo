@@ -4,6 +4,7 @@
 [ext_resource type="Script" uid="uid://bduq7owfuttwg" path="res://Scripts/Global/FloatTextLb.cs" id="2_w61fg"]
 
 [node name="FloatTextLb" type="Label" unique_id=1780256027]
+z_index = 2504
 offset_left = -9.0
 offset_top = -6.0
 offset_right = 9.0

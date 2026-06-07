@@ -11,9 +11,10 @@ size = Vector2(6, 4)
 shader = ExtResource("2_2xro6")
 shader_parameter/outline_color = Color(1, 1, 1, 1)
 shader_parameter/outline_width = 1.0000000475
+shader_parameter/flash_modifier = 0.0
+shader_parameter/flash_color = Color(1, 1, 1, 1)
 
 [node name="DropItem" type="Area2D" unique_id=664154850 node_paths=PackedStringArray("TextLb", "IconSprite")]
-z_index = -1
 script = ExtResource("1_43lql")
 TextLb = NodePath("Label")
 IconSprite = NodePath("Sprite2D")
@@ -22,6 +23,7 @@ IconSprite = NodePath("Sprite2D")
 shape = SubResource("RectangleShape2D_43lql")
 
 [node name="Label" type="Label" parent="." unique_id=1286302052]
+z_index = 547
 offset_left = -20.000002
 offset_top = -20.0
 offset_right = 31.999998
