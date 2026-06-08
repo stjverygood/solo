@@ -27,6 +27,7 @@ public partial class Building : StaticBody2D
         MaxHp = buildingData.MaxHp;
         _curHp = MaxHp;
         _dropItemList = buildingData.DropItemList;
+        _sprite.Position = new Vector2(_sprite.Position.X, _sprite.Position.Y - (buildingData.TextureHeight - buildingData.Height) / 2 * 16);
         if (_collisionShape.Shape is RectangleShape2D rectShape)
         {
             RectangleShape2D uniqueShape = (RectangleShape2D)rectShape.Duplicate();// 关键：复制一份 Shape 资源，确保当前建筑的碰撞体独立
@@ -73,6 +74,7 @@ public partial class Building : StaticBody2D
 
     public virtual void TakeDamage(ItemType? dmgItemType, float damage)
     {
+        damage = HandleDamage(dmgItemType, damage);
         Tween animTween = CreateTween().SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out);
         animTween.TweenProperty(_animRoot, "skew", 0.2f, 0.1f);
         animTween.Parallel().TweenProperty(_sprite.Material, "shader_parameter/flash_modifier", 1.0f, 0.1f);
@@ -130,5 +132,54 @@ public partial class Building : StaticBody2D
         _hpPb.MaxValue = MaxHp;
         _hpPb.Value = _curHp;
         _hpLb.Text = $"{_curHp:f0}/{MaxHp:f0}";
+    }
+
+    private float HandleDamage(ItemType? dmgItemType, float damage)
+    {
+        float resDmg = damage;
+        switch (Type)
+        {
+            case BuildingType.Tree:
+                switch (dmgItemType)
+                {
+                    case ItemType.WoodAxe:
+                        resDmg *= 2;
+                        break;
+                    case ItemType.IronAxe:
+                        resDmg *= 3;
+                        break;
+                    case ItemType.GoldAxe:
+                        resDmg *= 4;
+                        break;
+                    case ItemType.JadeAxe:
+                        resDmg *= 5;
+                        break;
+                    default:
+                        resDmg *= 1;
+                        break;
+                }
+                break;
+            case BuildingType.Stone:
+                switch (dmgItemType)
+                {
+                    case ItemType.WoodPickaxe:
+                        resDmg *= 1;
+                        break;
+                    case ItemType.IronPickaxe:
+                        resDmg *= 2;
+                        break;
+                    case ItemType.GoldPickaxe:
+                        resDmg *= 3;
+                        break;
+                    case ItemType.JadePickaxe:
+                        resDmg *= 4;
+                        break;
+                    default:
+                        resDmg *= 0.1f;
+                        break;
+                }
+                break;
+        }
+        return resDmg;
     }
 }

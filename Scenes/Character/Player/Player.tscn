@@ -8,9 +8,8 @@
 [ext_resource type="PackedScene" uid="uid://557c5e8cwx11" path="res://Scenes/System/InventorySystem/FastBarInventoryView.tscn" id="4_y25d7"]
 [ext_resource type="PackedScene" uid="uid://bv36kio2oi60f" path="res://Scenes/Character/Player/SelfView.tscn" id="6_7qy38"]
 
-[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_kpjcp"]
-radius = 5.0
-height = 14.0
+[sub_resource type="CircleShape2D" id="CircleShape2D_jw8fk"]
+radius = 7.0
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_3gn43"]
 radius = 22.022715
@@ -22,7 +21,7 @@ radius = 16.0
 radius = 61.0
 
 [node name="Player" type="CharacterBody2D" unique_id=1144409017 node_paths=PackedStringArray("SpriteRoot", "BodyRoot", "InteractArea", "AtkArea", "RangeAtkArea", "_camera", "_selfView", "_bagInventoryView", "_fastBarInventoryView", "_handNode", "_handSprite")]
-z_index = 100
+y_sort_enabled = true
 script = ExtResource("1_lxeke")
 SpriteRoot = NodePath("SpriteRoot")
 BodyRoot = NodePath("SpriteRoot/BodyRoot")
@@ -38,7 +37,8 @@ _handNode = NodePath("SpriteRoot/HandNode")
 _handSprite = NodePath("SpriteRoot/HandNode/Sprite2D")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1924437222]
-shape = SubResource("CapsuleShape2D_kpjcp")
+position = Vector2(0, 11)
+shape = SubResource("CircleShape2D_jw8fk")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=173865742]
 zoom = Vector2(2, 2)

@@ -11,9 +11,9 @@ namespace Solo.Scripts.System.BuildingSystem
 
         private BuildingDataManager()
         {
-            _BuildingDataMap.Add(BuildingType.Tree, new BuildingData() { Type = BuildingType.Tree, Width = 1, Height = 2, TexturePath = "res://Assets/AtlasTextures/Tree.tres", MaxHp = 100, DropItemList = new List<(ItemType, int, int)>() { (ItemType.Wood, 2, 6), } });
-            _BuildingDataMap.Add(BuildingType.Stone, new BuildingData() { Type = BuildingType.Stone, Width = 2, Height = 2, TexturePath = "res://Assets/AtlasTextures/Stone.tres", MaxHp = 100, DropItemList = new List<(ItemType, int, int)>() { (ItemType.Stone, 1, 3), } });
-            _BuildingDataMap.Add(BuildingType.MainBase, new BuildingData() { Type = BuildingType.MainBase, Width = 4, Height = 4, TexturePath = "res://Assets/AtlasTextures/MainBase.tres", MaxHp = 100, DropItemList = new List<(ItemType, int, int)>() { (ItemType.Stone, 1, 3), } });
+            _BuildingDataMap.Add(BuildingType.Tree, new BuildingData() { Type = BuildingType.Tree, Width = 1, Height = 1, TextureHeight = 3, TexturePath = "res://Assets/AtlasTextures/Tree.tres", MaxHp = 100, DropItemList = new List<(ItemType, int, int)>() { (ItemType.Wood, 2, 6), } });
+            _BuildingDataMap.Add(BuildingType.Stone, new BuildingData() { Type = BuildingType.Stone, Width = 2, Height = 2, TextureHeight = 4, TexturePath = "res://Assets/AtlasTextures/Stone.tres", MaxHp = 100, DropItemList = new List<(ItemType, int, int)>() { (ItemType.Stone, 1, 3), } });
+            _BuildingDataMap.Add(BuildingType.MainBase, new BuildingData() { Type = BuildingType.MainBase, Width = 4, Height = 4, TextureHeight = 6, TexturePath = "res://Assets/AtlasTextures/MainBase.tres", MaxHp = 100, DropItemList = new List<(ItemType, int, int)>() { (ItemType.Stone, 1, 3), } });
         }
 
         public BuildingData GetBuildingData(BuildingType type)

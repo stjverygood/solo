@@ -15,6 +15,7 @@ shader_parameter/flash_modifier = 0.0
 shader_parameter/flash_color = Color(1, 1, 1, 1)
 
 [node name="DropItem" type="Area2D" unique_id=664154850 node_paths=PackedStringArray("TextLb", "IconSprite")]
+y_sort_enabled = true
 script = ExtResource("1_43lql")
 TextLb = NodePath("Label")
 IconSprite = NodePath("Sprite2D")
@@ -23,7 +24,7 @@ IconSprite = NodePath("Sprite2D")
 shape = SubResource("RectangleShape2D_43lql")
 
 [node name="Label" type="Label" parent="." unique_id=1286302052]
-z_index = 547
+z_index = 10
 offset_left = -20.000002
 offset_top = -20.0
 offset_right = 31.999998

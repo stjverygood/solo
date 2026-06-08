@@ -3,10 +3,8 @@
 [ext_resource type="Script" uid="uid://bkhix5ewbrx8a" path="res://Scripts/System/BuildingSystem/Building.cs" id="1_ve38v"]
 [ext_resource type="PackedScene" uid="uid://qw0q5wipafhq" path="res://Scenes/System/ItemSystem/DropItem.tscn" id="2_ldljy"]
 [ext_resource type="Shader" uid="uid://i3lcvke3ll2n" path="res://Assets/Shaders/Outline.gdshader" id="3_ldljy"]
-[ext_resource type="Texture2D" uid="uid://c8bqlw3qj8bok" path="res://Assets/AtlasTextures/Tree.tres" id="4_10igi"]
+[ext_resource type="Texture2D" uid="uid://dt76k12bmj6gn" path="res://Assets/AtlasTextures/Stone.tres" id="4_y7ho7"]
 [ext_resource type="FontFile" uid="uid://chelxpn5elvbb" path="res://Assets/zpix.ttf" id="5_y7ho7"]
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_a72gv"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_10igi"]
 shader = ExtResource("3_ldljy")
@@ -14,6 +12,9 @@ shader_parameter/outline_color = Color(1, 1, 1, 1)
 shader_parameter/outline_width = 1.0
 shader_parameter/flash_modifier = 0.0
 shader_parameter/flash_color = Color(1, 1, 1, 1)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_a72gv"]
+size = Vector2(32, 32)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_4hhkt"]
 bg_color = Color(0, 0, 0, 0)
@@ -40,6 +41,7 @@ corner_radius_bottom_right = 64
 corner_radius_bottom_left = 64
 
 [node name="Building" type="StaticBody2D" unique_id=972007456 node_paths=PackedStringArray("_collisionShape", "_animRoot", "_sprite", "_hpPb", "_hpLb")]
+y_sort_enabled = true
 script = ExtResource("1_ve38v")
 _collisionShape = NodePath("CollisionShape2D")
 _animRoot = NodePath("AnimRoot")
@@ -48,23 +50,21 @@ _hpPb = NodePath("ProgressBar")
 _hpLb = NodePath("ProgressBar/Label")
 DropItemPs = ExtResource("2_ldljy")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1443277281]
-shape = SubResource("RectangleShape2D_a72gv")
-
 [node name="AnimRoot" type="Node2D" parent="." unique_id=748198720]
-position = Vector2(0, 17)
 
 [node name="Sprite2D" type="Sprite2D" parent="AnimRoot" unique_id=1800112651]
 material = SubResource("ShaderMaterial_10igi")
-position = Vector2(0, -17)
-texture = ExtResource("4_10igi")
+texture = ExtResource("4_y7ho7")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1443277281]
+shape = SubResource("RectangleShape2D_a72gv")
 
 [node name="ProgressBar" type="ProgressBar" parent="." unique_id=194993633]
 z_index = 277
-offset_left = -15.365
-offset_top = -24.7
-offset_right = 294.63498
-offset_bottom = 45.3
+offset_left = -14.999999
+offset_top = -61.999996
+offset_right = 294.99997
+offset_bottom = 8.000004
 scale = Vector2(0.1, 0.1)
 theme_override_styles/background = SubResource("StyleBoxFlat_4hhkt")
 theme_override_styles/fill = SubResource("StyleBoxFlat_y7ho7")
