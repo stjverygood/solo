@@ -27,6 +27,7 @@
     //建筑类型
     public enum BuildingType
     {
+        Water,//水上无法拍建筑
         Tree,
         Stone,
         MainBase,//聚灵之源

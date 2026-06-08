@@ -75,7 +75,6 @@ namespace Solo.Scripts.Character.Player
             {
                 ChangeState(PlayerState.Idle);
             }
-            ChangeState(PlayerState.Idle);
 
             _selfView.BasicCraftView.Init();
             _selfView.Visible = false;

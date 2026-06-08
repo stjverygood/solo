@@ -121,6 +121,8 @@ namespace Solo.Scripts.System.ChunkSystem
                         {
                             Vector2I rdTileCoords = TileCoordsListMap[TileType.Water][Random.Shared.Next(TileCoordsListMap[TileType.Water].Count)];
                             _tileMapLayer.SetCell(new Vector2I(globalX, globalY), 0, rdTileCoords);
+                            Vector2 snapPos = GameManager.Instance.BuildingManager.SnapToCell(BuildingType.Water, new Vector2I(globalX, globalY));
+                            GameManager.Instance.BuildingManager.Place(BuildingType.Water, snapPos);
                             //_tileMapLayer.SetCell(new Vector2I(globalX, globalY), _tileTypeInfoMap[TileType.Water].SourceId, _tileTypeInfoMap[TileType.Water].AtlasCoords);
                         }
                         else if (noiseVal < 0.35)//草
@@ -171,6 +173,8 @@ namespace Solo.Scripts.System.ChunkSystem
 
                             Vector2I rdTileCoords = TileCoordsListMap[TileType.Water][Random.Shared.Next(TileCoordsListMap[TileType.Water].Count)];
                             _tileMapLayer.SetCell(new Vector2I(globalX, globalY), 0, rdTileCoords);
+                            Vector2 snapPos = GameManager.Instance.BuildingManager.SnapToCell(BuildingType.Water, new Vector2I(globalX, globalY));
+                            GameManager.Instance.BuildingManager.Place(BuildingType.Water, snapPos);
                         }
                         else if (noiseVal < 0.35)//草
                         {
