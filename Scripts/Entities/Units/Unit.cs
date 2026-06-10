@@ -24,7 +24,7 @@ namespace Solo.Scripts.Entities.Units
     }
 
 
-    public partial class Unit : Node2D
+    public partial class Unit : CharacterBody2D
     {
         public UnitType Type;
         private float _maxHp;
@@ -38,43 +38,15 @@ namespace Solo.Scripts.Entities.Units
         private Vector2 _curDir = Vector2.Right;
         [Export] private NavigationAgent2D _naviAgent;
         [Export] private Area2D _viewArea;
+        [Export] private Node2D _spriteRoot;
         [Export] private Node2D _animRoot;
         private Tween _animTween;
         private List<Node2D> _targetNodeList = new List<Node2D>();
 
-        public override void _Ready()
-        {
-            _viewArea.BodyEntered += _viewArea_BodyEntered;
-            _viewArea.BodyExited += _viewArea_BodyExited;
-        }
-
-
-
-        private void _viewArea_BodyEntered(Node2D body)
-        {
-            if (body is Player player)
-            {
-                _targetNodeList.Add(player);
-            }
-            else if (body is Unit unit)
-            {
-                _targetNodeList.Add(unit);
-            }
-        }
-        private void _viewArea_BodyExited(Node2D body)
-        {
-            if (body is Player player)
-            {
-                _targetNodeList.Remove(player);
-            }
-            else if (body is Unit unit)
-            {
-                _targetNodeList.Remove(unit);
-            }
-        }
-
         public void Init(UnitType type, Vector2 worldPos)
         {
+            GameManager.Instance.UnitList.Add(this);
+
             Type = type;
             GlobalPosition = worldPos;
             UnitData unitData = UnitDataManager.Instance.GetUnitData(Type);
@@ -85,7 +57,15 @@ namespace Solo.Scripts.Entities.Units
             _hostileUnitTypeSet = unitData.HostileUnitTypeList.ToHashSet();
             _fearUnitTypeSet = unitData.FearUnitTypeList.ToHashSet();
             ChangeState(UnitState.Idle);
+            _viewArea.BodyEntered += _viewArea_BodyEntered;
+            _viewArea.BodyExited += _viewArea_BodyExited;
+            _naviAgent.VelocityComputed += OnVelocityComputed;
+            _naviAgent.AvoidanceEnabled = true;
+            _naviAgent.Radius = 10.0f;          // 根据你的单位大小调整
+            _naviAgent.AvoidanceLayers = 1;     // 设置层
+            _naviAgent.AvoidanceMask = 1;       // 设置掩码
         }
+
 
         public override void _PhysicsProcess(double delta)
         {
@@ -196,7 +176,6 @@ namespace Solo.Scripts.Entities.Units
             _idleTimer += delta;
             if (_idleTimer >= _idleDuration)
             {
-                _naviAgent.TargetPosition = GetRandomTargetPosition();
                 ChangeState(UnitState.Patrol);
                 return;
             }
@@ -214,6 +193,7 @@ namespace Solo.Scripts.Entities.Units
             _animTween = CreateTween().SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out).SetLoops();
             _animTween.TweenProperty(_animRoot, "skew", 0.1f, 0.3f);// 走动效果：左右晃动或轻微拉伸
             _animTween.TweenProperty(_animRoot, "skew", -0.1f, 0.3f);
+            _naviAgent.TargetPosition = GetRandomTargetPosition();
         }
         private void UpdatePatrol(float delta)
         {
@@ -224,10 +204,13 @@ namespace Solo.Scripts.Entities.Units
             }
             _curDir = (_naviAgent.GetNextPathPosition() - GlobalPosition).Normalized();
             if (_curDir.X > 0)
-                Scale = new Vector2(1, 1);
+                _spriteRoot.Scale = new Vector2(1, 1);
             else
-                Scale = new Vector2(-1, 1);
-            GlobalPosition += delta * _moveSpeed * _curDir;
+                _spriteRoot.Scale = new Vector2(-1, 1);
+            //Velocity = _moveSpeed * _curDir;
+            //MoveAndSlide();
+            _naviAgent.Velocity = _moveSpeed * _curDir;
+            //GlobalPosition += delta * _moveSpeed * _curDir;
         }
         private void ExitPatrol()
         {
@@ -324,13 +307,66 @@ namespace Solo.Scripts.Entities.Units
         public Vector2 GetRandomTargetPosition()
         {
             Rid mapRid = _naviAgent.GetNavigationMap();
-            float randomAngle = GD.Randf() * Mathf.Tau; // 1. 生成 360 度随机方向 // Tau 就是 2 * PI
-            Vector2 randomDirection = new Vector2(Mathf.Cos(randomAngle), Mathf.Sin(randomAngle));
-            float randomDistance = (float)GD.RandRange(0, _patrolRadius);// 2. 计算随机距离和原始目标点
-            Vector2 rawTargetPos = GlobalPosition + randomDirection * randomDistance;
-            Vector2 validTargetPos = NavigationServer2D.MapGetClosestPoint(mapRid, rawTargetPos);// 3. 使用 MapGetClosestPoint（这就是正确的 API）把点吸附到导航网格上
-            return validTargetPos;
+            Vector2 bestPos = GlobalPosition;
+
+            int maxAttempts = 5;
+            for (int i = 0; i < maxAttempts; i++)
+            {
+                float randomAngle = GD.Randf() * Mathf.Tau;
+                Vector2 randomDirection = new Vector2(Mathf.Cos(randomAngle), Mathf.Sin(randomAngle));
+                float randomDistance = (float)GD.RandRange(0, _patrolRadius);
+                Vector2 rawTargetPos = GlobalPosition + randomDirection * randomDistance;
+
+                Vector2 validTargetPos = NavigationServer2D.MapGetClosestPoint(mapRid, rawTargetPos);
+
+                // 【改用 Agent 判定】临时测一下这个点
+                _naviAgent.TargetPosition = validTargetPos;
+
+                // 如果 Agent 觉得能走到，说明没问题
+                if (_naviAgent.IsTargetReachable())
+                {
+                    bestPos = validTargetPos;
+                    break;
+                }
+            }
+
+            return bestPos;
         }
+
+        private void OnVelocityComputed(Vector2 safeVelocity)
+        {
+            Velocity = safeVelocity;
+            MoveAndSlide();
+        }
+        private void _viewArea_BodyEntered(Node2D body)
+        {
+            if (body is Player player)
+            {
+                _targetNodeList.Add(player);
+            }
+            else if (body is Unit unit)
+            {
+                _targetNodeList.Add(unit);
+            }
+        }
+        private void _viewArea_BodyExited(Node2D body)
+        {
+            if (body is Player player)
+            {
+                _targetNodeList.Remove(player);
+            }
+            else if (body is Unit unit)
+            {
+                _targetNodeList.Remove(unit);
+            }
+        }
+
+        private void Die()
+        {
+            GameManager.Instance.UnitList.Add(this);
+            QueueFree();
+        }
+
     }
 
 }

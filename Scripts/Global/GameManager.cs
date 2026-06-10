@@ -27,7 +27,7 @@ namespace Solo.Scripts.Global
 
 
         public Player Player;
-        public List<Unit> EnemyList = new List<Unit>();
+        public List<Unit> UnitList = new List<Unit>();
         public ChunkManager ChunkManager;
         public BuildingManager BuildingManager;
 
@@ -45,6 +45,7 @@ namespace Solo.Scripts.Global
 
         public override void _PhysicsProcess(double delta)
         {
+            GD.Print("UnitList.Count : " + UnitList.Count);
             switch (_curState)
             {
                 case GameState.Play:
