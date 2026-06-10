@@ -1,12 +1,12 @@
 [gd_scene format=3 uid="uid://bwctbm6eq64vu"]
 
-[ext_resource type="Script" uid="uid://dpkxkwy3ger5n" path="res://Scripts/Character/Player/Player.cs" id="1_lxeke"]
+[ext_resource type="Script" uid="uid://dpkxkwy3ger5n" path="res://Scripts/Entities/Players/Player.cs" id="1_lxeke"]
 [ext_resource type="Texture2D" uid="uid://cmlghpyvrsitg" path="res://Assets/AtlasTextures/Player.tres" id="3_3gn43"]
 [ext_resource type="PackedScene" uid="uid://das8eij0ua5tt" path="res://Scenes/System/BuildingSystem/BuildingPreview.tscn" id="3_f0b02"]
 [ext_resource type="PackedScene" uid="uid://cegl0cmno78dg" path="res://Scenes/System/InventorySystem/BagInventoryView.tscn" id="3_lxeke"]
 [ext_resource type="Texture2D" uid="uid://o4hfa45sxt1m" path="res://Assets/AtlasTextures/WoodAxe.tres" id="4_3gn43"]
 [ext_resource type="PackedScene" uid="uid://557c5e8cwx11" path="res://Scenes/System/InventorySystem/FastBarInventoryView.tscn" id="4_y25d7"]
-[ext_resource type="PackedScene" uid="uid://bv36kio2oi60f" path="res://Scenes/Character/Player/SelfView.tscn" id="6_7qy38"]
+[ext_resource type="PackedScene" uid="uid://bv36kio2oi60f" path="res://Scenes/Entities/Players/SelfView.tscn" id="6_7qy38"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_jw8fk"]
 radius = 7.0

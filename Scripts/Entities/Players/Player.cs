@@ -1,11 +1,12 @@
 using Godot;
 using Solo.Scripts.Global;
+using Solo.Scripts.System.BuildingSystem;
 using Solo.Scripts.System.InventorySystem;
 using Solo.Scripts.System.ItemSystem;
 using Solo.Scripts.System.SaveSystem;
 using System.Collections.Generic;
 
-namespace Solo.Scripts.Character.Player
+namespace Solo.Scripts.Entities.Players
 {
     public enum PlayerState
     {
@@ -541,13 +542,12 @@ namespace Solo.Scripts.Character.Player
             else
                 Velocity = input * moveSpeed;
             MoveAndSlide();
-
+            _curBuildingPreview.Update(GlobalPosition);
             if (Input.IsActionJustPressed("Atk"))
             {
                 bool isBuild = _curBuildingPreview.Build();                if (isBuild)
                 {
                     int remainCount = FastBarInventory.RemoveItemByIndex(CurFastBarIndex, 1);
-
                     if (remainCount == 0)//count = 0, 空手, 并且切到Idle
                     {
                         _curBuildingPreview.QueueFree();
@@ -555,15 +555,11 @@ namespace Solo.Scripts.Character.Player
                         return;
                     }
                 }
-
             }
-
             if (Input.IsActionJustPressed("Interact"))
             {
                 _curBuildingPreview.ChangeDir();
             }
-
-            _curBuildingPreview.Update(GlobalPosition);
         }
         #endregion
 

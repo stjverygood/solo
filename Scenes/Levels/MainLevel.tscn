@@ -2,19 +2,10 @@
 
 [ext_resource type="PackedScene" uid="uid://c364av0qjs5rx" path="res://Scenes/System/ChunkSystem/ChunkManager.tscn" id="1_5poqq"]
 [ext_resource type="Script" uid="uid://bg2yewdyov431" path="res://Scripts/Levels/MainLevel.cs" id="1_xatts"]
-[ext_resource type="PackedScene" uid="uid://bwctbm6eq64vu" path="res://Scenes/Character/Player/Player.tscn" id="2_jxtak"]
-[ext_resource type="Texture2D" uid="uid://c8bqlw3qj8bok" path="res://Assets/AtlasTextures/Tree.tres" id="4_xx3f3"]
+[ext_resource type="PackedScene" uid="uid://bwctbm6eq64vu" path="res://Scenes/Entities/Players/Player.tscn" id="2_jxtak"]
 
 [node name="MainLevel" type="Node2D" unique_id=1442456336]
 y_sort_enabled = true
 script = ExtResource("1_xatts")
 _playerPs = ExtResource("2_jxtak")
 _ChunkManagerPs = ExtResource("1_5poqq")
-
-[node name="Node2D" type="Node2D" parent="." unique_id=832152441]
-z_index = 100
-y_sort_enabled = true
-
-[node name="Sprite2D" type="Sprite2D" parent="Node2D" unique_id=1285004026]
-position = Vector2(0, -10)
-texture = ExtResource("4_xx3f3")

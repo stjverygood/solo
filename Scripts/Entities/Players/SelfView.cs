@@ -1,6 +1,6 @@
 using Godot;
 using Solo.Scripts.System.CraftSystem;
-namespace Solo.Scripts.Character.Player
+namespace Solo.Scripts.Entities.Players
 {
     public partial class SelfView : Control
     {

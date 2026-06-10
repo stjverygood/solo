@@ -37,6 +37,7 @@ public partial class BuildingPreview : Node2D
         }
         BuildingData buildingData = BuildingDataManager.Instance.GetBuildingData(Type);
         _sprite.Texture = GD.Load<Texture2D>(buildingData.TexturePath);
+        _sprite.Position = new Vector2(_sprite.Position.X, _sprite.Position.Y - (buildingData.TextureHeight - buildingData.Height) / 2 * 16);
         Update(playerPos);
     }
 
@@ -49,7 +50,7 @@ public partial class BuildingPreview : Node2D
     public void Update(Vector2 playerPos)
     {
         BuildingData buildingData = BuildingDataManager.Instance.GetBuildingData(Type);
-        Vector2 worldPos = playerPos + new Vector2(_curDir.X * buildingData.Width / 2 * 20, _curDir.Y * buildingData.Height / 2 * 20);
+        Vector2 worldPos = playerPos + new Vector2(_curDir.X * buildingData.Width / 2 * 20, _curDir.Y * buildingData.Height / 2 * 25);
         Vector2 snapPos = GameManager.Instance.BuildingManager.SnapToCell(Type, worldPos);
         bool canPlace = GameManager.Instance.BuildingManager.CanPlaced(Type, snapPos);
         GlobalPosition = snapPos;
@@ -82,24 +83,20 @@ public partial class BuildingPreview : Node2D
 
     public bool Build()
     {
-        Vector2 snapPos = GameManager.Instance.BuildingManager.SnapToCell(Type, GlobalPosition);
-        bool canPlace = GameManager.Instance.BuildingManager.CanPlaced(Type, snapPos);
-        if (canPlace)
+        //Vector2 snapPos = GameManager.Instance.BuildingManager.SnapToCell(Type, GlobalPosition);
+        //bool canPlace = GameManager.Instance.BuildingManager.CanPlaced(Type, snapPos);
+        //if (canPlace)
+        //{
+        GameManager.Instance.BuildingManager.Place(Type, GlobalPosition);
+
+        switch (Type)
         {
-            GameManager.Instance.BuildingManager.Place(Type, snapPos);
-
-            switch (Type)
-            {
-                case BuildingType.MainBase:
-                    Building bd = _buildingPs.Instantiate<Building>();
-                    bd.Init(Type, snapPos);//没有特殊功能的, 用buildingBase脚本, 走普通初始化函数
-                    GetTree().CurrentScene.AddChild(bd);
-                    break;
-            }
-            return true;
+            case BuildingType.MainBase:
+                Building bd = _buildingPs.Instantiate<Building>();
+                bd.Init(Type, GlobalPosition);//没有特殊功能的, 用buildingBase脚本, 走普通初始化函数
+                GetTree().CurrentScene.AddChild(bd);
+                break;
         }
-        return false;
+        return true;
     }
-
-
 }

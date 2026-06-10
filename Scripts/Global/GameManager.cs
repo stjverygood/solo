@@ -1,8 +1,10 @@
 using Godot;
-using Solo.Scripts.Character.Player;
+using Solo.Scripts.Entities.Players;
+using Solo.Scripts.Entities.Units;
 using Solo.Scripts.System.BuildingSystem;
 using Solo.Scripts.System.ChunkSystem;
 using Solo.Scripts.System.SaveSystem;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Solo.Scripts.Global
@@ -25,6 +27,7 @@ namespace Solo.Scripts.Global
 
 
         public Player Player;
+        public List<Unit> EnemyList = new List<Unit>();
         public ChunkManager ChunkManager;
         public BuildingManager BuildingManager;
 

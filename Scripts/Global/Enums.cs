@@ -18,12 +18,13 @@
         Stone,
     }
 
-    //资源类型
-    public enum ResObjType
+    //单位类型
+    public enum UnitType
     {
-        Tree,
-        Stone,
+        Player,//玩家
+        Wolf,//风狼
     }
+
     //建筑类型
     public enum BuildingType
     {

@@ -1,0 +1,25 @@
+[gd_scene format=3 uid="uid://fexciysj5hdb"]
+
+[ext_resource type="Script" uid="uid://c46bn3rmnapge" path="res://Scripts/Entities/Units/Unit.cs" id="1_52hpg"]
+[ext_resource type="Texture2D" uid="uid://tnjo4chtxi3m" path="res://Assets/AtlasTextures/Wolf.tres" id="2_scc8c"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_qdqud"]
+radius = 37.054016
+
+[node name="Unit" type="Node2D" unique_id=2004401166 node_paths=PackedStringArray("_naviAgent", "_viewArea", "_animRoot")]
+script = ExtResource("1_52hpg")
+_naviAgent = NodePath("NavigationAgent2D")
+_viewArea = NodePath("ViewArea")
+_animRoot = NodePath("AnimRoot")
+
+[node name="NavigationAgent2D" type="NavigationAgent2D" parent="." unique_id=1832958205]
+
+[node name="AnimRoot" type="Node2D" parent="." unique_id=1022720611]
+
+[node name="Sprite2D" type="Sprite2D" parent="AnimRoot" unique_id=537342220]
+texture = ExtResource("2_scc8c")
+
+[node name="ViewArea" type="Area2D" parent="." unique_id=1858817486]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ViewArea" unique_id=2141346343]
+shape = SubResource("CircleShape2D_qdqud")

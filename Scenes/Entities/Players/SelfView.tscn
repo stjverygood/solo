@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://bv36kio2oi60f"]
 
-[ext_resource type="Script" uid="uid://bkrggs67x2j84" path="res://Scripts/Character/Player/SelfView.cs" id="1_8ysbs"]
+[ext_resource type="Script" uid="uid://bkrggs67x2j84" path="res://Scripts/Entities/Players/SelfView.cs" id="1_8ysbs"]
 [ext_resource type="PackedScene" uid="uid://bji8v2soe8d4o" path="res://Scenes/System/InventorySystem/EquipmentView.tscn" id="2_wqlry"]
 [ext_resource type="PackedScene" uid="uid://cfu7wy1op48g5" path="res://Scenes/System/CraftSystem/CraftView.tscn" id="3_x8f1r"]
 

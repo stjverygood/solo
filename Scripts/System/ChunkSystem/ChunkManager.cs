@@ -1,5 +1,6 @@
 using Godot;
-using Solo.Scripts.Character.Player;
+using Solo.Scripts.Entities.Players;
+using Solo.Scripts.Entities.Units;
 using Solo.Scripts.Global;
 using Solo.Scripts.System.BuildingSystem;
 using Solo.Scripts.System.ItemSystem;
@@ -22,6 +23,7 @@ namespace Solo.Scripts.System.ChunkSystem
         [Export] private TileMapLayer _tileMapLayer;
         [Export] private PackedScene _buildingPs;
         [Export] public PackedScene DropItemPs;
+        [Export] public PackedScene _unitPs;
 
         //public BuildingManager BuildingManager;
         private FastNoiseLite _noise = new FastNoiseLite();
@@ -39,8 +41,8 @@ namespace Solo.Scripts.System.ChunkSystem
 
         private Dictionary<TileType, List<Vector2I>> TileCoordsListMap = new Dictionary<TileType, List<Vector2I>>()
         {
-            { TileType.Grass, new List<Vector2I>(){ new Vector2I(10, 8), new Vector2I(10, 8)}},
-            { TileType.Water, new List<Vector2I>(){ new Vector2I(9, 10)}},
+            { TileType.Grass, new List<Vector2I>(){ new Vector2I(8, 8)}},
+            { TileType.Water, new List<Vector2I>(){ new Vector2I(11, 10)}},
             { TileType.Stone, new List<Vector2I>(){new Vector2I(10, 4)}},
         };
         private Dictionary<Vector2I, TileType> TileTypeMap = new Dictionary<Vector2I, TileType>();//用于反查
@@ -121,7 +123,7 @@ namespace Solo.Scripts.System.ChunkSystem
                         {
                             Vector2I rdTileCoords = TileCoordsListMap[TileType.Water][Random.Shared.Next(TileCoordsListMap[TileType.Water].Count)];
                             _tileMapLayer.SetCell(new Vector2I(globalX, globalY), 0, rdTileCoords);
-                            Vector2 snapPos = GameManager.Instance.BuildingManager.SnapToCell(BuildingType.Water, new Vector2I(globalX, globalY));
+                            Vector2 snapPos = GameManager.Instance.BuildingManager.SnapToCell(BuildingType.Water, new Vector2I(globalX * _tileSize, globalY * _tileSize));
                             GameManager.Instance.BuildingManager.Place(BuildingType.Water, snapPos);
                             //_tileMapLayer.SetCell(new Vector2I(globalX, globalY), _tileTypeInfoMap[TileType.Water].SourceId, _tileTypeInfoMap[TileType.Water].AtlasCoords);
                         }
@@ -173,7 +175,7 @@ namespace Solo.Scripts.System.ChunkSystem
 
                             Vector2I rdTileCoords = TileCoordsListMap[TileType.Water][Random.Shared.Next(TileCoordsListMap[TileType.Water].Count)];
                             _tileMapLayer.SetCell(new Vector2I(globalX, globalY), 0, rdTileCoords);
-                            Vector2 snapPos = GameManager.Instance.BuildingManager.SnapToCell(BuildingType.Water, new Vector2I(globalX, globalY));
+                            Vector2 snapPos = GameManager.Instance.BuildingManager.SnapToCell(BuildingType.Water, new Vector2I(globalX * _tileSize, globalY * _tileSize));
                             GameManager.Instance.BuildingManager.Place(BuildingType.Water, snapPos);
                         }
                         else if (noiseVal < 0.35)//草
@@ -201,7 +203,6 @@ namespace Solo.Scripts.System.ChunkSystem
                                 GetTree().CurrentScene.AddChild(goldDropItem);
                                 goldDropItem.Init(ItemType.Grass, 3, tileWorldPos + offset);
                             }
-
                         }
                         else//石
                         {
@@ -222,6 +223,10 @@ namespace Solo.Scripts.System.ChunkSystem
                         }
                     }
                 }
+
+                Unit unit = _unitPs.Instantiate<Unit>();
+                GetTree().CurrentScene.AddChild(unit);
+                unit.Init(UnitType.Wolf, new Vector2(chunkPos.X * _chunkSize * _tileSize + GD.RandRange(0, _chunkSize * _tileSize), chunkPos.Y * _chunkSize * _tileSize + GD.RandRange(0, _chunkSize * _tileSize)));
 
                 // 第一个区块(0,0)首次生成时，必定掉落1个太古源石，位置随机
                 if (chunkPos == Vector2I.Zero)
