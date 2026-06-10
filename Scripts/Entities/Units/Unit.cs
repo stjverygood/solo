@@ -24,7 +24,7 @@ namespace Solo.Scripts.Entities.Units
     }
 
 
-    public partial class Unit : CharacterBody2D
+    public partial class Unit : Node2D
     {
         public UnitType Type;
         private float _maxHp;
@@ -161,9 +161,8 @@ namespace Solo.Scripts.Entities.Units
         }
 
         #region Idle
-        private float _idleDuration = 3;
+        private float _idleDuration = 1;
         private float _idleTimer = 0;
-
         private void EnterIdle()
         {
             ResetAnim();
@@ -187,6 +186,8 @@ namespace Solo.Scripts.Entities.Units
         #endregion
 
         #region Patrol
+        private float _patrolDuration = 1;
+        private float _patrolTimer = 0;
         private void EnterPatrol()
         {
             ResetAnim();
@@ -202,6 +203,14 @@ namespace Solo.Scripts.Entities.Units
                 ChangeState(UnitState.Idle);
                 return;
             }
+
+            _patrolTimer += delta;
+            if (_patrolTimer > _patrolDuration)
+            {
+                ChangeState(UnitState.Idle);
+                return;
+            }
+
             _curDir = (_naviAgent.GetNextPathPosition() - GlobalPosition).Normalized();
             if (_curDir.X > 0)
                 _spriteRoot.Scale = new Vector2(1, 1);
@@ -214,7 +223,7 @@ namespace Solo.Scripts.Entities.Units
         }
         private void ExitPatrol()
         {
-
+            _patrolTimer = 0;
         }
         #endregion
 
@@ -309,34 +318,43 @@ namespace Solo.Scripts.Entities.Units
             Rid mapRid = _naviAgent.GetNavigationMap();
             Vector2 bestPos = GlobalPosition;
 
-            int maxAttempts = 5;
+            int maxAttempts = 10; // 可以适当增加尝试次数
             for (int i = 0; i < maxAttempts; i++)
             {
                 float randomAngle = GD.Randf() * Mathf.Tau;
                 Vector2 randomDirection = new Vector2(Mathf.Cos(randomAngle), Mathf.Sin(randomAngle));
-                float randomDistance = (float)GD.RandRange(0, _patrolRadius);
+                float randomDistance = (float)GD.RandRange(20.0f, _patrolRadius); // 设置最小距离，避免原地发呆
                 Vector2 rawTargetPos = GlobalPosition + randomDirection * randomDistance;
 
+                // 1. 获取网格上最近的合法点
                 Vector2 validTargetPos = NavigationServer2D.MapGetClosestPoint(mapRid, rawTargetPos);
 
-                // 【改用 Agent 判定】临时测一下这个点
-                _naviAgent.TargetPosition = validTargetPos;
+                // 2. 核心：测试从当前位置到目标点是否有完整的通畅路径
+                // optimize: true 代表对路径进行平滑优化处理
+                Vector2[] path = NavigationServer2D.MapGetPath(mapRid, GlobalPosition, validTargetPos, optimize: true);
 
-                // 如果 Agent 觉得能走到，说明没问题
-                if (_naviAgent.IsTargetReachable())
+                // 3. 验证路径有效性
+                if (path != null && path.Length > 1)
                 {
-                    bestPos = validTargetPos;
-                    break;
+                    // 确保路径的实际终点离我们期望的目标点足够近 (例如小于 15 像素)
+                    // 如果终点差得太远，说明中间被完全挡断，走不过去
+                    if (path[path.Length - 1].DistanceTo(validTargetPos) < 15.0f)
+                    {
+                        bestPos = validTargetPos;
+                        break;
+                    }
                 }
             }
 
+            // 如果尝试了10次都被挡住，就返回当前位置，下一帧或下一个 Idle 周期再试
             return bestPos;
         }
 
         private void OnVelocityComputed(Vector2 safeVelocity)
         {
-            Velocity = safeVelocity;
-            MoveAndSlide();
+            //Velocity = safeVelocity;
+            //MoveAndSlide();
+            GlobalPosition += safeVelocity * (float)GetPhysicsProcessDeltaTime();
         }
         private void _viewArea_BodyEntered(Node2D body)
         {
@@ -363,7 +381,7 @@ namespace Solo.Scripts.Entities.Units
 
         private void Die()
         {
-            GameManager.Instance.UnitList.Add(this);
+            GameManager.Instance.UnitList.Remove(this);
             QueueFree();
         }
 

@@ -15,6 +15,7 @@ namespace Solo.Scripts.System.BuildingSystem
         [Export] public ProgressBar _hpPb;
         [Export] public Label _hpLb;
         [Export] public PackedScene DropItemPs;
+        [Export] private NavigationObstacle2D _naviObstacle;
         public float MaxHp = 100;
         private List<(ItemType, int, int)> _dropItemList;//掉落物类型, 最小掉落数量, 最大掉落数量
         private float _curHp;
@@ -29,12 +30,25 @@ namespace Solo.Scripts.System.BuildingSystem
             _curHp = MaxHp;
             _dropItemList = buildingData.DropItemList;
             _sprite.Position = new Vector2(_sprite.Position.X, _sprite.Position.Y - (buildingData.TextureHeight - buildingData.Height) * 16 / 2);
+
+            float actualWidth = buildingData.Width * 16f;
+            float actualHeight = buildingData.Height * 16f;
             if (_collisionShape.Shape is RectangleShape2D rectShape)
             {
-                RectangleShape2D uniqueShape = (RectangleShape2D)rectShape.Duplicate();// 关键：复制一份 Shape 资源，确保当前建筑的碰撞体独立
-                uniqueShape.Size = new Vector2(buildingData.Width * 16, buildingData.Height * 16);// 赋予新的尺寸
-                _collisionShape.Shape = uniqueShape;// 把独立后的 Shape 重新赋给当前建筑的 CollisionShape2D
+                RectangleShape2D uniqueShape = (RectangleShape2D)rectShape.Duplicate();
+                uniqueShape.Size = new Vector2(actualWidth, actualHeight); // 赋予新的尺寸
+                _collisionShape.Shape = uniqueShape;
             }
+            if (_naviObstacle != null)
+            {
+                float halfW = actualWidth / 2f;
+                float halfH = actualHeight / 2f;
+                Vector2[] obstacleVertices = new Vector2[] { new Vector2(-halfW, -halfH), new Vector2(halfW, -halfH), new Vector2(halfW, halfH), new Vector2(-halfW, halfH) };// 严格按照顺时针（Clockwise）定义矩形的 4 个顶点
+                _naviObstacle.Vertices = obstacleVertices;
+                _naviObstacle.AvoidanceEnabled = true;// 确保避障属性正确开启
+                _naviObstacle.AvoidanceLayers = 1; // 保持和之前 Units 的 AvoidanceMask 一致
+            }
+
             _sprite.Texture = GD.Load<Texture2D>(buildingData.TexturePath);
             if (_sprite.Material is ShaderMaterial shaderMat)
             {

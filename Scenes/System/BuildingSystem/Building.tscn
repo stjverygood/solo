@@ -40,7 +40,7 @@ corner_radius_top_right = 64
 corner_radius_bottom_right = 64
 corner_radius_bottom_left = 64
 
-[node name="Building" type="StaticBody2D" unique_id=972007456 node_paths=PackedStringArray("_collisionShape", "_animRoot", "_sprite", "_hpPb", "_hpLb")]
+[node name="Building" type="StaticBody2D" unique_id=972007456 node_paths=PackedStringArray("_collisionShape", "_animRoot", "_sprite", "_hpPb", "_hpLb", "_naviObstacle")]
 y_sort_enabled = true
 script = ExtResource("1_ve38v")
 _collisionShape = NodePath("CollisionShape2D")
@@ -49,6 +49,7 @@ _sprite = NodePath("AnimRoot/Sprite2D")
 _hpPb = NodePath("ProgressBar")
 _hpLb = NodePath("ProgressBar/Label")
 DropItemPs = ExtResource("2_ldljy")
+_naviObstacle = NodePath("NavigationObstacle2D")
 
 [node name="AnimRoot" type="Node2D" parent="." unique_id=748198720]
 
