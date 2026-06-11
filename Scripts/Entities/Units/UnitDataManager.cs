@@ -11,8 +11,7 @@ namespace Solo.Scripts.Entities.Units
 
         private UnitDataManager()
         {
-            _unitDataMap.Add(UnitType.Wolf, new UnitData() { UnitName = "风狼", MaxHp = 100, MoveSpeed = 50, IdleDuration = 3, PatrolDuration = 1, PatrolRadius = 200, HostileUnitTypeList = new List<UnitType>() { UnitType.Player }, FearUnitTypeList = new List<UnitType>() { }, DropItemList = new List<(ItemType, int, int)>() { (ItemType.Stone, 1, 3), } });
-
+            _unitDataMap.Add(UnitType.Wolf, new UnitData() { UnitName = "风狼", MaxHp = 100, MoveSpeed = 50, IdleDuration = 3, PatrolDuration = 1, PatrolRadius = 200, ViewCollisionShapeRadius = 64, AtkRange = 32, CdDuration = 2, NaviAgentRadius = 8, HostileUnitTypeList = new List<UnitType>() { UnitType.Wolf }, FearUnitTypeList = new List<UnitType>() { }, DropItemList = new List<(ItemType, int, int)>() { (ItemType.Stone, 1, 3), } });
         }
 
         public UnitData GetUnitData(UnitType type)

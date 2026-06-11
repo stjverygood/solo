@@ -37,7 +37,7 @@ public partial class BuildingPreview : Node2D
         }
         BuildingData buildingData = BuildingDataManager.Instance.GetBuildingData(Type);
         _sprite.Texture = GD.Load<Texture2D>(buildingData.TexturePath);
-        _sprite.Position = new Vector2(_sprite.Position.X, _sprite.Position.Y - (buildingData.TextureHeight - buildingData.Height) / 2 * 16);
+        _sprite.Position = new Vector2(0, -(buildingData.TextureHeight / 2f - buildingData.Height) * 16);
         Update(playerPos);
     }
 

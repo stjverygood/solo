@@ -29,27 +29,28 @@ namespace Solo.Scripts.System.BuildingSystem
             MaxHp = buildingData.MaxHp;
             _curHp = MaxHp;
             _dropItemList = buildingData.DropItemList;
-            _sprite.Position = new Vector2(_sprite.Position.X, _sprite.Position.Y - (buildingData.TextureHeight - buildingData.Height) * 16 / 2);
 
-            float actualWidth = buildingData.Width * 16f;
-            float actualHeight = buildingData.Height * 16f;
+            _sprite.Texture = GD.Load<Texture2D>(buildingData.TexturePath);
+            _sprite.Position = new Vector2(0, -(buildingData.TextureHeight / 2f - buildingData.Height) * 16);
             if (_collisionShape.Shape is RectangleShape2D rectShape)
             {
-                RectangleShape2D uniqueShape = (RectangleShape2D)rectShape.Duplicate();
-                uniqueShape.Size = new Vector2(actualWidth, actualHeight); // 赋予新的尺寸
-                _collisionShape.Shape = uniqueShape;
+                RectangleShape2D uniqueRectShape = (RectangleShape2D)rectShape.Duplicate();
+                uniqueRectShape.Size = new Vector2(buildingData.Width * 16f, buildingData.Height * 16f); // 赋予新的尺寸
+                _collisionShape.Shape = uniqueRectShape;
+                _collisionShape.Position = new Vector2(0, (buildingData.Height / 2f) * 16);
             }
             if (_naviObstacle != null)
             {
-                float halfW = actualWidth / 2f;
-                float halfH = actualHeight / 2f;
+                float halfW = buildingData.Width * 16 / 2f;
+                float halfH = buildingData.Height * 16 / 2f;
                 Vector2[] obstacleVertices = new Vector2[] { new Vector2(-halfW, -halfH), new Vector2(halfW, -halfH), new Vector2(halfW, halfH), new Vector2(-halfW, halfH) };// 严格按照顺时针（Clockwise）定义矩形的 4 个顶点
                 _naviObstacle.Vertices = obstacleVertices;
                 _naviObstacle.AvoidanceEnabled = true;// 确保避障属性正确开启
                 _naviObstacle.AvoidanceLayers = 1; // 保持和之前 Units 的 AvoidanceMask 一致
+                _naviObstacle.Position = new Vector2(0, (buildingData.Height / 2f) * 16);
             }
 
-            _sprite.Texture = GD.Load<Texture2D>(buildingData.TexturePath);
+
             if (_sprite.Material is ShaderMaterial shaderMat)
             {
                 _shaderMaterial = (ShaderMaterial)shaderMat.Duplicate();// 关键：复制一份材质，确保每个实例的材质相互独立
@@ -91,15 +92,14 @@ namespace Solo.Scripts.System.BuildingSystem
         {
             damage = HandleDamage(dmgItemType, damage);
             Tween animTween = CreateTween().SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out);
-            animTween.TweenProperty(_animRoot, "skew", 0.2f, 0.1f);
+            animTween.TweenProperty(_animRoot, "scale", new Vector2(0.8f, 0.8f), 0.1f);
             animTween.Parallel().TweenProperty(_sprite.Material, "shader_parameter/flash_modifier", 1.0f, 0.1f);
-            animTween.TweenProperty(_animRoot, "skew", -0.2f, 0.1f);
+            animTween.TweenProperty(_animRoot, "scale", new Vector2(1.2f, 1.2f), 0.1f);
             animTween.Parallel().TweenProperty(_sprite.Material, "shader_parameter/flash_modifier", 0.0f, 0.1f);
-            animTween.TweenProperty(_animRoot, "skew", 0f, 0.1f);
+            animTween.TweenProperty(_animRoot, "scale", new Vector2(1f, 1f), 0.1f);
             FloatTextLb floatTextLb = GameManager.Instance.FloatTextLbPs.Instantiate<FloatTextLb>();
             GetTree().CurrentScene.AddChild(floatTextLb);
             floatTextLb.Init($"-{damage}", GlobalPosition);
-            GameManager.Instance.Player.TriggerScreenShake(5f);
             _curHp -= damage;
             _damageCooldownTimer = 0f;
             _healTimer = 0f;

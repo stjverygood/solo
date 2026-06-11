@@ -11,6 +11,10 @@ namespace Solo.Scripts.Entities.Units
         public float IdleDuration = -1;
         public float PatrolDuration = -1;
         public float PatrolRadius = -1;
+        public float ViewCollisionShapeRadius = -1;
+        public float AtkRange = -1;
+        public float CdDuration = -1;
+        public float NaviAgentRadius = -1;
 
         public List<UnitType> HostileUnitTypeList;
         public List<UnitType> FearUnitTypeList;

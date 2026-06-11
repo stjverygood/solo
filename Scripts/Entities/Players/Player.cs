@@ -24,6 +24,7 @@ namespace Solo.Scripts.Entities.Players
 
     public partial class Player : CharacterBody2D
     {
+        public UnitType Type = UnitType.Player;
         private Vector2 _curDir = Vector2.Right;
         public PlayerState CurState;
         public float moveSpeed = 50;
@@ -434,11 +435,11 @@ namespace Solo.Scripts.Entities.Players
         private void EnterAtk()
         {
             ResetAnim();
-            if (_curAtkTargetUnit != null)
+            if (_curAtkTargetUnit != null && IsInstanceValid(_curAtkTargetUnit))
             {
                 FaceToNode(_curAtkTargetUnit);
             }
-            else if (_curAtkTargetBuilding != null)
+            else if (_curAtkTargetBuilding != null && IsInstanceValid(_curAtkTargetBuilding))
             {
                 FaceToNode(_curAtkTargetBuilding);
             }
@@ -455,7 +456,8 @@ namespace Solo.Scripts.Entities.Players
             {
                 //if (_curAtkTargetNode == null)
                 //    return;
-                if (_curAtkTargetUnit != null)
+                TriggerScreenShake(5);
+                if (_curAtkTargetUnit != null && IsInstanceValid(_curAtkTargetUnit))
                 {
                     if (FastBarInventory.ItemInstanceList[CurFastBarIndex] == null)//空手
                     {
@@ -476,7 +478,7 @@ namespace Solo.Scripts.Entities.Players
                         }
                     }
                 }
-                else if (_curAtkTargetBuilding != null)
+                else if (_curAtkTargetBuilding != null && IsInstanceValid(_curAtkTargetBuilding))
                 {
                     if (FastBarInventory.ItemInstanceList[CurFastBarIndex] == null)//空手
                     {
@@ -715,14 +717,14 @@ namespace Solo.Scripts.Entities.Players
         //private List<Node2D> _atkTargetNodeList = new List<Node2D>();
         private void AtkArea_AreaEntered(Area2D area)
         {
-            if (area.GetParent() is Unit unit)
+            if (area is Unit unit)
             {
                 _atkTargetUnitList.Add(unit);
             }
         }
         private void AtkArea_AreaExited(Area2D area)
         {
-            if (area.GetParent() is Unit unit)
+            if (area is Unit unit)
             {
                 _atkTargetUnitList.Remove(unit);
             }
@@ -760,7 +762,9 @@ namespace Solo.Scripts.Entities.Players
         private void CheckAtkTarget()
         {
             _curAtkTargetUnit?.ShowOutline(false);
+            _curAtkTargetUnit = null;
             _curAtkTargetBuilding?.ShowOutline(false);
+            _curAtkTargetBuilding = null;
             Unit newUnit = GlobalHelper.GetNearestNode(GlobalPosition, _atkTargetUnitList) as Unit;
             if (newUnit != null && IsInstanceValid(newUnit))
             {
@@ -956,6 +960,11 @@ namespace Solo.Scripts.Entities.Players
                 currentAmount *= 0.7f;
             }
             _shakeTween.TweenProperty(_camera, "offset", Vector2.Zero, duration);
+        }
+
+        public void TakeDamage(float damage)
+        {
+
         }
     }
 }

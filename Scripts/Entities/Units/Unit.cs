@@ -21,18 +21,20 @@ namespace Solo.Scripts.Entities.Units
         Chase,//追击
         Atk,//攻击
         Escape,//逃跑
+        Cd,//攻击后冷却
         Hurt,//受伤, 可以在这里添加击退等效果
         Death,//死亡
     }
 
 
-    public partial class Unit : Node2D
+    public partial class Unit : Area2D
     {
         public UnitType Type;
         private float _maxHp;
         private float _curHp;
         private float _patrolRadius;
         private float _moveSpeed;
+        private float _atkRangeSq;
         private HashSet<UnitType> _hostileUnitTypeSet = new HashSet<UnitType>();//敌对单位类型
         private HashSet<UnitType> _fearUnitTypeSet = new HashSet<UnitType>();//畏惧单位类型
         private List<(ItemType, int, int)> _dropItemList;//掉落物类型, 最小掉落数量, 最大掉落数量
@@ -41,13 +43,14 @@ namespace Solo.Scripts.Entities.Units
         private Vector2 _curDir = Vector2.Right;
         [Export] private NavigationAgent2D _naviAgent;
         [Export] private Area2D _viewArea;
+        [Export] private CollisionShape2D _viewCollisionShape;
         [Export] private Node2D _spriteRoot;
         [Export] private Node2D _animRoot;
         [Export] private Sprite2D _sprite;
         [Export] public PackedScene DropItemPs;
+        [Export] private Label _debugLb;
         private ShaderMaterial _shaderMaterial;
         private Tween _animTween;
-        private List<Node2D> _targetNodeList = new List<Node2D>();
 
         public void Init(UnitType type, Vector2 worldPos)
         {
@@ -62,19 +65,24 @@ namespace Solo.Scripts.Entities.Units
             _patrolRadius = unitData.PatrolRadius;
             _idleDuration = unitData.IdleDuration;
             _patrolDuration = unitData.PatrolDuration;
+            _atkRangeSq = unitData.AtkRange * unitData.AtkRange;
+            _cdDuration = unitData.CdDuration;
+            _naviAgent.Radius = unitData.NaviAgentRadius;          // 根据你的单位大小调整
             _hostileUnitTypeSet = unitData.HostileUnitTypeList.ToHashSet();
             _fearUnitTypeSet = unitData.FearUnitTypeList.ToHashSet();
             _dropItemList = unitData.DropItemList;
-
+            if (_viewCollisionShape.Shape is CircleShape2D circleShape)
+            {
+                circleShape.Radius = unitData.ViewCollisionShapeRadius;
+            }
 
             ChangeState(UnitState.Idle);
+            _viewArea.AreaEntered += _viewArea_AreaEntered;
+            _viewArea.AreaExited += _viewArea_AreaExited;
             _viewArea.BodyEntered += _viewArea_BodyEntered;
             _viewArea.BodyExited += _viewArea_BodyExited;
             _naviAgent.VelocityComputed += OnVelocityComputed;
-            _naviAgent.AvoidanceEnabled = true;
-            _naviAgent.Radius = 10.0f;          // 根据你的单位大小调整
-            _naviAgent.AvoidanceLayers = 1;     // 设置层
-            _naviAgent.AvoidanceMask = 1;       // 设置掩码
+
 
             if (_sprite.Material is ShaderMaterial shaderMat)
             {
@@ -83,6 +91,9 @@ namespace Solo.Scripts.Entities.Units
             }
             ShowOutline(false);
         }
+
+
+
 
 
         public override void _PhysicsProcess(double delta)
@@ -95,6 +106,7 @@ namespace Solo.Scripts.Entities.Units
             ExitState(_curState);
             EnterState(newState);
             _curState = newState;
+            _debugLb.Text = _curState.ToString();
         }
         private void EnterState(UnitState state)
         {
@@ -114,6 +126,9 @@ namespace Solo.Scripts.Entities.Units
                     break;
                 case UnitState.Escape:
                     EnterEscape();
+                    break;
+                case UnitState.Cd:
+                    EnterCd();
                     break;
                 case UnitState.Hurt:
                     EnterHurt();
@@ -142,6 +157,9 @@ namespace Solo.Scripts.Entities.Units
                 case UnitState.Escape:
                     UpdateEscape(delta);
                     break;
+                case UnitState.Cd:
+                    UpdateCd(delta);
+                    break;
                 case UnitState.Hurt:
                     UpdateHurt(delta);
                     break;
@@ -169,6 +187,9 @@ namespace Solo.Scripts.Entities.Units
                 case UnitState.Escape:
                     ExitEscape();
                     break;
+                case UnitState.Cd:
+                    ExitCd();
+                    break;
                 case UnitState.Hurt:
                     ExitHurt();
                     break;
@@ -183,6 +204,8 @@ namespace Solo.Scripts.Entities.Units
         private float _idleTimer = 0;
         private void EnterIdle()
         {
+            _naviAgent.TargetPosition = GlobalPosition;
+            _naviAgent.Velocity = Vector2.Zero;
             ResetAnim();
             _animTween = CreateTween().SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out).SetLoops();
             _animTween.TweenProperty(_animRoot, "scale", new Vector2(1.2f, 0.8f), 0.5f);
@@ -194,6 +217,20 @@ namespace Solo.Scripts.Entities.Units
             if (_idleTimer >= _idleDuration)
             {
                 ChangeState(UnitState.Patrol);
+                return;
+            }
+
+
+            RefreshFearNode();
+            if (_curFearNode != null)
+            {
+                ChangeState(UnitState.Escape);
+                return;
+            }
+            RefreshNearestHostileNode();
+            if (_curNearestHostileNode != null)
+            {
+                ChangeState(UnitState.Chase);
                 return;
             }
         }
@@ -229,15 +266,26 @@ namespace Solo.Scripts.Entities.Units
                 return;
             }
 
+            RefreshFearNode();
+            if (_curFearNode != null)
+            {
+                ChangeState(UnitState.Escape);
+                return;
+            }
+            RefreshNearestHostileNode();
+            if (_curNearestHostileNode != null)
+            {
+                ChangeState(UnitState.Chase);
+                return;
+            }
+
+
             _curDir = (_naviAgent.GetNextPathPosition() - GlobalPosition).Normalized();
             if (_curDir.X > 0)
                 _spriteRoot.Scale = new Vector2(1, 1);
             else
                 _spriteRoot.Scale = new Vector2(-1, 1);
-            //Velocity = _moveSpeed * _curDir;
-            //MoveAndSlide();
-            _naviAgent.Velocity = _moveSpeed * _curDir;
-            //GlobalPosition += delta * _moveSpeed * _curDir;
+            _naviAgent.SetVelocity(_moveSpeed * _curDir);
         }
         private void ExitPatrol()
         {
@@ -252,7 +300,31 @@ namespace Solo.Scripts.Entities.Units
         }
         private void UpdateChase(float delta)
         {
+            RefreshFearNode();
+            if (_curFearNode != null)
+            {
+                ChangeState(UnitState.Escape);
+                return;
+            }
+            RefreshNearestHostileNode();
+            if (_curNearestHostileNode == null)
+            {
+                ChangeState(UnitState.Idle);
+                return;
+            }
 
+            if (GlobalPosition.DistanceSquaredTo(_curNearestHostileNode.GlobalPosition) <= _atkRangeSq)
+            {
+                ChangeState(UnitState.Atk);
+                return;
+            }
+
+            _curDir = (_curNearestHostileNode.GlobalPosition - GlobalPosition).Normalized();
+            if (_curDir.X > 0)
+                _spriteRoot.Scale = new Vector2(1, 1);
+            else
+                _spriteRoot.Scale = new Vector2(-1, 1);
+            _naviAgent.SetVelocity(_moveSpeed * _curDir);
         }
         private void ExitChase()
         {
@@ -263,7 +335,43 @@ namespace Solo.Scripts.Entities.Units
         #region Atk
         private void EnterAtk()
         {
+            ResetAnim();
 
+            _curDir = (_curNearestHostileNode.GlobalPosition - GlobalPosition).Normalized();
+            if (_curDir.X > 0)
+                _spriteRoot.Scale = new Vector2(1, 1);
+            else
+                _spriteRoot.Scale = new Vector2(-1, 1);
+
+            _animTween = CreateTween().SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out);
+            _animTween.Parallel().TweenProperty(_animRoot, "scale", new Vector2(0.8f, 0.8f), 0.05f);//出手动画
+            _animTween.TweenProperty(_animRoot, "rotation", 1.3f, 0.05f);
+            _animTween.TweenCallback(Callable.From(() =>
+            {
+                foreach (Node2D viewNode in _viewNodeList)
+                {
+                    if (!IsInstanceValid(viewNode)) continue;
+                    if (GlobalPosition.DistanceSquaredTo(viewNode.GlobalPosition) > _atkRangeSq) continue;
+                    Vector2 toTarget = viewNode.GlobalPosition - GlobalPosition;
+                    if (Mathf.Abs(_curDir.AngleTo(toTarget)) > Mathf.DegToRad(60f)) continue;// 60 度转换为弧度是 Mathf.DegToRad(60)
+                    if (viewNode is Player player)
+                    {
+                        player.TakeDamage(10);
+                    }
+                    else if (viewNode is Unit unit)
+                    {
+                        unit.TakeDamage(null, 10);
+                    }
+                }
+            }));
+
+            _animTween.Parallel().TweenProperty(_animRoot, "scale", new Vector2(1f, 1f), 0.1f);
+            _animTween.TweenProperty(_animRoot, "rotation", 0f, 0.1f);
+            _animTween.Finished += () =>
+            {
+                ChangeState(UnitState.Cd);
+                return;
+            };
         }
         private void UpdateAtk(float delta)
         {
@@ -287,6 +395,29 @@ namespace Solo.Scripts.Entities.Units
         private void ExitEscape()
         {
 
+        }
+        #endregion
+
+        #region Cd
+        private float _cdDuration = 1;
+        private float CdTimer = 0;
+        private void EnterCd()
+        {
+            _naviAgent.TargetPosition = GlobalPosition;
+            _naviAgent.Velocity = Vector2.Zero;
+        }
+        private void UpdateCd(float delta)
+        {
+            CdTimer += delta;
+            if (CdTimer >= _cdDuration)
+            {
+                ChangeState(UnitState.Idle);
+                return;
+            }
+        }
+        private void ExitCd()
+        {
+            CdTimer = 0;
         }
         #endregion
 
@@ -319,6 +450,9 @@ namespace Solo.Scripts.Entities.Units
 
         }
         #endregion
+
+
+
 
         private void ResetAnim()
         {
@@ -374,28 +508,8 @@ namespace Solo.Scripts.Entities.Units
             //MoveAndSlide();
             GlobalPosition += safeVelocity * (float)GetPhysicsProcessDeltaTime();
         }
-        private void _viewArea_BodyEntered(Node2D body)
-        {
-            if (body is Player player)
-            {
-                _targetNodeList.Add(player);
-            }
-            else if (body is Unit unit)
-            {
-                _targetNodeList.Add(unit);
-            }
-        }
-        private void _viewArea_BodyExited(Node2D body)
-        {
-            if (body is Player player)
-            {
-                _targetNodeList.Remove(player);
-            }
-            else if (body is Unit unit)
-            {
-                _targetNodeList.Remove(unit);
-            }
-        }
+
+
 
         private void Die()
         {
@@ -419,8 +533,8 @@ namespace Solo.Scripts.Entities.Units
         {
             if (isShow)
             {
-                _shaderMaterial.SetShaderParameter("outline_color", new Godot.Color(162f / 255f, 38f / 255f, 51f / 255f));//162, 38, 51
-                _shaderMaterial.SetShaderParameter("outline_width", 2);
+                _shaderMaterial.SetShaderParameter("outline_color", new Godot.Color(1, 1, 1));//162, 38, 51
+                _shaderMaterial.SetShaderParameter("outline_width", 1);
             }
             else
             {
@@ -439,7 +553,6 @@ namespace Solo.Scripts.Entities.Units
             FloatTextLb floatTextLb = GameManager.Instance.FloatTextLbPs.Instantiate<FloatTextLb>();
             GetTree().CurrentScene.AddChild(floatTextLb);
             floatTextLb.Init($"-{damage}", GlobalPosition);
-            GameManager.Instance.Player.TriggerScreenShake(5f);
             _curHp -= damage;
             //_damageCooldownTimer = 0f;
             //_healTimer = 0f;
@@ -498,6 +611,83 @@ namespace Solo.Scripts.Entities.Units
             //        break;
             //}
             return resDmg;
+        }
+
+
+        private Node2D _curFearNode = null;
+        private Node2D _curNearestHostileNode = null;
+        private List<Node2D> _viewNodeList = new List<Node2D>();
+
+        private void _viewArea_AreaEntered(Area2D area)
+        {
+            if (area.GetParent() is Unit unit)
+            {
+                _viewNodeList.Add(unit);
+            }
+        }
+        private void _viewArea_AreaExited(Area2D area)
+        {
+            if (area.GetParent() is Unit unit)
+            {
+                _viewNodeList.Remove(unit);
+            }
+        }
+        private void _viewArea_BodyEntered(Node2D body)
+        {
+            if (body is Player player)
+            {
+                _viewNodeList.Add(player);
+            }
+        }
+        private void _viewArea_BodyExited(Node2D body)
+        {
+            if (body is Player player)
+            {
+                _viewNodeList.Remove(player);
+            }
+        }
+        private void RefreshFearNode()
+        {
+            //每帧拿到最近的node2d, 再根据该node的type决定切到追击/逃离
+            //逃跑优先 : 只要viewnodelist内存在畏惧类型, 就直接逃跑
+            //若无畏惧目标, 拿到最近可攻击目标, 进入追击
+            //检查是否有追击/逃离目标, 若有切换对应状态
+            _curFearNode = null;
+            foreach (Node2D targetNode in _viewNodeList)
+            {
+                if (targetNode is Player player && _fearUnitTypeSet.Contains(player.Type))
+                {
+                    _curFearNode = player;
+                    return;
+                }
+                else if (targetNode is Unit unit && _fearUnitTypeSet.Contains(unit.Type))
+                {
+                    _curFearNode = unit;
+                    return;
+                }
+            }
+        }
+        private void RefreshNearestHostileNode()
+        {
+            _curNearestHostileNode = null;
+            float curMinDistSq = float.MaxValue;
+            foreach (Node2D targetNode in _viewNodeList)
+            {
+                float curDisq = GlobalPosition.DistanceSquaredTo(targetNode.GlobalPosition);
+                if (curDisq < curMinDistSq)
+                {
+                    if (targetNode is Player player && _hostileUnitTypeSet.Contains(player.Type))
+                    {
+                        _curNearestHostileNode = targetNode;
+                        curMinDistSq = curDisq;
+                    }
+                    else if (targetNode is Unit unit && _hostileUnitTypeSet.Contains(unit.Type))
+                    {
+                        _curNearestHostileNode = targetNode;
+                        curMinDistSq = curDisq;
+                    }
+                }
+            }
         }
     }
 

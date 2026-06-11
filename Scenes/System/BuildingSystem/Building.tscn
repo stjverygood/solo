@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://bkhix5ewbrx8a" path="res://Scripts/System/BuildingSystem/Building.cs" id="1_ve38v"]
 [ext_resource type="PackedScene" uid="uid://qw0q5wipafhq" path="res://Scenes/System/ItemSystem/DropItem.tscn" id="2_ldljy"]
 [ext_resource type="Shader" uid="uid://i3lcvke3ll2n" path="res://Assets/Shaders/Outline.gdshader" id="3_ldljy"]
-[ext_resource type="Texture2D" uid="uid://dt76k12bmj6gn" path="res://Assets/AtlasTextures/Stone.tres" id="4_y7ho7"]
+[ext_resource type="Texture2D" uid="uid://c8bqlw3qj8bok" path="res://Assets/AtlasTextures/Tree.tres" id="4_y7ho7"]
 [ext_resource type="FontFile" uid="uid://chelxpn5elvbb" path="res://Assets/zpix.ttf" id="5_y7ho7"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_10igi"]
@@ -14,7 +14,7 @@ shader_parameter/flash_modifier = 0.0
 shader_parameter/flash_color = Color(1, 1, 1, 1)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_a72gv"]
-size = Vector2(32, 32)
+size = Vector2(16, 16)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_4hhkt"]
 bg_color = Color(0, 0, 0, 0)
@@ -55,9 +55,11 @@ _naviObstacle = NodePath("NavigationObstacle2D")
 
 [node name="Sprite2D" type="Sprite2D" parent="AnimRoot" unique_id=1800112651]
 material = SubResource("ShaderMaterial_10igi")
+position = Vector2(0, -8)
 texture = ExtResource("4_y7ho7")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1443277281]
+position = Vector2(0, 8)
 shape = SubResource("RectangleShape2D_a72gv")
 
 [node name="ProgressBar" type="ProgressBar" parent="." unique_id=194993633]
@@ -89,3 +91,9 @@ vertical_alignment = 1
 
 [node name="NavigationObstacle2D" type="NavigationObstacle2D" parent="." unique_id=400351854]
 radius = 8.0
+
+[node name="ColorRect" type="ColorRect" parent="." unique_id=171105797]
+visible = false
+offset_left = -40.0
+offset_right = 40.0
+offset_bottom = 1.0
