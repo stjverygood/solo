@@ -60,9 +60,13 @@ namespace Solo.Scripts.Entities.Units
             _curHp = _maxHp;
             _moveSpeed = unitData.MoveSpeed;
             _patrolRadius = unitData.PatrolRadius;
+            _idleDuration = unitData.IdleDuration;
+            _patrolDuration = unitData.PatrolDuration;
             _hostileUnitTypeSet = unitData.HostileUnitTypeList.ToHashSet();
             _fearUnitTypeSet = unitData.FearUnitTypeList.ToHashSet();
             _dropItemList = unitData.DropItemList;
+
+
             ChangeState(UnitState.Idle);
             _viewArea.BodyEntered += _viewArea_BodyEntered;
             _viewArea.BodyExited += _viewArea_BodyExited;
@@ -415,7 +419,7 @@ namespace Solo.Scripts.Entities.Units
         {
             if (isShow)
             {
-                _shaderMaterial.SetShaderParameter("outline_color", new Godot.Color(1, 1, 1));
+                _shaderMaterial.SetShaderParameter("outline_color", new Godot.Color(162f / 255f, 38f / 255f, 51f / 255f));//162, 38, 51
                 _shaderMaterial.SetShaderParameter("outline_width", 2);
             }
             else

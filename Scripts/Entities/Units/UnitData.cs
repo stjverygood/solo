@@ -8,7 +8,10 @@ namespace Solo.Scripts.Entities.Units
         public string UnitName = "";
         public float MaxHp = -1;
         public float MoveSpeed = -1;
+        public float IdleDuration = -1;
+        public float PatrolDuration = -1;
         public float PatrolRadius = -1;
+
         public List<UnitType> HostileUnitTypeList;
         public List<UnitType> FearUnitTypeList;
         public List<(ItemType, int, int)> DropItemList;//掉落物类型, 最小掉落数量, 最大掉落数量
