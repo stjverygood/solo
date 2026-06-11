@@ -1,4 +1,5 @@
 using Godot;
+using Solo.Scripts.Entities.Units;
 using Solo.Scripts.Global;
 using Solo.Scripts.System.BuildingSystem;
 using Solo.Scripts.System.InventorySystem;
@@ -62,6 +63,8 @@ namespace Solo.Scripts.Entities.Players
             InteractArea.AreaExited += InteractArea_AreaExited;
             InteractArea.BodyEntered += InteractArea_BodyEntered;
             InteractArea.BodyExited += InteractArea_BodyExited;
+            AtkArea.AreaEntered += AtkArea_AreaEntered;
+            AtkArea.AreaExited += AtkArea_AreaExited;
             AtkArea.BodyEntered += AtkArea_BodyEntered;
             AtkArea.BodyExited += AtkArea_BodyExited;
             RangeAtkArea.BodyEntered += RangeAtkArea_BodyEntered;
@@ -460,6 +463,27 @@ namespace Solo.Scripts.Entities.Players
                         }
                     }
                 }
+                if (_curAtkTargetNode is Unit unit)
+                {
+                    if (FastBarInventory.ItemInstanceList[CurFastBarIndex] == null)//空手
+                    {
+                        unit.TakeDamage(null, Atk);
+                    }
+                    else//工具, 要扣耐久
+                    {
+                        unit.TakeDamage(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type, Atk);
+                        if (ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).MaxDur != -1)
+                        {
+                            FastBarInventory.ItemInstanceList[CurFastBarIndex].CurDur--;
+                            if (FastBarInventory.ItemInstanceList[CurFastBarIndex].CurDur <= 0)
+                            {
+                                FastBarInventory.RemoveItem(CurFastBarIndex);
+                                RefreshHandNode();
+                            }
+                            _fastBarInventoryView.RefreshSlot(CurFastBarIndex);
+                        }
+                    }
+                }
                 //else if is enemy
             }));
 
@@ -668,12 +692,25 @@ namespace Solo.Scripts.Entities.Players
 
         private List<Node2D> _atkTargetNodeList = new List<Node2D>();
         private Node2D _curAtkTargetNode;
+        private void AtkArea_AreaEntered(Area2D area)
+        {
+            if (area.GetParent() is Unit unit)
+            {
+                _atkTargetNodeList.Add(unit);
+            }
+        }
+        private void AtkArea_AreaExited(Area2D area)
+        {
+            if (area.GetParent() is Unit unit)
+            {
+                _atkTargetNodeList.Remove(unit);
+            }
+        }
         private void AtkArea_BodyEntered(Node2D body)
         {
             if (body is Building building)//todo : enemy
             {
                 _atkTargetNodeList.Add(building);
-
             }
         }
         private void AtkArea_BodyExited(Node2D body)
@@ -689,14 +726,29 @@ namespace Solo.Scripts.Entities.Players
             Node2D newAtkTargetNode = GlobalHelper.GetNearestNode(GlobalPosition, _atkTargetNodeList);
             if (oldAtkTargetNode != newAtkTargetNode)// 1. 只有当最近的物体“发生改变”时，才处理开关逻辑
             {
-                if (IsInstanceValid(oldAtkTargetNode) && oldAtkTargetNode is Building oldBuilding)// 2. 关掉旧目标的文本（如果旧目标还存在的话）
+                if (IsInstanceValid(oldAtkTargetNode))// 2. 关掉旧目标的文本（如果旧目标还存在的话）
                 {
-                    oldBuilding.ShowOutline(false);
+                    if (oldAtkTargetNode is Building oldBuilding)
+                    {
+                        oldBuilding.ShowOutline(false);
+                    }
+                    else if (oldAtkTargetNode is Unit oldUnit)
+                    {
+                        oldUnit.ShowOutline(false);
+                    }
                 }
-                if (IsInstanceValid(newAtkTargetNode) && newAtkTargetNode is Building newBuilding)// 3. 开启新目标的文本（如果新目标存在的话）
+                if (IsInstanceValid(newAtkTargetNode))// 3. 开启新目标的文本（如果新目标存在的话）
                 {
-                    newBuilding.ShowOutline(true);
+                    if (newAtkTargetNode is Building newBuilding)
+                    {
+                        newBuilding.ShowOutline(true);
+                    }
+                    else if (newAtkTargetNode is Unit newUnit)
+                    {
+                        newUnit.ShowOutline(true);
+                    }
                 }
+
                 _curAtkTargetNode = newAtkTargetNode;// 4. 交接变量，完成记忆更新
             }
         }

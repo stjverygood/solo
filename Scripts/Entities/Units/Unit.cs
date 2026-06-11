@@ -1,6 +1,8 @@
 using Godot;
 using Solo.Scripts.Entities.Players;
 using Solo.Scripts.Global;
+using Solo.Scripts.System.ItemSystem;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -33,6 +35,7 @@ namespace Solo.Scripts.Entities.Units
         private float _moveSpeed;
         private HashSet<UnitType> _hostileUnitTypeSet = new HashSet<UnitType>();//敌对单位类型
         private HashSet<UnitType> _fearUnitTypeSet = new HashSet<UnitType>();//畏惧单位类型
+        private List<(ItemType, int, int)> _dropItemList;//掉落物类型, 最小掉落数量, 最大掉落数量
 
         private UnitState _curState;
         private Vector2 _curDir = Vector2.Right;
@@ -40,6 +43,9 @@ namespace Solo.Scripts.Entities.Units
         [Export] private Area2D _viewArea;
         [Export] private Node2D _spriteRoot;
         [Export] private Node2D _animRoot;
+        [Export] private Sprite2D _sprite;
+        [Export] public PackedScene DropItemPs;
+        private ShaderMaterial _shaderMaterial;
         private Tween _animTween;
         private List<Node2D> _targetNodeList = new List<Node2D>();
 
@@ -56,6 +62,7 @@ namespace Solo.Scripts.Entities.Units
             _patrolRadius = unitData.PatrolRadius;
             _hostileUnitTypeSet = unitData.HostileUnitTypeList.ToHashSet();
             _fearUnitTypeSet = unitData.FearUnitTypeList.ToHashSet();
+            _dropItemList = unitData.DropItemList;
             ChangeState(UnitState.Idle);
             _viewArea.BodyEntered += _viewArea_BodyEntered;
             _viewArea.BodyExited += _viewArea_BodyExited;
@@ -64,6 +71,13 @@ namespace Solo.Scripts.Entities.Units
             _naviAgent.Radius = 10.0f;          // 根据你的单位大小调整
             _naviAgent.AvoidanceLayers = 1;     // 设置层
             _naviAgent.AvoidanceMask = 1;       // 设置掩码
+
+            if (_sprite.Material is ShaderMaterial shaderMat)
+            {
+                _shaderMaterial = (ShaderMaterial)shaderMat.Duplicate();// 关键：复制一份材质，确保每个实例的材质相互独立
+                _sprite.Material = _shaderMaterial;// 记得把复制后的独立材质重新赋给当前的 Sprite2D
+            }
+            ShowOutline(false);
         }
 
 
@@ -381,10 +395,106 @@ namespace Solo.Scripts.Entities.Units
 
         private void Die()
         {
+            //GameManager.Instance.ChunkManager.RemoveItem(this, GlobalPosition);
+            _curHp = 0;
+            //掉落物品
+            foreach ((ItemType, int, int) tuple in _dropItemList)
+            {
+                DropItem dropItem = DropItemPs.Instantiate<DropItem>();
+                GetTree().CurrentScene.AddChild(dropItem);
+                dropItem.Init(tuple.Item1, Random.Shared.Next(tuple.Item2, tuple.Item3 + 1), Position);
+                dropItem.ApplyForce();
+            }
+            //GameManager.Instance.ChunkManager.RemoveItem(this, GlobalPosition);
             GameManager.Instance.UnitList.Remove(this);
             QueueFree();
         }
 
+
+        public virtual void ShowOutline(bool isShow)
+        {
+            if (isShow)
+            {
+                _shaderMaterial.SetShaderParameter("outline_color", new Godot.Color(1, 1, 1));
+                _shaderMaterial.SetShaderParameter("outline_width", 2);
+            }
+            else
+            {
+                _shaderMaterial.SetShaderParameter("outline_width", 0.0f);
+            }
+        }
+        public void TakeDamage(ItemType? dmgItemType, float damage)
+        {
+            damage = HandleDamage(dmgItemType, damage);
+            Tween animTween = CreateTween().SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out);
+            animTween.TweenProperty(_animRoot, "skew", 0.2f, 0.1f);
+            animTween.Parallel().TweenProperty(_sprite.Material, "shader_parameter/flash_modifier", 1.0f, 0.1f);
+            animTween.TweenProperty(_animRoot, "skew", -0.2f, 0.1f);
+            animTween.Parallel().TweenProperty(_sprite.Material, "shader_parameter/flash_modifier", 0.0f, 0.1f);
+            animTween.TweenProperty(_animRoot, "skew", 0f, 0.1f);
+            FloatTextLb floatTextLb = GameManager.Instance.FloatTextLbPs.Instantiate<FloatTextLb>();
+            GetTree().CurrentScene.AddChild(floatTextLb);
+            floatTextLb.Init($"-{damage}", GlobalPosition);
+            GameManager.Instance.Player.TriggerScreenShake(5f);
+            _curHp -= damage;
+            //_damageCooldownTimer = 0f;
+            //_healTimer = 0f;
+            //RefreshHpBar();
+            if (_curHp <= 0)
+            {
+                Die();
+
+            }
+        }
+
+        private float HandleDamage(ItemType? dmgItemType, float damage)
+        {
+            float resDmg = damage;
+            //switch (Type)
+            //{
+            //    case BuildingType.Tree:
+            //        switch (dmgItemType)
+            //        {
+            //            case ItemType.WoodAxe:
+            //                resDmg *= 2;
+            //                break;
+            //            case ItemType.IronAxe:
+            //                resDmg *= 3;
+            //                break;
+            //            case ItemType.GoldAxe:
+            //                resDmg *= 4;
+            //                break;
+            //            case ItemType.JadeAxe:
+            //                resDmg *= 5;
+            //                break;
+            //            default:
+            //                resDmg *= 1;
+            //                break;
+            //        }
+            //        break;
+            //    case BuildingType.Stone:
+            //        switch (dmgItemType)
+            //        {
+            //            case ItemType.WoodPickaxe:
+            //                resDmg *= 1;
+            //                break;
+            //            case ItemType.IronPickaxe:
+            //                resDmg *= 2;
+            //                break;
+            //            case ItemType.GoldPickaxe:
+            //                resDmg *= 3;
+            //                break;
+            //            case ItemType.JadePickaxe:
+            //                resDmg *= 4;
+            //                break;
+            //            default:
+            //                resDmg *= 0.1f;
+            //                break;
+            //        }
+            //        break;
+            //}
+            return resDmg;
+        }
     }
 
 }

@@ -1,17 +1,35 @@
 [gd_scene format=3 uid="uid://fexciysj5hdb"]
 
 [ext_resource type="Script" uid="uid://c46bn3rmnapge" path="res://Scripts/Entities/Units/Unit.cs" id="1_52hpg"]
+[ext_resource type="Shader" uid="uid://i3lcvke3ll2n" path="res://Assets/Shaders/Outline.gdshader" id="2_hsbt0"]
 [ext_resource type="Texture2D" uid="uid://tnjo4chtxi3m" path="res://Assets/AtlasTextures/Wolf.tres" id="2_scc8c"]
+[ext_resource type="PackedScene" uid="uid://qw0q5wipafhq" path="res://Scenes/System/ItemSystem/DropItem.tscn" id="2_tgtk1"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_52hpg"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_tgtk1"]
+shader = ExtResource("2_hsbt0")
+shader_parameter/outline_color = Color(0.96, 0.93, 0.73, 1)
+shader_parameter/outline_width = 1.0
+shader_parameter/flash_modifier = 0.0
+shader_parameter/flash_color = Color(1, 1, 1, 1)
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_qdqud"]
 radius = 37.054016
 
-[node name="Unit" type="Node2D" unique_id=418342575 node_paths=PackedStringArray("_naviAgent", "_viewArea", "_spriteRoot", "_animRoot")]
+[node name="Unit" type="Node2D" unique_id=418342575 node_paths=PackedStringArray("_naviAgent", "_viewArea", "_spriteRoot", "_animRoot", "_sprite")]
 script = ExtResource("1_52hpg")
 _naviAgent = NodePath("NavigationAgent2D")
 _viewArea = NodePath("ViewArea")
 _spriteRoot = NodePath("SpriteRoot")
 _animRoot = NodePath("SpriteRoot/AnimRoot")
+_sprite = NodePath("SpriteRoot/AnimRoot/Sprite2D")
+DropItemPs = ExtResource("2_tgtk1")
+
+[node name="BodyArea" type="Area2D" parent="." unique_id=609611614]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="BodyArea" unique_id=1482637738]
+shape = SubResource("CircleShape2D_52hpg")
 
 [node name="NavigationAgent2D" type="NavigationAgent2D" parent="." unique_id=1832958205]
 avoidance_enabled = true
@@ -21,6 +39,7 @@ avoidance_enabled = true
 [node name="AnimRoot" type="Node2D" parent="SpriteRoot" unique_id=1022720611]
 
 [node name="Sprite2D" type="Sprite2D" parent="SpriteRoot/AnimRoot" unique_id=537342220]
+material = SubResource("ShaderMaterial_tgtk1")
 texture = ExtResource("2_scc8c")
 
 [node name="ViewArea" type="Area2D" parent="." unique_id=1858817486]
