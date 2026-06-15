@@ -102,7 +102,7 @@ namespace Solo.Scripts.Entities.Players
         public override void _PhysicsProcess(double delta)
         {
             UpdateState((float)delta);
-            GD.Print("_curTarget : " + _curTarget);
+            //GD.Print("_curTarget : " + _curTarget);
             //GD.Print($"CurState : {CurState}");
             //GD.Print($"GlobalPosition : {GlobalPosition}");
         }
@@ -518,7 +518,7 @@ namespace Solo.Scripts.Entities.Players
             //    return;
             //}
 
-            if (_curTarget == null || _curTarget.CanAtk() == false)
+            if (_curTarget == null || _curTarget.IsVaild() == false || _curTarget.CanAtk() == false)
             {
                 ChangeState(PlayerState.Idle);
                 return;
@@ -546,8 +546,6 @@ namespace Solo.Scripts.Entities.Players
                     _fastBarInventoryView.RefreshSlot(CurFastBarIndex);
                 }
                 _curTarget.TakeDamage(Atk, FastBarInventory.ItemInstanceList[CurFastBarIndex]?.Type);
-                ChangeState(PlayerState.Idle);
-                return;
             }));
 
             _animTween.Parallel().TweenProperty(BodyRoot, "scale", new Vector2(1f, 1f), 0.1f);
@@ -571,21 +569,36 @@ namespace Solo.Scripts.Entities.Players
         }
         #endregion
 
-        //#region PreInteract
-        //private void EnterPreInteract()
-        //{
-
-        //}
-        //private void UpdatePreInteract(float delta)
-        //{
-
-        //}
-        //#endregion
-
         #region Interact
         private void EnterInteract()
         {
+            ResetAnim();
 
+            if (_curTarget == null || _curTarget.IsVaild() == false || _curTarget.CanInteract() == false)
+            {
+                ChangeState(PlayerState.Idle);
+                return;
+            }
+
+            if (_curTarget.GetWorldPosition().X - GlobalPosition.X < 0)
+                SpriteRoot.Scale = new Vector2(-1, 1);
+            else
+                SpriteRoot.Scale = new Vector2(1, 1);
+
+
+            _animTween = CreateTween().SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out);
+            _animTween.Parallel().TweenProperty(BodyRoot, "scale", new Vector2(0.8f, 0.8f), 0.05f);//出手动画
+            _animTween.TweenCallback(Callable.From(() =>
+            {
+                TriggerScreenShake(1);//震屏
+                _curTarget.Interact();
+            }));
+
+            _animTween.Parallel().TweenProperty(BodyRoot, "scale", new Vector2(1f, 1f), 0.1f);
+            _animTween.Finished += () =>
+            {
+                ChangeState(PlayerState.Idle);
+            };
         }
         private void UpdateInteract(float delta)
         {
@@ -833,13 +846,15 @@ namespace Solo.Scripts.Entities.Players
 
 
 
-        //用鼠标检测目标, 全屏检测, 触发攻击/交互时再判断距离
-        // 用鼠标检测目标, 全屏检测, 触发攻击/交互时再判断距离
+        // 用鼠标检测目标, 当前范围检测, 触发攻击/交互时再判断距离
         private ITargetable _curTarget = null;
         private void CheckTarget()
         {
-            _curTarget?.ShowOutline(false);
-            _curTarget = null;
+            if (_curTarget != null && _curTarget.IsVaild())
+            {
+                _curTarget.ShowOutline(false);
+                _curTarget = null;
+            }
 
             Vector2 mousePos = GetGlobalMousePosition();
             if (GlobalPosition.DistanceSquaredTo(mousePos) > _curTargetRangeSq)
@@ -854,17 +869,15 @@ namespace Solo.Scripts.Entities.Players
 
             foreach (var result in results)
             {
-                if (result["collider"].As<Node2D>() is ITargetable target)
+                if (result["collider"].As<Node2D>() is ITargetable target && target.IsVaild())
                 {
                     _curTarget = target;
-                    break;
+                    _curTarget.ShowOutline(true);
+                    return;
                 }
             }
 
-            if (_curTarget != null)//判断鼠标指向的目标是否发生了变化
-            {
-                _curTarget.ShowOutline(true);
-            }
+
         }
 
 
@@ -1143,6 +1156,16 @@ namespace Solo.Scripts.Entities.Players
         public void ShowOutline(bool isShow)
         {
             return;
+        }
+
+        public void Interact()
+        {
+            return;
+        }
+
+        public bool IsVaild()
+        {
+            return IsInstanceValid(this);
         }
     }
 }

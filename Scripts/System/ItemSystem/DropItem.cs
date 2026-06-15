@@ -77,20 +77,6 @@ namespace Solo.Scripts.System.ItemSystem
         //    }
         //}
 
-        public void Pickup()
-        {
-            int remainCount = GameManager.Instance.Player.AddItemToInventory(new ItemInstance() { Type = Type, Count = Count });
-            if (remainCount == 0)
-            {
-                GameManager.Instance.ChunkManager.RemoveItem(this, Position);
-                QueueFree();
-            }
-            else
-            {
-                Count = remainCount;
-            }
-        }
-
         public bool CanInteract()
         {
             return true;
@@ -139,6 +125,25 @@ namespace Solo.Scripts.System.ItemSystem
                 TextLb.Visible = false;
                 _shaderMaterial.SetShaderParameter("outline_width", 0.0f);
             }
+        }
+
+        public void Interact()
+        {
+            int remainCount = GameManager.Instance.Player.AddItemToInventory(new ItemInstance() { Type = Type, Count = Count });
+            if (remainCount == 0)
+            {
+                GameManager.Instance.ChunkManager.RemoveItem(this, Position);
+                QueueFree();
+            }
+            else
+            {
+                Count = remainCount;
+            }
+        }
+
+        public bool IsVaild()
+        {
+            return IsInstanceValid(this);
         }
     }
 }

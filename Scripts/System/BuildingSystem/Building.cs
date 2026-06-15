@@ -215,23 +215,23 @@ namespace Solo.Scripts.System.BuildingSystem
             return true;
         }
 
-        public void ShowInteractTip(bool isShow)
-        {
-            return;
-        }
+        //public void ShowInteractTip(bool isShow)
+        //{
+        //    return;
+        //}
 
-        public void ShowAtkTip(bool isShow)
-        {
-            if (isShow)
-            {
-                _shaderMaterial.SetShaderParameter("outline_color", new Godot.Color(1, 1, 1));
-                _shaderMaterial.SetShaderParameter("outline_width", 1);
-            }
-            else
-            {
-                _shaderMaterial.SetShaderParameter("outline_width", 0.0f);
-            }
-        }
+        //public void ShowAtkTip(bool isShow)
+        //{
+        //    if (isShow)
+        //    {
+        //        _shaderMaterial.SetShaderParameter("outline_color", new Godot.Color(1, 1, 1));
+        //        _shaderMaterial.SetShaderParameter("outline_width", 1);
+        //    }
+        //    else
+        //    {
+        //        _shaderMaterial.SetShaderParameter("outline_width", 0.0f);
+        //    }
+        //}
 
         public void ShowOutline(bool isShow)
         {
@@ -244,6 +244,16 @@ namespace Solo.Scripts.System.BuildingSystem
             {
                 _shaderMaterial.SetShaderParameter("outline_width", 0.0f);
             }
+        }
+
+        public void Interact()
+        {
+            return;
+        }
+
+        public bool IsVaild()
+        {
+            return IsInstanceValid(this);
         }
     }
 }

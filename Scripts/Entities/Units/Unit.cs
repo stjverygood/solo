@@ -734,6 +734,16 @@ namespace Solo.Scripts.Entities.Units
                 _shaderMaterial.SetShaderParameter("outline_width", 0.0f);
             }
         }
+
+        public void Interact()
+        {
+            return;
+        }
+
+        public bool IsVaild()
+        {
+            return IsInstanceValid(this);
+        }
     }
 
 }
