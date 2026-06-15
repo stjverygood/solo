@@ -1,12 +1,13 @@
 using Godot;
 using Solo.Scripts.Global;
+using Solo.Scripts.Global.Interfaces;
 using Solo.Scripts.System.ItemSystem;
 using System;
 using System.Collections.Generic;
 
 namespace Solo.Scripts.System.BuildingSystem
 {
-    public partial class Building : StaticBody2D
+    public partial class Building : StaticBody2D, ITargetable
     {
         public BuildingType Type;
         [Export] private CollisionShape2D _collisionShape;
@@ -88,9 +89,43 @@ namespace Solo.Scripts.System.BuildingSystem
             RefreshHpBar();
         }
 
-        public virtual void TakeDamage(ItemType? dmgItemType, float damage)
+
+
+        //public virtual void ShowOutline(bool isShow)
+        //{
+        //    if (isShow)
+        //    {
+        //        _shaderMaterial.SetShaderParameter("outline_color", new Godot.Color(1, 1, 1));
+        //        _shaderMaterial.SetShaderParameter("outline_width", 1);
+        //    }
+        //    else
+        //    {
+        //        _shaderMaterial.SetShaderParameter("outline_width", 0.0f);
+        //    }
+        //}
+
+        private void RefreshHpBar()
         {
-            damage = HandleDamage(dmgItemType, damage);
+            if (_curHp == MaxHp)
+            {
+                _hpPb.Visible = false;
+                return;
+            }
+            _hpPb.Position = new Vector2(_hpPb.Position.X, _sprite.Position.Y - (BuildingDataManager.Instance.GetBuildingData(Type).TextureHeight * 16 / 2 + 8));
+            _hpPb.Visible = true;
+            _hpPb.MaxValue = MaxHp;
+            _hpPb.Value = _curHp;
+            _hpLb.Text = $"{_curHp:f0}/{MaxHp:f0}";
+        }
+
+
+        public Vector2 GetWorldPosition()
+        {
+            return GlobalPosition;
+        }
+        public void TakeDamage(float damage, ItemType? itemType)
+        {
+            damage = HandleDamage(itemType, damage);
             Tween animTween = CreateTween().SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out);
             animTween.TweenProperty(_animRoot, "scale", new Vector2(0.8f, 0.8f), 0.1f);
             animTween.Parallel().TweenProperty(_sprite.Material, "shader_parameter/flash_modifier", 1.0f, 0.1f);
@@ -121,34 +156,6 @@ namespace Solo.Scripts.System.BuildingSystem
                 GameManager.Instance.ChunkManager.RemoveItem(this, GlobalPosition);
             }
         }
-
-        public virtual void ShowOutline(bool isShow)
-        {
-            if (isShow)
-            {
-                _shaderMaterial.SetShaderParameter("outline_color", new Godot.Color(1, 1, 1));
-                _shaderMaterial.SetShaderParameter("outline_width", 1);
-            }
-            else
-            {
-                _shaderMaterial.SetShaderParameter("outline_width", 0.0f);
-            }
-        }
-
-        private void RefreshHpBar()
-        {
-            if (_curHp == MaxHp)
-            {
-                _hpPb.Visible = false;
-                return;
-            }
-            _hpPb.Position = new Vector2(_hpPb.Position.X, _sprite.Position.Y - (BuildingDataManager.Instance.GetBuildingData(Type).TextureHeight * 16 / 2 + 8));
-            _hpPb.Visible = true;
-            _hpPb.MaxValue = MaxHp;
-            _hpPb.Value = _curHp;
-            _hpLb.Text = $"{_curHp:f0}/{MaxHp:f0}";
-        }
-
         private float HandleDamage(ItemType? dmgItemType, float damage)
         {
             float resDmg = damage;
@@ -196,6 +203,47 @@ namespace Solo.Scripts.System.BuildingSystem
                     break;
             }
             return resDmg;
+        }
+
+        public bool CanInteract()//todo : 根据配置项定
+        {
+            return false;
+        }
+
+        public bool CanAtk()
+        {
+            return true;
+        }
+
+        public void ShowInteractTip(bool isShow)
+        {
+            return;
+        }
+
+        public void ShowAtkTip(bool isShow)
+        {
+            if (isShow)
+            {
+                _shaderMaterial.SetShaderParameter("outline_color", new Godot.Color(1, 1, 1));
+                _shaderMaterial.SetShaderParameter("outline_width", 1);
+            }
+            else
+            {
+                _shaderMaterial.SetShaderParameter("outline_width", 0.0f);
+            }
+        }
+
+        public void ShowOutline(bool isShow)
+        {
+            if (isShow)
+            {
+                _shaderMaterial.SetShaderParameter("outline_color", new Godot.Color(1, 1, 1));
+                _shaderMaterial.SetShaderParameter("outline_width", 1);
+            }
+            else
+            {
+                _shaderMaterial.SetShaderParameter("outline_width", 0.0f);
+            }
         }
     }
 }

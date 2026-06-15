@@ -1,6 +1,7 @@
 using Godot;
 using Solo.Scripts.Entities.Players;
 using Solo.Scripts.Global;
+using Solo.Scripts.Global.Interfaces;
 using Solo.Scripts.System.ItemSystem;
 using System;
 using System.Collections.Generic;
@@ -27,7 +28,7 @@ namespace Solo.Scripts.Entities.Units
     }
 
 
-    public partial class Unit : Area2D
+    public partial class Unit : CharacterBody2D, ITargetable
     {
         public UnitType Type;
         private float _maxHp;
@@ -91,10 +92,6 @@ namespace Solo.Scripts.Entities.Units
             }
             ShowOutline(false);
         }
-
-
-
-
 
         public override void _PhysicsProcess(double delta)
         {
@@ -356,11 +353,11 @@ namespace Solo.Scripts.Entities.Units
                     if (Mathf.Abs(_curDir.AngleTo(toTarget)) > Mathf.DegToRad(60f)) continue;// 60 度转换为弧度是 Mathf.DegToRad(60)
                     if (viewNode is Player player)
                     {
-                        player.TakeDamage(10);
+                        player.TakeDamage(10, null);
                     }
                     else if (viewNode is Unit unit)
                     {
-                        unit.TakeDamage(null, 10);
+                        unit.TakeDamage(10, null);
                     }
                 }
             }));
@@ -504,9 +501,9 @@ namespace Solo.Scripts.Entities.Units
 
         private void OnVelocityComputed(Vector2 safeVelocity)
         {
-            //Velocity = safeVelocity;
-            //MoveAndSlide();
-            GlobalPosition += safeVelocity * (float)GetPhysicsProcessDeltaTime();
+            Velocity = safeVelocity;
+            MoveAndSlide();
+            //GlobalPosition += safeVelocity * (float)GetPhysicsProcessDeltaTime();
         }
 
 
@@ -529,40 +526,19 @@ namespace Solo.Scripts.Entities.Units
         }
 
 
-        public virtual void ShowOutline(bool isShow)
-        {
-            if (isShow)
-            {
-                _shaderMaterial.SetShaderParameter("outline_color", new Godot.Color(1, 1, 1));//162, 38, 51
-                _shaderMaterial.SetShaderParameter("outline_width", 1);
-            }
-            else
-            {
-                _shaderMaterial.SetShaderParameter("outline_width", 0.0f);
-            }
-        }
-        public void TakeDamage(ItemType? dmgItemType, float damage)
-        {
-            damage = HandleDamage(dmgItemType, damage);
-            Tween animTween = CreateTween().SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out);
-            animTween.TweenProperty(_animRoot, "skew", 0.2f, 0.1f);
-            animTween.Parallel().TweenProperty(_sprite.Material, "shader_parameter/flash_modifier", 1.0f, 0.1f);
-            animTween.TweenProperty(_animRoot, "skew", -0.2f, 0.1f);
-            animTween.Parallel().TweenProperty(_sprite.Material, "shader_parameter/flash_modifier", 0.0f, 0.1f);
-            animTween.TweenProperty(_animRoot, "skew", 0f, 0.1f);
-            FloatTextLb floatTextLb = GameManager.Instance.FloatTextLbPs.Instantiate<FloatTextLb>();
-            GetTree().CurrentScene.AddChild(floatTextLb);
-            floatTextLb.Init($"-{damage}", GlobalPosition);
-            _curHp -= damage;
-            //_damageCooldownTimer = 0f;
-            //_healTimer = 0f;
-            //RefreshHpBar();
-            if (_curHp <= 0)
-            {
-                Die();
+        //public virtual void ShowOutline(bool isShow)
+        //{
+        //    if (isShow)
+        //    {
+        //        _shaderMaterial.SetShaderParameter("outline_color", new Godot.Color(1, 1, 1));//162, 38, 51
+        //        _shaderMaterial.SetShaderParameter("outline_width", 1);
+        //    }
+        //    else
+        //    {
+        //        _shaderMaterial.SetShaderParameter("outline_width", 0.0f);
+        //    }
+        //}
 
-            }
-        }
 
         private float HandleDamage(ItemType? dmgItemType, float damage)
         {
@@ -687,6 +663,75 @@ namespace Solo.Scripts.Entities.Units
                         curMinDistSq = curDisq;
                     }
                 }
+            }
+        }
+
+        public Vector2 GetWorldPosition()
+        {
+            return GlobalPosition;
+        }
+
+        public void TakeDamage(float damage, ItemType? itemType)
+        {
+            damage = HandleDamage(itemType, damage);
+            Tween animTween = CreateTween().SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out);
+            animTween.TweenProperty(_animRoot, "skew", 0.2f, 0.1f);
+            animTween.Parallel().TweenProperty(_sprite.Material, "shader_parameter/flash_modifier", 1.0f, 0.1f);
+            animTween.TweenProperty(_animRoot, "skew", -0.2f, 0.1f);
+            animTween.Parallel().TweenProperty(_sprite.Material, "shader_parameter/flash_modifier", 0.0f, 0.1f);
+            animTween.TweenProperty(_animRoot, "skew", 0f, 0.1f);
+            FloatTextLb floatTextLb = GameManager.Instance.FloatTextLbPs.Instantiate<FloatTextLb>();
+            GetTree().CurrentScene.AddChild(floatTextLb);
+            floatTextLb.Init($"-{damage}", GlobalPosition);
+            _curHp -= damage;
+            //_damageCooldownTimer = 0f;
+            //_healTimer = 0f;
+            //RefreshHpBar();
+            if (_curHp <= 0)
+            {
+                Die();
+
+            }
+        }
+
+        public bool CanInteract()
+        {
+            return false;
+        }
+
+        public bool CanAtk()
+        {
+            return true;
+        }
+
+        public void ShowInteractTip(bool isShow)
+        {
+            return;
+        }
+
+        public void ShowAtkTip(bool isShow)
+        {
+            if (isShow)
+            {
+                _shaderMaterial.SetShaderParameter("outline_color", new Godot.Color(1, 1, 1));//162, 38, 51
+                _shaderMaterial.SetShaderParameter("outline_width", 1);
+            }
+            else
+            {
+                _shaderMaterial.SetShaderParameter("outline_width", 0.0f);
+            }
+        }
+
+        public void ShowOutline(bool isShow)
+        {
+            if (isShow)
+            {
+                _shaderMaterial.SetShaderParameter("outline_color", new Godot.Color(1, 1, 1));//162, 38, 51
+                _shaderMaterial.SetShaderParameter("outline_width", 1);
+            }
+            else
+            {
+                _shaderMaterial.SetShaderParameter("outline_width", 0.0f);
             }
         }
     }

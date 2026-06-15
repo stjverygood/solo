@@ -11,23 +11,15 @@
 [sub_resource type="CircleShape2D" id="CircleShape2D_jw8fk"]
 radius = 7.0
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_3gn43"]
-radius = 22.022715
+[sub_resource type="CircleShape2D" id="CircleShape2D_0527a"]
+radius = 100.0
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_kpjcp"]
-radius = 16.0
-
-[sub_resource type="CircleShape2D" id="CircleShape2D_f0b02"]
-radius = 61.0
-
-[node name="Player" type="CharacterBody2D" unique_id=1144409017 node_paths=PackedStringArray("SpriteRoot", "BodyRoot", "InteractArea", "AtkArea", "RangeAtkArea", "_camera", "_selfView", "_bagInventoryView", "_fastBarInventoryView", "_handNode", "_handSprite")]
+[node name="Player" type="CharacterBody2D" unique_id=1144409017 node_paths=PackedStringArray("SpriteRoot", "BodyRoot", "ViewArea", "_camera", "_selfView", "_bagInventoryView", "_fastBarInventoryView", "_handNode", "_handSprite")]
 y_sort_enabled = true
 script = ExtResource("1_lxeke")
 SpriteRoot = NodePath("SpriteRoot")
 BodyRoot = NodePath("SpriteRoot/BodyRoot")
-InteractArea = NodePath("InteractArea")
-AtkArea = NodePath("AtkArea")
-RangeAtkArea = NodePath("RangeAtkArea")
+ViewArea = NodePath("")
 _camera = NodePath("Camera2D")
 _selfView = NodePath("CanvasLayer/SelfView")
 _bagInventoryView = NodePath("CanvasLayer/BagInventoryView")
@@ -58,27 +50,6 @@ position = Vector2(8, -13)
 [node name="Sprite2D" type="Sprite2D" parent="SpriteRoot/HandNode" unique_id=216393619]
 position = Vector2(3, -3)
 texture = ExtResource("4_3gn43")
-
-[node name="InteractArea" type="Area2D" parent="." unique_id=1100036687]
-position = Vector2(0, -15)
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="InteractArea" unique_id=1331086004]
-shape = SubResource("CircleShape2D_3gn43")
-debug_color = Color(0, 0.60038817, 0.70000815, 0.07300001)
-
-[node name="AtkArea" type="Area2D" parent="." unique_id=588471765]
-position = Vector2(0, -15)
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="AtkArea" unique_id=135832409]
-shape = SubResource("CircleShape2D_kpjcp")
-debug_color = Color(0.8232569, 0.37342674, 0.38560182, 0.14400001)
-
-[node name="RangeAtkArea" type="Area2D" parent="." unique_id=789042574]
-position = Vector2(0, -15)
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="RangeAtkArea" unique_id=1554103456]
-shape = SubResource("CircleShape2D_f0b02")
-debug_color = Color(0.7723388, 0.4222509, 0.37342674, 0)
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=374399419]
 
@@ -144,3 +115,9 @@ visible = false
 offset_left = -42.0
 offset_right = 42.0
 offset_bottom = 2.0
+
+[node name="Area2D" type="Area2D" parent="." unique_id=1090585039]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D" unique_id=1786946931]
+shape = SubResource("CircleShape2D_0527a")
+debug_color = Color(0.38431373, 0.6117647, 0, 0.043137256)

@@ -1,9 +1,10 @@
 using Godot;
 using Solo.Scripts.Global;
+using Solo.Scripts.Global.Interfaces;
 
 namespace Solo.Scripts.System.ItemSystem
 {
-    public partial class DropItem : Area2D
+    public partial class DropItem : Area2D, ITargetable
     {
         public ItemType Type;
         public int Count;
@@ -28,7 +29,7 @@ namespace Solo.Scripts.System.ItemSystem
                 _shaderMaterial = (ShaderMaterial)shaderMat.Duplicate();// 关键：复制一份材质，确保每个实例的材质相互独立
                 IconSprite.Material = _shaderMaterial;// 记得把复制后的独立材质重新赋给当前的 Sprite2D
             }
-            ShowText(false);
+            ShowOutline(false);
             GameManager.Instance.ChunkManager.AddItem(this, Position);
         }
 
@@ -61,21 +62,20 @@ namespace Solo.Scripts.System.ItemSystem
             }));
         }
 
-        public void ShowText(bool isShow)
-        {
-            if (isShow)
-            {
-                TextLb.Visible = true;
-                _shaderMaterial.SetShaderParameter("outline_color", new Godot.Color(1, 1, 1));
-                _shaderMaterial.SetShaderParameter("outline_width", 1);
-            }
-            else
-            {
-                TextLb.Visible = false;
-                _shaderMaterial.SetShaderParameter("outline_width", 0.0f);
-            }
-
-        }
+        //public void ShowText(bool isShow)
+        //{
+        //    if (isShow)
+        //    {
+        //        TextLb.Visible = true;
+        //        _shaderMaterial.SetShaderParameter("outline_color", new Godot.Color(1, 1, 1));
+        //        _shaderMaterial.SetShaderParameter("outline_width", 1);
+        //    }
+        //    else
+        //    {
+        //        TextLb.Visible = false;
+        //        _shaderMaterial.SetShaderParameter("outline_width", 0.0f);
+        //    }
+        //}
 
         public void Pickup()
         {
@@ -88,6 +88,56 @@ namespace Solo.Scripts.System.ItemSystem
             else
             {
                 Count = remainCount;
+            }
+        }
+
+        public bool CanInteract()
+        {
+            return true;
+        }
+        public bool CanAtk()
+        {
+            return false;
+        }
+        public void ShowInteractTip(bool isShow)
+        {
+            if (isShow)
+            {
+                TextLb.Visible = true;
+                //_shaderMaterial.SetShaderParameter("outline_color", new Godot.Color(1, 1, 1));
+                //_shaderMaterial.SetShaderParameter("outline_width", 1);
+            }
+            else
+            {
+                TextLb.Visible = false;
+                //_shaderMaterial.SetShaderParameter("outline_width", 0.0f);
+            }
+        }
+        public void ShowAtkTip(bool isShow)
+        {
+            return;
+        }
+        public Vector2 GetWorldPosition()
+        {
+            return GlobalPosition;
+        }
+        public void TakeDamage(float damage, ItemType? itemType)
+        {
+            return;
+        }
+
+        public void ShowOutline(bool isShow)
+        {
+            if (isShow)
+            {
+                TextLb.Visible = true;
+                _shaderMaterial.SetShaderParameter("outline_color", new Godot.Color(1, 1, 1));
+                _shaderMaterial.SetShaderParameter("outline_width", 1);
+            }
+            else
+            {
+                TextLb.Visible = false;
+                _shaderMaterial.SetShaderParameter("outline_width", 0.0f);
             }
         }
     }
