@@ -10,8 +10,6 @@ namespace Solo.Scripts.Global.Interfaces
 
         public bool CanAtk();
         public void TakeDamage(float damage, ItemType? itemType);
-        //public void ShowInteractTip(bool isShow);
-        //public void ShowAtkTip(bool isShow);
 
         public bool CanInteract();
         public void Interact();

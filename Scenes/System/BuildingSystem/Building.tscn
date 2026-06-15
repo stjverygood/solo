@@ -9,7 +9,7 @@
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_10igi"]
 shader = ExtResource("3_ldljy")
 shader_parameter/outline_color = Color(1, 1, 1, 1)
-shader_parameter/outline_width = 1.0
+shader_parameter/outline_width = 0.618000029355
 shader_parameter/flash_modifier = 0.0
 shader_parameter/flash_color = Color(1, 1, 1, 1)
 
@@ -51,6 +51,14 @@ _hpLb = NodePath("ProgressBar/Label")
 DropItemPs = ExtResource("2_ldljy")
 _naviObstacle = NodePath("NavigationObstacle2D")
 
+[node name="ColorRect" type="ColorRect" parent="." unique_id=171105797]
+visible = false
+offset_left = -8.0
+offset_top = 0.24
+offset_right = 8.0
+offset_bottom = 16.239994
+color = Color(0.4509804, 0.24313726, 0.22352941, 1)
+
 [node name="AnimRoot" type="Node2D" parent="." unique_id=748198720]
 
 [node name="Sprite2D" type="Sprite2D" parent="AnimRoot" unique_id=1800112651]
@@ -91,9 +99,3 @@ vertical_alignment = 1
 
 [node name="NavigationObstacle2D" type="NavigationObstacle2D" parent="." unique_id=400351854]
 radius = 8.0
-
-[node name="ColorRect" type="ColorRect" parent="." unique_id=171105797]
-visible = false
-offset_left = -40.0
-offset_right = 40.0
-offset_bottom = 1.0

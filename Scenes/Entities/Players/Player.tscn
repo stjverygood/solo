@@ -45,7 +45,7 @@ position = Vector2(0, -15)
 texture = ExtResource("3_3gn43")
 
 [node name="HandNode" type="Node2D" parent="SpriteRoot" unique_id=129208459]
-position = Vector2(8, -13)
+position = Vector2(6, -7)
 
 [node name="Sprite2D" type="Sprite2D" parent="SpriteRoot/HandNode" unique_id=216393619]
 position = Vector2(3, -3)
@@ -121,3 +121,7 @@ offset_bottom = 2.0
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D" unique_id=1786946931]
 shape = SubResource("CircleShape2D_0527a")
 debug_color = Color(0.38431373, 0.6117647, 0, 0.043137256)
+
+[node name="NavigationObstacle2D" type="NavigationObstacle2D" parent="." unique_id=1630283297]
+position = Vector2(0, -7)
+radius = 11.11

@@ -41,9 +41,9 @@ namespace Solo.Scripts.System.ChunkSystem
 
         private Dictionary<TileType, List<Vector2I>> TileCoordsListMap = new Dictionary<TileType, List<Vector2I>>()
         {
-            { TileType.Grass, new List<Vector2I>(){ new Vector2I(8, 8)}},
-            { TileType.Water, new List<Vector2I>(){ new Vector2I(11, 10)}},
-            { TileType.Stone, new List<Vector2I>(){new Vector2I(10, 4)}},
+            { TileType.Grass, new List<Vector2I>(){ new Vector2I(7, 6)}},
+            { TileType.Stone, new List<Vector2I>(){new Vector2I(7, 7)}},
+            { TileType.Water, new List<Vector2I>(){ new Vector2I(7, 8)}},
         };
         private Dictionary<Vector2I, TileType> TileTypeMap = new Dictionary<Vector2I, TileType>();//用于反查
 
@@ -224,7 +224,7 @@ namespace Solo.Scripts.System.ChunkSystem
                     }
                 }
 
-                if (GD.Randf() < 0.5)
+                if (GD.Randf() < 0.2)
                 {
                     Unit unit = _unitPs.Instantiate<Unit>();
                     GetTree().CurrentScene.AddChild(unit);
