@@ -32,13 +32,13 @@ namespace Solo.Scripts.System.BuildingSystem
             _dropItemList = buildingData.DropItemList;
 
             _sprite.Texture = GD.Load<Texture2D>(buildingData.TexturePath);
-            _sprite.Position = new Vector2(0, -(buildingData.TextureHeight / 2f - buildingData.Height) * 16);
+            _sprite.Position = new Vector2(0, -(buildingData.TextureHeight - buildingData.Height) * 16 / 2);
             if (_collisionShape.Shape is RectangleShape2D rectShape)
             {
                 RectangleShape2D uniqueRectShape = (RectangleShape2D)rectShape.Duplicate();
                 uniqueRectShape.Size = new Vector2(buildingData.Width * 16f, buildingData.Height * 16f); // 赋予新的尺寸
                 _collisionShape.Shape = uniqueRectShape;
-                _collisionShape.Position = new Vector2(0, (buildingData.Height / 2f) * 16);
+                _collisionShape.Position = new Vector2(0, 0);
             }
             if (_naviObstacle != null)
             {
@@ -48,7 +48,7 @@ namespace Solo.Scripts.System.BuildingSystem
                 _naviObstacle.Vertices = obstacleVertices;
                 _naviObstacle.AvoidanceEnabled = true;// 确保避障属性正确开启
                 _naviObstacle.AvoidanceLayers = 1; // 保持和之前 Units 的 AvoidanceMask 一致
-                _naviObstacle.Position = new Vector2(0, (buildingData.Height / 2f) * 16);
+                _naviObstacle.Position = new Vector2(0, 0);
             }
 
 

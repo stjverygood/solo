@@ -237,14 +237,31 @@ namespace Solo.Scripts.Entities.Players
             //RefreshNearestTarget();//每帧刷新最近的target
             if (Input.IsActionJustPressed("Atk"))
             {
-                //todo : 根据物品, 若是buildingItem, 转到建筑模式
-                ChangeState(PlayerState.Atk);
-                return;
+                //根据物品, 若是buildingItem, 转到建筑模式
+                if (FastBarInventory.ItemInstanceList[CurFastBarIndex] != null && ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).isBuilding)
+                {
+                    ChangeState(PlayerState.Build);
+                    return;
+                }
+                else
+                {
+                    ChangeState(PlayerState.Atk);
+                    return;
+                }
             }
             if (Input.IsActionJustPressed("Interact"))
             {
-                ChangeState(PlayerState.Interact);
-                return;
+                //根据物品, 若是buildingItem, 转到建筑模式
+                if (FastBarInventory.ItemInstanceList[CurFastBarIndex] != null && ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).isBuilding)
+                {
+                    ChangeState(PlayerState.Build);
+                    return;
+                }
+                else
+                {
+                    ChangeState(PlayerState.Interact);
+                    return;
+                }
             }
 
             Vector2 input = Input.GetVector("MoveLeft", "MoveRight", "MoveForward", "MoveBack");
@@ -307,14 +324,29 @@ namespace Solo.Scripts.Entities.Players
             CheckTarget();
             if (Input.IsActionJustPressed("Atk"))
             {
-                //todo : 根据物品, 若是buildingItem, 转到建筑模式
-                ChangeState(PlayerState.Atk);
-                return;
+                if (FastBarInventory.ItemInstanceList[CurFastBarIndex] != null && ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).isBuilding)
+                {
+                    ChangeState(PlayerState.Build);
+                    return;
+                }
+                else
+                {
+                    ChangeState(PlayerState.Atk);
+                    return;
+                }
             }
             if (Input.IsActionJustPressed("Interact"))
             {
-                ChangeState(PlayerState.Interact);
-                return;
+                if (FastBarInventory.ItemInstanceList[CurFastBarIndex] != null && ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).isBuilding)
+                {
+                    ChangeState(PlayerState.Build);
+                    return;
+                }
+                else
+                {
+                    ChangeState(PlayerState.Interact);
+                    return;
+                }
             }
             //RefreshNearestTarget();//每帧刷新最近的target
             //if (Input.IsActionJustPressed("Atk"))
@@ -392,14 +424,29 @@ namespace Solo.Scripts.Entities.Players
             CheckTarget();
             if (Input.IsActionJustPressed("Atk"))
             {
-                //todo : 根据物品, 若是buildingItem, 转到建筑模式
-                ChangeState(PlayerState.Atk);
-                return;
+                if (FastBarInventory.ItemInstanceList[CurFastBarIndex] != null && ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).isBuilding)
+                {
+                    ChangeState(PlayerState.Build);
+                    return;
+                }
+                else
+                {
+                    ChangeState(PlayerState.Atk);
+                    return;
+                }
             }
             if (Input.IsActionJustPressed("Interact"))
             {
-                ChangeState(PlayerState.Interact);
-                return;
+                if (FastBarInventory.ItemInstanceList[CurFastBarIndex] != null && ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).isBuilding)
+                {
+                    ChangeState(PlayerState.Build);
+                    return;
+                }
+                else
+                {
+                    ChangeState(PlayerState.Interact);
+                    return;
+                }
             }
             //RefreshNearestTarget();//每帧刷新最近的target
             //if (Input.IsActionJustPressed("Atk"))
@@ -446,7 +493,7 @@ namespace Solo.Scripts.Entities.Players
         }
         #endregion
 
-        #region dash
+        #region Dash
         private float _dashTimer;
         private float _dashDuration = 0.2f;
         private float _dashSpeed = 200;
@@ -506,7 +553,7 @@ namespace Solo.Scripts.Entities.Players
         }
         #endregion
 
-        #region atk
+        #region Atk
         private void EnterAtk()
         {
             ResetAnim();
@@ -606,7 +653,7 @@ namespace Solo.Scripts.Entities.Players
         }
         #endregion
 
-        #region build
+        #region Build
         [Export] private PackedScene _buildingPreviewPs;
         private BuildingPreview _curBuildingPreview;
         private void EnterBuild()
@@ -621,26 +668,26 @@ namespace Solo.Scripts.Entities.Players
         }
         private void UpdateBuild(float delta)
         {
-            if (Input.IsActionJustPressed("Pre"))
-            {
-                ChangeCurFastBarIndex(false);
-                if (FastBarInventory.ItemInstanceList[CurFastBarIndex] == null || ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).isBuilding == false)
-                {
-                    _curBuildingPreview.QueueFree();
-                    ChangeState(PlayerState.Idle);
-                    return;
-                }
-            }
-            if (Input.IsActionJustPressed("Next"))
-            {
-                ChangeCurFastBarIndex(true);
-                if (FastBarInventory.ItemInstanceList[CurFastBarIndex] == null || ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).isBuilding == false)
-                {
-                    _curBuildingPreview.QueueFree();
-                    ChangeState(PlayerState.Idle);
-                    return;
-                }
-            }
+            //if (Input.IsActionJustPressed("Pre"))
+            //{
+            //    ChangeCurFastBarIndex(false);
+            //    if (FastBarInventory.ItemInstanceList[CurFastBarIndex] == null || ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).isBuilding == false)
+            //    {
+            //        _curBuildingPreview.QueueFree();
+            //        ChangeState(PlayerState.Idle);
+            //        return;
+            //    }
+            //}
+            //if (Input.IsActionJustPressed("Next"))
+            //{
+            //    ChangeCurFastBarIndex(true);
+            //    if (FastBarInventory.ItemInstanceList[CurFastBarIndex] == null || ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).isBuilding == false)
+            //    {
+            //        _curBuildingPreview.QueueFree();
+            //        ChangeState(PlayerState.Idle);
+            //        return;
+            //    }
+            //}
 
             Vector2 input = Input.GetVector("MoveLeft", "MoveRight", "MoveForward", "MoveBack");
             if (input != Vector2.Zero)
@@ -654,7 +701,9 @@ namespace Solo.Scripts.Entities.Players
             else
                 Velocity = input * moveSpeed;
             MoveAndSlide();
-            _curBuildingPreview.Update(GlobalPosition);
+
+            Vector2 mousePos = GetGlobalMousePosition();
+            _curBuildingPreview.RefreshPosition(mousePos);
             if (Input.IsActionJustPressed("Atk"))
             {
                 bool isBuild = _curBuildingPreview.Build();                if (isBuild)
@@ -670,7 +719,8 @@ namespace Solo.Scripts.Entities.Players
             }
             if (Input.IsActionJustPressed("Interact"))
             {
-                _curBuildingPreview.ChangeDir();
+                ChangeState(PlayerState.Idle);
+                return;
             }
         }
         #endregion

@@ -9,7 +9,7 @@ public partial class BuildingPreview : Node2D
     [Export] private PackedScene _buildingPs;
     private Vector2 _curDir = Vector2.Down;
 
-    public void Init(ItemType itemType, Vector2 playerPos)
+    public void Init(ItemType itemType, Vector2 mousePos)
     {
         switch (itemType)
         {
@@ -37,56 +37,21 @@ public partial class BuildingPreview : Node2D
         }
         BuildingData buildingData = BuildingDataManager.Instance.GetBuildingData(Type);
         _sprite.Texture = GD.Load<Texture2D>(buildingData.TexturePath);
-        _sprite.Position = new Vector2(0, -(buildingData.TextureHeight / 2f - buildingData.Height) * 16);
-        Update(playerPos);
+        _sprite.Position = new Vector2(0, -(buildingData.TextureHeight - buildingData.Height) * 16 / 2);
+        RefreshPosition(mousePos);
     }
 
-    //public override void _PhysicsProcess(double delta)
-    //{
-
-    //}
-
-
-    public void Update(Vector2 playerPos)
+    public void RefreshPosition(Vector2 mousePos)
     {
         BuildingData buildingData = BuildingDataManager.Instance.GetBuildingData(Type);
-        Vector2 worldPos = playerPos + new Vector2(_curDir.X * buildingData.Width / 2 * 20, _curDir.Y * buildingData.Height / 2 * 25);
-        Vector2 snapPos = GameManager.Instance.BuildingManager.SnapToCell(Type, worldPos);
+        Vector2 snapPos = GameManager.Instance.BuildingManager.SnapToCell(Type, mousePos);
         bool canPlace = GameManager.Instance.BuildingManager.CanPlaced(Type, snapPos);
         GlobalPosition = snapPos;
         _sprite.Modulate = canPlace ? new Color(0, 1, 0, 0.2f) : new Color(1, 0, 0, 0.2f);
     }
 
-    public void ChangeDir()
-    {
-        if (_curDir == Vector2.Down)
-        {
-            _curDir = Vector2.Left;
-            return;
-        }
-        if (_curDir == Vector2.Left)
-        {
-            _curDir = Vector2.Up;
-            return;
-        }
-        if (_curDir == Vector2.Up)
-        {
-            _curDir = Vector2.Right;
-            return;
-        }
-        if (_curDir == Vector2.Right)
-        {
-            _curDir = Vector2.Down;
-            return;
-        }
-    }
-
     public bool Build()
     {
-        //Vector2 snapPos = GameManager.Instance.BuildingManager.SnapToCell(Type, GlobalPosition);
-        //bool canPlace = GameManager.Instance.BuildingManager.CanPlaced(Type, snapPos);
-        //if (canPlace)
-        //{
         GameManager.Instance.BuildingManager.Place(Type, GlobalPosition);
 
         switch (Type)
