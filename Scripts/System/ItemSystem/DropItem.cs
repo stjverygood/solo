@@ -6,20 +6,20 @@ namespace Solo.Scripts.System.ItemSystem
 {
     public partial class DropItem : Area2D, ITargetable
     {
-        public ItemType Type;
+        //public ItemType Type;
+        public ItemInstance ItemInstance;
         public int Count;
         [Export] public Label TextLb;
         [Export] public Sprite2D IconSprite;
         private ShaderMaterial _shaderMaterial;
 
-        public void Init(ItemType type, int count, Vector2 pos)
+        public void Init(ItemInstance instance, Vector2 pos)
         {
-            Type = type;
-            Count = count;
+            ItemInstance = instance;
             GlobalPosition = pos;
-            TextLb.Text = ItemDataManager.Instance.GetItemData(Type).Name;
+            TextLb.Text = ItemDataManager.Instance.GetItemData(ItemInstance.Type).Name;
             TextLb.Visible = false;
-            Texture2D texture = GD.Load<Texture2D>(ItemDataManager.Instance.GetItemData(Type).IconPath);
+            Texture2D texture = GD.Load<Texture2D>(ItemDataManager.Instance.GetItemData(ItemInstance.Type).IconPath);
             Vector2 targetSize = new Vector2(16, 16);
             Vector2 texSize = texture.GetSize(); // 获取图片实际的像素大小
             IconSprite.Scale = new Vector2(targetSize.X / texSize.X, targetSize.Y / texSize.Y);// 计算缩放比例：目标尺寸 / 图片实际尺寸
@@ -35,25 +35,15 @@ namespace Solo.Scripts.System.ItemSystem
 
         public void ApplyForce()
         {
-            //ApplyCentralImpulse(new Vector2(10, 10));
-
-            // 2. 视觉层：用 Tween 做一个纯视觉的“抛物线”弹跳
             float duration = 0.5f; // 整个弹跳持续时间
             float jumpHeight = (float)GD.RandRange(30f, 50f); // 向上跳跃的高度
-
             Tween airTween = CreateTween();
-
-            // 前半段：往上冲 (Y 轴为负)
             airTween.TweenProperty(IconSprite, "position:y", -jumpHeight, duration * 0.5f)
                     .SetTrans(Tween.TransitionType.Quad)
                     .SetEase(Tween.EaseType.Out);
-
-            // 后后半段：落回地面 (Y 轴归零)
             airTween.TweenProperty(IconSprite, "position:y", 0f, duration * 0.5f)
                     .SetTrans(Tween.TransitionType.Quad)
                     .SetEase(Tween.EaseType.In);
-
-            // 落地后再微微弹一下，更有动感
             airTween.TweenCallback(Callable.From(() =>
             {
                 Tween bounceTween = CreateTween();
@@ -61,21 +51,6 @@ namespace Solo.Scripts.System.ItemSystem
                 bounceTween.TweenProperty(IconSprite, "position:y", 0f, 0.1f).SetEase(Tween.EaseType.In);
             }));
         }
-
-        //public void ShowText(bool isShow)
-        //{
-        //    if (isShow)
-        //    {
-        //        TextLb.Visible = true;
-        //        _shaderMaterial.SetShaderParameter("outline_color", new Godot.Color(1, 1, 1));
-        //        _shaderMaterial.SetShaderParameter("outline_width", 1);
-        //    }
-        //    else
-        //    {
-        //        TextLb.Visible = false;
-        //        _shaderMaterial.SetShaderParameter("outline_width", 0.0f);
-        //    }
-        //}
 
         public bool CanInteract()
         {
@@ -129,7 +104,7 @@ namespace Solo.Scripts.System.ItemSystem
 
         public void Interact()
         {
-            int remainCount = GameManager.Instance.Player.AddItemToInventory(new ItemInstance() { Type = Type, Count = Count });
+            int remainCount = GameManager.Instance.Player.AddItemToInventory(ItemInstance);
             if (remainCount == 0)
             {
                 GameManager.Instance.ChunkManager.RemoveItem(this, Position);

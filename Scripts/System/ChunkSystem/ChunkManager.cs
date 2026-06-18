@@ -157,7 +157,7 @@ namespace Solo.Scripts.System.ChunkSystem
                 {
                     DropItem DropItem = DropItemPs.Instantiate<DropItem>();
                     GetTree().CurrentScene.AddChild(DropItem);
-                    DropItem.Init(dropItemData.Type, dropItemData.Count, new Vector2(dropItemData.X, dropItemData.Y));
+                    DropItem.Init(dropItemData.Instance, new Vector2(dropItemData.X, dropItemData.Y));
                 }
             }
             else
@@ -201,7 +201,7 @@ namespace Solo.Scripts.System.ChunkSystem
                                 Vector2 offset = new Vector2(_tileSize / 2f, _tileSize / 2f);// 计算偏移量，使物体位于瓦片中心 (假设 _tileSize 是 16，偏移就是 8)
                                 DropItem goldDropItem = DropItemPs.Instantiate<DropItem>();
                                 GetTree().CurrentScene.AddChild(goldDropItem);
-                                goldDropItem.Init(ItemType.Grass, 3, tileWorldPos + offset);
+                                goldDropItem.Init(new ItemInstance() { Type = ItemType.Grass, Count = 3 }, tileWorldPos + offset);
                             }
                         }
                         else//石
@@ -248,7 +248,7 @@ namespace Solo.Scripts.System.ChunkSystem
                     );
                     DropItem stoneDrop = DropItemPs.Instantiate<DropItem>();
                     GetTree().CurrentScene.AddChild(stoneDrop);
-                    stoneDrop.Init(ItemType.MainBaseStone, 1, randomPos);
+                    stoneDrop.Init(new ItemInstance() { Type = ItemType.MainBaseStone, Count = 1 }, randomPos);
                 }
 
             }
@@ -277,7 +277,7 @@ namespace Solo.Scripts.System.ChunkSystem
             }
             foreach (DropItem dropItem in curChunk.DropItemList)//移除node
             {
-                curChunkData.DropItemSaveDataList.Add(new DropItemSaveData() { Type = dropItem.Type, Count = dropItem.Count, X = dropItem.GlobalPosition.X, Y = dropItem.GlobalPosition.Y });
+                curChunkData.DropItemSaveDataList.Add(new DropItemSaveData() { Instance = dropItem.ItemInstance, Count = dropItem.Count, X = dropItem.GlobalPosition.X, Y = dropItem.GlobalPosition.Y });
                 if (IsInstanceValid(dropItem))
                     dropItem.QueueFree();
             }
@@ -346,7 +346,7 @@ namespace Solo.Scripts.System.ChunkSystem
                 }
                 foreach (DropItem dropItem in chunk.DropItemList)//移除node
                 {
-                    chunkSaveData.DropItemSaveDataList.Add(new DropItemSaveData() { Type = dropItem.Type, Count = dropItem.Count, X = dropItem.GlobalPosition.X, Y = dropItem.GlobalPosition.Y });
+                    chunkSaveData.DropItemSaveDataList.Add(new DropItemSaveData() { Instance = dropItem.ItemInstance, Count = dropItem.Count, X = dropItem.GlobalPosition.X, Y = dropItem.GlobalPosition.Y });
                 }
                 ChunkSaveDataMap[chunkPos] = chunkSaveData;
             }

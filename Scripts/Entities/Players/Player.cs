@@ -31,6 +31,9 @@ namespace Solo.Scripts.Entities.Players
         [Export] private Sprite2D _sprite;
         [Export] private Camera2D _camera;
 
+
+        [Export] public PackedScene DropItemPs;
+
         private ShaderMaterial _shaderMaterial;
 
         //人物属性
@@ -659,10 +662,42 @@ namespace Solo.Scripts.Entities.Players
             //1. 播放死亡动画
             ResetAnim();
             _animTween = CreateTween().SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out);
-            _animTween.TweenProperty(BodyRoot, "scale", new Vector2(0.01f, 0.01f), 1f);
+            _animTween.TweenProperty(SpriteRoot, "scale", new Vector2(0.01f, 0.01f), 1f);
             _animTween.Finished += () =>
             {
                 //2. 爆装备
+                // 遍历快捷栏和背包, 把每个物品重新包装回dropItem, 在半径内随机生成, 然后调init
+                for (int i = 0; i < FastBarInventory.ItemInstanceList.Count; i++)
+                {
+                    if (FastBarInventory.ItemInstanceList[i] == null)
+                        continue;
+
+                    ItemInstance itemInstance = FastBarInventory.ItemInstanceList[i];
+                    DropItem dropItem = DropItemPs.Instantiate<DropItem>();
+                    float randomAngle = (float)GD.RandRange(0, Mathf.Tau);
+                    float randomRadius = Mathf.Sqrt((float)GD.Randf()) * 30f;
+                    Vector2 randomOffset = new Vector2(Mathf.Cos(randomAngle), Mathf.Sin(randomAngle)) * randomRadius;
+                    Vector2 randomPosition = GlobalPosition + randomOffset;
+                    GetTree().CurrentScene.AddChild(dropItem);
+                    dropItem.Init(itemInstance, randomPosition);
+                    dropItem.ApplyForce();
+                }
+                for (int i = 0; i < BagInventory.ItemInstanceList.Count; i++)
+                {
+                    if (BagInventory.ItemInstanceList[i] == null)
+                        continue;
+
+                    ItemInstance itemInstance = BagInventory.ItemInstanceList[i];
+                    DropItem dropItem = DropItemPs.Instantiate<DropItem>();
+                    float randomAngle = (float)GD.RandRange(0, Mathf.Tau);
+                    float randomRadius = Mathf.Sqrt((float)GD.Randf()) * 30f;
+                    Vector2 randomOffset = new Vector2(Mathf.Cos(randomAngle), Mathf.Sin(randomAngle)) * randomRadius;
+                    Vector2 randomPosition = GlobalPosition + randomOffset;
+                    GetTree().CurrentScene.AddChild(dropItem);
+                    dropItem.Init(itemInstance, randomPosition);
+                    dropItem.ApplyForce();
+                }
+
                 //3. 等待1s
                 GetTree().CreateTimer(1).Timeout += () =>
                 {

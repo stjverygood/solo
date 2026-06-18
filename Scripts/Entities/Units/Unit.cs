@@ -583,7 +583,7 @@ namespace Solo.Scripts.Entities.Units
             {
                 DropItem dropItem = DropItemPs.Instantiate<DropItem>();
                 GetTree().CurrentScene.AddChild(dropItem);
-                dropItem.Init(tuple.Item1, Random.Shared.Next(tuple.Item2, tuple.Item3 + 1), Position);
+                dropItem.Init(new ItemInstance() { Type = tuple.Item1, Count = Random.Shared.Next(tuple.Item2, tuple.Item3 + 1) }, Position);
                 dropItem.ApplyForce();
             }
             //GameManager.Instance.ChunkManager.RemoveItem(this, GlobalPosition);
