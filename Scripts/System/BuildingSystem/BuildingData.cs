@@ -5,7 +5,7 @@ namespace Solo.Scripts.System.BuildingSystem
 {
     public class BuildingData
     {
-        //public BuildingType Type;
+        public TargetType TargetType;
         public int Width = -1;
         public int Height = -1;
         public int TextureHeight = -1;

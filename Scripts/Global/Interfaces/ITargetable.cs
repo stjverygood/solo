@@ -7,6 +7,7 @@ namespace Solo.Scripts.Global.Interfaces
         public Vector2 GetWorldPosition();
         public void ShowOutline(bool isShow);
         public bool IsVaild();
+        public TargetType GetTargetType();
 
         public bool CanAtk();
         public void TakeDamage(float damage, ItemType? itemType);

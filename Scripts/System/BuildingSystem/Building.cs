@@ -10,6 +10,7 @@ namespace Solo.Scripts.System.BuildingSystem
     public partial class Building : StaticBody2D, ITargetable
     {
         public BuildingType Type;
+        public TargetType TargetType;
         [Export] private CollisionShape2D _collisionShape;
         [Export] private Node2D _animRoot;
         [Export] private Sprite2D _sprite;
@@ -27,6 +28,7 @@ namespace Solo.Scripts.System.BuildingSystem
             Type = type;
             GlobalPosition = snapPos;
             BuildingData buildingData = BuildingDataManager.Instance.GetBuildingData(Type);
+            TargetType = buildingData.TargetType;
             MaxHp = buildingData.MaxHp;
             _curHp = MaxHp;
             _dropItemList = buildingData.DropItemList;
@@ -254,6 +256,11 @@ namespace Solo.Scripts.System.BuildingSystem
         public bool IsVaild()
         {
             return IsInstanceValid(this);
+        }
+
+        public TargetType GetTargetType()
+        {
+            return TargetType;
         }
     }
 }

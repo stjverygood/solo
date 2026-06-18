@@ -4,6 +4,7 @@
 [ext_resource type="Shader" uid="uid://i3lcvke3ll2n" path="res://Assets/Shaders/Outline.gdshader" id="2_hsbt0"]
 [ext_resource type="Texture2D" uid="uid://tnjo4chtxi3m" path="res://Assets/AtlasTextures/Wolf.tres" id="2_scc8c"]
 [ext_resource type="PackedScene" uid="uid://qw0q5wipafhq" path="res://Scenes/System/ItemSystem/DropItem.tscn" id="2_tgtk1"]
+[ext_resource type="FontFile" uid="uid://chelxpn5elvbb" path="res://Assets/zpix.ttf" id="5_tgtk1"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_52hpg"]
 
@@ -29,6 +30,7 @@ DropItemPs = ExtResource("2_tgtk1")
 _debugLb = NodePath("Label")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1482637738]
+y_sort_enabled = true
 shape = SubResource("CircleShape2D_52hpg")
 
 [node name="NavigationAgent2D" type="NavigationAgent2D" parent="." unique_id=1832958205]
@@ -48,11 +50,13 @@ texture = ExtResource("2_scc8c")
 shape = SubResource("CircleShape2D_qdqud")
 
 [node name="Label" type="Label" parent="." unique_id=273333339]
-visible = false
 offset_left = -20.0
 offset_top = -31.0
 offset_right = 20.0
 offset_bottom = -8.0
-text = "123"
+theme_override_constants/outline_size = 7
+theme_override_fonts/font = ExtResource("5_tgtk1")
+theme_override_font_sizes/font_size = 14
+text = "chase"
 horizontal_alignment = 1
 vertical_alignment = 1

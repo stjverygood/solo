@@ -24,7 +24,6 @@ namespace Solo.Scripts.Entities.Players
 
     public partial class Player : CharacterBody2D, ITargetable
     {
-        public UnitType Type = UnitType.Player;
         private Vector2 _curDir = Vector2.Right;
         public PlayerState CurState;
         public float moveSpeed = 50;
@@ -81,14 +80,15 @@ namespace Solo.Scripts.Entities.Players
             //ViewArea.BodyEntered += ViewArea_BodyEntered;
             //ViewArea.BodyExited += ViewArea_BodyExited;
 
-            if (FastBarInventory.ItemInstanceList[CurFastBarIndex] != null && ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).isBuilding)
-            {
-                ChangeState(PlayerState.Build);
-            }
-            else
-            {
-                ChangeState(PlayerState.Idle);
-            }
+            //if (FastBarInventory.ItemInstanceList[CurFastBarIndex] != null && ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).isBuilding)
+            //{
+            //    ChangeState(PlayerState.Build);
+            //}
+            //else
+            //{
+            //    ChangeState(PlayerState.Idle);
+            //}
+            ChangeState(PlayerState.Idle);
 
             _selfView.BasicCraftView.Init();
             _selfView.Visible = false;
@@ -197,7 +197,7 @@ namespace Solo.Scripts.Entities.Players
         {
             ResetAnim();
             _animTween = CreateTween().SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out).SetLoops();
-            _animTween.TweenProperty(BodyRoot, "scale", new Vector2(1.2f, 0.8f), 0.5f);
+            _animTween.TweenProperty(BodyRoot, "scale", new Vector2(1.1f, 0.9f), 0.5f);
             _animTween.TweenProperty(BodyRoot, "scale", new Vector2(1.0f, 1.0f), 0.5f);
         }
         private void UpdateIdle(float delta)
@@ -514,24 +514,24 @@ namespace Solo.Scripts.Entities.Players
             //        dropItem.Pickup();
             //}
 
-            if (Input.IsActionJustPressed("Pre"))
-            {
-                ChangeCurFastBarIndex(false);
-                if (FastBarInventory.ItemInstanceList[CurFastBarIndex] != null && ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).isBuilding)
-                {
-                    ChangeState(PlayerState.Build);
-                    return;
-                }
-            }
-            if (Input.IsActionJustPressed("Next"))
-            {
-                ChangeCurFastBarIndex(true);
-                if (FastBarInventory.ItemInstanceList[CurFastBarIndex] != null && ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).isBuilding)
-                {
-                    ChangeState(PlayerState.Build);
-                    return;
-                }
-            }
+            //if (Input.IsActionJustPressed("Pre"))
+            //{
+            //    ChangeCurFastBarIndex(false);
+            //    if (FastBarInventory.ItemInstanceList[CurFastBarIndex] != null && ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).isBuilding)
+            //    {
+            //        ChangeState(PlayerState.Build);
+            //        return;
+            //    }
+            //}
+            //if (Input.IsActionJustPressed("Next"))
+            //{
+            //    ChangeCurFastBarIndex(true);
+            //    if (FastBarInventory.ItemInstanceList[CurFastBarIndex] != null && ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).isBuilding)
+            //    {
+            //        ChangeState(PlayerState.Build);
+            //        return;
+            //    }
+            //}
 
             _dashTimer += delta;
             if (_dashTimer >= _dashDuration)
@@ -736,7 +736,7 @@ namespace Solo.Scripts.Entities.Players
         }
         #endregion
 
-        #region bagUI
+        #region BagUI
         private void EnterBagUI()
         {
             ResetAnim();
@@ -752,16 +752,18 @@ namespace Solo.Scripts.Entities.Players
             {
                 _selfView.Visible = false;
                 _bagInventoryView.Visible = false;
-                if (FastBarInventory.ItemInstanceList[CurFastBarIndex] != null && ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).isBuilding)
-                {
-                    ChangeState(PlayerState.Build);
-                    return;
-                }
-                else
-                {
-                    ChangeState(PlayerState.Idle);
-                    return;
-                }
+                ChangeState(PlayerState.Idle);
+                return;
+                //if (FastBarInventory.ItemInstanceList[CurFastBarIndex] != null && ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).isBuilding)
+                //{
+                //    ChangeState(PlayerState.Build);
+                //    return;
+                //}
+                //else
+                //{
+                //    ChangeState(PlayerState.Idle);
+                //    return;
+                //}
             }
         }
         #endregion
@@ -1146,7 +1148,6 @@ namespace Solo.Scripts.Entities.Players
             if (ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).isBuilding == false)
             {
                 _handSprite.Texture = GD.Load<Texture2D>(ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).IconPath);
-
             }
         }
 
@@ -1216,6 +1217,11 @@ namespace Solo.Scripts.Entities.Players
         public bool IsVaild()
         {
             return IsInstanceValid(this);
+        }
+
+        public TargetType GetTargetType()
+        {
+            return TargetType.Player;
         }
     }
 }

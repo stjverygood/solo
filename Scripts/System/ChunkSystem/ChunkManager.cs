@@ -224,13 +224,18 @@ namespace Solo.Scripts.System.ChunkSystem
                     }
                 }
 
-                if (GD.Randf() < 0.2)
+                if (GD.Randf() < 0.4)
                 {
                     Unit unit = _unitPs.Instantiate<Unit>();
                     GetTree().CurrentScene.AddChild(unit);
                     unit.Init(UnitType.Wolf, new Vector2(chunkPos.X * _chunkSize * _tileSize + GD.RandRange(0, _chunkSize * _tileSize), chunkPos.Y * _chunkSize * _tileSize + GD.RandRange(0, _chunkSize * _tileSize)));
                 }
-
+                if (GD.Randf() < 0.4)
+                {
+                    Unit unit = _unitPs.Instantiate<Unit>();
+                    GetTree().CurrentScene.AddChild(unit);
+                    unit.Init(UnitType.Fox, new Vector2(chunkPos.X * _chunkSize * _tileSize + GD.RandRange(0, _chunkSize * _tileSize), chunkPos.Y * _chunkSize * _tileSize + GD.RandRange(0, _chunkSize * _tileSize)));
+                }
 
                 // 第一个区块(0,0)首次生成时，必定掉落1个太古源石，位置随机
                 if (chunkPos == Vector2I.Zero)

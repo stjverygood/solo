@@ -21,8 +21,30 @@
     //单位类型
     public enum UnitType
     {
-        Player,//玩家
         Wolf,//风狼
+        Fox,
+    }
+
+    public enum TargetType
+    {
+        DropItem,
+
+        Player,
+
+        //单位
+        Wolf,
+        Fox,
+
+        //建筑
+        Tree,
+        Stone,
+        MainBase,
+        Flag,//法旗
+        BuildingCraft,//建筑合成台
+        ToolCraft,//工具合成台
+        ArmorCraft,//防具合成台
+        Crucible,//熔炉
+        ItemBox,//储物箱
     }
 
     //建筑类型

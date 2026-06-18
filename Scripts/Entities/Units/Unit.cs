@@ -1,5 +1,4 @@
 using Godot;
-using Solo.Scripts.Entities.Players;
 using Solo.Scripts.Global;
 using Solo.Scripts.Global.Interfaces;
 using Solo.Scripts.System.ItemSystem;
@@ -31,13 +30,16 @@ namespace Solo.Scripts.Entities.Units
     public partial class Unit : CharacterBody2D, ITargetable
     {
         public UnitType Type;
+        public TargetType TargetType;
         private float _maxHp;
         private float _curHp;
         private float _patrolRadius;
         private float _moveSpeed;
         private float _atkRangeSq;
-        private HashSet<UnitType> _hostileUnitTypeSet = new HashSet<UnitType>();//敌对单位类型
-        private HashSet<UnitType> _fearUnitTypeSet = new HashSet<UnitType>();//畏惧单位类型
+        //private HashSet<UnitType> _hostileUnitTypeSet = new HashSet<UnitType>();//敌对单位类型
+        //private HashSet<UnitType> _fearUnitTypeSet = new HashSet<UnitType>();//畏惧单位类型
+        private HashSet<TargetType> _atkTargetTypeSet = new HashSet<TargetType>();//敌对目标类型
+        private HashSet<TargetType> _fearTargetTypeSet = new HashSet<TargetType>();//畏惧目标类型
         private List<(ItemType, int, int)> _dropItemList;//掉落物类型, 最小掉落数量, 最大掉落数量
 
         private UnitState _curState;
@@ -60,6 +62,8 @@ namespace Solo.Scripts.Entities.Units
             Type = type;
             GlobalPosition = worldPos;
             UnitData unitData = UnitDataManager.Instance.GetUnitData(Type);
+            TargetType = unitData.TargetType;
+            _sprite.Texture = GD.Load<Texture2D>(unitData.TexturePath);
             _maxHp = unitData.MaxHp;
             _curHp = _maxHp;
             _moveSpeed = unitData.MoveSpeed;
@@ -68,9 +72,9 @@ namespace Solo.Scripts.Entities.Units
             _patrolDuration = unitData.PatrolDuration;
             _atkRangeSq = unitData.AtkRange * unitData.AtkRange;
             _cdDuration = unitData.CdDuration;
-            _naviAgent.Radius = unitData.NaviAgentRadius;          // 根据你的单位大小调整
-            _hostileUnitTypeSet = unitData.HostileUnitTypeList.ToHashSet();
-            _fearUnitTypeSet = unitData.FearUnitTypeList.ToHashSet();
+            _naviAgent.Radius = 10;          // 根据你的单位大小调整
+            _atkTargetTypeSet = unitData.AtkTargetTypeList.ToHashSet();
+            _fearTargetTypeSet = unitData.FearTargetTypeList.ToHashSet();
             _dropItemList = unitData.DropItemList;
             if (_viewCollisionShape.Shape is CircleShape2D circleShape)
             {
@@ -96,6 +100,7 @@ namespace Solo.Scripts.Entities.Units
         public override void _PhysicsProcess(double delta)
         {
             UpdataState((float)delta);
+            _debugLb.Text = _curState.ToString() + " " + _curFearTargetList.Count;
         }
 
         private void ChangeState(UnitState newState)
@@ -103,7 +108,7 @@ namespace Solo.Scripts.Entities.Units
             ExitState(_curState);
             EnterState(newState);
             _curState = newState;
-            _debugLb.Text = _curState.ToString();
+
         }
         private void EnterState(UnitState state)
         {
@@ -205,7 +210,7 @@ namespace Solo.Scripts.Entities.Units
             _naviAgent.Velocity = Vector2.Zero;
             ResetAnim();
             _animTween = CreateTween().SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out).SetLoops();
-            _animTween.TweenProperty(_animRoot, "scale", new Vector2(1.2f, 0.8f), 0.5f);
+            _animTween.TweenProperty(_animRoot, "scale", new Vector2(1.1f, 0.9f), 0.5f);
             _animTween.TweenProperty(_animRoot, "scale", new Vector2(1.0f, 1.0f), 0.5f);
         }
         private void UpdateIdle(float delta)
@@ -217,15 +222,15 @@ namespace Solo.Scripts.Entities.Units
                 return;
             }
 
-
-            RefreshFearNode();
-            if (_curFearNode != null)
+            RefreshFearTargetList();
+            if (_curFearTargetList.Count != 0)
             {
                 ChangeState(UnitState.Escape);
                 return;
             }
-            RefreshNearestHostileNode();
-            if (_curNearestHostileNode != null)
+
+            RefreshAtkTarget();
+            if (_curAtkTarget != null)
             {
                 ChangeState(UnitState.Chase);
                 return;
@@ -263,14 +268,15 @@ namespace Solo.Scripts.Entities.Units
                 return;
             }
 
-            RefreshFearNode();
-            if (_curFearNode != null)
+            RefreshFearTargetList();
+            if (_curFearTargetList.Count != 0)
             {
                 ChangeState(UnitState.Escape);
                 return;
             }
-            RefreshNearestHostileNode();
-            if (_curNearestHostileNode != null)
+
+            RefreshAtkTarget();
+            if (_curAtkTarget != null)
             {
                 ChangeState(UnitState.Chase);
                 return;
@@ -293,30 +299,34 @@ namespace Solo.Scripts.Entities.Units
         #region Chase
         private void EnterChase()
         {
-
+            ResetAnim();
+            _animTween = CreateTween().SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out).SetLoops();
+            _animTween.TweenProperty(_animRoot, "skew", 0.1f, 0.3f);// 走动效果：左右晃动或轻微拉伸
+            _animTween.TweenProperty(_animRoot, "skew", -0.1f, 0.3f);
         }
         private void UpdateChase(float delta)
         {
-            RefreshFearNode();
-            if (_curFearNode != null)
+            RefreshFearTargetList();
+            if (_curFearTargetList.Count != 0)
             {
                 ChangeState(UnitState.Escape);
                 return;
             }
-            RefreshNearestHostileNode();
-            if (_curNearestHostileNode == null)
+
+            RefreshAtkTarget();
+            if (_curAtkTarget == null)
             {
                 ChangeState(UnitState.Idle);
                 return;
             }
 
-            if (GlobalPosition.DistanceSquaredTo(_curNearestHostileNode.GlobalPosition) <= _atkRangeSq)
+            if (GlobalPosition.DistanceSquaredTo(_curAtkTarget.GetWorldPosition()) <= _atkRangeSq)
             {
                 ChangeState(UnitState.Atk);
                 return;
             }
 
-            _curDir = (_curNearestHostileNode.GlobalPosition - GlobalPosition).Normalized();
+            _curDir = (_curAtkTarget.GetWorldPosition() - GlobalPosition).Normalized();
             if (_curDir.X > 0)
                 _spriteRoot.Scale = new Vector2(1, 1);
             else
@@ -332,9 +342,11 @@ namespace Solo.Scripts.Entities.Units
         #region Atk
         private void EnterAtk()
         {
+            _naviAgent.TargetPosition = GlobalPosition;
+            _naviAgent.Velocity = Vector2.Zero;
             ResetAnim();
 
-            _curDir = (_curNearestHostileNode.GlobalPosition - GlobalPosition).Normalized();
+            _curDir = (_curAtkTarget.GetWorldPosition() - GlobalPosition).Normalized();
             if (_curDir.X > 0)
                 _spriteRoot.Scale = new Vector2(1, 1);
             else
@@ -342,28 +354,29 @@ namespace Solo.Scripts.Entities.Units
 
             _animTween = CreateTween().SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out);
             _animTween.Parallel().TweenProperty(_animRoot, "scale", new Vector2(0.8f, 0.8f), 0.05f);//出手动画
-            _animTween.TweenProperty(_animRoot, "rotation", 1.3f, 0.05f);
+            //_animTween.TweenProperty(_animRoot, "rotation", 1.3f, 0.05f);
             _animTween.TweenCallback(Callable.From(() =>
             {
-                foreach (Node2D viewNode in _viewNodeList)
-                {
-                    if (!IsInstanceValid(viewNode)) continue;
-                    if (GlobalPosition.DistanceSquaredTo(viewNode.GlobalPosition) > _atkRangeSq) continue;
-                    Vector2 toTarget = viewNode.GlobalPosition - GlobalPosition;
-                    if (Mathf.Abs(_curDir.AngleTo(toTarget)) > Mathf.DegToRad(60f)) continue;// 60 度转换为弧度是 Mathf.DegToRad(60)
-                    if (viewNode is Player player)
-                    {
-                        player.TakeDamage(10, null);
-                    }
-                    else if (viewNode is Unit unit)
-                    {
-                        unit.TakeDamage(10, null);
-                    }
-                }
+                _curAtkTarget.TakeDamage(10, null);
+                //foreach (Node2D viewNode in _viewNodeList)
+                //{
+                //    if (!IsInstanceValid(viewNode)) continue;
+                //    if (GlobalPosition.DistanceSquaredTo(viewNode.GlobalPosition) > _atkRangeSq) continue;
+                //    Vector2 toTarget = viewNode.GlobalPosition - GlobalPosition;
+                //    if (Mathf.Abs(_curDir.AngleTo(toTarget)) > Mathf.DegToRad(60f)) continue;// 60 度转换为弧度是 Mathf.DegToRad(60)
+                //    if (viewNode is Player player)
+                //    {
+                //        player.TakeDamage(10, null);
+                //    }
+                //    else if (viewNode is Unit unit)
+                //    {
+                //        unit.TakeDamage(10, null);
+                //    }
+                //}
             }));
 
             _animTween.Parallel().TweenProperty(_animRoot, "scale", new Vector2(1f, 1f), 0.1f);
-            _animTween.TweenProperty(_animRoot, "rotation", 0f, 0.1f);
+            //_animTween.TweenProperty(_animRoot, "rotation", 0f, 0.1f);
             _animTween.Finished += () =>
             {
                 ChangeState(UnitState.Cd);
@@ -387,7 +400,56 @@ namespace Solo.Scripts.Entities.Units
         }
         private void UpdateEscape(float delta)
         {
+            RefreshFearTargetList();
+            if (_curFearTargetList.Count == 0)//无恐惧目标
+            {
+                ChangeState(UnitState.Idle);
+                return;
+            }
+            //每帧计算遍历畏惧列表, 计算斥力
+            Vector2 combinedEscapeDirection = Vector2.Zero;
 
+            foreach (ITargetable target in _curFearTargetList)
+            {
+                if (target.IsVaild() == false) continue;
+
+                float distance = GlobalPosition.DistanceTo(target.GetWorldPosition());
+
+                // 修正隐患：限制距离最大为 100，防止 force 变成负数
+                distance = Mathf.Min(distance, 100f);
+
+                Vector2 awayFromTarget = (GlobalPosition - target.GetWorldPosition()).Normalized();
+
+                // 如果距离极近，力接近 1.0；如果在边缘（100），力接近 0.0
+                float force = 1.0f - (distance / 100f);
+
+                combinedEscapeDirection += awayFromTarget * force; // 叠加排斥力
+            }
+
+            // 如果所有力抵消了（比如被正左和正右的敌人假心包围），给一个微小的随机方向防止原地发呆
+            if (combinedEscapeDirection.IsZeroApprox())
+            {
+                combinedEscapeDirection = Vector2.Up;
+            }
+
+            // 计算理想逃跑点
+            Vector2 idealFleePoint = GlobalPosition + combinedEscapeDirection.Normalized() * 100;
+
+            // 修正到合法的导航网格
+            Rid rid = _naviAgent.GetNavigationMap(); // 如果可以，建议把 rid 缓存为类成员变量
+            Vector2 validFleePoint = NavigationServer2D.MapGetClosestPoint(rid, idealFleePoint);
+
+            // 【核心修正】！！！必须将计算出的合法点设置给导航代理！！！
+            _naviAgent.TargetPosition = validFleePoint;
+
+            // 获取导航网格计算出的下一个拐角点，并移动
+            Vector2 nextPathPos = _naviAgent.GetNextPathPosition();
+            _curDir = (nextPathPos - GlobalPosition).Normalized();
+            if (_curDir.X > 0)
+                _spriteRoot.Scale = new Vector2(1, 1);
+            else
+                _spriteRoot.Scale = new Vector2(-1, 1);
+            _naviAgent.SetVelocity(_moveSpeed * _curDir);
         }
         private void ExitEscape()
         {
@@ -402,6 +464,10 @@ namespace Solo.Scripts.Entities.Units
         {
             _naviAgent.TargetPosition = GlobalPosition;
             _naviAgent.Velocity = Vector2.Zero;
+            ResetAnim();
+            _animTween = CreateTween().SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out).SetLoops();
+            _animTween.TweenProperty(_animRoot, "scale", new Vector2(1.1f, 0.9f), 0.5f);
+            _animTween.TweenProperty(_animRoot, "scale", new Vector2(1.0f, 1.0f), 0.5f);
         }
         private void UpdateCd(float delta)
         {
@@ -590,78 +656,67 @@ namespace Solo.Scripts.Entities.Units
         }
 
 
-        private Node2D _curFearNode = null;
-        private Node2D _curNearestHostileNode = null;
-        private List<Node2D> _viewNodeList = new List<Node2D>();
-
+        //private Node2D _curFearNode = null;
+        //private Node2D _curNearestHostileNode = null;
+        //private List<Node2D> _viewNodeList = new List<Node2D>();
+        //private ITargetable _curFearTarget = null;
+        private List<ITargetable> _curFearTargetList = new List<ITargetable>();
+        private ITargetable _curAtkTarget = null;
+        private List<ITargetable> _viewTargetList = new List<ITargetable>();//先用targetlist是因为fear和atk会动态调整, 若先分类就做不到动态了(过滤规则会动态变化, 不能先过滤好, 而是要动态过滤)
         private void _viewArea_AreaEntered(Area2D area)
         {
-            if (area.GetParent() is Unit unit)
+            if (area is ITargetable target)
             {
-                _viewNodeList.Add(unit);
+                _viewTargetList.Add(target);
             }
         }
         private void _viewArea_AreaExited(Area2D area)
         {
-            if (area.GetParent() is Unit unit)
+            if (area is ITargetable target)
             {
-                _viewNodeList.Remove(unit);
+                _viewTargetList.Remove(target);
             }
         }
         private void _viewArea_BodyEntered(Node2D body)
         {
-            if (body is Player player)
+            if (body == this) return;
+            if (body is ITargetable target)
             {
-                _viewNodeList.Add(player);
+                _viewTargetList.Add(target);
             }
         }
         private void _viewArea_BodyExited(Node2D body)
         {
-            if (body is Player player)
+            if (body is ITargetable target)
             {
-                _viewNodeList.Remove(player);
+                _viewTargetList.Remove(target);
             }
         }
-        private void RefreshFearNode()
+
+        private void RefreshFearTargetList()
         {
-            //每帧拿到最近的node2d, 再根据该node的type决定切到追击/逃离
-            //逃跑优先 : 只要viewnodelist内存在畏惧类型, 就直接逃跑
-            //若无畏惧目标, 拿到最近可攻击目标, 进入追击
-            //检查是否有追击/逃离目标, 若有切换对应状态
-            _curFearNode = null;
-            foreach (Node2D targetNode in _viewNodeList)
+            _curFearTargetList.Clear();
+            foreach (ITargetable target in _viewTargetList)
             {
-                if (targetNode is Player player && _fearUnitTypeSet.Contains(player.Type))
-                {
-                    _curFearNode = player;
-                    return;
-                }
-                else if (targetNode is Unit unit && _fearUnitTypeSet.Contains(unit.Type))
-                {
-                    _curFearNode = unit;
-                    return;
-                }
+                if (_fearTargetTypeSet.Contains(target.GetTargetType()) == false)
+                    continue;
+                _curFearTargetList.Add(target);
             }
         }
-        private void RefreshNearestHostileNode()
+
+        private void RefreshAtkTarget()
         {
-            _curNearestHostileNode = null;
+            _curAtkTarget = null;
             float curMinDistSq = float.MaxValue;
-            foreach (Node2D targetNode in _viewNodeList)
+            foreach (ITargetable target in _viewTargetList)
             {
-                float curDisq = GlobalPosition.DistanceSquaredTo(targetNode.GlobalPosition);
-                if (curDisq < curMinDistSq)
+                if (_atkTargetTypeSet.Contains(target.GetTargetType()) == false)
+                    continue;
+                float distSq = GlobalPosition.DistanceSquaredTo(target.GetWorldPosition());
+                if (distSq < curMinDistSq)
                 {
-                    if (targetNode is Player player && _hostileUnitTypeSet.Contains(player.Type))
-                    {
-                        _curNearestHostileNode = targetNode;
-                        curMinDistSq = curDisq;
-                    }
-                    else if (targetNode is Unit unit && _hostileUnitTypeSet.Contains(unit.Type))
-                    {
-                        _curNearestHostileNode = targetNode;
-                        curMinDistSq = curDisq;
-                    }
+                    curMinDistSq = distSq;
+                    _curAtkTarget = target;
                 }
             }
         }
@@ -743,6 +798,11 @@ namespace Solo.Scripts.Entities.Units
         public bool IsVaild()
         {
             return IsInstanceValid(this);
+        }
+
+        public TargetType GetTargetType()
+        {
+            return TargetType;
         }
     }
 

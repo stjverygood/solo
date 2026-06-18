@@ -145,6 +145,11 @@ namespace Solo.Scripts.System.ItemSystem
         {
             return IsInstanceValid(this);
         }
+
+        public TargetType GetTargetType()
+        {
+            return TargetType.DropItem;
+        }
     }
 }
 
