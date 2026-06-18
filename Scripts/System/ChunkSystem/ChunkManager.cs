@@ -1,6 +1,5 @@
 using Godot;
 using Solo.Scripts.Entities.Players;
-using Solo.Scripts.Entities.Units;
 using Solo.Scripts.Global;
 using Solo.Scripts.System.BuildingSystem;
 using Solo.Scripts.System.ItemSystem;
@@ -146,7 +145,7 @@ namespace Solo.Scripts.System.ChunkSystem
                     Vector2 snapPos;
                     BuildingData buildingData = BuildingDataManager.Instance.GetBuildingData(buildingSaveData.Type);
                     snapPos = GameManager.Instance.BuildingManager.SnapToCell(buildingSaveData.Type, new Vector2(buildingSaveData.X, buildingSaveData.Y));
-                    if (GameManager.Instance.BuildingManager.CanPlaced(buildingSaveData.Type, new Vector2(buildingSaveData.X, buildingSaveData.Y)) && WorldToChunkPos(snapPos) == chunkPos)//可放置且不越界
+                    if (GameManager.Instance.BuildingManager.CanPlaced(buildingSaveData.Type, snapPos) && WorldToChunkPos(snapPos) == chunkPos)//可放置且不越界
                     {
                         Building building = _buildingPs.Instantiate<Building>();
                         GetTree().CurrentScene.AddChild(building);
@@ -213,7 +212,7 @@ namespace Solo.Scripts.System.ChunkSystem
                             {
                                 Vector2 curTilePos = new Vector2(globalX * _tileSize, globalY * _tileSize) + new Vector2(_tileSize / 2f, _tileSize / 2f);
                                 Vector2 snapPos = GameManager.Instance.BuildingManager.SnapToCell(BuildingType.Stone, curTilePos);
-                                if (GameManager.Instance.BuildingManager.CanPlaced(BuildingType.Stone, curTilePos) && WorldToChunkPos(snapPos) == chunkPos)
+                                if (GameManager.Instance.BuildingManager.CanPlaced(BuildingType.Stone, snapPos) && WorldToChunkPos(snapPos) == chunkPos)
                                 {
                                     Building stone = _buildingPs.Instantiate<Building>();
                                     GetTree().CurrentScene.AddChild(stone);
@@ -224,18 +223,18 @@ namespace Solo.Scripts.System.ChunkSystem
                     }
                 }
 
-                if (GD.Randf() < 0.2)
-                {
-                    Unit unit = _unitPs.Instantiate<Unit>();
-                    GetTree().CurrentScene.AddChild(unit);
-                    unit.Init(UnitType.Wolf, new Vector2(chunkPos.X * _chunkSize * _tileSize + GD.RandRange(0, _chunkSize * _tileSize), chunkPos.Y * _chunkSize * _tileSize + GD.RandRange(0, _chunkSize * _tileSize)));
-                }
-                if (GD.Randf() < 0.2)
-                {
-                    Unit unit = _unitPs.Instantiate<Unit>();
-                    GetTree().CurrentScene.AddChild(unit);
-                    unit.Init(UnitType.Fox, new Vector2(chunkPos.X * _chunkSize * _tileSize + GD.RandRange(0, _chunkSize * _tileSize), chunkPos.Y * _chunkSize * _tileSize + GD.RandRange(0, _chunkSize * _tileSize)));
-                }
+                //if (GD.Randf() < 0.2)
+                //{
+                //    Unit unit = _unitPs.Instantiate<Unit>();
+                //    GetTree().CurrentScene.AddChild(unit);
+                //    unit.Init(UnitType.Wolf, new Vector2(chunkPos.X * _chunkSize * _tileSize + GD.RandRange(0, _chunkSize * _tileSize), chunkPos.Y * _chunkSize * _tileSize + GD.RandRange(0, _chunkSize * _tileSize)));
+                //}
+                //if (GD.Randf() < 0.2)
+                //{
+                //    Unit unit = _unitPs.Instantiate<Unit>();
+                //    GetTree().CurrentScene.AddChild(unit);
+                //    unit.Init(UnitType.Fox, new Vector2(chunkPos.X * _chunkSize * _tileSize + GD.RandRange(0, _chunkSize * _tileSize), chunkPos.Y * _chunkSize * _tileSize + GD.RandRange(0, _chunkSize * _tileSize)));
+                //}
 
                 // 第一个区块(0,0)首次生成时，必定掉落1个太古源石，位置随机
                 if (chunkPos == Vector2I.Zero)

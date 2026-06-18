@@ -38,7 +38,7 @@ namespace Solo.Scripts.Entities.Players
 
         //人物属性
         public Vector2 StartPoint = new Vector2(0, 0);//出生点
-        public float moveSpeed = 50;
+        public float moveSpeed = 500;
         public float Atk = 10;
         private float _maxHp = 100;
         private float _maxHg = 100;
@@ -632,7 +632,7 @@ namespace Solo.Scripts.Entities.Players
             _curBuildingPreview.RefreshPosition(mousePos);
             if (Input.IsActionJustPressed("Atk"))
             {
-                bool isBuild = _curBuildingPreview.Build();                if (isBuild)
+                bool isBuild = _curBuildingPreview.Build(mousePos);                if (isBuild)
                 {
                     int remainCount = FastBarInventory.RemoveItemByIndex(CurFastBarIndex, 1);
                     if (remainCount == 0)//count = 0, 空手, 并且切到Idle

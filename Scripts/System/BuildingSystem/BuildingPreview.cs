@@ -43,16 +43,19 @@ public partial class BuildingPreview : Node2D
 
     public void RefreshPosition(Vector2 mousePos)
     {
-        BuildingData buildingData = BuildingDataManager.Instance.GetBuildingData(Type);
         Vector2 snapPos = GameManager.Instance.BuildingManager.SnapToCell(Type, mousePos);
         bool canPlace = GameManager.Instance.BuildingManager.CanPlaced(Type, snapPos);
         GlobalPosition = snapPos;
         _sprite.Modulate = canPlace ? new Color(0, 1, 0, 0.2f) : new Color(1, 0, 0, 0.2f);
     }
 
-    public bool Build()
+    public bool Build(Vector2 mousePos)
     {
-        GameManager.Instance.BuildingManager.Place(Type, GlobalPosition);
+        Vector2 snapPos = GameManager.Instance.BuildingManager.SnapToCell(Type, mousePos);
+        bool canPlace = GameManager.Instance.BuildingManager.CanPlaced(Type, snapPos);
+        if (!canPlace)
+            return false;
+        GameManager.Instance.BuildingManager.Place(Type, snapPos);
 
         switch (Type)
         {
