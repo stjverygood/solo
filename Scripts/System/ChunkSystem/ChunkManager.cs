@@ -224,13 +224,13 @@ namespace Solo.Scripts.System.ChunkSystem
                     }
                 }
 
-                if (GD.Randf() < 0.4)
+                if (GD.Randf() < 0.2)
                 {
                     Unit unit = _unitPs.Instantiate<Unit>();
                     GetTree().CurrentScene.AddChild(unit);
                     unit.Init(UnitType.Wolf, new Vector2(chunkPos.X * _chunkSize * _tileSize + GD.RandRange(0, _chunkSize * _tileSize), chunkPos.Y * _chunkSize * _tileSize + GD.RandRange(0, _chunkSize * _tileSize)));
                 }
-                if (GD.Randf() < 0.4)
+                if (GD.Randf() < 0.2)
                 {
                     Unit unit = _unitPs.Instantiate<Unit>();
                     GetTree().CurrentScene.AddChild(unit);

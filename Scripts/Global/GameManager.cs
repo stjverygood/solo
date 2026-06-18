@@ -4,6 +4,7 @@ using Solo.Scripts.Entities.Units;
 using Solo.Scripts.System.BuildingSystem;
 using Solo.Scripts.System.ChunkSystem;
 using Solo.Scripts.System.SaveSystem;
+using Solo.Scripts.System.UiSystem;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -24,6 +25,7 @@ namespace Solo.Scripts.Global
         [Export] private PackedScene _chunkManagerPs;
         [Export] private PackedScene _playerPs;
         [Export] private PauseView _pauseView;
+        [Export] private DeathView _deathView;
 
 
         public Player Player;
@@ -45,7 +47,7 @@ namespace Solo.Scripts.Global
 
         public override void _PhysicsProcess(double delta)
         {
-            GD.Print("UnitList.Count : " + UnitList.Count);
+            //GD.Print("UnitList.Count : " + UnitList.Count);
             switch (_curState)
             {
                 case GameState.Play:
@@ -108,6 +110,25 @@ namespace Solo.Scripts.Global
                         GetTree().Paused = true;
                         return;
                     }
+                    if (newState == GameState.StartMenu)
+                    {
+                        _curState = newState;
+                        GetTree().Paused = false;
+
+                        SaveManager.Instance.CurSaveData.PlayerSaveData = Player.GetSaveData();
+                        SaveManager.Instance.CurSaveData.BagInventoryGuidStr = Player.BagInventory.GuidStr;
+                        SaveManager.Instance.CurSaveData.BagInventoryList = Player.BagInventory.ItemInstanceList;
+                        SaveManager.Instance.CurSaveData.FastBarInventoryGuidStr = Player.FastBarInventory.GuidStr;
+                        SaveManager.Instance.CurSaveData.FastBarInventoryList = Player.FastBarInventory.ItemInstanceList;
+                        SaveManager.Instance.CurSaveData.FastBarIndex = Player.CurFastBarIndex;
+                        ChunkManager.SaveActiveChunk();
+                        SaveManager.Instance.CurSaveData.ChunkSaveDataList = ChunkManager.ChunkSaveDataMap.Values.ToList();
+                        SaveManager.Instance.WriteCurSaveData();
+
+                        GetTree().ChangeSceneToPacked(_startMenuPs);
+                        _pauseView.Visible = false;
+                        return;
+                    }
                     break;
                 case GameState.Pause:
                     if (newState == GameState.Play)
@@ -121,8 +142,7 @@ namespace Solo.Scripts.Global
                         _curState = newState;
                         GetTree().Paused = false;
 
-                        SaveManager.Instance.CurSaveData.PlayerPosX = Player.GlobalPosition.X;
-                        SaveManager.Instance.CurSaveData.PlayerPosY = Player.GlobalPosition.Y;
+                        SaveManager.Instance.CurSaveData.PlayerSaveData = Player.GetSaveData();
                         SaveManager.Instance.CurSaveData.BagInventoryGuidStr = Player.BagInventory.GuidStr;
                         SaveManager.Instance.CurSaveData.BagInventoryList = Player.BagInventory.ItemInstanceList;
                         SaveManager.Instance.CurSaveData.FastBarInventoryGuidStr = Player.FastBarInventory.GuidStr;

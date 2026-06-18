@@ -20,8 +20,8 @@ namespace Solo.Scripts.System.SaveSystem
         //纯数据类, 记录一个存档的全部信息
         public string WorldSeedStr { get; set; }
 
-        public float PlayerPosX { get; set; }
-        public float PlayerPosY { get; set; }
+        public PlayerSaveData PlayerSaveData { get; set; }
+
         public string BagInventoryGuidStr { get; set; }
         public List<ItemInstance> BagInventoryList { get; set; }
         public string FastBarInventoryGuidStr { get; set; }
@@ -36,8 +36,7 @@ namespace Solo.Scripts.System.SaveSystem
             WorldSeedStr = "test_seed_3";
             ChunkSaveDataList = new List<ChunkSaveData>();
 
-            PlayerPosX = 0;
-            PlayerPosY = 0;
+            PlayerSaveData = new PlayerSaveData();
 
             BagInventoryGuidStr = Guid.NewGuid().ToString();
             BagInventoryList = new List<ItemInstance>(16);

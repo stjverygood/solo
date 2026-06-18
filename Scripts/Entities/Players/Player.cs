@@ -26,12 +26,22 @@ namespace Solo.Scripts.Entities.Players
     {
         private Vector2 _curDir = Vector2.Right;
         public PlayerState CurState;
-        public float moveSpeed = 50;
         [Export] public Node2D SpriteRoot;//附带上身体之外的交互点, 比如后面拍建筑的定位点, 用于控制功能交互的
         [Export] public Node2D BodyRoot;//仅仅是身体的根节点, 用于控制动画
-        [Export] public Area2D ViewArea;//视角内
+        [Export] private Sprite2D _sprite;
         [Export] private Camera2D _camera;
+
+        private ShaderMaterial _shaderMaterial;
+
+        //人物属性
+        public Vector2 StartPoint = new Vector2(0, 0);//出生点
+        public float moveSpeed = 50;
         public float Atk = 10;
+        private float _maxHp = 100;
+        private float _maxHg = 100;
+        private float _curHp;
+        private float _curHg;
+
 
         private float _meleeAtkRange = 30;
         private float _rangeAtkRange = 50;
@@ -54,40 +64,50 @@ namespace Solo.Scripts.Entities.Players
         [Export] private SelfView _selfView;
         [Export] private InventoryView _bagInventoryView;
         [Export] private InventoryView _fastBarInventoryView;
+        [Export] private ProgressBar _hpPb;
+        [Export] private Label _hpLb;
+        [Export] private ProgressBar _hgPb;
+        [Export] private Label _hgLb;
+        [Export] private Label _debugLb;
+        [Export] private DeathView _deathView;
 
 
         public override void _Ready()
         {
             GD.Print("Player Ready~~~");
             GameManager.Instance.Player = this;
+            PlayerSaveData playerSaveData = SaveManager.Instance.CurSaveData.PlayerSaveData; //从存档里加载属性
+            StartPoint = new Vector2(playerSaveData.StartPosX, playerSaveData.StartPosY);
+            GlobalPosition = new Vector2(playerSaveData.PosX, playerSaveData.PosY);
+            _maxHp = playerSaveData.MaxHp;
+            SetCurHp(playerSaveData.CurHp);
+            _maxHg = playerSaveData.MaxHg;
+            SetCurHg(playerSaveData.CurHg);
 
-            GlobalPosition = new Vector2(SaveManager.Instance.CurSaveData.PlayerPosX, SaveManager.Instance.CurSaveData.PlayerPosY);
             BagInventory.GuidStr = SaveManager.Instance.CurSaveData.BagInventoryGuidStr;
             BagInventory.ItemInstanceList = SaveManager.Instance.CurSaveData.BagInventoryList;
             FastBarInventory.GuidStr = SaveManager.Instance.CurSaveData.FastBarInventoryGuidStr;
             FastBarInventory.ItemInstanceList = SaveManager.Instance.CurSaveData.FastBarInventoryList;
             CurFastBarIndex = SaveManager.Instance.CurSaveData.FastBarIndex;
 
+            if (_sprite.Material is ShaderMaterial shaderMat)
+            {
+                _shaderMaterial = (ShaderMaterial)shaderMat.Duplicate();// 关键：复制一份材质，确保每个实例的材质相互独立
+                _sprite.Material = _shaderMaterial;// 记得把复制后的独立材质重新赋给当前的 Sprite2D
+            }
+            ShowOutline(false);
 
             _curAtkRange = _meleeAtkRange;//todo : 根据itemdata的israngeitem来决定攻击范围
             _curAtkRangeSq = _curAtkRange * _curAtkRange;
             _interactRangeSq = _interactRange * _interactRange;
 
             _curTargetRangeSq = _curTargetRange * _curTargetRange;
+            _deathView.Visible = false;
 
-            //ViewArea.AreaEntered += ViewArea_AreaEntered;
-            //ViewArea.AreaExited += ViewArea_AreaExited;
-            //ViewArea.BodyEntered += ViewArea_BodyEntered;
-            //ViewArea.BodyExited += ViewArea_BodyExited;
-
-            //if (FastBarInventory.ItemInstanceList[CurFastBarIndex] != null && ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).isBuilding)
-            //{
-            //    ChangeState(PlayerState.Build);
-            //}
-            //else
-            //{
-            //    ChangeState(PlayerState.Idle);
-            //}
+            if (_curHp == 0)//若血量是0, 进入重生逻辑
+            {
+                Restart();
+            }
             ChangeState(PlayerState.Idle);
 
             _selfView.BasicCraftView.Init();
@@ -102,6 +122,7 @@ namespace Solo.Scripts.Entities.Players
         public override void _PhysicsProcess(double delta)
         {
             UpdateState((float)delta);
+            _debugLb.Text = CurState.ToString();
             //GD.Print("_curTarget : " + _curTarget);
             //GD.Print($"CurState : {CurState}");
             //GD.Print($"GlobalPosition : {GlobalPosition}");
@@ -202,23 +223,19 @@ namespace Solo.Scripts.Entities.Players
         }
         private void UpdateIdle(float delta)
         {
+            if (_curHp <= 0)
+            {
+                ChangeState(PlayerState.Death);
+                return;
+            }
+
             if (Input.IsActionJustPressed("Pre"))
             {
                 ChangeCurFastBarIndex(false);
-                //if (FastBarInventory.ItemInstanceList[CurFastBarIndex] != null && ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).isBuilding)
-                //{
-                //    ChangeState(PlayerState.Build);
-                //    return;
-                //}
             }
             if (Input.IsActionJustPressed("Next"))
             {
                 ChangeCurFastBarIndex(true);
-                //if (FastBarInventory.ItemInstanceList[CurFastBarIndex] != null && ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).isBuilding)
-                //{
-                //    ChangeState(PlayerState.Build);
-                //    return;
-                //}
             }
 
             if (Input.IsActionJustPressed("Bag"))
@@ -270,13 +287,6 @@ namespace Solo.Scripts.Entities.Players
                 ChangeState(PlayerState.Walk);
                 return;
             }
-
-            //CheckInteractTarget();
-            //if (Input.IsActionJustPressed("Interact") && _curInteractTargetNode != null)
-            //{
-            //    if (_curInteractTargetNode is DropItem dropItem)
-            //        dropItem.Pickup();
-            //}
         }
         #endregion
 
@@ -290,23 +300,19 @@ namespace Solo.Scripts.Entities.Players
         }
         private void UpdateWalk(float delta)
         {
+            if (_curHp <= 0)
+            {
+                ChangeState(PlayerState.Death);
+                return;
+            }
+
             if (Input.IsActionJustPressed("Pre"))
             {
                 ChangeCurFastBarIndex(false);
-                //if (FastBarInventory.ItemInstanceList[CurFastBarIndex] != null && ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).isBuilding)
-                //{
-                //    ChangeState(PlayerState.Build);
-                //    return;
-                //}
             }
             if (Input.IsActionJustPressed("Next"))
             {
                 ChangeCurFastBarIndex(true);
-                //if (FastBarInventory.ItemInstanceList[CurFastBarIndex] != null && ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).isBuilding)
-                //{
-                //    ChangeState(PlayerState.Build);
-                //    return;
-                //}
             }
 
             if (Input.IsActionJustPressed("Bag"))
@@ -348,30 +354,6 @@ namespace Solo.Scripts.Entities.Players
                     return;
                 }
             }
-            //RefreshNearestTarget();//每帧刷新最近的target
-            //if (Input.IsActionJustPressed("Atk"))
-            //{
-            //    ChangeState(PlayerState.PreAtk);
-            //    return;
-            //}
-            //if (Input.IsActionJustPressed("Interact"))
-            //{
-            //    ChangeState(PlayerState.PreInteract);
-            //    return;
-            //}
-
-            //CheckAtkTarget();
-            //if (Input.IsActionJustPressed("Atk"))
-            //{
-            //    ChangeState(PlayerState.Atk);
-            //    return;
-            //}
-            //CheckInteractTarget();
-            //if (Input.IsActionJustPressed("Interact") && _curInteractTargetNode != null)
-            //{
-            //    if (_curInteractTargetNode is DropItem dropItem)
-            //        dropItem.Pickup();
-            //}
 
             Vector2 input = Input.GetVector("MoveLeft", "MoveRight", "MoveForward", "MoveBack");
             if (input == Vector2.Zero)
@@ -402,23 +384,19 @@ namespace Solo.Scripts.Entities.Players
         }
         private void UpdateRun(float delta)
         {
+            if (_curHp <= 0)
+            {
+                ChangeState(PlayerState.Death);
+                return;
+            }
+
             if (Input.IsActionJustPressed("Pre"))
             {
                 ChangeCurFastBarIndex(false);
-                //if (FastBarInventory.ItemInstanceList[CurFastBarIndex] != null && ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).isBuilding)
-                //{
-                //    ChangeState(PlayerState.Build);
-                //    return;
-                //}
             }
             if (Input.IsActionJustPressed("Next"))
             {
                 ChangeCurFastBarIndex(true);
-                //if (FastBarInventory.ItemInstanceList[CurFastBarIndex] != null && ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).isBuilding)
-                //{
-                //    ChangeState(PlayerState.Build);
-                //    return;
-                //}
             }
 
             CheckTarget();
@@ -448,30 +426,6 @@ namespace Solo.Scripts.Entities.Players
                     return;
                 }
             }
-            //RefreshNearestTarget();//每帧刷新最近的target
-            //if (Input.IsActionJustPressed("Atk"))
-            //{
-            //    ChangeState(PlayerState.PreAtk);
-            //    return;
-            //}
-            //if (Input.IsActionJustPressed("Interact"))
-            //{
-            //    ChangeState(PlayerState.PreInteract);
-            //    return;
-            //}
-
-            //CheckInteractTarget();
-            //if (Input.IsActionJustPressed("Interact") && _curInteractTargetNode != null)
-            //{
-            //    if (_curInteractTargetNode is DropItem dropItem)
-            //        dropItem.Pickup();
-            //}
-            //CheckAtkTarget();
-            //if (Input.IsActionJustPressed("Atk"))
-            //{
-            //    ChangeState(PlayerState.Atk);
-            //    return;
-            //}
 
             Vector2 input = Input.GetVector("MoveLeft", "MoveRight", "MoveForward", "MoveBack");
             if (input == Vector2.Zero || Input.IsActionPressed("Dash") == false)
@@ -507,31 +461,11 @@ namespace Solo.Scripts.Entities.Players
         }
         private void UpdateDash(float delta)
         {
-            //CheckInteractTarget();
-            //if (Input.IsActionJustPressed("Interact") && _curInteractTargetNode != null)
-            //{
-            //    if (_curInteractTargetNode is DropItem dropItem)
-            //        dropItem.Pickup();
-            //}
-
-            //if (Input.IsActionJustPressed("Pre"))
-            //{
-            //    ChangeCurFastBarIndex(false);
-            //    if (FastBarInventory.ItemInstanceList[CurFastBarIndex] != null && ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).isBuilding)
-            //    {
-            //        ChangeState(PlayerState.Build);
-            //        return;
-            //    }
-            //}
-            //if (Input.IsActionJustPressed("Next"))
-            //{
-            //    ChangeCurFastBarIndex(true);
-            //    if (FastBarInventory.ItemInstanceList[CurFastBarIndex] != null && ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).isBuilding)
-            //    {
-            //        ChangeState(PlayerState.Build);
-            //        return;
-            //    }
-            //}
+            if (_curHp <= 0)
+            {
+                ChangeState(PlayerState.Death);
+                return;
+            }
 
             _dashTimer += delta;
             if (_dashTimer >= _dashDuration)
@@ -558,13 +492,6 @@ namespace Solo.Scripts.Entities.Players
         {
             ResetAnim();
 
-            //判断目标有效性, 超出攻击范围直接返回idle
-            //if (GlobalPosition.DistanceSquaredTo(_atkTargetSortList[_atkTargetIndex].GetWorldPosition()) > _curAtkRange)
-            //{
-            //    ChangeState(PlayerState.Idle);
-            //    return;
-            //}
-
             if (_curTarget == null || _curTarget.IsVaild() == false || _curTarget.CanAtk() == false)
             {
                 ChangeState(PlayerState.Idle);
@@ -581,7 +508,7 @@ namespace Solo.Scripts.Entities.Players
             _animTween.TweenProperty(_handNode, "rotation", 1.3f, 0.05f);
             _animTween.TweenCallback(Callable.From(() =>
             {
-                TriggerScreenShake(5);//震屏
+                TriggerScreenShake(1);//震屏
                 if (FastBarInventory.ItemInstanceList[CurFastBarIndex] != null && ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).MaxDur != -1)//有工具耐久
                 {
                     FastBarInventory.ItemInstanceList[CurFastBarIndex].CurDur--;
@@ -600,10 +527,17 @@ namespace Solo.Scripts.Entities.Players
             _animTween.Finished += () =>
             {
                 ChangeState(PlayerState.Idle);
+                return;
             };
         }
         private void UpdateAtk(float delta)
         {
+            if (_curHp <= 0)
+            {
+                ChangeState(PlayerState.Death);
+                return;
+            }
+
             Vector2 input = Input.GetVector("MoveLeft", "MoveRight", "MoveForward", "MoveBack");
             if (input != Vector2.Zero)
             {
@@ -649,7 +583,11 @@ namespace Solo.Scripts.Entities.Players
         }
         private void UpdateInteract(float delta)
         {
-
+            if (_curHp <= 0)
+            {
+                ChangeState(PlayerState.Death);
+                return;
+            }
         }
         #endregion
 
@@ -668,26 +606,11 @@ namespace Solo.Scripts.Entities.Players
         }
         private void UpdateBuild(float delta)
         {
-            //if (Input.IsActionJustPressed("Pre"))
-            //{
-            //    ChangeCurFastBarIndex(false);
-            //    if (FastBarInventory.ItemInstanceList[CurFastBarIndex] == null || ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).isBuilding == false)
-            //    {
-            //        _curBuildingPreview.QueueFree();
-            //        ChangeState(PlayerState.Idle);
-            //        return;
-            //    }
-            //}
-            //if (Input.IsActionJustPressed("Next"))
-            //{
-            //    ChangeCurFastBarIndex(true);
-            //    if (FastBarInventory.ItemInstanceList[CurFastBarIndex] == null || ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).isBuilding == false)
-            //    {
-            //        _curBuildingPreview.QueueFree();
-            //        ChangeState(PlayerState.Idle);
-            //        return;
-            //    }
-            //}
+            if (_curHp <= 0)
+            {
+                ChangeState(PlayerState.Death);
+                return;
+            }
 
             Vector2 input = Input.GetVector("MoveLeft", "MoveRight", "MoveForward", "MoveBack");
             if (input != Vector2.Zero)
@@ -720,19 +643,42 @@ namespace Solo.Scripts.Entities.Players
             if (Input.IsActionJustPressed("Interact"))
             {
                 ChangeState(PlayerState.Idle);
+                _curBuildingPreview.QueueFree();
                 return;
             }
         }
         #endregion
 
-        #region death
+        #region Death
         private void EnterDeath()
         {
+            SetCurHp(0);
+            CollisionLayer = 0;
+            CollisionMask = 0;
+            //todo :
+            //1. 播放死亡动画
             ResetAnim();
+            _animTween = CreateTween().SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out);
+            _animTween.TweenProperty(BodyRoot, "scale", new Vector2(0.01f, 0.01f), 1f);
+            _animTween.Finished += () =>
+            {
+                //2. 爆装备
+                //3. 等待1s
+                GetTree().CreateTimer(1).Timeout += () =>
+                {
+                    //弹出菜单 : 退出到主菜单 or 复活
+                    _deathView.Visible = true;
+                };
+            };
         }
         private void UpdateDeath(float delta)
         {
+            if (_curHp > 0)
+            {
 
+                ChangeState(PlayerState.Idle);
+                return;
+            }
         }
         #endregion
 
@@ -754,16 +700,6 @@ namespace Solo.Scripts.Entities.Players
                 _bagInventoryView.Visible = false;
                 ChangeState(PlayerState.Idle);
                 return;
-                //if (FastBarInventory.ItemInstanceList[CurFastBarIndex] != null && ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).isBuilding)
-                //{
-                //    ChangeState(PlayerState.Build);
-                //    return;
-                //}
-                //else
-                //{
-                //    ChangeState(PlayerState.Idle);
-                //    return;
-                //}
             }
         }
         #endregion
@@ -781,122 +717,6 @@ namespace Solo.Scripts.Entities.Players
             BodyRoot.Rotation = 0f;
             BodyRoot.Modulate = Colors.White;
         }
-
-
-        //todo : !!!!!!!!!!!!!!!!!!!!!!!
-        //统一用viewarea来检测, 增加IInteractable, 左键攻击, 右键交互
-        //或则滚轮切目标? 然后把进入/退出建筑状态的条件改一下, 比如切到建筑, 然后按左键, 才会进入建筑状态
-        //在建筑状态, 滚轮是切方向, 按左键拍建筑, 按右键退出, 输入左键要先判断是否为建筑物品了(已有isBuilding)
-        //由于右键+滚轮不是很舒服, 所以添加tab键的功能, 和向下滚一样
-        //右键交互逻辑和攻击逻辑一样, 长按进入交互选时才标记轮廓?
-        //交互list, 攻击list
-        //同一用一个nodelist, 不断把最近node轮廓标记, 左键攻击, 右键
-        //交互, 长按进入切目标
-        //
-
-        //private ITargetable _curNearestInteractTarget;
-        //private ITargetable _curNearestAtkTarget;
-        //private List<ITargetable> _curInteractTargetList = new List<ITargetable>();//记录视野内的IInteractable
-        //private List<ITargetable> _curAtkTargetList = new List<ITargetable>();//记录视野内的ICombatable
-
-        //private void RefreshNearestTarget()//把最近的可攻击, 可交互目标标记出来, 可攻击轮廓, 可交互ui
-        //{
-        //    _curNearestAtkTarget?.ShowAtkTip(false);
-        //    _curNearestInteractTarget?.ShowInteractTip(false);
-        //    _curNearestAtkTarget = null;
-        //    _curNearestInteractTarget = null;
-
-        //    float minDistSq = float.MaxValue;
-        //    foreach (ITargetable atkTarget in _curAtkTargetList)
-        //    {
-        //        float curDistSq = GlobalPosition.DistanceSquaredTo(atkTarget.GetWorldPosition());
-        //        if (curDistSq > _curAtkRangeSq)
-        //            continue;
-        //        if (curDistSq > minDistSq)
-        //            continue;
-        //        minDistSq = curDistSq;
-        //        _curNearestAtkTarget = atkTarget;
-        //    }
-
-        //    minDistSq = float.MaxValue;
-        //    foreach (ITargetable interactable in _curInteractTargetList)
-        //    {
-        //        float curDistSq = GlobalPosition.DistanceSquaredTo(interactable.GetWorldPosition());
-        //        if (curDistSq > _interactRangeSq)
-        //            continue;
-        //        if (curDistSq > minDistSq)
-        //            continue;
-        //        minDistSq = curDistSq;
-        //        _curNearestInteractTarget = interactable;
-        //    }
-
-        //    _curNearestAtkTarget?.ShowAtkTip(true);
-        //    _curNearestInteractTarget?.ShowInteractTip(true);
-        //}
-
-        //private void ViewArea_AreaEntered(Area2D area)
-        //{
-        //    if (area is ITargetable targetable)
-        //    {
-        //        if (targetable.CanInteract())
-        //        {
-        //            _curInteractTargetList.Add(targetable);
-        //        }
-        //        if (targetable.CanAtk())
-        //        {
-        //            _curAtkTargetList.Add(targetable);
-        //        }
-        //    }
-        //}
-        //private void ViewArea_AreaExited(Area2D area)
-        //{
-        //    if (area is ITargetable targetable)
-        //    {
-        //        if (targetable.CanInteract())
-        //        {
-        //            _curInteractTargetList.Remove(targetable);
-        //        }
-        //        if (targetable.CanAtk())
-        //        {
-        //            _curAtkTargetList.Remove(targetable);
-        //        }
-        //    }
-        //}
-        //private void ViewArea_BodyEntered(Node2D body)
-        //{
-        //    if (body is ITargetable targetable)
-        //    {
-        //        if (targetable == this) return;
-        //        if (targetable.CanInteract())
-        //        {
-        //            _curInteractTargetList.Add(targetable);
-        //        }
-        //        if (targetable.CanAtk())
-        //        {
-        //            _curAtkTargetList.Add(targetable);
-        //        }
-        //    }
-        //}
-        //private void ViewArea_BodyExited(Node2D body)
-        //{
-        //    if (body is ITargetable targetable)
-        //    {
-        //        if (targetable.CanInteract())
-        //        {
-        //            _curInteractTargetList.Remove(targetable);
-        //        }
-        //        if (targetable.CanAtk())
-        //        {
-        //            _curAtkTargetList.Remove(targetable);
-        //        }
-        //    }
-        //}
-
-
-
-
-
-
 
         // 用鼠标检测目标, 当前范围检测, 触发攻击/交互时再判断距离
         private ITargetable _curTarget = null;
@@ -931,119 +751,6 @@ namespace Solo.Scripts.Entities.Players
 
 
         }
-
-
-        //private List<Node2D> _interactTargetNodeList = new List<Node2D>();
-        //private Node2D _curInteractTargetNode;
-        //private void InteractArea_AreaEntered(Area2D area)
-        //{
-        //    if (area is DropItem dropItem)
-        //    {
-        //        _interactTargetNodeList.Add(dropItem);
-        //    }
-        //}
-        //private void InteractArea_AreaExited(Area2D area)
-        //{
-        //    if (area is DropItem dropItem)
-        //    {
-        //        _interactTargetNodeList.Remove(dropItem);
-        //    }
-        //}
-        //private void InteractArea_BodyEntered(Node2D body)
-        //{
-        //    //if (body is DropItem dropItem)
-        //    //{
-        //    //    _interactTargetNodeList.Add(dropItem);
-        //    //}
-        //}
-        //private void InteractArea_BodyExited(Node2D body)
-        //{
-        //    //if (body is DropItem dropItem)
-        //    //{
-        //    //    _interactTargetNodeList.Remove(dropItem);
-        //    //}
-        //}
-        //private void CheckInteractTarget()
-        //{
-        //    Node2D oldInteractTargetNode = _curInteractTargetNode;
-        //    Node2D newInteractTargetNode = GlobalHelper.GetNearestNode(GlobalPosition, _interactTargetNodeList);
-        //    if (oldInteractTargetNode != newInteractTargetNode)// 1. 只有当最近的物体“发生改变”时，才处理开关逻辑
-        //    {
-        //        if (IsInstanceValid(oldInteractTargetNode) && oldInteractTargetNode is DropItem oldDropItem)// 2. 关掉旧目标的文本（如果旧目标还存在的话）
-        //        {
-        //            oldDropItem.ShowText(false);
-        //        }
-        //        if (IsInstanceValid(newInteractTargetNode) && newInteractTargetNode is DropItem newDropItem)// 3. 开启新目标的文本（如果新目标存在的话）
-        //        {
-        //            newDropItem.ShowText(true);
-        //        }
-        //        _curInteractTargetNode = newInteractTargetNode;// 4. 交接变量，完成记忆更新
-        //    }
-        //}
-
-
-
-        //private void AtkArea_BodyEntered(Node2D body)
-        //{
-        //    if (body is ICombatable combat)//todo : enemy
-        //    {
-        //        _curCombatList.Add(building);
-        //    }
-        //}
-        //private void AtkArea_BodyExited(Node2D body)
-        //{
-        //    if (body is Building building)//todo : enemy
-        //    {
-        //        _atkTargetBuildingList.Remove(building);
-        //    }
-        //}
-        //private void CheckAtkUnitTarget()
-        //{
-        //    //先清除旧目标标记
-        //    _curAtkTargetUnit?.ShowOutline(false);
-        //    _curAtkTargetBuilding?.ShowOutline(false);
-        //    Unit newUnit = GlobalHelper.GetNearestNode(GlobalPosition, _atkTargetUnitList) as Unit;
-        //    _curAtkTargetUnit = newUnit;
-        //    _curAtkTargetUnit.ShowOutline(true);
-        //}
-        //private void CheckAtkBuildingTarget()
-        //{
-        //    //先清除旧目标标记
-        //    _curAtkTargetUnit?.ShowOutline(false);
-        //    _curAtkTargetBuilding?.ShowOutline(false);
-
-        //}
-        //private void CheckAtkTarget()
-        //{
-        //    _curAtkTargetUnit?.ShowOutline(false);
-        //    _curAtkTargetUnit = null;
-        //    _curAtkTargetBuilding?.ShowOutline(false);
-        //    _curAtkTargetBuilding = null;
-        //    Unit newUnit = GlobalHelper.GetNearestNode(GlobalPosition, _atkTargetUnitList) as Unit;
-        //    if (newUnit != null && IsInstanceValid(newUnit))
-        //    {
-        //        _curAtkTargetUnit = newUnit;
-        //        _curAtkTargetUnit.ShowOutline(true);
-        //    }
-        //    else
-        //    {
-        //        Building newBuilding = GlobalHelper.GetNearestNode(GlobalPosition, _atkTargetBuildingList) as Building;
-        //        if (newBuilding != null && IsInstanceValid(newBuilding))
-        //        {
-        //            _curAtkTargetBuilding = newBuilding;
-        //            _curAtkTargetBuilding.ShowOutline(true);
-        //        }
-        //    }
-        //}
-
-        //private void FaceToNode(Node2D targetNode)
-        //{
-        //    float directionToTarget = targetNode.GlobalPosition.X - GlobalPosition.X;// 计算从自己指向敌人的向量
-        //    if (directionToTarget < 0)
-        //        SpriteRoot.Scale = new Vector2(-1, 1); // 目标在左
-        //    else if (directionToTarget > 0)
-        //        SpriteRoot.Scale = new Vector2(1, 1);  // 目标在右
-        //}
 
         public void SwapItemInterInventory(string sourceInvGuid, int sourceIndex, string targetInvGuid, int targetIndex)
         {
@@ -1175,13 +882,61 @@ namespace Solo.Scripts.Entities.Players
             _shakeTween.TweenProperty(_camera, "offset", Vector2.Zero, duration);
         }
 
+        private void SetCurHp(float curHp)
+        {
+            _curHp = curHp;
+            _hpPb.MaxValue = _maxHp;
+            _hpPb.Value = _curHp;
+            _hpLb.Text = $"{_curHp}/{_maxHp}";
+        }
+        private void SetCurHg(float curHg)
+        {
+            _curHg = curHg;
+            _hgPb.MaxValue = _maxHg;
+            _hgPb.Value = _curHg;
+            _hgLb.Text = $"{_curHg}/{_maxHp}";
+        }
+
+        public void Restart()
+        {
+            GlobalPosition = StartPoint;
+            SetCurHp(_maxHp);
+            SetCurHg(_maxHg);
+            CollisionLayer = 1;
+            CollisionMask = 1;
+        }
+
+        public PlayerSaveData GetSaveData()
+        {
+            return new PlayerSaveData()
+            {
+                StartPosX = StartPoint.X,
+                StartPosY = StartPoint.Y,
+                PosX = GlobalPosition.X,
+                PosY = GlobalPosition.Y,
+                MaxHp = _maxHp,
+                CurHp = _curHp,
+                MaxHg = _maxHg,
+                CurHg = _curHg,
+            };
+        }
+
         public Vector2 GetWorldPosition()
         {
             return GlobalPosition;
         }
         public void TakeDamage(float damage, ItemType? itemType)
         {
-
+            Tween animTween = CreateTween().SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out);
+            animTween.TweenProperty(SpriteRoot, "scale", new Vector2(0.8f, 0.8f), 0.1f);
+            animTween.Parallel().TweenProperty(_sprite.Material, "shader_parameter/flash_modifier", 1.0f, 0.1f);
+            animTween.TweenProperty(SpriteRoot, "scale", new Vector2(1.2f, 1.2f), 0.1f);
+            animTween.Parallel().TweenProperty(_sprite.Material, "shader_parameter/flash_modifier", 0.0f, 0.1f);
+            animTween.TweenProperty(SpriteRoot, "scale", new Vector2(1f, 1f), 0.1f);
+            FloatTextLb floatTextLb = GameManager.Instance.FloatTextLbPs.Instantiate<FloatTextLb>();
+            GetTree().CurrentScene.AddChild(floatTextLb);
+            floatTextLb.Init($"-{damage}", GlobalPosition, new Color(162 / 256f, 38 / 256f, 51 / 256f));//162, 38, 51
+            SetCurHp(_curHp - damage);
         }
 
         public bool CanInteract()
@@ -1206,7 +961,15 @@ namespace Solo.Scripts.Entities.Players
 
         public void ShowOutline(bool isShow)
         {
-            return;
+            if (isShow)
+            {
+                _shaderMaterial.SetShaderParameter("outline_color", new Godot.Color(1, 1, 1));
+                _shaderMaterial.SetShaderParameter("outline_width", 1);
+            }
+            else
+            {
+                _shaderMaterial.SetShaderParameter("outline_width", 0.0f);
+            }
         }
 
         public void Interact()

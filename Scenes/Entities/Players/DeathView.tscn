@@ -1,0 +1,66 @@
+[gd_scene format=3 uid="uid://d3ptuijhfhmm0"]
+
+[ext_resource type="FontFile" uid="uid://chelxpn5elvbb" path="res://Assets/zpix.ttf" id="1_lxl8r"]
+[ext_resource type="Script" uid="uid://hjsd63oafc54" path="res://Scripts/Entities/Players/DeathView.cs" id="1_r1xys"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_r1xys"]
+bg_color = Color(0.15294118, 0.15294118, 0.15294118, 0.6509804)
+
+[node name="DeathView" type="Control" unique_id=1940583019 node_paths=PackedStringArray("_exitBtn", "_restartBtn")]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_r1xys")
+_exitBtn = NodePath("Panel/ExitBtn")
+_restartBtn = NodePath("Panel/RestartBtn")
+
+[node name="Panel" type="Panel" parent="." unique_id=1864654552]
+z_index = 100
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_r1xys")
+
+[node name="Label" type="Label" parent="Panel" unique_id=488292909]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -386.0
+offset_right = 386.0
+offset_bottom = 246.0
+grow_horizontal = 2
+theme_override_constants/outline_size = 64
+theme_override_fonts/font = ExtResource("1_lxl8r")
+theme_override_font_sizes/font_size = 128
+text = "大道磨灭"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ExitBtn" type="Button" parent="Panel" unique_id=850660247]
+layout_mode = 0
+offset_left = 246.0
+offset_top = 430.0
+offset_right = 497.0
+offset_bottom = 513.0
+theme_override_constants/outline_size = 32
+theme_override_fonts/font = ExtResource("1_lxl8r")
+theme_override_font_sizes/font_size = 40
+text = "返回主菜单"
+
+[node name="RestartBtn" type="Button" parent="Panel" unique_id=2076908316]
+layout_mode = 0
+offset_left = 692.0
+offset_top = 430.0
+offset_right = 917.0
+offset_bottom = 509.0
+theme_override_constants/outline_size = 32
+theme_override_fonts/font = ExtResource("1_lxl8r")
+theme_override_font_sizes/font_size = 40
+text = "起死回生"
