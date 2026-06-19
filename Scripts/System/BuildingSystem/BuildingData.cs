@@ -12,5 +12,6 @@ namespace Solo.Scripts.System.BuildingSystem
         public string TexturePath = "";
         public int MaxHp = -1;
         public List<(ItemType, int, int)> DropItemList;//掉落物类型, 最小掉落数量, 最大掉落数量
+        public List<string> ComponentPsPath;
     }
 }

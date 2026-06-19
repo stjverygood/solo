@@ -126,6 +126,10 @@ namespace Solo.Scripts.Entities.Players
         {
             UpdateState((float)delta);
             _debugLb.Text = CurState.ToString();
+            if (Input.IsActionJustPressed("Test"))
+            {
+                TakeDamage(10, null);
+            }
             //GD.Print("_curTarget : " + _curTarget);
             //GD.Print($"CurState : {CurState}");
             //GD.Print($"GlobalPosition : {GlobalPosition}");

@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://xv6feyno2ghb"]
+
+[ext_resource type="Script" uid="uid://w54jvaofhpfs" path="res://Scripts/System/BuildingSystem/BuildingComponents/DominComponent.cs" id="1_kfxyo"]
+
+[node name="DominComponent" type="Node2D" unique_id=682908545]
+script = ExtResource("1_kfxyo")

@@ -62,8 +62,6 @@
         ItemBox,//储物箱
     }
 
-
-
     //记录全游戏物品的type
     public enum ItemType
     {

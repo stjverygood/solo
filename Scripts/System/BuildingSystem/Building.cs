@@ -22,6 +22,7 @@ namespace Solo.Scripts.System.BuildingSystem
         private List<(ItemType, int, int)> _dropItemList;//掉落物类型, 最小掉落数量, 最大掉落数量
         private float _curHp;
         private ShaderMaterial _shaderMaterial;
+        private List<IBuildingComponent> _bdComponentList = new List<IBuildingComponent>();
 
         public void Init(BuildingType type, Vector2 snapPos)
         {
@@ -63,6 +64,18 @@ namespace Solo.Scripts.System.BuildingSystem
             ShowOutline(false);
             GameManager.Instance.BuildingManager.Place(Type, snapPos);
             GameManager.Instance.ChunkManager.AddItem(this, GlobalPosition);
+
+
+            //初始化组件
+            foreach (string componentPsPath in buildingData.ComponentPsPath)
+            {
+                PackedScene ComponentPs = GD.Load<PackedScene>(componentPsPath);
+                Node2D componentNode = ComponentPs.Instantiate<Node2D>();
+                AddChild(componentNode);
+                IBuildingComponent bdComponent = (IBuildingComponent)componentNode;
+                bdComponent.Init();
+                _bdComponentList.Add(bdComponent);
+            }
         }
 
         public override void _Process(double delta)
@@ -209,7 +222,7 @@ namespace Solo.Scripts.System.BuildingSystem
 
         public bool CanInteract()//todo : 根据配置项定
         {
-            return false;
+            return true;
         }
 
         public bool CanAtk()
@@ -250,6 +263,15 @@ namespace Solo.Scripts.System.BuildingSystem
 
         public void Interact()
         {
+            //todo : 这里触发交互后, 分发给每个实现了Interable接口的组件, 执行对于功能
+            GD.Print("Building Interact");
+            foreach (IBuildingComponent bdComponent in _bdComponentList)
+            {
+                if (bdComponent is IInteractable interactable)
+                {
+                    interactable.Interact();
+                }
+            }
             return;
         }
 
