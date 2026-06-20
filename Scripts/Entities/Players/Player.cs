@@ -625,11 +625,19 @@ namespace Solo.Scripts.Entities.Players
             _curBuildingPreview = _buildingPreviewPs.Instantiate<BuildingPreview>();
             GetTree().CurrentScene.AddChild(_curBuildingPreview);
             _curBuildingPreview.Init(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type, GlobalPosition);
+            foreach (IQiRangeable qiRangeable in GameManager.Instance.IQiRangeableList)
+            {
+                qiRangeable.ShowQiRange(true);
+            }
         }
         private void UpdateBuild(float delta)
         {
             if (_curHp <= 0)
             {
+                foreach (IQiRangeable qiRangeable in GameManager.Instance.IQiRangeableList)
+                {
+                    qiRangeable.ShowQiRange(false);
+                }
                 ChangeState(PlayerState.Death);
                 return;
             }
@@ -657,6 +665,10 @@ namespace Solo.Scripts.Entities.Players
                     if (remainCount == 0)//count = 0, 空手, 并且切到Idle
                     {
                         _curBuildingPreview.QueueFree();
+                        foreach (IQiRangeable qiRangeable in GameManager.Instance.IQiRangeableList)
+                        {
+                            qiRangeable.ShowQiRange(false);
+                        }
                         ChangeState(PlayerState.Idle);
                         return;
                     }
@@ -666,6 +678,10 @@ namespace Solo.Scripts.Entities.Players
             {
                 ChangeState(PlayerState.Idle);
                 _curBuildingPreview.QueueFree();
+                foreach (IQiRangeable qiRangeable in GameManager.Instance.IQiRangeableList)
+                {
+                    qiRangeable.ShowQiRange(false);
+                }
                 return;
             }
         }
@@ -749,6 +765,7 @@ namespace Solo.Scripts.Entities.Players
             if (_curInteractingNode is BuildingCraft)
             {
                 _selfView.ChangeView(SelfViewTarget.OtherCraftView);
+                _curInteractingNode = null;
             }
             else
             {

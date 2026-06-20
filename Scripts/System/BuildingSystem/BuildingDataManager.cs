@@ -60,6 +60,16 @@ namespace Solo.Scripts.System.BuildingSystem
                 TscnPath = "res://Scenes/System/BuildingSystem/Buildings/BuildingCraft.tscn",
                 DropItemList = new List<(ItemType, int, int)>() { (ItemType.Stone, 1, 3), },
             });
+            _buildingDataMap.Add(BuildingType.Flag, new BuildingData()
+            {
+                TargetType = TargetType.BuildingCraft,
+                Width = 1,
+                Height = 1,
+                MaxHp = 100,
+                TexturePath = "res://Assets/AtlasTextures/Flag.tres",
+                TscnPath = "res://Scenes/System/BuildingSystem/Buildings/Flag.tscn",
+                DropItemList = new List<(ItemType, int, int)>() { (ItemType.Stone, 1, 3), },
+            });
         }
 
         public BuildingData GetBuildingData(BuildingType type)

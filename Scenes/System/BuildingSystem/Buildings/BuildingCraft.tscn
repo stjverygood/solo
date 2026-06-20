@@ -15,7 +15,7 @@ shader_parameter/flash_color = Color(1, 1, 1, 1)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_wl7sm"]
 size = Vector2(64, 32)
 
-[node name="MainBase" type="StaticBody2D" unique_id=1861027985 node_paths=PackedStringArray("_animRoot", "_sprite", "_hpBar")]
+[node name="BuildingCraft" type="StaticBody2D" unique_id=1861027985 node_paths=PackedStringArray("_animRoot", "_sprite", "_hpBar")]
 script = ExtResource("1_ewx1o")
 _animRoot = NodePath("AnimRoot")
 _sprite = NodePath("AnimRoot/Sprite2D")

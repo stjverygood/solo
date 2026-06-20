@@ -1,8 +1,8 @@
 using Godot;
 using Solo.Scripts.Entities.Players;
 using Solo.Scripts.Entities.Units;
+using Solo.Scripts.Global.Interfaces;
 using Solo.Scripts.System.BuildingSystem;
-using Solo.Scripts.System.BuildingSystem.Buildings;
 using Solo.Scripts.System.ChunkSystem;
 using Solo.Scripts.System.SaveSystem;
 using Solo.Scripts.System.UiSystem;
@@ -32,8 +32,7 @@ namespace Solo.Scripts.Global
 
         public Player Player;
         public List<Unit> UnitList = new List<Unit>();
-        public List<MainBase> MainBaseList = new List<MainBase>();
-        //public List<MainBase> MainBaseList = new List<MainBase>();
+        public List<IQiRangeable> IQiRangeableList = new List<IQiRangeable>();
         public ChunkManager ChunkManager;
         public BuildingManager BuildingManager;
 

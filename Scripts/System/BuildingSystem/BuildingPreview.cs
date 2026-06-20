@@ -1,5 +1,6 @@
 using Godot;
 using Solo.Scripts.Global;
+using Solo.Scripts.Global.Interfaces;
 using Solo.Scripts.System.BuildingSystem;
 using Solo.Scripts.System.BuildingSystem.Buildings;
 
@@ -45,30 +46,17 @@ public partial class BuildingPreview : Node2D
     {
         Vector2 snapPos = GameManager.Instance.BuildingManager.SnapToCell(Type, mousePos);
         _canPlace = GameManager.Instance.BuildingManager.CanPlaced(Type, snapPos);
-        if (_canPlace && Type != BuildingType.MainBase && Type != BuildingType.Flag)
+        if (_canPlace && Type != BuildingType.MainBase)//非主基地要多进行一次灵气范围校验
         {
             bool isInQiRange = false;
-            foreach (MainBase mainBase in GameManager.Instance.MainBaseList)
+            foreach (IQiRangeable qiRangeable in GameManager.Instance.IQiRangeableList)
             {
-                if (snapPos.DistanceTo(mainBase.GlobalPosition) <= mainBase.QiRange)
+                if (snapPos.DistanceTo(qiRangeable.GetWorldPos()) <= qiRangeable.GetQiRange())
                 {
                     isInQiRange = true;
-                    break; // 只要满足一个就可以跳出循环
+                    break;
                 }
             }
-
-            //// 如果主基地没满足，继续检查所有旗帜 (假设你的旗帜列表叫 FlagList，类型为 Flag)
-            //if (!isInQiRange && GameManager.Instance.FlagList != null)
-            //{
-            //    foreach (Flag flag in GameManager.Instance.FlagList)
-            //    {
-            //        if (snapPos.DistanceTo(flag.GlobalPosition) <= flag.QiRange)
-            //        {
-            //            isInQiRange = true;
-            //            break;
-            //        }
-            //    }
-            //}
             _canPlace = isInQiRange;
         }
 
@@ -85,19 +73,28 @@ public partial class BuildingPreview : Node2D
         GameManager.Instance.BuildingManager.Place(Type, snapPos);
 
         BuildingData buildingData = BuildingDataManager.Instance.GetBuildingData(Type);
+
         switch (Type)
         {
             case BuildingType.MainBase:
                 PackedScene mainBasePs = GD.Load<PackedScene>(buildingData.TscnPath);
                 MainBase mainBase = mainBasePs.Instantiate<MainBase>();
-                mainBase.Init(Type, GlobalPosition);//没有特殊功能的, 用buildingBase脚本, 走普通初始化函数
+                mainBase.Init(Type, GlobalPosition);
+                mainBase.ShowQiRange(true);
                 GetTree().CurrentScene.AddChild(mainBase);
                 break;
             case BuildingType.BuildingCraft:
                 PackedScene buildingCraftPs = GD.Load<PackedScene>(buildingData.TscnPath);
                 BuildingCraft buildingCraft = buildingCraftPs.Instantiate<BuildingCraft>();
-                buildingCraft.Init(Type, GlobalPosition);//没有特殊功能的, 用buildingBase脚本, 走普通初始化函数
+                buildingCraft.Init(Type, GlobalPosition);
                 GetTree().CurrentScene.AddChild(buildingCraft);
+                break;
+            case BuildingType.Flag:
+                PackedScene flagPs = GD.Load<PackedScene>(buildingData.TscnPath);
+                Flag flag = flagPs.Instantiate<Flag>();
+                flag.Init(Type, GlobalPosition);
+                flag.ShowQiRange(true);
+                GetTree().CurrentScene.AddChild(flag);
                 break;
         }
         return true;
