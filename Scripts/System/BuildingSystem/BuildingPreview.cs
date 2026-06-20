@@ -45,7 +45,7 @@ public partial class BuildingPreview : Node2D
     {
         Vector2 snapPos = GameManager.Instance.BuildingManager.SnapToCell(Type, mousePos);
         _canPlace = GameManager.Instance.BuildingManager.CanPlaced(Type, snapPos);
-        if (_canPlace)
+        if (_canPlace && Type != BuildingType.MainBase && Type != BuildingType.Flag)
         {
             bool isInQiRange = false;
             foreach (MainBase mainBase in GameManager.Instance.MainBaseList)

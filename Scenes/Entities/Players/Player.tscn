@@ -178,6 +178,7 @@ offset_right = -602.0
 offset_bottom = -184.0
 
 [node name="DeathView" parent="CanvasLayer" unique_id=1940583019 instance=ExtResource("11_oet8y")]
+visible = false
 
 [node name="DebugLabel" type="Label" parent="." unique_id=1146679472]
 offset_left = -66.0

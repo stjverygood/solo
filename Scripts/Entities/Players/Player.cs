@@ -1,6 +1,8 @@
 using Godot;
 using Solo.Scripts.Global;
 using Solo.Scripts.Global.Interfaces;
+using Solo.Scripts.System.BuildingSystem.Buildings;
+using Solo.Scripts.System.CraftSystem;
 using Solo.Scripts.System.InventorySystem;
 using Solo.Scripts.System.ItemSystem;
 using Solo.Scripts.System.SaveSystem;
@@ -113,7 +115,7 @@ namespace Solo.Scripts.Entities.Players
             }
             ChangeState(PlayerState.Idle);
 
-            _selfView.BasicCraftView.Init();
+            _selfView.BasicCraftView.RefreshType(CraftViewType.Basic);
             _selfView.Visible = false;
             _bagInventoryView.Init(BagInventory);
             _fastBarInventoryView.Init(FastBarInventory);
@@ -558,6 +560,7 @@ namespace Solo.Scripts.Entities.Players
         #endregion
 
         #region Interact
+        private ITargetable _curInteractingNode = null;
         private void EnterInteract()
         {
             ResetAnim();
@@ -580,12 +583,23 @@ namespace Solo.Scripts.Entities.Players
             {
                 TriggerScreenShake(1);//震屏
                 _curTarget.Interact();
+
             }));
 
             _animTween.Parallel().TweenProperty(BodyRoot, "scale", new Vector2(1f, 1f), 0.1f);
             _animTween.Finished += () =>
             {
-                ChangeState(PlayerState.Idle);
+                if (_curTarget is BuildingCraft)
+                {
+                    _curInteractingNode = _curTarget;
+                    ChangeState(PlayerState.BagUI);
+                    return;
+                }
+                else
+                {
+                    ChangeState(PlayerState.Idle);
+                    return;
+                }
             };
         }
         private void UpdateInteract(float delta)
@@ -607,6 +621,7 @@ namespace Solo.Scripts.Entities.Players
             _animTween = CreateTween().SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out).SetLoops();
             _animTween.TweenProperty(BodyRoot, "skew", 0.1f, 0.3f);// 走动效果：左右晃动或轻微拉伸
             _animTween.TweenProperty(BodyRoot, "skew", -0.1f, 0.3f);
+
             _curBuildingPreview = _buildingPreviewPs.Instantiate<BuildingPreview>();
             GetTree().CurrentScene.AddChild(_curBuildingPreview);
             _curBuildingPreview.Init(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type, GlobalPosition);
@@ -728,8 +743,18 @@ namespace Solo.Scripts.Entities.Players
             _animTween = CreateTween().SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out).SetLoops();
             _animTween.TweenProperty(BodyRoot, "scale", new Vector2(1.2f, 0.8f), 0.5f);
             _animTween.TweenProperty(BodyRoot, "scale", new Vector2(1.0f, 1.0f), 0.5f);
+
             _selfView.Visible = true;
             _bagInventoryView.Visible = true;
+            if (_curInteractingNode is BuildingCraft)
+            {
+                _selfView.ChangeView(SelfViewTarget.OtherCraftView);
+            }
+            else
+            {
+                _selfView.ChangeView(SelfViewTarget.EquipmentView);
+            }
+
         }
         private void UpdateBagUI(float delta)
         {

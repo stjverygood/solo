@@ -25,6 +25,13 @@
         Fox,
     }
 
+    public enum SelfViewTarget
+    {
+        EquipmentView,
+        BasicCraftView,
+        OtherCraftView,
+    }
+
     public enum TargetType
     {
         DropItem,

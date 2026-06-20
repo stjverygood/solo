@@ -8,7 +8,7 @@ namespace Solo.Scripts.System.BuildingSystem.Buildings
         {
             base.Interact();
             GD.Print("BuildingCraft Interact");
-            //todo : 打开建筑合成台
+
         }
     }
 }
