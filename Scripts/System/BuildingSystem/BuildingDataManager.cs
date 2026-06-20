@@ -21,7 +21,7 @@ namespace Solo.Scripts.System.BuildingSystem
                 TargetType = TargetType.Tree,
                 Width = 1,
                 Height = 1,
-                TextureHeight = 2,
+                //TextureHeight = 2,
                 MaxHp = 100,
                 TexturePath = "res://Assets/AtlasTextures/Tree.tres",
                 TscnPath = "res://Scenes/System/BuildingSystem/Buildings/Tree.tscn",
@@ -32,7 +32,7 @@ namespace Solo.Scripts.System.BuildingSystem
                 TargetType = TargetType.Stone,
                 Width = 2,
                 Height = 1,
-                TextureHeight = 2,
+                //TextureHeight = 2,
                 MaxHp = 100,
                 TexturePath = "res://Assets/AtlasTextures/Stone.tres",
                 TscnPath = "res://Scenes/System/BuildingSystem/Buildings/Stone.tscn",
@@ -43,10 +43,21 @@ namespace Solo.Scripts.System.BuildingSystem
                 TargetType = TargetType.MainBase,
                 Width = 4,
                 Height = 2,
-                TextureHeight = 4,
+                //TextureHeight = 4,
                 MaxHp = 100,
                 TexturePath = "res://Assets/AtlasTextures/MainBase.tres",
                 TscnPath = "res://Scenes/System/BuildingSystem/Buildings/MainBase.tscn",
+                DropItemList = new List<(ItemType, int, int)>() { (ItemType.Stone, 1, 3), },
+            });
+            _buildingDataMap.Add(BuildingType.BuildingCraft, new BuildingData()
+            {
+                TargetType = TargetType.BuildingCraft,
+                Width = 4,
+                Height = 2,
+                //TextureHeight = 3,
+                MaxHp = 100,
+                TexturePath = "res://Assets/AtlasTextures/BuildingCraft.tres",
+                TscnPath = "res://Scenes/System/BuildingSystem/Buildings/BuildingCraft.tscn",
                 DropItemList = new List<(ItemType, int, int)>() { (ItemType.Stone, 1, 3), },
             });
         }

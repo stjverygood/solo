@@ -1,7 +1,6 @@
 [gd_scene format=3 uid="uid://bwctbm6eq64vu"]
 
 [ext_resource type="Script" uid="uid://dpkxkwy3ger5n" path="res://Scripts/Entities/Players/Player.cs" id="1_lxeke"]
-[ext_resource type="PackedScene" uid="uid://qw0q5wipafhq" path="res://Scenes/System/ItemSystem/DropItem.tscn" id="2_8ildv"]
 [ext_resource type="Texture2D" uid="uid://cmlghpyvrsitg" path="res://Assets/AtlasTextures/Player.tres" id="3_3gn43"]
 [ext_resource type="Shader" uid="uid://i3lcvke3ll2n" path="res://Assets/Shaders/Outline.gdshader" id="3_4xrd3"]
 [ext_resource type="PackedScene" uid="uid://das8eij0ua5tt" path="res://Scenes/System/BuildingSystem/BuildingPreview.tscn" id="3_f0b02"]
@@ -61,7 +60,6 @@ SpriteRoot = NodePath("SpriteRoot")
 BodyRoot = NodePath("SpriteRoot/BodyRoot")
 _sprite = NodePath("SpriteRoot/BodyRoot/Sprite")
 _camera = NodePath("Camera2D")
-DropItemPs = ExtResource("2_8ildv")
 _selfView = NodePath("CanvasLayer/SelfView")
 _bagInventoryView = NodePath("CanvasLayer/BagInventoryView")
 _fastBarInventoryView = NodePath("CanvasLayer/FastBarInventoryViewv")
@@ -80,7 +78,6 @@ position = Vector2(0, -5)
 shape = SubResource("CircleShape2D_jw8fk")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=173865742]
-zoom = Vector2(3, 3)
 position_smoothing_enabled = true
 
 [node name="SpriteRoot" type="Node2D" parent="." unique_id=700917934]

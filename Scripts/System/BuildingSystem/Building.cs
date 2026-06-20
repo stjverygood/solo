@@ -19,7 +19,7 @@ namespace Solo.Scripts.System.BuildingSystem
         private List<(ItemType, int, int)> _dropItemList;//掉落物类型, 最小掉落数量, 最大掉落数量
         private ShaderMaterial _shaderMaterial;
 
-        public void Init(BuildingType type, Vector2 snapPos)
+        public virtual void Init(BuildingType type, Vector2 snapPos)
         {
             Type = type;
             GlobalPosition = snapPos;

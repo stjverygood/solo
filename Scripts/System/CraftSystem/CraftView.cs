@@ -37,6 +37,7 @@ namespace Solo.Scripts.System.CraftSystem
             {
                 case CraftViewType.Basic://徒手的只能做木套
                     CraftItemList.Add(new CraftItem(ItemType.MainBase, new List<(ItemType, int)>() { (ItemType.MainBaseStone, 0), (ItemType.Wood, 0), (ItemType.Stone, 0) }));
+                    CraftItemList.Add(new CraftItem(ItemType.BuildingCraft, new List<(ItemType, int)>() { (ItemType.MainBaseStone, 0), (ItemType.Wood, 0), (ItemType.Stone, 0) }));
                     CraftItemList.Add(new CraftItem(ItemType.Rope, new List<(ItemType, int)>() { (ItemType.Grass, 1) }));
                     CraftItemList.Add(new CraftItem(ItemType.WoodSword, new List<(ItemType, int)>() { (ItemType.Wood, 3), (ItemType.Rope, 5) }));
                     CraftItemList.Add(new CraftItem(ItemType.WoodBow, new List<(ItemType, int)>() { (ItemType.Wood, 4), (ItemType.Rope, 5) }));

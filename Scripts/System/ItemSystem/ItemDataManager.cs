@@ -75,11 +75,11 @@ namespace Solo.Scripts.System.ItemSystem
 
             //建筑
             _itemDataMap.Add(ItemType.MainBase, new ItemData { Name = "聚灵之源", MaxCount = 99, IconPath = "res://Assets/AtlasTextures/MainBase.tres", isBuilding = true });
-            _itemDataMap.Add(ItemType.Flag, new ItemData { Name = "法旗", IconPath = "res://Assets/AtlasTextures/WoodAxe.tres", isBuilding = true });
-            _itemDataMap.Add(ItemType.BuildingCraft, new ItemData { Name = "天工殿", IconPath = "res://Assets/AtlasTextures/WoodAxe.tres", isBuilding = true });
-            _itemDataMap.Add(ItemType.ToolCraft, new ItemData { Name = "锻器台", IconPath = "res://Assets/AtlasTextures/WoodAxe.tres", isBuilding = true });
-            _itemDataMap.Add(ItemType.ArmorCraft, new ItemData { Name = "织锦阁", IconPath = "res://Assets/AtlasTextures/WoodAxe.tres", isBuilding = true });
-            _itemDataMap.Add(ItemType.ItemBox, new ItemData { Name = "乾坤箱", IconPath = "res://Assets/AtlasTextures/WoodAxe.tres", isBuilding = true });
+            _itemDataMap.Add(ItemType.Flag, new ItemData { Name = "法旗", MaxCount = 99, IconPath = "res://Assets/AtlasTextures/MainBase.tres", isBuilding = true });
+            _itemDataMap.Add(ItemType.BuildingCraft, new ItemData { Name = "天工殿", MaxCount = 99, IconPath = "res://Assets/AtlasTextures/BuildingCraft.tres", isBuilding = true });
+            _itemDataMap.Add(ItemType.ToolCraft, new ItemData { Name = "锻器台", MaxCount = 99, IconPath = "res://Assets/AtlasTextures/MainBase.tres", isBuilding = true });
+            _itemDataMap.Add(ItemType.ArmorCraft, new ItemData { Name = "织锦阁", MaxCount = 99, IconPath = "res://Assets/AtlasTextures/MainBase.tres", isBuilding = true });
+            _itemDataMap.Add(ItemType.ItemBox, new ItemData { Name = "乾坤箱", MaxCount = 99, IconPath = "res://Assets/AtlasTextures/MainBase.tres", isBuilding = true });
         }
 
         public ItemData GetItemData(ItemType type)

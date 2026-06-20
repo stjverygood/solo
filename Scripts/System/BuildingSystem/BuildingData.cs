@@ -8,7 +8,7 @@ namespace Solo.Scripts.System.BuildingSystem
         public TargetType TargetType;
         public int Width = -1;
         public int Height = -1;
-        public int TextureHeight = -1;
+        //public int TextureHeight = -1;
         public int MaxHp = -1;
         public string TexturePath = "";//给preview用
         public string TscnPath;

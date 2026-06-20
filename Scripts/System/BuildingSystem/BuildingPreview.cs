@@ -7,8 +7,8 @@ public partial class BuildingPreview : Node2D
 {
     public BuildingType Type;
     [Export] private Sprite2D _sprite;
-    //[Export] private PackedScene _buildingPs;
     private Vector2 _curDir = Vector2.Down;
+    private bool _canPlace = false;
 
     public void Init(ItemType itemType, Vector2 mousePos)
     {
@@ -38,23 +38,49 @@ public partial class BuildingPreview : Node2D
         }
         BuildingData buildingData = BuildingDataManager.Instance.GetBuildingData(Type);
         _sprite.Texture = GD.Load<Texture2D>(buildingData.TexturePath);
-        //_sprite.Position = new Vector2(0, -(buildingData.TextureHeight - buildingData.Height) * 16 / 2);
         RefreshPosition(mousePos);
     }
 
     public void RefreshPosition(Vector2 mousePos)
     {
         Vector2 snapPos = GameManager.Instance.BuildingManager.SnapToCell(Type, mousePos);
-        bool canPlace = GameManager.Instance.BuildingManager.CanPlaced(Type, snapPos);
+        _canPlace = GameManager.Instance.BuildingManager.CanPlaced(Type, snapPos);
+        if (_canPlace)
+        {
+            bool isInQiRange = false;
+            foreach (MainBase mainBase in GameManager.Instance.MainBaseList)
+            {
+                if (snapPos.DistanceTo(mainBase.GlobalPosition) <= mainBase.QiRange)
+                {
+                    isInQiRange = true;
+                    break; // 只要满足一个就可以跳出循环
+                }
+            }
+
+            //// 如果主基地没满足，继续检查所有旗帜 (假设你的旗帜列表叫 FlagList，类型为 Flag)
+            //if (!isInQiRange && GameManager.Instance.FlagList != null)
+            //{
+            //    foreach (Flag flag in GameManager.Instance.FlagList)
+            //    {
+            //        if (snapPos.DistanceTo(flag.GlobalPosition) <= flag.QiRange)
+            //        {
+            //            isInQiRange = true;
+            //            break;
+            //        }
+            //    }
+            //}
+            _canPlace = isInQiRange;
+        }
+
         GlobalPosition = snapPos;
-        _sprite.Modulate = canPlace ? new Color(0, 1, 0, 0.2f) : new Color(1, 0, 0, 0.2f);
+        _sprite.Modulate = _canPlace ? new Color(0, 1, 0, 0.4f) : new Color(1, 0, 0, 0.4f);
     }
 
     public bool Build(Vector2 mousePos)
     {
         Vector2 snapPos = GameManager.Instance.BuildingManager.SnapToCell(Type, mousePos);
-        bool canPlace = GameManager.Instance.BuildingManager.CanPlaced(Type, snapPos);
-        if (!canPlace)
+        //bool canPlace = GameManager.Instance.BuildingManager.CanPlaced(Type, snapPos);
+        if (!_canPlace)
             return false;
         GameManager.Instance.BuildingManager.Place(Type, snapPos);
 
@@ -67,7 +93,15 @@ public partial class BuildingPreview : Node2D
                 mainBase.Init(Type, GlobalPosition);//没有特殊功能的, 用buildingBase脚本, 走普通初始化函数
                 GetTree().CurrentScene.AddChild(mainBase);
                 break;
+            case BuildingType.BuildingCraft:
+                PackedScene buildingCraftPs = GD.Load<PackedScene>(buildingData.TscnPath);
+                BuildingCraft buildingCraft = buildingCraftPs.Instantiate<BuildingCraft>();
+                buildingCraft.Init(Type, GlobalPosition);//没有特殊功能的, 用buildingBase脚本, 走普通初始化函数
+                GetTree().CurrentScene.AddChild(buildingCraft);
+                break;
         }
         return true;
     }
+
+    //private bool Check
 }
