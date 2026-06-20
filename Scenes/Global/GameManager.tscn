@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://dfdmitrwv0kqk" path="res://Scripts/Global/GameManager.cs" id="1_g4tje"]
 [ext_resource type="PackedScene" uid="uid://b0h5soh7rcqn1" path="res://Scenes/Levels/StartMenu.tscn" id="2_6j0h0"]
+[ext_resource type="PackedScene" uid="uid://qw0q5wipafhq" path="res://Scenes/System/ItemSystem/DropItem.tscn" id="2_cxcem"]
 [ext_resource type="PackedScene" uid="uid://bwctbm6eq64vu" path="res://Scenes/Entities/Players/Player.tscn" id="2_okfta"]
 [ext_resource type="PackedScene" uid="uid://ddos2w52gxb06" path="res://Scenes/Global/FloatTextLb.tscn" id="2_xy3kr"]
 [ext_resource type="PackedScene" uid="uid://bu5uihu26jmpm" path="res://Scenes/System/SaveSystem/SaveListView.tscn" id="3_enwxu"]
@@ -11,6 +12,7 @@
 
 [node name="GameManager" type="Node" unique_id=1034362425 node_paths=PackedStringArray("_pauseView")]
 script = ExtResource("1_g4tje")
+DropItemPs = ExtResource("2_cxcem")
 FloatTextLbPs = ExtResource("2_xy3kr")
 _startMenuPs = ExtResource("2_6j0h0")
 _loadingViewPs = ExtResource("3_h7we0")

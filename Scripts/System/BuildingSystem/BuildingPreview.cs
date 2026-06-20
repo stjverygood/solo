@@ -1,12 +1,13 @@
 using Godot;
 using Solo.Scripts.Global;
 using Solo.Scripts.System.BuildingSystem;
+using Solo.Scripts.System.BuildingSystem.Buildings;
 
 public partial class BuildingPreview : Node2D
 {
     public BuildingType Type;
     [Export] private Sprite2D _sprite;
-    [Export] private PackedScene _buildingPs;
+    //[Export] private PackedScene _buildingPs;
     private Vector2 _curDir = Vector2.Down;
 
     public void Init(ItemType itemType, Vector2 mousePos)
@@ -37,7 +38,7 @@ public partial class BuildingPreview : Node2D
         }
         BuildingData buildingData = BuildingDataManager.Instance.GetBuildingData(Type);
         _sprite.Texture = GD.Load<Texture2D>(buildingData.TexturePath);
-        _sprite.Position = new Vector2(0, -(buildingData.TextureHeight - buildingData.Height) * 16 / 2);
+        //_sprite.Position = new Vector2(0, -(buildingData.TextureHeight - buildingData.Height) * 16 / 2);
         RefreshPosition(mousePos);
     }
 
@@ -57,12 +58,14 @@ public partial class BuildingPreview : Node2D
             return false;
         GameManager.Instance.BuildingManager.Place(Type, snapPos);
 
+        BuildingData buildingData = BuildingDataManager.Instance.GetBuildingData(Type);
         switch (Type)
         {
             case BuildingType.MainBase:
-                Building bd = _buildingPs.Instantiate<Building>();
-                bd.Init(Type, GlobalPosition);//没有特殊功能的, 用buildingBase脚本, 走普通初始化函数
-                GetTree().CurrentScene.AddChild(bd);
+                PackedScene mainBasePs = GD.Load<PackedScene>(buildingData.TscnPath);
+                MainBase mainBase = mainBasePs.Instantiate<MainBase>();
+                mainBase.Init(Type, GlobalPosition);//没有特殊功能的, 用buildingBase脚本, 走普通初始化函数
+                GetTree().CurrentScene.AddChild(mainBase);
                 break;
         }
         return true;

@@ -11,18 +11,13 @@ namespace Solo.Scripts.System.BuildingSystem
     {
         public BuildingType Type;
         public TargetType TargetType;
-        [Export] private CollisionShape2D _collisionShape;
         [Export] private Node2D _animRoot;
         [Export] private Sprite2D _sprite;
-        [Export] public ProgressBar _hpPb;
-        [Export] public Label _hpLb;
-        [Export] public PackedScene DropItemPs;
-        [Export] private NavigationObstacle2D _naviObstacle;
-        public float MaxHp = 100;
+        [Export] private HpBar _hpBar;
+        public float _maxHp = 100;
+        protected float _curHp;
         private List<(ItemType, int, int)> _dropItemList;//掉落物类型, 最小掉落数量, 最大掉落数量
-        private float _curHp;
         private ShaderMaterial _shaderMaterial;
-        private List<IBuildingComponent> _bdComponentList = new List<IBuildingComponent>();
 
         public void Init(BuildingType type, Vector2 snapPos)
         {
@@ -30,52 +25,17 @@ namespace Solo.Scripts.System.BuildingSystem
             GlobalPosition = snapPos;
             BuildingData buildingData = BuildingDataManager.Instance.GetBuildingData(Type);
             TargetType = buildingData.TargetType;
-            MaxHp = buildingData.MaxHp;
-            _curHp = MaxHp;
+            SetMaxHp(buildingData.MaxHp);
+            SetCurHp(_maxHp);
             _dropItemList = buildingData.DropItemList;
-
-            _sprite.Texture = GD.Load<Texture2D>(buildingData.TexturePath);
-            _sprite.Position = new Vector2(0, -(buildingData.TextureHeight - buildingData.Height) * 16 / 2);
-            if (_collisionShape.Shape is RectangleShape2D rectShape)
-            {
-                RectangleShape2D uniqueRectShape = (RectangleShape2D)rectShape.Duplicate();
-                uniqueRectShape.Size = new Vector2(buildingData.Width * 16f, buildingData.Height * 16f); // 赋予新的尺寸
-                _collisionShape.Shape = uniqueRectShape;
-                _collisionShape.Position = new Vector2(0, 0);
-            }
-            if (_naviObstacle != null)
-            {
-                float halfW = buildingData.Width * 16 / 2f;
-                float halfH = buildingData.Height * 16 / 2f;
-                Vector2[] obstacleVertices = new Vector2[] { new Vector2(-halfW, -halfH), new Vector2(halfW, -halfH), new Vector2(halfW, halfH), new Vector2(-halfW, halfH) };// 严格按照顺时针（Clockwise）定义矩形的 4 个顶点
-                _naviObstacle.Vertices = obstacleVertices;
-                _naviObstacle.AvoidanceEnabled = true;// 确保避障属性正确开启
-                _naviObstacle.AvoidanceLayers = 1; // 保持和之前 Units 的 AvoidanceMask 一致
-                _naviObstacle.Position = new Vector2(0, 0);
-            }
-
-
             if (_sprite.Material is ShaderMaterial shaderMat)
             {
                 _shaderMaterial = (ShaderMaterial)shaderMat.Duplicate();// 关键：复制一份材质，确保每个实例的材质相互独立
                 _sprite.Material = _shaderMaterial;// 记得把复制后的独立材质重新赋给当前的 Sprite2D
             }
-            RefreshHpBar();
             ShowOutline(false);
             GameManager.Instance.BuildingManager.Place(Type, snapPos);
             GameManager.Instance.ChunkManager.AddItem(this, GlobalPosition);
-
-
-            //初始化组件
-            foreach (string componentPsPath in buildingData.ComponentPsPath)
-            {
-                PackedScene ComponentPs = GD.Load<PackedScene>(componentPsPath);
-                Node2D componentNode = ComponentPs.Instantiate<Node2D>();
-                AddChild(componentNode);
-                IBuildingComponent bdComponent = (IBuildingComponent)componentNode;
-                bdComponent.Init();
-                _bdComponentList.Add(bdComponent);
-            }
         }
 
         public override void _Process(double delta)
@@ -99,40 +59,10 @@ namespace Solo.Scripts.System.BuildingSystem
                 return;
             _healTimer = 0;
             _curHp++;
-            if (_curHp > MaxHp)
-                _curHp = MaxHp;
-            RefreshHpBar();
+            SetCurHp(_curHp);
+            if (_curHp > _maxHp)
+                SetCurHp(_maxHp);
         }
-
-
-
-        //public virtual void ShowOutline(bool isShow)
-        //{
-        //    if (isShow)
-        //    {
-        //        _shaderMaterial.SetShaderParameter("outline_color", new Godot.Color(1, 1, 1));
-        //        _shaderMaterial.SetShaderParameter("outline_width", 1);
-        //    }
-        //    else
-        //    {
-        //        _shaderMaterial.SetShaderParameter("outline_width", 0.0f);
-        //    }
-        //}
-
-        private void RefreshHpBar()
-        {
-            if (_curHp == MaxHp)
-            {
-                _hpPb.Visible = false;
-                return;
-            }
-            _hpPb.Position = new Vector2(_hpPb.Position.X, _sprite.Position.Y - (BuildingDataManager.Instance.GetBuildingData(Type).TextureHeight * 16 / 2 + 8));
-            _hpPb.Visible = true;
-            _hpPb.MaxValue = MaxHp;
-            _hpPb.Value = _curHp;
-            _hpLb.Text = $"{_curHp:f0}/{MaxHp:f0}";
-        }
-
 
         public Vector2 GetWorldPosition()
         {
@@ -140,84 +70,61 @@ namespace Solo.Scripts.System.BuildingSystem
         }
         public void TakeDamage(float damage, ItemType? itemType)
         {
-            damage = HandleDamage(itemType, damage);
             Tween animTween = CreateTween().SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out);
             animTween.TweenProperty(_animRoot, "scale", new Vector2(0.8f, 0.8f), 0.1f);
             animTween.Parallel().TweenProperty(_sprite.Material, "shader_parameter/flash_modifier", 1.0f, 0.1f);
             animTween.TweenProperty(_animRoot, "scale", new Vector2(1.2f, 1.2f), 0.1f);
             animTween.Parallel().TweenProperty(_sprite.Material, "shader_parameter/flash_modifier", 0.0f, 0.1f);
             animTween.TweenProperty(_animRoot, "scale", new Vector2(1f, 1f), 0.1f);
+
             FloatTextLb floatTextLb = GameManager.Instance.FloatTextLbPs.Instantiate<FloatTextLb>();
             GetTree().CurrentScene.AddChild(floatTextLb);
             floatTextLb.Init($"-{damage}", GlobalPosition);
-            _curHp -= damage;
+
             _damageCooldownTimer = 0f;
             _healTimer = 0f;
-            RefreshHpBar();
+
+            HandleDamage(damage, itemType);//子类重写, 默认不处理
+
+            SetCurHp(_curHp - damage);
             if (_curHp <= 0)
             {
-                GameManager.Instance.ChunkManager.RemoveItem(this, GlobalPosition);
-                _curHp = 0;
-                //掉落物品
-                foreach ((ItemType, int, int) tuple in _dropItemList)
-                {
-                    DropItem dropItem = DropItemPs.Instantiate<DropItem>();
-                    GetTree().CurrentScene.AddChild(dropItem);
-                    dropItem.Init(new ItemInstance() { Type = tuple.Item1, Count = Random.Shared.Next(tuple.Item2, tuple.Item3 + 1) }, Position);
-                    dropItem.ApplyForce();
-                }
-                QueueFree();
-                GameManager.Instance.BuildingManager.Remove(Type, GlobalPosition);
-                GameManager.Instance.ChunkManager.RemoveItem(this, GlobalPosition);
+                Die();//子类重写, 默认爆装备
             }
         }
-        private float HandleDamage(ItemType? dmgItemType, float damage)
+
+
+        protected virtual float HandleDamage(float damage, ItemType? itemType)
         {
-            float resDmg = damage;
-            switch (Type)
+            return damage;
+        }
+        protected virtual void Die()
+        {
+            GameManager.Instance.ChunkManager.RemoveItem(this, GlobalPosition);
+            SetCurHp(0);
+            //掉落物品
+            foreach ((ItemType, int, int) tuple in _dropItemList)
             {
-                case BuildingType.Tree:
-                    switch (dmgItemType)
-                    {
-                        case ItemType.WoodAxe:
-                            resDmg *= 2;
-                            break;
-                        case ItemType.IronAxe:
-                            resDmg *= 3;
-                            break;
-                        case ItemType.GoldAxe:
-                            resDmg *= 4;
-                            break;
-                        case ItemType.JadeAxe:
-                            resDmg *= 5;
-                            break;
-                        default:
-                            resDmg *= 1;
-                            break;
-                    }
-                    break;
-                case BuildingType.Stone:
-                    switch (dmgItemType)
-                    {
-                        case ItemType.WoodPickaxe:
-                            resDmg *= 1;
-                            break;
-                        case ItemType.IronPickaxe:
-                            resDmg *= 2;
-                            break;
-                        case ItemType.GoldPickaxe:
-                            resDmg *= 3;
-                            break;
-                        case ItemType.JadePickaxe:
-                            resDmg *= 4;
-                            break;
-                        default:
-                            resDmg *= 0.1f;
-                            break;
-                    }
-                    break;
+                DropItem dropItem = GameManager.Instance.DropItemPs.Instantiate<DropItem>();
+                GetTree().CurrentScene.AddChild(dropItem);
+                dropItem.Init(new ItemInstance() { Type = tuple.Item1, Count = Random.Shared.Next(tuple.Item2, tuple.Item3 + 1) }, Position);
+                dropItem.ApplyForce();
             }
-            return resDmg;
+            GameManager.Instance.BuildingManager.Remove(Type, GlobalPosition);
+            GameManager.Instance.ChunkManager.RemoveItem(this, GlobalPosition);
+            QueueFree();
+        }
+
+
+        protected void SetMaxHp(float maxHp)
+        {
+            _maxHp = maxHp;
+            _hpBar.Refresh(_curHp, _maxHp);
+        }
+        protected void SetCurHp(float curHp)
+        {
+            _curHp = curHp;
+            _hpBar.Refresh(_curHp, _maxHp);
         }
 
         public bool CanInteract()//todo : 根据配置项定
@@ -229,24 +136,6 @@ namespace Solo.Scripts.System.BuildingSystem
         {
             return true;
         }
-
-        //public void ShowInteractTip(bool isShow)
-        //{
-        //    return;
-        //}
-
-        //public void ShowAtkTip(bool isShow)
-        //{
-        //    if (isShow)
-        //    {
-        //        _shaderMaterial.SetShaderParameter("outline_color", new Godot.Color(1, 1, 1));
-        //        _shaderMaterial.SetShaderParameter("outline_width", 1);
-        //    }
-        //    else
-        //    {
-        //        _shaderMaterial.SetShaderParameter("outline_width", 0.0f);
-        //    }
-        //}
 
         public void ShowOutline(bool isShow)
         {
@@ -261,17 +150,9 @@ namespace Solo.Scripts.System.BuildingSystem
             }
         }
 
-        public void Interact()
+        public virtual void Interact()
         {
-            //todo : 这里触发交互后, 分发给每个实现了Interable接口的组件, 执行对于功能
             GD.Print("Building Interact");
-            foreach (IBuildingComponent bdComponent in _bdComponentList)
-            {
-                if (bdComponent is IInteractable interactable)
-                {
-                    interactable.Interact();
-                }
-            }
             return;
         }
 

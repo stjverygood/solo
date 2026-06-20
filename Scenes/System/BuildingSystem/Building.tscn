@@ -1,9 +1,7 @@
 [gd_scene format=3 uid="uid://dkxvgd7m5vqru"]
 
 [ext_resource type="Script" uid="uid://bkhix5ewbrx8a" path="res://Scripts/System/BuildingSystem/Building.cs" id="1_ve38v"]
-[ext_resource type="PackedScene" uid="uid://qw0q5wipafhq" path="res://Scenes/System/ItemSystem/DropItem.tscn" id="2_ldljy"]
 [ext_resource type="Shader" uid="uid://i3lcvke3ll2n" path="res://Assets/Shaders/Outline.gdshader" id="3_ldljy"]
-[ext_resource type="Texture2D" uid="uid://dt76k12bmj6gn" path="res://Assets/AtlasTextures/Stone.tres" id="4_y7ho7"]
 [ext_resource type="FontFile" uid="uid://chelxpn5elvbb" path="res://Assets/zpix.ttf" id="5_y7ho7"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_10igi"]
@@ -40,30 +38,16 @@ corner_radius_top_right = 64
 corner_radius_bottom_right = 64
 corner_radius_bottom_left = 64
 
-[node name="Building" type="StaticBody2D" unique_id=972007456 node_paths=PackedStringArray("_collisionShape", "_animRoot", "_sprite", "_hpPb", "_hpLb", "_naviObstacle")]
+[node name="Building" type="StaticBody2D" unique_id=972007456 node_paths=PackedStringArray("_animRoot", "_sprite")]
 y_sort_enabled = true
 script = ExtResource("1_ve38v")
-_collisionShape = NodePath("CollisionShape2D")
 _animRoot = NodePath("AnimRoot")
 _sprite = NodePath("AnimRoot/Sprite2D")
-_hpPb = NodePath("ProgressBar")
-_hpLb = NodePath("ProgressBar/Label")
-DropItemPs = ExtResource("2_ldljy")
-_naviObstacle = NodePath("NavigationObstacle2D")
-
-[node name="ColorRect" type="ColorRect" parent="." unique_id=171105797]
-visible = false
-offset_left = -8.0
-offset_top = -8.0
-offset_right = 8.0
-offset_bottom = 7.9999943
-color = Color(0.4509804, 0.24313726, 0.22352941, 1)
 
 [node name="AnimRoot" type="Node2D" parent="." unique_id=748198720]
 
 [node name="Sprite2D" type="Sprite2D" parent="AnimRoot" unique_id=1800112651]
 material = SubResource("ShaderMaterial_10igi")
-texture = ExtResource("4_y7ho7")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1443277281]
 shape = SubResource("RectangleShape2D_a72gv")

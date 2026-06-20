@@ -1,0 +1,55 @@
+[gd_scene format=3 uid="uid://b061vtrr1tw5d"]
+
+[ext_resource type="FontFile" uid="uid://chelxpn5elvbb" path="res://Assets/zpix.ttf" id="1_300bt"]
+[ext_resource type="Script" uid="uid://cixgrwgq7xb1n" path="res://Scripts/Global/HpBar.cs" id="1_sdrt1"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_sdrt1"]
+bg_color = Color(0, 0, 0, 0)
+border_width_left = 16
+border_width_top = 16
+border_width_right = 16
+border_width_bottom = 16
+border_color = Color(0.12156863, 0.05490196, 0.10980392, 1)
+corner_radius_top_left = 65
+corner_radius_top_right = 65
+corner_radius_bottom_right = 65
+corner_radius_bottom_left = 65
+expand_margin_left = 16.0
+expand_margin_top = 16.0
+expand_margin_right = 16.0
+expand_margin_bottom = 16.0
+anti_aliasing = false
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ex883"]
+bg_color = Color(0.89411765, 0.5803922, 0.22745098, 1)
+corner_radius_top_left = 64
+corner_radius_top_right = 64
+corner_radius_bottom_right = 64
+corner_radius_bottom_left = 64
+
+[node name="HpBar" type="ProgressBar" unique_id=1624310174 node_paths=PackedStringArray("_hpLb")]
+z_index = 277
+offset_right = 309.99997
+offset_bottom = 70.0
+scale = Vector2(0.1, 0.1)
+theme_override_styles/background = SubResource("StyleBoxFlat_sdrt1")
+theme_override_styles/fill = SubResource("StyleBoxFlat_ex883")
+value = 68.91
+show_percentage = false
+script = ExtResource("1_sdrt1")
+_hpLb = NodePath("Label")
+
+[node name="Label" type="Label" parent="." unique_id=1229150175]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 28
+theme_override_fonts/font = ExtResource("1_300bt")
+theme_override_font_sizes/font_size = 76
+text = "90/100"
+horizontal_alignment = 1
+vertical_alignment = 1

@@ -1,0 +1,23 @@
+using Godot;
+using Solo.Scripts.Global;
+
+namespace Solo.Scripts.System.BuildingSystem.Buildings
+{
+    public partial class MainBase : Building
+    {
+        //public override void _Ready()
+        //{
+        //}
+
+        //public override void _Process(double delta)
+        //{
+        //}
+        public override void Interact()
+        {
+            base.Interact();
+            GD.Print("MainBase Interact");
+            GameManager.Instance.Player.StartPoint = GlobalPosition;
+            GD.Print("ResetComponent, 重置出生点成功~~");
+        }
+    }
+}

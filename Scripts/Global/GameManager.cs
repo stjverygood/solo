@@ -17,6 +17,7 @@ namespace Solo.Scripts.Global
         static public GameManager Instance => _instance;
         private GameState _curState;
 
+        [Export] public PackedScene DropItemPs;
         [Export] public PackedScene FloatTextLbPs;
         [Export] private PackedScene _startMenuPs;//todo : 这里等到后面有美术资源了, 开屏变慢了, 要优化成场景路径, 动态加载packedScene
         [Export] private PackedScene _loadingViewPs;

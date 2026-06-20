@@ -1,0 +1,41 @@
+[gd_scene format=3 uid="uid://d1cobohhdt060"]
+
+[ext_resource type="Shader" uid="uid://i3lcvke3ll2n" path="res://Assets/Shaders/Outline.gdshader" id="1_nq1a8"]
+[ext_resource type="Script" uid="uid://u4sccffsggkn" path="res://Scripts/System/BuildingSystem/Buildings/MainBase.cs" id="1_oiup2"]
+[ext_resource type="Texture2D" uid="uid://bgbc8y1xxyjde" path="res://Assets/AtlasTextures/MainBase.tres" id="2_oiup2"]
+[ext_resource type="PackedScene" uid="uid://b061vtrr1tw5d" path="res://Scenes/Global/HpBar.tscn" id="3_36k1t"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_s2gw0"]
+shader = ExtResource("1_nq1a8")
+shader_parameter/outline_color = Color(1, 1, 1, 1)
+shader_parameter/outline_width = 0.618000029355
+shader_parameter/flash_modifier = 0.0
+shader_parameter/flash_color = Color(1, 1, 1, 1)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_wl7sm"]
+size = Vector2(64, 32)
+
+[node name="MainBase" type="StaticBody2D" unique_id=1861027985 node_paths=PackedStringArray("_animRoot", "_sprite", "_hpBar")]
+script = ExtResource("1_oiup2")
+_animRoot = NodePath("AnimRoot")
+_sprite = NodePath("AnimRoot/Sprite2D")
+_hpBar = NodePath("HpBar")
+
+[node name="AnimRoot" type="Node2D" parent="." unique_id=1639367242]
+
+[node name="Sprite2D" type="Sprite2D" parent="AnimRoot" unique_id=808970362]
+material = SubResource("ShaderMaterial_s2gw0")
+texture = ExtResource("2_oiup2")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1911161318]
+position = Vector2(0, 16)
+shape = SubResource("RectangleShape2D_wl7sm")
+
+[node name="NavigationObstacle2D" type="NavigationObstacle2D" parent="." unique_id=926142465]
+vertices = PackedVector2Array(-32, 0, -32, 32, 32, 32, 32, 0)
+
+[node name="HpBar" parent="." unique_id=1624310174 instance=ExtResource("3_36k1t")]
+offset_left = -14.999999
+offset_top = -42.0
+offset_right = 294.99997
+offset_bottom = 28.0

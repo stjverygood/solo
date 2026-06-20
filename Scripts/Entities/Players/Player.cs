@@ -32,7 +32,7 @@ namespace Solo.Scripts.Entities.Players
         [Export] private Camera2D _camera;
 
 
-        [Export] public PackedScene DropItemPs;
+        //[Export] public PackedScene DropItemPs;
 
         private ShaderMaterial _shaderMaterial;
 
@@ -677,7 +677,7 @@ namespace Solo.Scripts.Entities.Players
                         continue;
 
                     ItemInstance itemInstance = FastBarInventory.ItemInstanceList[i];
-                    DropItem dropItem = DropItemPs.Instantiate<DropItem>();
+                    DropItem dropItem = GameManager.Instance.DropItemPs.Instantiate<DropItem>();
                     float randomAngle = (float)GD.RandRange(0, Mathf.Tau);
                     float randomRadius = Mathf.Sqrt((float)GD.Randf()) * 30f;
                     Vector2 randomOffset = new Vector2(Mathf.Cos(randomAngle), Mathf.Sin(randomAngle)) * randomRadius;
@@ -692,7 +692,7 @@ namespace Solo.Scripts.Entities.Players
                         continue;
 
                     ItemInstance itemInstance = BagInventory.ItemInstanceList[i];
-                    DropItem dropItem = DropItemPs.Instantiate<DropItem>();
+                    DropItem dropItem = GameManager.Instance.DropItemPs.Instantiate<DropItem>();
                     float randomAngle = (float)GD.RandRange(0, Mathf.Tau);
                     float randomRadius = Mathf.Sqrt((float)GD.Randf()) * 30f;
                     Vector2 randomOffset = new Vector2(Mathf.Cos(randomAngle), Mathf.Sin(randomAngle)) * randomRadius;

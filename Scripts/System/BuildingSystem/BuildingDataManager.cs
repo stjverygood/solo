@@ -13,14 +13,8 @@ namespace Solo.Scripts.System.BuildingSystem
         {
             _buildingDataMap.Add(BuildingType.Water, new BuildingData()
             {
-                TargetType = TargetType.Player,
                 Width = 1,
                 Height = 1,
-                TextureHeight = 3,
-                TexturePath = "res://Assets/AtlasTextures/Tree.tres",
-                MaxHp = 100,
-                DropItemList = new List<(ItemType, int, int)>() { (ItemType.Wood, 2, 6), },
-                ComponentPsPath = new List<string>()
             });
             _buildingDataMap.Add(BuildingType.Tree, new BuildingData()
             {
@@ -28,10 +22,10 @@ namespace Solo.Scripts.System.BuildingSystem
                 Width = 1,
                 Height = 1,
                 TextureHeight = 2,
-                TexturePath = "res://Assets/AtlasTextures/Tree.tres",
                 MaxHp = 100,
+                TexturePath = "res://Assets/AtlasTextures/Tree.tres",
+                TscnPath = "res://Scenes/System/BuildingSystem/Buildings/Tree.tscn",
                 DropItemList = new List<(ItemType, int, int)>() { (ItemType.Wood, 2, 6), },
-                ComponentPsPath = new List<string>()
             });
             _buildingDataMap.Add(BuildingType.Stone, new BuildingData()
             {
@@ -39,10 +33,10 @@ namespace Solo.Scripts.System.BuildingSystem
                 Width = 2,
                 Height = 1,
                 TextureHeight = 2,
-                TexturePath = "res://Assets/AtlasTextures/Stone.tres",
                 MaxHp = 100,
+                TexturePath = "res://Assets/AtlasTextures/Stone.tres",
+                TscnPath = "res://Scenes/System/BuildingSystem/Buildings/Stone.tscn",
                 DropItemList = new List<(ItemType, int, int)>() { (ItemType.Stone, 1, 3), },
-                ComponentPsPath = new List<string>()
             });
             _buildingDataMap.Add(BuildingType.MainBase, new BuildingData()
             {
@@ -50,10 +44,10 @@ namespace Solo.Scripts.System.BuildingSystem
                 Width = 4,
                 Height = 2,
                 TextureHeight = 4,
-                TexturePath = "res://Assets/AtlasTextures/MainBase.tres",
                 MaxHp = 100,
+                TexturePath = "res://Assets/AtlasTextures/MainBase.tres",
+                TscnPath = "res://Scenes/System/BuildingSystem/Buildings/MainBase.tscn",
                 DropItemList = new List<(ItemType, int, int)>() { (ItemType.Stone, 1, 3), },
-                ComponentPsPath = new List<string>() { "res://Scenes/System/BuildingSystem/BuildingComponents/DominComponent.tscn", "res://Scenes/System/BuildingSystem/BuildingComponents/ResetComponent.tscn" }
             });
         }
 
