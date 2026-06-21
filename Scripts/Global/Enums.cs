@@ -64,7 +64,7 @@
         Flag,//法旗
         BuildingCraft,//建筑合成台
         ToolCraft,//工具合成台
-        DefendCraft,//防具合成台
+        ArmorCraft,//防具合成台
         Crucible,//熔炉
         ItemBox,//储物箱
     }
@@ -137,7 +137,7 @@
         Flag,//法旗
         BuildingCraft,//建筑合成台
         ToolCraft,//工具合成台
-        DefendCraft,//防具合成台
+        ArmorCraft,//防具合成台
         Crucible,//熔炉
         ItemBox,//储物箱
 

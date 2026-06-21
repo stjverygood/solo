@@ -24,6 +24,8 @@ namespace Solo.Scripts.System.SaveSystem
 
         public string BagInventoryGuidStr { get; set; }
         public List<ItemInstance> BagInventoryList { get; set; }
+        public string ArmorInventoryGuidStr { get; set; }
+        public List<ItemInstance> ArmorInventoryList { get; set; }
         public string FastBarInventoryGuidStr { get; set; }
         public int FastBarIndex { get; set; }
         public List<ItemInstance> FastBarInventoryList { get; set; }
@@ -43,6 +45,13 @@ namespace Solo.Scripts.System.SaveSystem
             for (int i = 0; i < 16; i++)
             {
                 BagInventoryList.Add(null);
+            }
+
+            ArmorInventoryGuidStr = Guid.NewGuid().ToString();
+            ArmorInventoryList = new List<ItemInstance>(3);
+            for (int i = 0; i < 3; i++)
+            {
+                ArmorInventoryList.Add(null);
             }
 
             FastBarInventoryGuidStr = Guid.NewGuid().ToString();

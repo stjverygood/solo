@@ -63,6 +63,7 @@ namespace Solo.Scripts.Entities.Players
         private Tween _animTween; // 用于管理当前动画
 
         public Inventory BagInventory = new Inventory();//背包
+        public Inventory ArmorInventory = new Inventory();//装备栏
         public Inventory FastBarInventory = new Inventory();//快捷栏
 
 
@@ -91,6 +92,8 @@ namespace Solo.Scripts.Entities.Players
 
             BagInventory.GuidStr = SaveManager.Instance.CurSaveData.BagInventoryGuidStr;
             BagInventory.ItemInstanceList = SaveManager.Instance.CurSaveData.BagInventoryList;
+            ArmorInventory.GuidStr = SaveManager.Instance.CurSaveData.ArmorInventoryGuidStr;
+            ArmorInventory.ItemInstanceList = SaveManager.Instance.CurSaveData.ArmorInventoryList;
             FastBarInventory.GuidStr = SaveManager.Instance.CurSaveData.FastBarInventoryGuidStr;
             FastBarInventory.ItemInstanceList = SaveManager.Instance.CurSaveData.FastBarInventoryList;
             CurFastBarIndex = SaveManager.Instance.CurSaveData.FastBarIndex;
@@ -118,6 +121,7 @@ namespace Solo.Scripts.Entities.Players
             _selfView.BasicCraftView.RefreshType(CraftViewType.Basic);
             _selfView.Visible = false;
             _bagInventoryView.Init(BagInventory);
+            _selfView.ArmorInventoryView.Init(ArmorInventory);
             _fastBarInventoryView.Init(FastBarInventory);
             _bagInventoryView.Visible = false;
             _fastBarInventoryView.SetSelected(CurFastBarIndex, true);
@@ -264,7 +268,7 @@ namespace Solo.Scripts.Entities.Players
             if (Input.IsActionJustPressed("Atk"))
             {
                 //根据物品, 若是buildingItem, 转到建筑模式
-                if (FastBarInventory.ItemInstanceList[CurFastBarIndex] != null && ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).isBuilding)
+                if (FastBarInventory.ItemInstanceList[CurFastBarIndex] != null && ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).IsBuilding)
                 {
                     ChangeState(PlayerState.Build);
                     return;
@@ -330,7 +334,7 @@ namespace Solo.Scripts.Entities.Players
             CheckTarget();
             if (Input.IsActionJustPressed("Atk"))
             {
-                if (FastBarInventory.ItemInstanceList[CurFastBarIndex] != null && ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).isBuilding)
+                if (FastBarInventory.ItemInstanceList[CurFastBarIndex] != null && ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).IsBuilding)
                 {
                     ChangeState(PlayerState.Build);
                     return;
@@ -394,7 +398,7 @@ namespace Solo.Scripts.Entities.Players
             CheckTarget();
             if (Input.IsActionJustPressed("Atk"))
             {
-                if (FastBarInventory.ItemInstanceList[CurFastBarIndex] != null && ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).isBuilding)
+                if (FastBarInventory.ItemInstanceList[CurFastBarIndex] != null && ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).IsBuilding)
                 {
                     ChangeState(PlayerState.Build);
                     return;
@@ -564,7 +568,7 @@ namespace Solo.Scripts.Entities.Players
             _animTween.Parallel().TweenProperty(BodyRoot, "scale", new Vector2(1f, 1f), 0.1f);
             _animTween.Finished += () =>
             {
-                if (_curTarget is BuildingCraft or ToolCraft or DefendCraft)
+                if (_curTarget is BuildingCraft or ToolCraft or ArmorCraft)
                 {
                     _curInteractingNode = _curTarget;
                     ChangeState(PlayerState.BagUI);
@@ -745,9 +749,9 @@ namespace Solo.Scripts.Entities.Players
             {
                 _selfView.ChangeView(SelfViewTarget.OtherCraftView, CraftViewType.Tool);
             }
-            else if (_curInteractingNode is DefendCraft)
+            else if (_curInteractingNode is ArmorCraft)
             {
-                _selfView.ChangeView(SelfViewTarget.OtherCraftView, CraftViewType.Defend);
+                _selfView.ChangeView(SelfViewTarget.OtherCraftView, CraftViewType.Armor);
             }
             else
             {
@@ -915,7 +919,7 @@ namespace Solo.Scripts.Entities.Players
             _handSprite.Texture = null;
             if (FastBarInventory.ItemInstanceList[CurFastBarIndex] == null)
                 return;
-            if (ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).isBuilding == false)
+            if (ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).IsBuilding == false)
             {
                 _handSprite.Texture = GD.Load<Texture2D>(ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).IconPath);
             }

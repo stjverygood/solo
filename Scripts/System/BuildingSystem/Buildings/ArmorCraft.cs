@@ -1,6 +1,6 @@
 namespace Solo.Scripts.System.BuildingSystem.Buildings
 {
-    public partial class DefendCraft : Building
+    public partial class ArmorCraft : Building
     {
 
     }

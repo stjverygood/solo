@@ -13,7 +13,7 @@ namespace Solo.Scripts.System.CraftSystem
         Seed,//合成种子的
         Weapon, //剑, 弓
         Tool,//镐,斧,壶, 鱼竿
-        Defend,//盔甲鞋
+        Armor,//盔甲鞋
     }
 
     public partial class CraftView : Control
@@ -71,7 +71,7 @@ namespace Solo.Scripts.System.CraftSystem
                     CraftItemList.Add(new CraftItem(ItemType.MainBase, new List<(ItemType, int)>() { (ItemType.MainBaseStone, 0), (ItemType.Wood, 0), (ItemType.Stone, 0) }));
                     CraftItemList.Add(new CraftItem(ItemType.Flag, new List<(ItemType, int)>() { (ItemType.MainBaseStone, 0), (ItemType.Wood, 0), (ItemType.Stone, 0) }));
                     CraftItemList.Add(new CraftItem(ItemType.ToolCraft, new List<(ItemType, int)>() { (ItemType.MainBaseStone, 0), (ItemType.Wood, 0), (ItemType.Stone, 0) }));
-                    CraftItemList.Add(new CraftItem(ItemType.DefendCraft, new List<(ItemType, int)>() { (ItemType.MainBaseStone, 0), (ItemType.Wood, 0), (ItemType.Stone, 0) }));
+                    CraftItemList.Add(new CraftItem(ItemType.ArmorCraft, new List<(ItemType, int)>() { (ItemType.MainBaseStone, 0), (ItemType.Wood, 0), (ItemType.Stone, 0) }));
                     break;
                 case CraftViewType.Weapon://高级武器合成台
                     CraftItemList.Add(new CraftItem(ItemType.IronSword, new List<(ItemType, int)>() { (ItemType.Iron, 0) }));
@@ -95,7 +95,7 @@ namespace Solo.Scripts.System.CraftSystem
                     CraftItemList.Add(new CraftItem(ItemType.JadePot, new List<(ItemType, int)>() { (ItemType.Gold, 0) }));
                     CraftItemList.Add(new CraftItem(ItemType.JadeRod, new List<(ItemType, int)>() { (ItemType.Gold, 0) }));
                     break;
-                case CraftViewType.Defend://高级防具合成台
+                case CraftViewType.Armor://高级防具合成台
                     CraftItemList.Add(new CraftItem(ItemType.IronHelmet, new List<(ItemType, int)>() { (ItemType.Iron, 0) }));
                     CraftItemList.Add(new CraftItem(ItemType.IronArmor, new List<(ItemType, int)>() { (ItemType.Iron, 0) }));
                     CraftItemList.Add(new CraftItem(ItemType.IronBoot, new List<(ItemType, int)>() { (ItemType.Iron, 0) }));

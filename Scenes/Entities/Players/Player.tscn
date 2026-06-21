@@ -62,7 +62,7 @@ _sprite = NodePath("SpriteRoot/BodyRoot/Sprite")
 _camera = NodePath("Camera2D")
 _selfView = NodePath("CanvasLayer/SelfView")
 _bagInventoryView = NodePath("CanvasLayer/BagInventoryView")
-_fastBarInventoryView = NodePath("CanvasLayer/FastBarInventoryViewv")
+_fastBarInventoryView = NodePath("CanvasLayer/FastBarInventoryView")
 _hpPb = NodePath("CanvasLayer/HpPb")
 _hpLb = NodePath("CanvasLayer/HpPb/HpLb")
 _hgPb = NodePath("CanvasLayer/HgPb")
@@ -159,7 +159,7 @@ offset_right = -210.0
 offset_bottom = 131.0
 grow_horizontal = 0
 
-[node name="FastBarInventoryViewv" parent="CanvasLayer" unique_id=1473412187 instance=ExtResource("4_y25d7")]
+[node name="FastBarInventoryView" parent="CanvasLayer" unique_id=1473412187 instance=ExtResource("4_y25d7")]
 anchors_preset = 7
 anchor_left = 0.5
 anchor_top = 1.0
