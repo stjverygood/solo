@@ -23,7 +23,7 @@ namespace Solo.Scripts.Entities.Players
             OtherCraftBtn.Visible = false;
         }
 
-        public void ChangeView(SelfViewTarget type)
+        public void ChangeView(SelfViewTarget type, CraftViewType? craftViewType = null)
         {
             // 先将所有按钮置为未选中（防止状态冲突）
             EquipmentBtn.ButtonPressed = false;
@@ -44,7 +44,7 @@ namespace Solo.Scripts.Entities.Players
                 case SelfViewTarget.OtherCraftView:
                     OtherCraftBtn.Visible = true;
                     OtherCraftBtn.ButtonPressed = true;
-                    OtherCraftView.RefreshType(CraftViewType.Building);
+                    OtherCraftView.RefreshType((CraftViewType)craftViewType);
                     break;
             }
         }

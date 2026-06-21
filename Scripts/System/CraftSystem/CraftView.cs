@@ -70,6 +70,40 @@ namespace Solo.Scripts.System.CraftSystem
                 case CraftViewType.Building://建筑合成台
                     CraftItemList.Add(new CraftItem(ItemType.MainBase, new List<(ItemType, int)>() { (ItemType.MainBaseStone, 0), (ItemType.Wood, 0), (ItemType.Stone, 0) }));
                     CraftItemList.Add(new CraftItem(ItemType.Flag, new List<(ItemType, int)>() { (ItemType.MainBaseStone, 0), (ItemType.Wood, 0), (ItemType.Stone, 0) }));
+                    CraftItemList.Add(new CraftItem(ItemType.ToolCraft, new List<(ItemType, int)>() { (ItemType.MainBaseStone, 0), (ItemType.Wood, 0), (ItemType.Stone, 0) }));
+                    break;
+                case CraftViewType.Weapon://高级武器合成台
+                    CraftItemList.Add(new CraftItem(ItemType.IronSword, new List<(ItemType, int)>() { (ItemType.Iron, 0) }));
+                    CraftItemList.Add(new CraftItem(ItemType.IronBow, new List<(ItemType, int)>() { (ItemType.Iron, 0) }));
+                    CraftItemList.Add(new CraftItem(ItemType.GoldSword, new List<(ItemType, int)>() { (ItemType.Gold, 0) }));
+                    CraftItemList.Add(new CraftItem(ItemType.GoldBow, new List<(ItemType, int)>() { (ItemType.Gold, 0) }));
+                    CraftItemList.Add(new CraftItem(ItemType.JadeSword, new List<(ItemType, int)>() { (ItemType.Gold, 0) }));
+                    CraftItemList.Add(new CraftItem(ItemType.JadeBow, new List<(ItemType, int)>() { (ItemType.Gold, 0) }));
+                    break;
+                case CraftViewType.Tool://高级工具合成台
+                    CraftItemList.Add(new CraftItem(ItemType.IronPickaxe, new List<(ItemType, int)>() { (ItemType.Iron, 0) }));
+                    CraftItemList.Add(new CraftItem(ItemType.IronAxe, new List<(ItemType, int)>() { (ItemType.Iron, 0) }));
+                    CraftItemList.Add(new CraftItem(ItemType.IronPot, new List<(ItemType, int)>() { (ItemType.Iron, 0) }));
+                    CraftItemList.Add(new CraftItem(ItemType.IronRod, new List<(ItemType, int)>() { (ItemType.Iron, 0) }));
+                    CraftItemList.Add(new CraftItem(ItemType.GoldPickaxe, new List<(ItemType, int)>() { (ItemType.Gold, 0) }));
+                    CraftItemList.Add(new CraftItem(ItemType.GoldAxe, new List<(ItemType, int)>() { (ItemType.Gold, 0) }));
+                    CraftItemList.Add(new CraftItem(ItemType.GoldPot, new List<(ItemType, int)>() { (ItemType.Gold, 0) }));
+                    CraftItemList.Add(new CraftItem(ItemType.GoldRod, new List<(ItemType, int)>() { (ItemType.Gold, 0) }));
+                    CraftItemList.Add(new CraftItem(ItemType.JadePickaxe, new List<(ItemType, int)>() { (ItemType.Gold, 0) }));
+                    CraftItemList.Add(new CraftItem(ItemType.JadeAxe, new List<(ItemType, int)>() { (ItemType.Gold, 0) }));
+                    CraftItemList.Add(new CraftItem(ItemType.JadePot, new List<(ItemType, int)>() { (ItemType.Gold, 0) }));
+                    CraftItemList.Add(new CraftItem(ItemType.JadeRod, new List<(ItemType, int)>() { (ItemType.Gold, 0) }));
+                    break;
+                case CraftViewType.Defend://高级防具合成台
+                    CraftItemList.Add(new CraftItem(ItemType.IronHelmet, new List<(ItemType, int)>() { (ItemType.Iron, 0) }));
+                    CraftItemList.Add(new CraftItem(ItemType.IronArmor, new List<(ItemType, int)>() { (ItemType.Iron, 0) }));
+                    CraftItemList.Add(new CraftItem(ItemType.IronBoot, new List<(ItemType, int)>() { (ItemType.Iron, 0) }));
+                    CraftItemList.Add(new CraftItem(ItemType.GoldHelmet, new List<(ItemType, int)>() { (ItemType.Gold, 0) }));
+                    CraftItemList.Add(new CraftItem(ItemType.GoldArmor, new List<(ItemType, int)>() { (ItemType.Gold, 0) }));
+                    CraftItemList.Add(new CraftItem(ItemType.GoldBoot, new List<(ItemType, int)>() { (ItemType.Gold, 0) }));
+                    CraftItemList.Add(new CraftItem(ItemType.JadeHelmet, new List<(ItemType, int)>() { (ItemType.Gold, 0) }));
+                    CraftItemList.Add(new CraftItem(ItemType.JadeArmor, new List<(ItemType, int)>() { (ItemType.Gold, 0) }));
+                    CraftItemList.Add(new CraftItem(ItemType.JadeBoot, new List<(ItemType, int)>() { (ItemType.Gold, 0) }));
                     break;
             }
 

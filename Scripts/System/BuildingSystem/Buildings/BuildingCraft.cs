@@ -8,7 +8,6 @@ namespace Solo.Scripts.System.BuildingSystem.Buildings
         {
             base.Interact();
             GD.Print("BuildingCraft Interact");
-
         }
     }
 }
