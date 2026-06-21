@@ -40,7 +40,7 @@ namespace Solo.Scripts.Entities.Players
 
         //人物属性
         public Vector2 StartPoint = new Vector2(0, 0);//出生点
-        public float moveSpeed = 500;
+        public float moveSpeed = 100;
         public float Atk = 10;
         private float _maxHp = 100;
         private float _maxHg = 100;
@@ -277,17 +277,8 @@ namespace Solo.Scripts.Entities.Players
             }
             if (Input.IsActionJustPressed("Interact"))
             {
-                //根据物品, 若是buildingItem, 转到建筑模式
-                if (FastBarInventory.ItemInstanceList[CurFastBarIndex] != null && ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).isBuilding)
-                {
-                    ChangeState(PlayerState.Build);
-                    return;
-                }
-                else
-                {
-                    ChangeState(PlayerState.Interact);
-                    return;
-                }
+                ChangeState(PlayerState.Interact);
+                return;
             }
 
             Vector2 input = Input.GetVector("MoveLeft", "MoveRight", "MoveForward", "MoveBack");
@@ -352,16 +343,8 @@ namespace Solo.Scripts.Entities.Players
             }
             if (Input.IsActionJustPressed("Interact"))
             {
-                if (FastBarInventory.ItemInstanceList[CurFastBarIndex] != null && ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).isBuilding)
-                {
-                    ChangeState(PlayerState.Build);
-                    return;
-                }
-                else
-                {
-                    ChangeState(PlayerState.Interact);
-                    return;
-                }
+                ChangeState(PlayerState.Interact);
+                return;
             }
 
             Vector2 input = Input.GetVector("MoveLeft", "MoveRight", "MoveForward", "MoveBack");
@@ -424,16 +407,8 @@ namespace Solo.Scripts.Entities.Players
             }
             if (Input.IsActionJustPressed("Interact"))
             {
-                if (FastBarInventory.ItemInstanceList[CurFastBarIndex] != null && ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).isBuilding)
-                {
-                    ChangeState(PlayerState.Build);
-                    return;
-                }
-                else
-                {
-                    ChangeState(PlayerState.Interact);
-                    return;
-                }
+                ChangeState(PlayerState.Interact);
+                return;
             }
 
             Vector2 input = Input.GetVector("MoveLeft", "MoveRight", "MoveForward", "MoveBack");

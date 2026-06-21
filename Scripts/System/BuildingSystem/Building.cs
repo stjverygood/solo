@@ -77,16 +77,18 @@ namespace Solo.Scripts.System.BuildingSystem
             animTween.Parallel().TweenProperty(_sprite.Material, "shader_parameter/flash_modifier", 0.0f, 0.1f);
             animTween.TweenProperty(_animRoot, "scale", new Vector2(1f, 1f), 0.1f);
 
-            FloatTextLb floatTextLb = GameManager.Instance.FloatTextLbPs.Instantiate<FloatTextLb>();
-            GetTree().CurrentScene.AddChild(floatTextLb);
-            floatTextLb.Init($"-{damage}", GlobalPosition);
+
 
             _damageCooldownTimer = 0f;
             _healTimer = 0f;
 
-            HandleDamage(damage, itemType);//子类重写, 默认不处理
+            float finalDamage = HandleDamage(damage, itemType);//子类重写, 默认不处理
 
-            SetCurHp(_curHp - damage);
+            FloatTextLb floatTextLb = GameManager.Instance.FloatTextLbPs.Instantiate<FloatTextLb>();
+            GetTree().CurrentScene.AddChild(floatTextLb);
+            floatTextLb.Init($"-{finalDamage}", GlobalPosition);
+
+            SetCurHp(_curHp - finalDamage);
             if (_curHp <= 0)
             {
                 Die();//子类重写, 默认爆装备
