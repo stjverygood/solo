@@ -71,6 +71,7 @@ namespace Solo.Scripts.System.CraftSystem
                     CraftItemList.Add(new CraftItem(ItemType.MainBase, new List<(ItemType, int)>() { (ItemType.MainBaseStone, 0), (ItemType.Wood, 0), (ItemType.Stone, 0) }));
                     CraftItemList.Add(new CraftItem(ItemType.Flag, new List<(ItemType, int)>() { (ItemType.MainBaseStone, 0), (ItemType.Wood, 0), (ItemType.Stone, 0) }));
                     CraftItemList.Add(new CraftItem(ItemType.ToolCraft, new List<(ItemType, int)>() { (ItemType.MainBaseStone, 0), (ItemType.Wood, 0), (ItemType.Stone, 0) }));
+                    CraftItemList.Add(new CraftItem(ItemType.DefendCraft, new List<(ItemType, int)>() { (ItemType.MainBaseStone, 0), (ItemType.Wood, 0), (ItemType.Stone, 0) }));
                     break;
                 case CraftViewType.Weapon://高级武器合成台
                     CraftItemList.Add(new CraftItem(ItemType.IronSword, new List<(ItemType, int)>() { (ItemType.Iron, 0) }));

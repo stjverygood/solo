@@ -564,7 +564,7 @@ namespace Solo.Scripts.Entities.Players
             _animTween.Parallel().TweenProperty(BodyRoot, "scale", new Vector2(1f, 1f), 0.1f);
             _animTween.Finished += () =>
             {
-                if (_curTarget is BuildingCraft or ToolCraft)
+                if (_curTarget is BuildingCraft or ToolCraft or DefendCraft)
                 {
                     _curInteractingNode = _curTarget;
                     ChangeState(PlayerState.BagUI);
@@ -745,10 +745,10 @@ namespace Solo.Scripts.Entities.Players
             {
                 _selfView.ChangeView(SelfViewTarget.OtherCraftView, CraftViewType.Tool);
             }
-            //else if (_curInteractingNode is ArmorCraft)
-            //{
-            //    _selfView.ChangeView(SelfViewTarget.OtherCraftView, CraftViewType.Defend);
-            //}
+            else if (_curInteractingNode is DefendCraft)
+            {
+                _selfView.ChangeView(SelfViewTarget.OtherCraftView, CraftViewType.Defend);
+            }
             else
             {
                 _selfView.ChangeView(SelfViewTarget.EquipmentView);

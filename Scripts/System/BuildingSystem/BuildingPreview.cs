@@ -27,8 +27,8 @@ public partial class BuildingPreview : Node2D
             case ItemType.ToolCraft:
                 Type = BuildingType.ToolCraft;
                 break;
-            case ItemType.ArmorCraft:
-                Type = BuildingType.ArmorCraft;
+            case ItemType.DefendCraft:
+                Type = BuildingType.DefendCraft;
                 break;
             case ItemType.Crucible:
                 Type = BuildingType.Crucible;
@@ -101,6 +101,12 @@ public partial class BuildingPreview : Node2D
                 ToolCraft toolCraft = toolCraftPs.Instantiate<ToolCraft>();
                 toolCraft.Init(Type, GlobalPosition);
                 GetTree().CurrentScene.AddChild(toolCraft);
+                break;
+            case BuildingType.DefendCraft:
+                PackedScene defendCraftPs = GD.Load<PackedScene>(buildingData.TscnPath);
+                DefendCraft defendCraft = defendCraftPs.Instantiate<DefendCraft>();
+                defendCraft.Init(Type, GlobalPosition);
+                GetTree().CurrentScene.AddChild(defendCraft);
                 break;
         }
         return true;
