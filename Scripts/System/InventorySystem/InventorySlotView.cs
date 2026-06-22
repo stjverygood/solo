@@ -1,6 +1,7 @@
 using Godot;
 using Godot.Collections;
 using Solo.Scripts.Global;
+using Solo.Scripts.System.InventorySystem;
 using Solo.Scripts.System.ItemSystem;
 
 public partial class InventorySlotView : Control
@@ -84,6 +85,19 @@ public partial class InventorySlotView : Control
 
     public override bool _CanDropData(Vector2 atPosition, Variant data)
     {
+        if (_parent.Inventory.GuidStr == GameManager.Instance.Player.ArmorInventory.GuidStr)
+        {
+            Dictionary dict = (Dictionary)data;
+            string sourceGuid = (string)dict["InventoryGuid"];
+            int sourceIdx = (int)dict["Index"];
+            Inventory sourceInv = GameManager.Instance.Player.GetInventoryByGuid(sourceGuid);
+            if (sourceInv == null || sourceIdx >= sourceInv.ItemInstanceList.Count)
+                return false;
+            ItemInstance item = sourceInv.ItemInstanceList[sourceIdx];
+            if (item == null) return false;
+            ItemData itemData = ItemDataManager.Instance.GetItemData(item.Type);
+            return itemData.IsArmor && (int)itemData.ArmorSlot == _index;
+        }
         return true;
     }
 
@@ -92,18 +106,23 @@ public partial class InventorySlotView : Control
         Dictionary dict = (Dictionary)data;
         string sourceInventoryGuid = (string)dict["InventoryGuid"];
         int sourceIndex = (int)dict["Index"];
-        if (sourceInventoryGuid == _parent.Inventory.GuidStr)//背包内拖动
+        if (sourceInventoryGuid == _parent.Inventory.GuidStr)
         {
             if (sourceIndex == _index)
                 return;
+            if (_parent.Inventory.GuidStr == GameManager.Instance.Player.ArmorInventory.GuidStr)
+            {
+                ItemData srcData = ItemDataManager.Instance.GetItemData(_parent.Inventory.ItemInstanceList[sourceIndex].Type);
+                ItemData dstData = ItemDataManager.Instance.GetItemData(_parent.Inventory.ItemInstanceList[_index].Type);
+                if (!srcData.IsArmor || !dstData.IsArmor || srcData.ArmorSlot != dstData.ArmorSlot)
+                    return;
+            }
             _parent.Inventory.SwapItem(sourceIndex, _index);
         }
-        else//跨背包拖动
+        else
         {
             GameManager.Instance.Player.SwapItemInterInventory(sourceInventoryGuid, sourceIndex, _parent.Inventory.GuidStr, _index);
         }
-
-
     }
 
     public void SetSelected(bool isSelected)

@@ -33,11 +33,14 @@ namespace Solo.Scripts.System.CraftSystem
             _craftBtn.Pressed += () =>
             {
                 if (_curCraftItem == null) return;
-                foreach ((ItemType, int) t in _curCraftItem.RequiredItemList)
+                if (!GameManager.Instance.IsDebugMode)
                 {
-                    int remain = t.Item2;
-                    remain -= GameManager.Instance.Player.BagInventory.RemoveItemByType(t.Item1, remain);
-                    GameManager.Instance.Player.FastBarInventory.RemoveItemByType(t.Item1, remain);
+                    foreach ((ItemType, int) t in _curCraftItem.RequiredItemList)
+                    {
+                        int remain = t.Item2;
+                        remain -= GameManager.Instance.Player.BagInventory.RemoveItemByType(t.Item1, remain);
+                        GameManager.Instance.Player.FastBarInventory.RemoveItemByType(t.Item1, remain);
+                    }
                 }
                 GameManager.Instance.Player.AddItemToInventory(new ItemInstance() { Type = _curCraftItem.Type, Count = 1, CurDur = ItemDataManager.Instance.GetItemData(_curCraftItem.Type).MaxDur });
                 CheckCanCraft();
@@ -133,6 +136,11 @@ namespace Solo.Scripts.System.CraftSystem
 
         private void CheckCanCraft()
         {
+            if (GameManager.Instance.IsDebugMode)
+            {
+                _craftBtn.Disabled = false;
+                return;
+            }
             foreach ((ItemType, int) t in _curCraftItem.RequiredItemList)
             {
                 int count = GameManager.Instance.Player.FastBarInventory.GetItemCount(t.Item1) + GameManager.Instance.Player.BagInventory.GetItemCount(t.Item1);

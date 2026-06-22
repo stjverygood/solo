@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://bv36kio2oi60f"]
 
 [ext_resource type="Script" uid="uid://bkrggs67x2j84" path="res://Scripts/Entities/Players/SelfView.cs" id="1_8ysbs"]
-[ext_resource type="PackedScene" uid="uid://bji8v2soe8d4o" path="res://Scenes/System/InventorySystem/ArmorInventoryView.tscn" id="2_wqlry"]
+[ext_resource type="PackedScene" uid="uid://cq5didowaqjpg" path="res://Scenes/Entities/Players/ArmorView.tscn" id="2_ifvws"]
 [ext_resource type="PackedScene" uid="uid://cfu7wy1op48g5" path="res://Scenes/System/CraftSystem/CraftView.tscn" id="3_x8f1r"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_qyddj"]
@@ -12,11 +12,11 @@ bg_color = Color(0.16862746, 0.16862746, 0.16862746, 1)
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ifvws"]
 bg_color = Color(0.3529412, 0.4117647, 0.53333336, 1)
 
-[sub_resource type="ButtonGroup" id="ButtonGroup_ifvws"]
-
 [sub_resource type="ButtonGroup" id="ButtonGroup_i0elv"]
 
-[node name="SelfView" type="Control" unique_id=1555358295 node_paths=PackedStringArray("EquipmentBtn", "BasicCraftBtn", "OtherCraftBtn", "ArmorInventoryView", "BasicCraftView", "OtherCraftView")]
+[sub_resource type="ButtonGroup" id="ButtonGroup_x52a3"]
+
+[node name="SelfView" type="Control" unique_id=1555358295 node_paths=PackedStringArray("EquipmentBtn", "BasicCraftBtn", "OtherCraftBtn", "ArmorView", "BasicCraftView", "OtherCraftView")]
 custom_minimum_size = Vector2(300, 400)
 layout_mode = 3
 anchors_preset = 15
@@ -30,7 +30,7 @@ script = ExtResource("1_8ysbs")
 EquipmentBtn = NodePath("Panel/MarginContainer/HBoxContainer/EquipmentBtn")
 BasicCraftBtn = NodePath("Panel/MarginContainer/HBoxContainer/BasicCraftBtn")
 OtherCraftBtn = NodePath("Panel/MarginContainer/HBoxContainer/OtherCraftBtn")
-ArmorInventoryView = NodePath("Panel/ArmorInventoryView")
+ArmorView = NodePath("Panel/ArmorView")
 BasicCraftView = NodePath("Panel/BasicCraftView")
 OtherCraftView = NodePath("Panel/OtherCraftView")
 
@@ -86,16 +86,11 @@ offset_right = 300.0
 offset_bottom = 44.0
 theme_override_styles/panel = SubResource("StyleBoxFlat_ifvws")
 
-[node name="ArmorInventoryView" parent="Panel" unique_id=658431685 instance=ExtResource("2_wqlry")]
-layout_mode = 0
-anchors_preset = 0
-anchor_right = 0.0
-anchor_bottom = 0.0
+[node name="ArmorView" parent="Panel" unique_id=1598107125 instance=ExtResource("2_ifvws")]
+layout_mode = 1
 offset_top = 43.0
-offset_right = 300.0
-offset_bottom = 403.0
-grow_horizontal = 1
-grow_vertical = 1
+offset_right = 262.5
+offset_bottom = 384.24
 
 [node name="BasicCraftView" parent="Panel" unique_id=1489113954 instance=ExtResource("3_x8f1r")]
 layout_mode = 0
@@ -107,7 +102,7 @@ offset_right = 300.0
 offset_bottom = 403.0
 grow_horizontal = 1
 grow_vertical = 1
-_btnGroup = SubResource("ButtonGroup_ifvws")
+_btnGroup = SubResource("ButtonGroup_i0elv")
 
 [node name="OtherCraftView" parent="Panel" unique_id=1325985176 instance=ExtResource("3_x8f1r")]
 layout_mode = 0
@@ -120,4 +115,4 @@ offset_bottom = 403.0
 grow_horizontal = 1
 grow_vertical = 1
 Type = 1
-_btnGroup = SubResource("ButtonGroup_i0elv")
+_btnGroup = SubResource("ButtonGroup_x52a3")

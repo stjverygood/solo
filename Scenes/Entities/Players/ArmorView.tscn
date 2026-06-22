@@ -1,0 +1,74 @@
+[gd_scene format=3 uid="uid://cq5didowaqjpg"]
+
+[ext_resource type="Script" uid="uid://qvnfuh4hmeui" path="res://Scripts/Entities/Players/ArmorView.cs" id="1_1j6m5"]
+[ext_resource type="Texture2D" uid="uid://cmlghpyvrsitg" path="res://Assets/AtlasTextures/Player.tres" id="2_1j6m5"]
+[ext_resource type="PackedScene" uid="uid://bji8v2soe8d4o" path="res://Scenes/System/InventorySystem/ArmorInventoryView.tscn" id="4_akjis"]
+
+[node name="ArmorView" type="Control" unique_id=1598107125 node_paths=PackedStringArray("_helmetSprite", "_ArmorSprite", "_bootSprite", "ArmorInventoryView")]
+custom_minimum_size = Vector2(300, 360)
+layout_mode = 3
+anchor_right = 0.125
+anchor_bottom = 0.469
+offset_right = 156.0
+offset_bottom = 56.087982
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_1j6m5")
+_helmetSprite = NodePath("Panel/Panel/BodyRoot/HelmetNode/HelmetSprite")
+_ArmorSprite = NodePath("Panel/Panel/BodyRoot/ArmorNode/ArmorSprite")
+_bootSprite = NodePath("Panel/Panel/BodyRoot/BootNode/BootSprite")
+ArmorInventoryView = NodePath("Panel/Panel2/ArmorInventoryView")
+
+[node name="Panel" type="Panel" parent="." unique_id=1829191855]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = -16.0
+offset_bottom = -24.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Panel" type="Panel" parent="Panel" unique_id=1965722042]
+layout_mode = 0
+offset_left = 16.0
+offset_top = 16.0
+offset_right = 160.0
+offset_bottom = 312.0
+
+[node name="BodyRoot" type="Node2D" parent="Panel/Panel" unique_id=392515956]
+position = Vector2(72.00001, 280)
+scale = Vector2(10, 10)
+
+[node name="Sprite" type="Sprite2D" parent="Panel/Panel/BodyRoot" unique_id=709122126]
+position = Vector2(0, -15)
+texture = ExtResource("2_1j6m5")
+
+[node name="HelmetNode" type="Node2D" parent="Panel/Panel/BodyRoot" unique_id=983095070]
+position = Vector2(0, -20)
+
+[node name="HelmetSprite" type="Sprite2D" parent="Panel/Panel/BodyRoot/HelmetNode" unique_id=561130446]
+
+[node name="ArmorNode" type="Node2D" parent="Panel/Panel/BodyRoot" unique_id=708951462]
+position = Vector2(0, -11)
+
+[node name="ArmorSprite" type="Sprite2D" parent="Panel/Panel/BodyRoot/ArmorNode" unique_id=1154227526]
+
+[node name="BootNode" type="Node2D" parent="Panel/Panel/BodyRoot" unique_id=1310452825]
+position = Vector2(0, -3)
+
+[node name="BootSprite" type="Sprite2D" parent="Panel/Panel/BodyRoot/BootNode" unique_id=824154403]
+
+[node name="Panel2" type="Panel" parent="Panel" unique_id=80615504]
+layout_mode = 0
+offset_left = 176.0
+offset_top = 16.0
+offset_right = 263.0
+offset_bottom = 314.0
+
+[node name="ArmorInventoryView" parent="Panel/Panel2" unique_id=658431685 instance=ExtResource("4_akjis")]
+layout_mode = 1
+offset_left = 104.0
+offset_top = 190.0
+offset_right = -80.0
+offset_bottom = -194.0

@@ -25,6 +25,13 @@
         Fox,
     }
 
+    public enum ArmorSlotType
+    {
+        Helmet,
+        Armor,
+        Boot,
+    }
+
     public enum SelfViewTarget
     {
         EquipmentView,

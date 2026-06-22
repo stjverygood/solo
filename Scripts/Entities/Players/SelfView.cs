@@ -8,7 +8,8 @@ namespace Solo.Scripts.Entities.Players
         [Export] public Button EquipmentBtn;
         [Export] public Button BasicCraftBtn;
         [Export] public Button OtherCraftBtn;
-        [Export] public InventoryView ArmorInventoryView;
+        //[Export] public InventoryView ArmorInventoryView;
+        [Export] public ArmorView ArmorView;
         [Export] public CraftView BasicCraftView;
         [Export] public CraftView OtherCraftView;
 
@@ -17,7 +18,7 @@ namespace Solo.Scripts.Entities.Players
             EquipmentBtn.Toggled += EquipmentBtn_Toggled;
             BasicCraftBtn.Toggled += BasicCraftBtn_Toggled;
             OtherCraftBtn.Toggled += OtherCraftBtn_Toggled;
-            ArmorInventoryView.Visible = true;
+            ArmorView.Visible = true;
             BasicCraftView.Visible = false;
             OtherCraftView.Visible = false;
             OtherCraftBtn.Visible = false;
@@ -53,7 +54,7 @@ namespace Solo.Scripts.Entities.Players
         {
             if (toggledOn)
             {
-                ArmorInventoryView.Visible = true;
+                ArmorView.Visible = true;
                 BasicCraftView.Visible = false;
                 OtherCraftView.Visible = false;
             }
@@ -63,7 +64,7 @@ namespace Solo.Scripts.Entities.Players
         {
             if (toggledOn)
             {
-                ArmorInventoryView.Visible = false;
+                ArmorView.Visible = false;
                 BasicCraftView.Visible = true;
                 OtherCraftView.Visible = false;
             }
@@ -71,7 +72,7 @@ namespace Solo.Scripts.Entities.Players
 
         private void OtherCraftBtn_Toggled(bool toggledOn)
         {
-            ArmorInventoryView.Visible = false;
+            ArmorView.Visible = false;
             BasicCraftView.Visible = false;
             OtherCraftView.Visible = true;
         }

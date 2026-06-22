@@ -31,6 +31,9 @@ namespace Solo.Scripts.Entities.Players
         [Export] public Node2D SpriteRoot;//附带上身体之外的交互点, 比如后面拍建筑的定位点, 用于控制功能交互的
         [Export] public Node2D BodyRoot;//仅仅是身体的根节点, 用于控制动画
         [Export] private Sprite2D _sprite;
+        [Export] private Sprite2D _helmetSprite;
+        [Export] private Sprite2D _ArmorSprite;
+        [Export] private Sprite2D _bootSprite;
         [Export] private Camera2D _camera;
 
 
@@ -121,11 +124,13 @@ namespace Solo.Scripts.Entities.Players
             _selfView.BasicCraftView.RefreshType(CraftViewType.Basic);
             _selfView.Visible = false;
             _bagInventoryView.Init(BagInventory);
-            _selfView.ArmorInventoryView.Init(ArmorInventory);
+            _selfView.ArmorView.ArmorInventoryView.Init(ArmorInventory);
             _fastBarInventoryView.Init(FastBarInventory);
             _bagInventoryView.Visible = false;
             _fastBarInventoryView.SetSelected(CurFastBarIndex, true);
             RefreshHandNode();
+            RefreshArmorVisuals();
+            ArmorInventory.SlotChanged += (_) => RefreshArmorVisuals();
         }
 
         public override void _PhysicsProcess(double delta)
@@ -819,26 +824,31 @@ namespace Solo.Scripts.Entities.Players
 
         }
 
+        public Inventory GetInventoryByGuid(string guid)
+        {
+            if (guid == FastBarInventory.GuidStr) return FastBarInventory;
+            if (guid == BagInventory.GuidStr) return BagInventory;
+            if (guid == ArmorInventory.GuidStr) return ArmorInventory;
+            return null;
+        }
+
         public void SwapItemInterInventory(string sourceInvGuid, int sourceIndex, string targetInvGuid, int targetIndex)
         {
-            Inventory sourceInv = null;
-            Inventory targetInv = null;
-
-            if (sourceInvGuid == FastBarInventory.GuidStr)
-                sourceInv = FastBarInventory;
-            else if (sourceInvGuid == BagInventory.GuidStr)
-                sourceInv = BagInventory;
-
-            if (targetInvGuid == FastBarInventory.GuidStr)
-                targetInv = FastBarInventory;
-            else if (targetInvGuid == BagInventory.GuidStr)
-                targetInv = BagInventory;
+            Inventory sourceInv = GetInventoryByGuid(sourceInvGuid);
+            Inventory targetInv = GetInventoryByGuid(targetInvGuid);
 
             if (sourceInv == null || targetInv == null)
                 return;
 
             if (sourceInv.ItemInstanceList[sourceIndex] == null)
                 return;
+
+            if (targetInv.GuidStr == ArmorInventory.GuidStr)
+            {
+                ItemData itemData = ItemDataManager.Instance.GetItemData(sourceInv.ItemInstanceList[sourceIndex].Type);
+                if (!itemData.IsArmor || (int)itemData.ArmorSlot != targetIndex)
+                    return;
+            }
 
             if (targetInv.ItemInstanceList[targetIndex] == null)
             {
@@ -923,6 +933,36 @@ namespace Solo.Scripts.Entities.Players
             {
                 _handSprite.Texture = GD.Load<Texture2D>(ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).IconPath);
             }
+        }
+
+        private void RefreshArmorVisuals()
+        {
+            _helmetSprite.Texture = null;
+            _ArmorSprite.Texture = null;
+            _bootSprite.Texture = null;
+
+            for (int i = 0; i < ArmorInventory.ItemInstanceList.Count; i++)
+            {
+                if (ArmorInventory.ItemInstanceList[i] == null)
+                    continue;
+
+                ItemData itemData = ItemDataManager.Instance.GetItemData(ArmorInventory.ItemInstanceList[i].Type);
+                Texture2D texture = GD.Load<Texture2D>(itemData.IconPath);
+                switch ((ArmorSlotType)i)
+                {
+                    case ArmorSlotType.Helmet:
+                        _helmetSprite.Texture = texture;
+                        break;
+                    case ArmorSlotType.Armor:
+                        _ArmorSprite.Texture = texture;
+                        break;
+                    case ArmorSlotType.Boot:
+                        _bootSprite.Texture = texture;
+                        break;
+                }
+            }
+
+            _selfView?.ArmorView?.RefreshVisuals(ArmorInventory);
         }
 
 

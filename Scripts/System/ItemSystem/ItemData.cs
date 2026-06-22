@@ -1,12 +1,15 @@
-﻿namespace Solo.Scripts.System.ItemSystem
+﻿using Solo.Scripts.Global;
+
+namespace Solo.Scripts.System.ItemSystem
 {
     public class ItemData
     {
         public string Name = "";
-        public byte MaxCount = 1;//堆叠上限
-        public string IconPath = "";//图片路径
-        public int MaxDur = -1;//最大耐久度, 为-1意味着没有耐久度
+        public byte MaxCount = 1;
+        public string IconPath = "";
+        public int MaxDur = -1;
         public bool IsBuilding = false;
-        public bool IsArmor = false;//可穿戴
+        public bool IsArmor = false;
+        public ArmorSlotType ArmorSlot = ArmorSlotType.Helmet;
     }
 }

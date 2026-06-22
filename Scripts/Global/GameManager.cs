@@ -17,6 +17,7 @@ namespace Solo.Scripts.Global
         static private GameManager _instance;
         static public GameManager Instance => _instance;
         private GameState _curState;
+        public bool IsDebugMode = true;
 
         [Export] public PackedScene DropItemPs;
         [Export] public PackedScene FloatTextLbPs;
