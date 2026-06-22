@@ -44,6 +44,20 @@ namespace Solo.Scripts.Entities.Players
         //人物属性
         public Vector2 StartPoint = new Vector2(0, 0);//出生点
         private float _moveSpeed = 100;
+        private float TotalMoveSpeed
+        {
+            get
+            {
+                float bonus = 0;
+                for (int i = 0; i < ArmorInventory.ItemInstanceList.Count; i++)
+                {
+                    if (ArmorInventory.ItemInstanceList[i] == null)
+                        continue;
+                    bonus += ItemDataManager.Instance.GetItemData(ArmorInventory.ItemInstanceList[i].Type).MoveSpeedBonus;
+                }
+                return _moveSpeed + bonus;
+            }
+        }
         private float _atk = 10;
         private float _def = 10;
         private float _maxHp = 100;
@@ -372,9 +386,9 @@ namespace Solo.Scripts.Entities.Players
             else if (input.X > 0)
                 SpriteRoot.Scale = new Vector2(1, 1);
             if (GameManager.Instance.ChunkManager.GetTileType(GlobalPosition) == TileType.Water)
-                Velocity = input * _moveSpeed / 4;
+                Velocity = input * TotalMoveSpeed / 4;
             else
-                Velocity = input * _moveSpeed;
+                Velocity = input * TotalMoveSpeed;
             MoveAndSlide();
         }
         #endregion
@@ -438,9 +452,9 @@ namespace Solo.Scripts.Entities.Players
                 SpriteRoot.Scale = new Vector2(1, 1);
             //TouchArea.Rotation = input.Angle();
             if (GameManager.Instance.ChunkManager.GetTileType(GlobalPosition) == TileType.Water)
-                Velocity = input * _moveSpeed / 2;
+                Velocity = input * TotalMoveSpeed / 2;
             else
-                Velocity = input * _moveSpeed * 2;
+                Velocity = input * TotalMoveSpeed * 2;
             MoveAndSlide();
         }
         #endregion
@@ -540,9 +554,9 @@ namespace Solo.Scripts.Entities.Players
             if (input != Vector2.Zero)
             {
                 if (GameManager.Instance.ChunkManager.GetTileType(GlobalPosition) == TileType.Water)
-                    Velocity = input * _moveSpeed / 8;
+                    Velocity = input * TotalMoveSpeed / 8;
                 else
-                    Velocity = input * _moveSpeed / 2;
+                    Velocity = input * TotalMoveSpeed / 2;
                 MoveAndSlide();
             }
         }
@@ -639,9 +653,9 @@ namespace Solo.Scripts.Entities.Players
             else if (input.X > 0)
                 SpriteRoot.Scale = new Vector2(1, 1);
             if (GameManager.Instance.ChunkManager.GetTileType(GlobalPosition) == TileType.Water)
-                Velocity = input * _moveSpeed / 4;
+                Velocity = input * TotalMoveSpeed / 4;
             else
-                Velocity = input * _moveSpeed;
+                Velocity = input * TotalMoveSpeed;
             MoveAndSlide();
 
             Vector2 mousePos = GetGlobalMousePosition();
