@@ -10,6 +10,7 @@
 [ext_resource type="FontFile" uid="uid://chelxpn5elvbb" path="res://Assets/zpix.ttf" id="5_rnj17"]
 [ext_resource type="PackedScene" uid="uid://bv36kio2oi60f" path="res://Scenes/Entities/Players/SelfView.tscn" id="6_7qy38"]
 [ext_resource type="PackedScene" uid="uid://d3ptuijhfhmm0" path="res://Scenes/Entities/Players/DeathView.tscn" id="11_oet8y"]
+[ext_resource type="PackedScene" uid="uid://ch5mbcfvw4tu3" path="res://Scenes/Entities/Players/DiscardView.tscn" id="11_ynm40"]
 [ext_resource type="Texture2D" uid="uid://bahh2vtdli002" path="res://Assets/AtlasTextures/GoldBoot.tres" id="13_sod1g"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_jw8fk"]
@@ -177,6 +178,13 @@ offset_top = -229.0
 offset_right = -210.0
 offset_bottom = 131.0
 grow_horizontal = 0
+
+[node name="DiscardView" parent="CanvasLayer/BagInventoryView" unique_id=640664064 instance=ExtResource("11_ynm40")]
+layout_mode = 1
+offset_left = 389.68
+offset_top = 276.5
+offset_right = 469.68
+offset_bottom = 356.5
 
 [node name="FastBarInventoryView" parent="CanvasLayer" unique_id=1473412187 instance=ExtResource("4_y25d7")]
 anchors_preset = 7
