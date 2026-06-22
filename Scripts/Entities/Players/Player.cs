@@ -43,12 +43,14 @@ namespace Solo.Scripts.Entities.Players
 
         //人物属性
         public Vector2 StartPoint = new Vector2(0, 0);//出生点
-        public float moveSpeed = 100;
-        public float Atk = 10;
+        private float _moveSpeed = 100;
+        private float _atk = 10;
+        private float _def = 10;
         private float _maxHp = 100;
         private float _maxHg = 100;
         private float _curHp;
         private float _curHg;
+        private float _curExp = 0;
 
 
         private float _meleeAtkRange = 30;
@@ -59,7 +61,7 @@ namespace Solo.Scripts.Entities.Players
         private float _interactRange = 30;
         private float _interactRangeSq;
 
-        private float _curTargetRange = 100;//手长, 攻击和交互都统一用这个距离, 远程itemtype能加这个范围
+        private float _curTargetRange = 100;//手长, 攻击和交互都统一用这个距离, 远程itemtype能加这个范围, todo : 改用基础值, 使用时获取手持物+距离
         private float _curTargetRangeSq;
 
         public int ResCapacity = 1000;//资源存储上限
@@ -370,9 +372,9 @@ namespace Solo.Scripts.Entities.Players
             else if (input.X > 0)
                 SpriteRoot.Scale = new Vector2(1, 1);
             if (GameManager.Instance.ChunkManager.GetTileType(GlobalPosition) == TileType.Water)
-                Velocity = input * moveSpeed / 4;
+                Velocity = input * _moveSpeed / 4;
             else
-                Velocity = input * moveSpeed;
+                Velocity = input * _moveSpeed;
             MoveAndSlide();
         }
         #endregion
@@ -436,9 +438,9 @@ namespace Solo.Scripts.Entities.Players
                 SpriteRoot.Scale = new Vector2(1, 1);
             //TouchArea.Rotation = input.Angle();
             if (GameManager.Instance.ChunkManager.GetTileType(GlobalPosition) == TileType.Water)
-                Velocity = input * moveSpeed / 2;
+                Velocity = input * _moveSpeed / 2;
             else
-                Velocity = input * moveSpeed * 2;
+                Velocity = input * _moveSpeed * 2;
             MoveAndSlide();
         }
         #endregion
@@ -515,7 +517,7 @@ namespace Solo.Scripts.Entities.Players
                     }
                     _fastBarInventoryView.RefreshSlot(CurFastBarIndex);
                 }
-                _curTarget.TakeDamage(Atk, FastBarInventory.ItemInstanceList[CurFastBarIndex]?.Type);
+                _curTarget.TakeDamage(_atk, FastBarInventory.ItemInstanceList[CurFastBarIndex]?.Type);
             }));
 
             _animTween.Parallel().TweenProperty(BodyRoot, "scale", new Vector2(1f, 1f), 0.1f);
@@ -538,9 +540,9 @@ namespace Solo.Scripts.Entities.Players
             if (input != Vector2.Zero)
             {
                 if (GameManager.Instance.ChunkManager.GetTileType(GlobalPosition) == TileType.Water)
-                    Velocity = input * moveSpeed / 8;
+                    Velocity = input * _moveSpeed / 8;
                 else
-                    Velocity = input * moveSpeed / 2;
+                    Velocity = input * _moveSpeed / 2;
                 MoveAndSlide();
             }
         }
@@ -637,9 +639,9 @@ namespace Solo.Scripts.Entities.Players
             else if (input.X > 0)
                 SpriteRoot.Scale = new Vector2(1, 1);
             if (GameManager.Instance.ChunkManager.GetTileType(GlobalPosition) == TileType.Water)
-                Velocity = input * moveSpeed / 4;
+                Velocity = input * _moveSpeed / 4;
             else
-                Velocity = input * moveSpeed;
+                Velocity = input * _moveSpeed;
             MoveAndSlide();
 
             Vector2 mousePos = GetGlobalMousePosition();
@@ -1037,6 +1039,18 @@ namespace Solo.Scripts.Entities.Players
         }
         public void TakeDamage(float damage, ItemType? itemType)
         {
+            float totalDef = _def;
+            for (int i = 0; i < ArmorInventory.ItemInstanceList.Count; i++)
+            {
+                if (ArmorInventory.ItemInstanceList[i] == null)
+                    continue;
+                totalDef += ItemDataManager.Instance.GetItemData(ArmorInventory.ItemInstanceList[i].Type).DefBonus;
+            }
+            if (FastBarInventory.ItemInstanceList[CurFastBarIndex] != null)
+                totalDef += ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).DefBonus;
+
+            float finalDamage = Mathf.Max(0, damage - totalDef);
+
             Tween animTween = CreateTween().SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out);
             animTween.TweenProperty(SpriteRoot, "scale", new Vector2(0.8f, 0.8f), 0.1f);
             animTween.Parallel().TweenProperty(_sprite.Material, "shader_parameter/flash_modifier", 1.0f, 0.1f);
@@ -1045,8 +1059,8 @@ namespace Solo.Scripts.Entities.Players
             animTween.TweenProperty(SpriteRoot, "scale", new Vector2(1f, 1f), 0.1f);
             FloatTextLb floatTextLb = GameManager.Instance.FloatTextLbPs.Instantiate<FloatTextLb>();
             GetTree().CurrentScene.AddChild(floatTextLb);
-            floatTextLb.Init($"-{damage}", GlobalPosition, new Color(162 / 256f, 38 / 256f, 51 / 256f));//162, 38, 51
-            SetCurHp(_curHp - damage);
+            floatTextLb.Init($"-{finalDamage}", GlobalPosition, new Color(162 / 256f, 38 / 256f, 51 / 256f));//162, 38, 51
+            SetCurHp(_curHp - finalDamage);
         }
 
         public bool CanInteract()

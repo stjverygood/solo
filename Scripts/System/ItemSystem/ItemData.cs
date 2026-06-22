@@ -11,5 +11,8 @@ namespace Solo.Scripts.System.ItemSystem
         public bool IsBuilding = false;
         public bool IsArmor = false;
         public ArmorSlotType ArmorSlot = ArmorSlotType.Helmet;
+        public int DefBonus = 0;
+        public int AtkBonus = 0;
+        public int MoveSpeedBonus = 0;
     }
 }
