@@ -12,9 +12,9 @@ bg_color = Color(0.16862746, 0.16862746, 0.16862746, 1)
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ifvws"]
 bg_color = Color(0.3529412, 0.4117647, 0.53333336, 1)
 
-[sub_resource type="ButtonGroup" id="ButtonGroup_i0elv"]
+[sub_resource type="ButtonGroup" id="ButtonGroup_ifvws"]
 
-[sub_resource type="ButtonGroup" id="ButtonGroup_x52a3"]
+[sub_resource type="ButtonGroup" id="ButtonGroup_i0elv"]
 
 [node name="SelfView" type="Control" unique_id=1555358295 node_paths=PackedStringArray("EquipmentBtn", "BasicCraftBtn", "OtherCraftBtn", "ArmorView", "BasicCraftView", "OtherCraftView")]
 custom_minimum_size = Vector2(300, 400)
@@ -93,6 +93,7 @@ offset_right = 262.5
 offset_bottom = 384.24
 
 [node name="BasicCraftView" parent="Panel" unique_id=1489113954 instance=ExtResource("3_x8f1r")]
+visible = false
 layout_mode = 0
 anchors_preset = 0
 anchor_right = 0.0
@@ -102,9 +103,10 @@ offset_right = 300.0
 offset_bottom = 403.0
 grow_horizontal = 1
 grow_vertical = 1
-_btnGroup = SubResource("ButtonGroup_i0elv")
+_btnGroup = SubResource("ButtonGroup_ifvws")
 
 [node name="OtherCraftView" parent="Panel" unique_id=1325985176 instance=ExtResource("3_x8f1r")]
+visible = false
 layout_mode = 0
 anchors_preset = 0
 anchor_right = 0.0
@@ -115,4 +117,4 @@ offset_bottom = 403.0
 grow_horizontal = 1
 grow_vertical = 1
 Type = 1
-_btnGroup = SubResource("ButtonGroup_x52a3")
+_btnGroup = SubResource("ButtonGroup_i0elv")

@@ -268,7 +268,8 @@ namespace Solo.Scripts.Entities.Players
                 return;
             }
 
-            CheckTarget();
+            if (FastBarInventory.ItemInstanceList[CurFastBarIndex] == null || !ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).IsBuilding)
+                CheckTarget();
             //RefreshNearestTarget();//每帧刷新最近的target
             if (Input.IsActionJustPressed("Atk"))
             {
@@ -336,7 +337,8 @@ namespace Solo.Scripts.Entities.Players
                 return;
             }
 
-            CheckTarget();
+            if (FastBarInventory.ItemInstanceList[CurFastBarIndex] == null || !ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).IsBuilding)
+                CheckTarget();
             if (Input.IsActionJustPressed("Atk"))
             {
                 if (FastBarInventory.ItemInstanceList[CurFastBarIndex] != null && ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).IsBuilding)
@@ -400,7 +402,8 @@ namespace Solo.Scripts.Entities.Players
                 ChangeCurFastBarIndex(true);
             }
 
-            CheckTarget();
+            if (FastBarInventory.ItemInstanceList[CurFastBarIndex] == null || !ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).IsBuilding)
+                CheckTarget();
             if (Input.IsActionJustPressed("Atk"))
             {
                 if (FastBarInventory.ItemInstanceList[CurFastBarIndex] != null && ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).IsBuilding)
