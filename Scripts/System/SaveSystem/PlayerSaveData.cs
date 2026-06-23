@@ -8,8 +8,8 @@
         public float PosY { get; set; } = 0;
         public float MaxHp { get; set; } = 100;//血量
         public float CurHp { get; set; } = 100;
-        public float MaxHg { get; set; } = 100;//饥饿值
-        public float CurHg { get; set; } = 100;
+        public float MaxMp { get; set; } = 100;//饥饿值
+        public float CurMp { get; set; } = 100;
 
     }
 }

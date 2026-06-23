@@ -15,9 +15,7 @@ namespace Solo.Scripts.Entities.Players
         Walk,
         Run,
         Dash,
-        //PreAtk,//预攻击, 选目标
         Atk,//攻击
-        //PreInteract,//预交互, 选目标
         Interact,//交互
         Build,//建造状态
         Death,
@@ -61,9 +59,10 @@ namespace Solo.Scripts.Entities.Players
         private float _atk = 10;
         private float _def = 10;
         private float _maxHp = 100;
-        private float _maxHg = 100;
+        private float _maxMp = 100;
         private float _curHp;
-        private float _curHg;
+        private float _curMp; //灵气机制 : 1. 只要活着, 就会不断扣灵气; 2. >= 80%, 自动回血; 3. 
+        private float _mpConsume = 0.01f;
         private float _curExp = 0;
 
 
@@ -91,8 +90,8 @@ namespace Solo.Scripts.Entities.Players
         [Export] private InventoryView _fastBarInventoryView;
         [Export] private ProgressBar _hpPb;
         [Export] private Label _hpLb;
-        [Export] private ProgressBar _hgPb;
-        [Export] private Label _hgLb;
+        [Export] private ProgressBar _mpPb;
+        [Export] private Label _mpLb;
         [Export] private Label _debugLb;
         [Export] private DeathView _deathView;
 
@@ -106,8 +105,8 @@ namespace Solo.Scripts.Entities.Players
             GlobalPosition = new Vector2(playerSaveData.PosX, playerSaveData.PosY);
             _maxHp = playerSaveData.MaxHp;
             SetCurHp(playerSaveData.CurHp);
-            _maxHg = playerSaveData.MaxHg;
-            SetCurHg(playerSaveData.CurHg);
+            _maxMp = playerSaveData.MaxMp;
+            SetCurMp(playerSaveData.CurMp);
 
             BagInventory.GuidStr = SaveManager.Instance.CurSaveData.BagInventoryGuidStr;
             BagInventory.ItemInstanceList = SaveManager.Instance.CurSaveData.BagInventoryList;
@@ -153,13 +152,34 @@ namespace Solo.Scripts.Entities.Players
         {
             UpdateState((float)delta);
             _debugLb.Text = CurState.ToString();
-            if (Input.IsActionJustPressed("Test"))
-            {
-                TakeDamage(10, null);
-            }
-            //GD.Print("_curTarget : " + _curTarget);
-            //GD.Print($"CurState : {CurState}");
             //GD.Print($"GlobalPosition : {GlobalPosition}");
+        }
+
+        public override void _UnhandledInput(InputEvent @event)
+        {
+            // 测试用
+            if (@event is InputEventKey keyEvent && keyEvent.Pressed)
+            {
+                switch (keyEvent.Keycode)
+                {
+                    case Key.Key1:
+                        GetHp(10);
+                        GD.Print("快捷检测：按下了 1");
+                        break;
+                    case Key.Key2:
+                        TakeDamage(50, null);
+                        GD.Print("快捷检测：按下了 2");
+                        break;
+                    case Key.Key3:
+                        GetMp(10);
+                        GD.Print("快捷检测：按下了 3");
+                        break;
+                    case Key.Key4:
+                        TakeMp(10);
+                        GD.Print("快捷检测：按下了 4");
+                        break;
+                }
+            }
         }
 
         private void ChangeState(PlayerState newState)
@@ -184,15 +204,9 @@ namespace Solo.Scripts.Entities.Players
                 case PlayerState.Dash:
                     EnterDash();
                     break;
-                //case PlayerState.PreAtk:
-                //    EnterPreAtk();
-                //    break;
                 case PlayerState.Atk:
                     EnterAtk();
                     break;
-                //case PlayerState.PreInteract:
-                //    EnterPreInteract();
-                //    break;
                 case PlayerState.Interact:
                     EnterInteract();
                     break;
@@ -223,15 +237,9 @@ namespace Solo.Scripts.Entities.Players
                 case PlayerState.Dash:
                     UpdateDash(delta);
                     break;
-                //case PlayerState.PreAtk:
-                //    UpdatePreAtk(delta);
-                //    break;
                 case PlayerState.Atk:
                     UpdateAtk(delta);
                     break;
-                //case PlayerState.PreInteract:
-                //    UpdatePreInteract(delta);
-                //    break;
                 case PlayerState.Interact:
                     UpdateInteract(delta);
                     break;
@@ -263,14 +271,7 @@ namespace Solo.Scripts.Entities.Players
                 return;
             }
 
-            if (Input.IsActionJustPressed("Pre"))
-            {
-                ChangeCurFastBarIndex(false);
-            }
-            if (Input.IsActionJustPressed("Next"))
-            {
-                ChangeCurFastBarIndex(true);
-            }
+
 
             if (Input.IsActionJustPressed("Bag"))
             {
@@ -283,6 +284,14 @@ namespace Solo.Scripts.Entities.Players
                 ChangeState(PlayerState.Dash);
                 return;
             }
+
+
+            ConsumeDuration(delta, _mpConsume * 1);
+
+            if (Input.IsActionJustPressed("Pre"))
+                ChangeCurFastBarIndex(false);
+            if (Input.IsActionJustPressed("Next"))
+                ChangeCurFastBarIndex(true);
 
             if (FastBarInventory.ItemInstanceList[CurFastBarIndex] == null || !ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).IsBuilding)
                 CheckTarget();
@@ -374,6 +383,13 @@ namespace Solo.Scripts.Entities.Players
                 return;
             }
 
+            ConsumeDuration(delta, _mpConsume * 1.2f);
+
+            if (Input.IsActionJustPressed("Pre"))
+                ChangeCurFastBarIndex(false);
+            if (Input.IsActionJustPressed("Next"))
+                ChangeCurFastBarIndex(true);
+
             Vector2 input = Input.GetVector("MoveLeft", "MoveRight", "MoveForward", "MoveBack");
             if (input == Vector2.Zero)
             {
@@ -409,15 +425,6 @@ namespace Solo.Scripts.Entities.Players
                 return;
             }
 
-            if (Input.IsActionJustPressed("Pre"))
-            {
-                ChangeCurFastBarIndex(false);
-            }
-            if (Input.IsActionJustPressed("Next"))
-            {
-                ChangeCurFastBarIndex(true);
-            }
-
             if (FastBarInventory.ItemInstanceList[CurFastBarIndex] == null || !ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).IsBuilding)
                 CheckTarget();
             if (Input.IsActionJustPressed("Atk"))
@@ -438,6 +445,12 @@ namespace Solo.Scripts.Entities.Players
                 ChangeState(PlayerState.Interact);
                 return;
             }
+
+            ConsumeDuration(delta, _mpConsume * 2);
+            if (Input.IsActionJustPressed("Pre"))
+                ChangeCurFastBarIndex(false);
+            if (Input.IsActionJustPressed("Next"))
+                ChangeCurFastBarIndex(true);
 
             Vector2 input = Input.GetVector("MoveLeft", "MoveRight", "MoveForward", "MoveBack");
             if (input == Vector2.Zero || Input.IsActionPressed("Dash") == false)
@@ -470,6 +483,7 @@ namespace Solo.Scripts.Entities.Players
             _animTween.TweenProperty(BodyRoot, "skew", 0.1f, 0.3f);// 走动效果：左右晃动或轻微拉伸
             _animTween.TweenProperty(BodyRoot, "skew", -0.1f, 0.3f);
             _dashTimer = 0;
+            TakeMp(1);
         }
         private void UpdateDash(float delta)
         {
@@ -494,6 +508,13 @@ namespace Solo.Scripts.Entities.Players
                 }
             }
 
+
+            ConsumeDuration(delta, 0.3f);
+            if (Input.IsActionJustPressed("Pre"))
+                ChangeCurFastBarIndex(false);
+            if (Input.IsActionJustPressed("Next"))
+                ChangeCurFastBarIndex(true);
+
             Velocity = _curDir * _dashSpeed;
             MoveAndSlide();
         }
@@ -503,7 +524,7 @@ namespace Solo.Scripts.Entities.Players
         private void EnterAtk()
         {
             ResetAnim();
-
+            TakeMp(1f);
             if (_curTarget == null || _curTarget.IsVaild() == false || _curTarget.CanAtk() == false)
             {
                 ChangeState(PlayerState.Idle);
@@ -1013,21 +1034,21 @@ namespace Solo.Scripts.Entities.Players
             _curHp = curHp;
             _hpPb.MaxValue = _maxHp;
             _hpPb.Value = _curHp;
-            _hpLb.Text = $"{_curHp}/{_maxHp}";
+            _hpLb.Text = $"{_curHp:f0}/{_maxHp:f0}";
         }
-        private void SetCurHg(float curHg)
+        private void SetCurMp(float curHg)
         {
-            _curHg = curHg;
-            _hgPb.MaxValue = _maxHg;
-            _hgPb.Value = _curHg;
-            _hgLb.Text = $"{_curHg}/{_maxHp}";
+            _curMp = curHg;
+            _mpPb.MaxValue = _maxMp;
+            _mpPb.Value = _curMp;
+            _mpLb.Text = $"{_curMp:f0}/{_maxHp:f0}";
         }
 
         public void Restart()
         {
             GlobalPosition = StartPoint;
             SetCurHp(_maxHp);
-            SetCurHg(_maxHg);
+            SetCurMp(_maxMp);
             CollisionLayer = 1;
             CollisionMask = 1;
         }
@@ -1042,8 +1063,8 @@ namespace Solo.Scripts.Entities.Players
                 PosY = GlobalPosition.Y,
                 MaxHp = _maxHp,
                 CurHp = _curHp,
-                MaxHg = _maxHg,
-                CurHg = _curHg,
+                MaxMp = _maxMp,
+                CurMp = _curMp,
             };
         }
 
@@ -1060,8 +1081,8 @@ namespace Solo.Scripts.Entities.Players
                     continue;
                 totalDef += ItemDataManager.Instance.GetItemData(ArmorInventory.ItemInstanceList[i].Type).DefBonus;
             }
-            if (FastBarInventory.ItemInstanceList[CurFastBarIndex] != null)
-                totalDef += ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).DefBonus;
+            //if (FastBarInventory.ItemInstanceList[CurFastBarIndex] != null)
+            //    totalDef += ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).DefBonus;
 
             float finalDamage = Mathf.Max(0, damage - totalDef);
 
@@ -1123,6 +1144,47 @@ namespace Solo.Scripts.Entities.Players
         public TargetType GetTargetType()
         {
             return TargetType.Player;
+        }
+
+        private float _mpConsumeDuration = 0.1f;//每0.1秒 -consumeValue
+        private float _mpConsumeTimer = 0;
+        private void ConsumeDuration(float delta, float consumeValue)
+        {
+            _mpConsumeTimer += delta;
+            if (_mpConsumeTimer < _mpConsumeDuration)
+                return;
+            if (_curMp - consumeValue > 0)
+            {
+                SetCurMp(_curMp - consumeValue);
+            }
+            else
+            {
+                SetCurMp(0);
+            }
+            _mpConsumeTimer = 0;
+        }
+
+        private void GetHp(float hp)
+        {
+            FloatTextLb floatTextLb = GameManager.Instance.FloatTextLbPs.Instantiate<FloatTextLb>();
+            GetTree().CurrentScene.AddChild(floatTextLb);
+            floatTextLb.Init($"+{hp}", GlobalPosition, new Color(162 / 256f, 38 / 256f, 51 / 256f));//0, 153, 219
+            SetCurHp(_curHp + hp);
+        }
+
+        private void GetMp(float mp)
+        {
+            FloatTextLb floatTextLb = GameManager.Instance.FloatTextLbPs.Instantiate<FloatTextLb>();
+            GetTree().CurrentScene.AddChild(floatTextLb);
+            floatTextLb.Init($"+{mp}", GlobalPosition, new Color(0 / 256f, 153 / 256f, 219 / 256f));//0, 153, 219
+            SetCurMp(_curMp + mp);
+        }
+        private void TakeMp(float mp)
+        {
+            FloatTextLb floatTextLb = GameManager.Instance.FloatTextLbPs.Instantiate<FloatTextLb>();
+            GetTree().CurrentScene.AddChild(floatTextLb);
+            floatTextLb.Init($"-{mp}", GlobalPosition, new Color(0 / 256f, 153 / 256f, 219 / 256f));//0, 153, 219
+            SetCurMp(_curMp - mp);
         }
     }
 }

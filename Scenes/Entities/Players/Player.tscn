@@ -54,7 +54,7 @@ corner_radius_top_right = 12
 corner_radius_bottom_right = 12
 corner_radius_bottom_left = 12
 
-[node name="Player" type="CharacterBody2D" unique_id=1144409017 node_paths=PackedStringArray("SpriteRoot", "BodyRoot", "_sprite", "_helmetSprite", "_ArmorSprite", "_bootSprite", "_camera", "_selfView", "_bagInventoryView", "_fastBarInventoryView", "_hpPb", "_hpLb", "_hgPb", "_hgLb", "_debugLb", "_deathView", "_handNode", "_handSprite")]
+[node name="Player" type="CharacterBody2D" unique_id=1144409017 node_paths=PackedStringArray("SpriteRoot", "BodyRoot", "_sprite", "_helmetSprite", "_ArmorSprite", "_bootSprite", "_camera", "_selfView", "_bagInventoryView", "_fastBarInventoryView", "_hpPb", "_hpLb", "_mpPb", "_mpLb", "_debugLb", "_deathView", "_handNode", "_handSprite")]
 y_sort_enabled = true
 script = ExtResource("1_lxeke")
 SpriteRoot = NodePath("SpriteRoot")
@@ -69,8 +69,8 @@ _bagInventoryView = NodePath("CanvasLayer/BagInventoryView")
 _fastBarInventoryView = NodePath("CanvasLayer/FastBarInventoryView")
 _hpPb = NodePath("CanvasLayer/HpPb")
 _hpLb = NodePath("CanvasLayer/HpPb/HpLb")
-_hgPb = NodePath("CanvasLayer/HgPb")
-_hgLb = NodePath("CanvasLayer/HgPb/HgLb")
+_mpPb = NodePath("CanvasLayer/MpPb")
+_mpLb = NodePath("CanvasLayer/MpPb/MpLb")
 _debugLb = NodePath("DebugLabel")
 _deathView = NodePath("CanvasLayer/DeathView")
 _buildingPreviewPs = ExtResource("3_f0b02")
@@ -142,7 +142,7 @@ text = "fukinghealthy"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="HgPb" type="ProgressBar" parent="CanvasLayer" unique_id=1609693081]
+[node name="MpPb" type="ProgressBar" parent="CanvasLayer" unique_id=1609693081]
 offset_left = 615.0
 offset_top = 500.0
 offset_right = 734.0
@@ -152,7 +152,7 @@ theme_override_styles/fill = SubResource("StyleBoxFlat_4xrd3")
 value = 45.57
 show_percentage = false
 
-[node name="HgLb" type="Label" parent="CanvasLayer/HgPb" unique_id=1450420962]
+[node name="MpLb" type="Label" parent="CanvasLayer/MpPb" unique_id=1450420962]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
