@@ -1240,9 +1240,9 @@ namespace Solo.Scripts.Entities.Players
 
         private void GetMp(float mp)
         {
-            FloatTextLb floatTextLb = GameManager.Instance.FloatTextLbPs.Instantiate<FloatTextLb>();
-            GetTree().CurrentScene.AddChild(floatTextLb);
-            floatTextLb.Init($"+{mp}", GlobalPosition, new Color(44 / 256f, 232 / 256f, 245 / 256f));//44, 232, 245
+            //FloatTextLb floatTextLb = GameManager.Instance.FloatTextLbPs.Instantiate<FloatTextLb>();
+            //GetTree().CurrentScene.AddChild(floatTextLb);
+            //floatTextLb.Init($"+{mp}", GlobalPosition, new Color(44 / 256f, 232 / 256f, 245 / 256f));//44, 232, 245
             if (_curMp + mp < _maxMp)
                 SetCurMp(_curMp + mp);
             else
@@ -1250,9 +1250,9 @@ namespace Solo.Scripts.Entities.Players
         }
         private void TakeMp(float mp)
         {
-            FloatTextLb floatTextLb = GameManager.Instance.FloatTextLbPs.Instantiate<FloatTextLb>();
-            GetTree().CurrentScene.AddChild(floatTextLb);
-            floatTextLb.Init($"-{mp}", GlobalPosition, new Color(18 / 256f, 78 / 256f, 137 / 256f));//18, 78, 137
+            //FloatTextLb floatTextLb = GameManager.Instance.FloatTextLbPs.Instantiate<FloatTextLb>();
+            //GetTree().CurrentScene.AddChild(floatTextLb);
+            //floatTextLb.Init($"-{mp}", GlobalPosition, new Color(18 / 256f, 78 / 256f, 137 / 256f));//18, 78, 137
             if (_curMp - mp > 0)
                 SetCurMp(_curMp - mp);
             else

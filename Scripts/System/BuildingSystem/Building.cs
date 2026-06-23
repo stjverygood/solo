@@ -86,7 +86,7 @@ namespace Solo.Scripts.System.BuildingSystem
 
             FloatTextLb floatTextLb = GameManager.Instance.FloatTextLbPs.Instantiate<FloatTextLb>();
             GetTree().CurrentScene.AddChild(floatTextLb);
-            floatTextLb.Init($"-{finalDamage}", GlobalPosition);
+            floatTextLb.Init($"-{finalDamage}", GlobalPosition, new Color(162 / 256f, 38 / 256f, 51 / 256f));
 
             SetCurHp(_curHp - finalDamage);
             if (_curHp <= 0)
