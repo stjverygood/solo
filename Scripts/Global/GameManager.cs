@@ -37,6 +37,8 @@ namespace Solo.Scripts.Global
         public ChunkManager ChunkManager;
         public BuildingManager BuildingManager;
 
+
+
         public override void _Ready()
         {
             _instance = this;
@@ -51,6 +53,7 @@ namespace Solo.Scripts.Global
 
         public override void _PhysicsProcess(double delta)
         {
+            UpdateGameTime((float)delta);
             //GD.Print("UnitList.Count : " + UnitList.Count);
             switch (_curState)
             {
@@ -162,6 +165,18 @@ namespace Solo.Scripts.Global
                     }
                     break;
             }
+        }
+
+        //时间系统
+        public float TimeRatio = 0;//0天黑, 0.25黎明, 0.5中午, 0.75日落, 1天黑; 白天 : 0.25-0.75, 晚上 : 0.75 - 后一天0.25
+        private float DayDuration = 60f * 1;
+        private float _curTime = 0;
+        private void UpdateGameTime(float delta)
+        {
+            _curTime += delta;
+            if (_curTime >= DayDuration)
+                _curTime -= DayDuration;
+            TimeRatio = _curTime / DayDuration;
         }
     }
 
