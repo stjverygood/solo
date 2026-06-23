@@ -186,7 +186,7 @@ namespace Solo.Scripts.System.ChunkSystem
                             _tileMapLayer.SetCell(new Vector2I(globalX, globalY), 0, rdTileCoords);
                             //随机生成
                             float rd = GD.Randf();
-                            if (rd < 0.1)
+                            if (rd < 0.1)//树
                             {
                                 Vector2 curTilePos = new Vector2(globalX * _tileSize, globalY * _tileSize) + new Vector2(_tileSize / 2f, _tileSize / 2f);
                                 Vector2 snapPos = GameManager.Instance.BuildingManager.SnapToCell(BuildingType.Tree, curTilePos);
@@ -205,6 +205,14 @@ namespace Solo.Scripts.System.ChunkSystem
                                 DropItem goldDropItem = DropItemPs.Instantiate<DropItem>();
                                 GetTree().CurrentScene.AddChild(goldDropItem);
                                 goldDropItem.Init(new ItemInstance() { Type = ItemType.Grass, Count = 3 }, tileWorldPos + offset);
+                            }
+                            else if (rd < 0.2)
+                            {
+                                Vector2 tileWorldPos = new Vector2(globalX * _tileSize, globalY * _tileSize);
+                                Vector2 offset = new Vector2(_tileSize / 2f, _tileSize / 2f);// 计算偏移量，使物体位于瓦片中心 (假设 _tileSize 是 16，偏移就是 8)
+                                DropItem bananaDropItem = DropItemPs.Instantiate<DropItem>();
+                                GetTree().CurrentScene.AddChild(bananaDropItem);
+                                bananaDropItem.Init(new ItemInstance() { Type = ItemType.Banana, Count = 3 }, tileWorldPos + offset);
                             }
                         }
                         else//石

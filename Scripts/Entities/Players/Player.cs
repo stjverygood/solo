@@ -294,7 +294,7 @@ namespace Solo.Scripts.Entities.Players
 
 
             ConsumeDuration(delta, _mpConsume * 1);
-
+            HpRecover(delta);
             if (Input.IsActionJustPressed("Pre"))
                 ChangeCurFastBarIndex(false);
             if (Input.IsActionJustPressed("Next"))
@@ -354,15 +354,6 @@ namespace Solo.Scripts.Entities.Players
                 return;
             }
 
-            if (Input.IsActionJustPressed("Pre"))
-            {
-                ChangeCurFastBarIndex(false);
-            }
-            if (Input.IsActionJustPressed("Next"))
-            {
-                ChangeCurFastBarIndex(true);
-            }
-
             if (Input.IsActionJustPressed("Bag"))
             {
                 ChangeState(PlayerState.BagUI);
@@ -401,7 +392,7 @@ namespace Solo.Scripts.Entities.Players
             }
 
             ConsumeDuration(delta, _mpConsume * 1.2f);
-
+            HpRecover(delta);
             if (Input.IsActionJustPressed("Pre"))
                 ChangeCurFastBarIndex(false);
             if (Input.IsActionJustPressed("Next"))
@@ -545,7 +536,7 @@ namespace Solo.Scripts.Entities.Players
         private void EnterAtk()
         {
             ResetAnim();
-            TakeMp(1f);
+
             if (_curTarget == null || _curTarget.IsVaild() == false || _curTarget.CanAtk() == false)
             {
                 ChangeState(PlayerState.Idle);
@@ -574,6 +565,7 @@ namespace Solo.Scripts.Entities.Players
                     _fastBarInventoryView.RefreshSlot(CurFastBarIndex);
                 }
                 _curTarget.TakeDamage(_atk, FastBarInventory.ItemInstanceList[CurFastBarIndex]?.Type);
+                TakeMp(1f);
             }));
 
             _animTween.Parallel().TweenProperty(BodyRoot, "scale", new Vector2(1f, 1f), 0.1f);
@@ -1218,27 +1210,53 @@ namespace Solo.Scripts.Entities.Players
             _mpConsumeTimer = 0;
         }
 
+        private float _hpRecoverDuration = 1f;
+        private float _hpRecoverTimer = 0f;
+        private void HpRecover(float delta)
+        {
+            if (_curMp / _maxMp < 0.8)
+            {
+                _hpRecoverTimer = 0;
+                return;
+            }
+            _hpRecoverTimer += delta;
+            if (_hpRecoverTimer < _hpRecoverDuration)
+                return;
+            if (_curHp < _maxMp)
+                GetHp(10);
+            _hpRecoverTimer = 0;
+        }
+
         private void GetHp(float hp)
         {
             FloatTextLb floatTextLb = GameManager.Instance.FloatTextLbPs.Instantiate<FloatTextLb>();
             GetTree().CurrentScene.AddChild(floatTextLb);
-            floatTextLb.Init($"+{hp}", GlobalPosition, new Color(162 / 256f, 38 / 256f, 51 / 256f));//0, 153, 219
-            SetCurHp(_curHp + hp);
+            floatTextLb.Init($"+{hp}", GlobalPosition, new Color(99 / 256f, 199 / 256f, 77 / 256f));//99, 199, 77 
+            if (_curHp + hp < _maxHp)
+                SetCurHp(_curHp + hp);
+            else
+                SetCurHp(_maxHp);
         }
 
         private void GetMp(float mp)
         {
             FloatTextLb floatTextLb = GameManager.Instance.FloatTextLbPs.Instantiate<FloatTextLb>();
             GetTree().CurrentScene.AddChild(floatTextLb);
-            floatTextLb.Init($"+{mp}", GlobalPosition, new Color(0 / 256f, 153 / 256f, 219 / 256f));//0, 153, 219
-            SetCurMp(_curMp + mp);
+            floatTextLb.Init($"+{mp}", GlobalPosition, new Color(44 / 256f, 232 / 256f, 245 / 256f));//44, 232, 245
+            if (_curMp + mp < _maxMp)
+                SetCurMp(_curMp + mp);
+            else
+                SetCurMp(_maxHp);
         }
         private void TakeMp(float mp)
         {
             FloatTextLb floatTextLb = GameManager.Instance.FloatTextLbPs.Instantiate<FloatTextLb>();
             GetTree().CurrentScene.AddChild(floatTextLb);
-            floatTextLb.Init($"-{mp}", GlobalPosition, new Color(0 / 256f, 153 / 256f, 219 / 256f));//0, 153, 219
-            SetCurMp(_curMp - mp);
+            floatTextLb.Init($"-{mp}", GlobalPosition, new Color(18 / 256f, 78 / 256f, 137 / 256f));//18, 78, 137
+            if (_curMp - mp > 0)
+                SetCurMp(_curMp - mp);
+            else
+                SetCurMp(0);
         }
 
         private void ComsumeItem()

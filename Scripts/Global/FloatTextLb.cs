@@ -2,28 +2,30 @@ using Godot;
 
 public partial class FloatTextLb : Label
 {
-    [Export] public float FloatDistance = 50.0f; // 向上漂浮的距离
+    [Export] public float FloatDistance = 30.0f; // 向上漂浮的距离
     [Export] public double Duration = 1d;       // 动画持续时间
 
-    // 允许的最大左右随机角度（弧度制），约等于 35 度
-    [Export] public float MaxRandomAngle = 0.4f;
-    // 初始位置的最大随机偏移像素
-    [Export] public float PositionOffsetRange = 10.0f;
+
+    [Export] public float MaxRandomAngle = 0.2f;// 允许的最大左右随机角度（弧度制
+    [Export] public float PositionOffsetRange = 5.0f;// 初始位置的最大随机偏移像素
 
     public void Init(string text, Vector2 globalPos, Color? color = null)
     {
         Text = text;
+        HorizontalAlignment = HorizontalAlignment.Center; // 文字水平居中
+        VerticalAlignment = VerticalAlignment.Center;     // 文字垂直居中
 
-        // 1. 给初始位置增加一点点随机微调，防止多个数字完全重合
-        float randomX = (float)GD.RandRange(-PositionOffsetRange, PositionOffsetRange);
-        float randomY = (float)GD.RandRange(-PositionOffsetRange, PositionOffsetRange);
-        GlobalPosition = globalPos + new Vector2(randomX, randomY);
+        ResetSize();
+        PivotOffset = Size / 2;
 
         if (color.HasValue)
         {
             Modulate = color.Value;
         }
 
+        float randomX = (float)GD.RandRange(-PositionOffsetRange, PositionOffsetRange);
+        float randomY = (float)GD.RandRange(-PositionOffsetRange, PositionOffsetRange);
+        GlobalPosition = globalPos - (Size / 2) + new Vector2(randomX, randomY);
         StartFloatingAnimation();
     }
 
