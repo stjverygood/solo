@@ -14,5 +14,8 @@ namespace Solo.Scripts.System.ItemSystem
         public int DefBonus = 0;
         public int AtkBonus = 0;
         public int MoveSpeedBonus = 0;
+        public bool IsConsumable = false;
+        public float HpBonus = 0;
+        public float MpBonus = 0;
     }
 }

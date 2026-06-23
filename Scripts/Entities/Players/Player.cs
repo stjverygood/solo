@@ -18,6 +18,7 @@ namespace Solo.Scripts.Entities.Players
         Atk,//攻击
         Interact,//交互
         Build,//建造状态
+        Comsume,//消耗物品
         Death,
         BagUI,
     }
@@ -213,6 +214,9 @@ namespace Solo.Scripts.Entities.Players
                 case PlayerState.Build:
                     EnterBuild();
                     break;
+                case PlayerState.Comsume:
+                    EnterComsume();
+                    break;
                 case PlayerState.Death:
                     EnterDeath();
                     break;
@@ -245,6 +249,9 @@ namespace Solo.Scripts.Entities.Players
                     break;
                 case PlayerState.Build:
                     UpdateBuild(delta);
+                    break;
+                case PlayerState.Comsume:
+                    UpdateComsume(delta);
                     break;
                 case PlayerState.Death:
                     UpdateDeath(delta);
@@ -293,8 +300,8 @@ namespace Solo.Scripts.Entities.Players
             if (Input.IsActionJustPressed("Next"))
                 ChangeCurFastBarIndex(true);
 
-            if (FastBarInventory.ItemInstanceList[CurFastBarIndex] == null || !ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).IsBuilding)
-                CheckTarget();
+
+            CheckTarget();
             //RefreshNearestTarget();//每帧刷新最近的target
             if (Input.IsActionJustPressed("Atk"))
             {
@@ -304,12 +311,18 @@ namespace Solo.Scripts.Entities.Players
                     ChangeState(PlayerState.Build);
                     return;
                 }
+                else if (FastBarInventory.ItemInstanceList[CurFastBarIndex] != null && ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).IsConsumable)
+                {
+                    ChangeState(PlayerState.Comsume);
+                    return;
+                }
                 else
                 {
                     ChangeState(PlayerState.Atk);
                     return;
                 }
             }
+
             if (Input.IsActionJustPressed("Interact"))
             {
                 ChangeState(PlayerState.Interact);
@@ -362,13 +375,17 @@ namespace Solo.Scripts.Entities.Players
                 return;
             }
 
-            if (FastBarInventory.ItemInstanceList[CurFastBarIndex] == null || !ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).IsBuilding)
-                CheckTarget();
+            CheckTarget();
             if (Input.IsActionJustPressed("Atk"))
             {
                 if (FastBarInventory.ItemInstanceList[CurFastBarIndex] != null && ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).IsBuilding)
                 {
                     ChangeState(PlayerState.Build);
+                    return;
+                }
+                else if (FastBarInventory.ItemInstanceList[CurFastBarIndex] != null && ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).IsConsumable)
+                {
+                    ChangeState(PlayerState.Comsume);
                     return;
                 }
                 else
@@ -425,13 +442,17 @@ namespace Solo.Scripts.Entities.Players
                 return;
             }
 
-            if (FastBarInventory.ItemInstanceList[CurFastBarIndex] == null || !ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).IsBuilding)
-                CheckTarget();
+            CheckTarget();
             if (Input.IsActionJustPressed("Atk"))
             {
                 if (FastBarInventory.ItemInstanceList[CurFastBarIndex] != null && ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).IsBuilding)
                 {
                     ChangeState(PlayerState.Build);
+                    return;
+                }
+                else if (FastBarInventory.ItemInstanceList[CurFastBarIndex] != null && ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).IsConsumable)
+                {
+                    ChangeState(PlayerState.Comsume);
                     return;
                 }
                 else
@@ -711,6 +732,30 @@ namespace Solo.Scripts.Entities.Players
         }
         #endregion
 
+        #region Comsume
+        private float _comsumeDuration = 2;
+        private float _comsumeTimer = 0;
+        private void EnterComsume()
+        {
+            ResetAnim();
+            _animTween = CreateTween().SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out).SetLoops();
+            _animTween.TweenProperty(BodyRoot, "scale", new Vector2(1.5f, 0.8f), 0.2f);
+            _animTween.TweenProperty(BodyRoot, "scale", new Vector2(1.0f, 1.0f), 0.2f);
+            _comsumeTimer = 0;
+        }
+        private void UpdateComsume(float delta)
+        {
+            _comsumeTimer += delta;
+            if (_comsumeTimer >= _comsumeDuration)
+            {
+                ComsumeItem();
+                ChangeState(PlayerState.Idle);
+                return;
+            }
+        }
+        #endregion
+
+
         #region Death
         private void EnterDeath()
         {
@@ -839,6 +884,15 @@ namespace Solo.Scripts.Entities.Players
                 _curTarget.ShowOutline(false);
                 _curTarget = null;
             }
+
+            //若当前手持物是building, IsConsumable, 跳过
+            if (FastBarInventory.ItemInstanceList[CurFastBarIndex] != null)
+            {
+                ItemData itemData = ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type);
+                if (itemData.IsBuilding || itemData.IsConsumable)
+                    return;
+            }
+
 
             Vector2 mousePos = GetGlobalMousePosition();
             if (GlobalPosition.DistanceSquaredTo(mousePos) > _curTargetRangeSq)
@@ -1185,6 +1239,24 @@ namespace Solo.Scripts.Entities.Players
             GetTree().CurrentScene.AddChild(floatTextLb);
             floatTextLb.Init($"-{mp}", GlobalPosition, new Color(0 / 256f, 153 / 256f, 219 / 256f));//0, 153, 219
             SetCurMp(_curMp - mp);
+        }
+
+        private void ComsumeItem()
+        {
+            var itemInstance = FastBarInventory.ItemInstanceList[CurFastBarIndex];
+            if (itemInstance == null)
+                return;
+
+            ItemData itemData = ItemDataManager.Instance.GetItemData(itemInstance.Type);
+
+            if (itemData.HpBonus > 0)
+                GetHp(itemData.HpBonus);
+            if (itemData.MpBonus > 0)
+                GetMp(itemData.MpBonus);
+
+            int remainCount = FastBarInventory.RemoveItemByIndex(CurFastBarIndex, 1);
+            if (remainCount == 0)
+                RefreshHandNode();
         }
     }
 }

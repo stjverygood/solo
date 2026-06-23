@@ -28,6 +28,9 @@ namespace Solo.Scripts.System.ItemSystem
             _itemDataMap.Add(ItemType.Silver, new ItemData { Name = "银块", MaxCount = 99, IconPath = "res://Assets/AtlasTextures/milk_icon.tres" });
             _itemDataMap.Add(ItemType.Gold, new ItemData { Name = "黄金", MaxCount = 99, IconPath = "res://Assets/AtlasTextures/milk_icon.tres" });
 
+            //食物
+            _itemDataMap.Add(ItemType.Banana, new ItemData { Name = "蕉", MaxCount = 99, IconPath = "res://Assets/AtlasTextures/Banana.tres", IsConsumable = true, MpBonus = 5 });
+
 
             //木制套装
             _itemDataMap.Add(ItemType.WoodSword, new ItemData { Name = "木剑", IconPath = "res://Assets/AtlasTextures/WoodSword.tres", MaxDur = 100 });
