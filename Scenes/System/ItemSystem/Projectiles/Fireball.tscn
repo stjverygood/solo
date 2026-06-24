@@ -1,0 +1,26 @@
+[gd_scene format=3 uid="uid://d24xyf4tuo8wn"]
+
+[ext_resource type="Texture2D" uid="uid://btyexkw7silgn" path="res://Assets/AtlasTextures/Fireball.tres" id="1_s47wh"]
+[ext_resource type="Script" uid="uid://c40plgxtwot0s" path="res://Scripts/System/ItemSystem/Projectiles/Fireball.cs" id="1_tlkoy"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_tlkoy"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_5dc2d"]
+radius = 52.009613
+
+[node name="Fireball" type="Area2D" unique_id=1367049546 node_paths=PackedStringArray("_explosionArea")]
+script = ExtResource("1_tlkoy")
+_explosionArea = NodePath("ExplosionArea2D")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1528945285]
+shape = SubResource("CircleShape2D_tlkoy")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=2125624342]
+rotation = 0.7853982
+scale = Vector2(0.9999999, 0.9999999)
+texture = ExtResource("1_s47wh")
+
+[node name="ExplosionArea2D" type="Area2D" parent="." unique_id=501190927]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ExplosionArea2D" unique_id=1346236062]
+shape = SubResource("CircleShape2D_5dc2d")

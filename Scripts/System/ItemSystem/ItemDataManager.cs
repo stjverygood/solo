@@ -29,6 +29,7 @@ namespace Solo.Scripts.System.ItemSystem
             _itemDataMap.Add(ItemType.Gold, new ItemData { Name = "黄金", MaxCount = 99, IconPath = "res://Assets/AtlasTextures/milk_icon.tres" });
 
             _itemDataMap.Add(ItemType.Arrow, new ItemData { Name = "箭", MaxCount = 99, IconPath = "res://Assets/AtlasTextures/Arrow.tres" });
+            _itemDataMap.Add(ItemType.Fireball, new ItemData { Name = "火球符箓", MaxCount = 99, IconPath = "res://Assets/AtlasTextures/Fireball.tres", CanProject = true });
 
 
 

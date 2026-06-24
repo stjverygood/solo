@@ -97,6 +97,7 @@
         Gold,//金, 直接捡的, 不用冶炼
 
         Arrow,//箭, 后面考虑是否要区分等级
+        Fireball,
 
         Banana,
 

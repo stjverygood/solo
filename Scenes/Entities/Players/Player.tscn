@@ -5,6 +5,7 @@
 [ext_resource type="PackedScene" uid="uid://bnq2kgnwy4iaa" path="res://Scenes/System/ItemSystem/Projectiles/Arrow.tscn" id="2_ynm40"]
 [ext_resource type="Texture2D" uid="uid://cmlghpyvrsitg" path="res://Assets/AtlasTextures/Player.tres" id="3_3gn43"]
 [ext_resource type="Shader" uid="uid://i3lcvke3ll2n" path="res://Assets/Shaders/Outline.gdshader" id="3_4xrd3"]
+[ext_resource type="PackedScene" uid="uid://d24xyf4tuo8wn" path="res://Scenes/System/ItemSystem/Projectiles/Fireball.tscn" id="3_cbjid"]
 [ext_resource type="PackedScene" uid="uid://das8eij0ua5tt" path="res://Scenes/System/BuildingSystem/BuildingPreview.tscn" id="3_f0b02"]
 [ext_resource type="PackedScene" uid="uid://cegl0cmno78dg" path="res://Scenes/System/InventorySystem/BagInventoryView.tscn" id="3_lxeke"]
 [ext_resource type="Texture2D" uid="uid://o4hfa45sxt1m" path="res://Assets/AtlasTextures/WoodAxe.tres" id="4_3gn43"]
@@ -70,6 +71,7 @@ _ArmorSprite = NodePath("SpriteRoot/BodyRoot/ArmorNode/ArmorSprite")
 _bootSprite = NodePath("SpriteRoot/BodyRoot/BootNode/BootSprite")
 _camera = NodePath("Camera2D")
 _arrowPs = ExtResource("2_ynm40")
+_fireballPs = ExtResource("3_cbjid")
 _selfView = NodePath("CanvasLayer/SelfView")
 _bagInventoryView = NodePath("CanvasLayer/BagInventoryView")
 _fastBarInventoryView = NodePath("CanvasLayer/FastBarInventoryView")

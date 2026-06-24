@@ -38,6 +38,7 @@ namespace Solo.Scripts.Entities.Players
 
         //发射物ps
         [Export] private PackedScene _arrowPs;
+        [Export] private PackedScene _fireballPs;
 
 
         //[Export] public PackedScene DropItemPs;
@@ -839,6 +840,11 @@ namespace Solo.Scripts.Entities.Players
                             GetTree().CurrentScene.AddChild(arrow);
                             arrow.Init(this, GlobalPosition, GetGlobalMousePosition(), _atk);
                         }
+                        break;
+                    case ItemType.Fireball:
+                        Fireball fireball = _fireballPs.Instantiate<Fireball>();
+                        GetTree().CurrentScene.AddChild(fireball);
+                        fireball.Init(this, GlobalPosition, GetGlobalMousePosition(), _atk);
                         break;
                 }
                 _atkLongPressTimer = 0;

@@ -3,8 +3,7 @@
 [ext_resource type="Script" uid="uid://ct2gix2i4644t" path="res://Scripts/System/ItemSystem/Projectiles/Arrow.cs" id="1_6emyp"]
 [ext_resource type="Texture2D" uid="uid://dq3kpdy1suhis" path="res://Assets/AtlasTextures/Arrow.tres" id="2_aiw7c"]
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_6emyp"]
-size = Vector2(22, 8)
+[sub_resource type="CircleShape2D" id="CircleShape2D_6emyp"]
 
 [node name="Arrow" type="Area2D" unique_id=416376320]
 script = ExtResource("1_6emyp")
@@ -16,4 +15,4 @@ texture = ExtResource("2_aiw7c")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=2016580624]
 position = Vector2(1, 0)
-shape = SubResource("RectangleShape2D_6emyp")
+shape = SubResource("CircleShape2D_6emyp")
