@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://bwctbm6eq64vu"]
 
 [ext_resource type="Script" uid="uid://dpkxkwy3ger5n" path="res://Scripts/Entities/Players/Player.cs" id="1_lxeke"]
+[ext_resource type="Texture2D" uid="uid://c5cysx8uva6i2" path="res://Assets/AtlasTextures/AimIcon.tres" id="2_oet8y"]
 [ext_resource type="Texture2D" uid="uid://cmlghpyvrsitg" path="res://Assets/AtlasTextures/Player.tres" id="3_3gn43"]
 [ext_resource type="Shader" uid="uid://i3lcvke3ll2n" path="res://Assets/Shaders/Outline.gdshader" id="3_4xrd3"]
 [ext_resource type="PackedScene" uid="uid://das8eij0ua5tt" path="res://Scenes/System/BuildingSystem/BuildingPreview.tscn" id="3_f0b02"]
@@ -76,6 +77,7 @@ _mpPb = NodePath("CanvasLayer/MpPb")
 _mpLb = NodePath("CanvasLayer/MpPb/MpLb")
 _debugLb = NodePath("DebugLabel")
 _deathView = NodePath("CanvasLayer/DeathView")
+_aimTexture = ExtResource("2_oet8y")
 _buildingPreviewPs = ExtResource("3_f0b02")
 _handNode = NodePath("SpriteRoot/HandNode")
 _handSprite = NodePath("SpriteRoot/HandNode/Sprite2D")
@@ -213,7 +215,6 @@ offset_bottom = -184.0
 visible = false
 
 [node name="DebugLabel" type="Label" parent="." unique_id=1146679472]
-visible = false
 offset_left = -66.0
 offset_top = -15.0
 offset_right = -12.0

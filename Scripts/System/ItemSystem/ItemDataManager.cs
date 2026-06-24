@@ -28,13 +28,17 @@ namespace Solo.Scripts.System.ItemSystem
             _itemDataMap.Add(ItemType.Silver, new ItemData { Name = "银块", MaxCount = 99, IconPath = "res://Assets/AtlasTextures/milk_icon.tres" });
             _itemDataMap.Add(ItemType.Gold, new ItemData { Name = "黄金", MaxCount = 99, IconPath = "res://Assets/AtlasTextures/milk_icon.tres" });
 
-            //食物
+            _itemDataMap.Add(ItemType.Arrow, new ItemData { Name = "箭", MaxCount = 99, IconPath = "res://Assets/AtlasTextures/Arrow.tres" });
+
+
+
+            //可消耗品
             _itemDataMap.Add(ItemType.Banana, new ItemData { Name = "蕉", MaxCount = 99, IconPath = "res://Assets/AtlasTextures/Banana.tres", IsConsumable = true, MpBonus = 5 });
 
 
             //木制套装
             _itemDataMap.Add(ItemType.WoodSword, new ItemData { Name = "木剑", IconPath = "res://Assets/AtlasTextures/WoodSword.tres", MaxDur = 100 });
-            _itemDataMap.Add(ItemType.WoodBow, new ItemData { Name = "木弓", IconPath = "res://Assets/AtlasTextures/WoodAxe.tres", MaxDur = 100 });
+            _itemDataMap.Add(ItemType.WoodBow, new ItemData { Name = "木弓", IconPath = "res://Assets/AtlasTextures/WoodBow.tres", MaxDur = 100, CanProject = true });
             _itemDataMap.Add(ItemType.WoodPickaxe, new ItemData { Name = "木镐", IconPath = "res://Assets/AtlasTextures/WoodPickaxe.tres", MaxDur = 100 });
             _itemDataMap.Add(ItemType.WoodAxe, new ItemData { Name = "木斧", IconPath = "res://Assets/AtlasTextures/WoodAxe.tres", MaxDur = 100 });
             _itemDataMap.Add(ItemType.WoodPot, new ItemData { Name = "木壶", IconPath = "res://Assets/AtlasTextures/WoodPot.tres", MaxDur = 100 });
@@ -45,7 +49,7 @@ namespace Solo.Scripts.System.ItemSystem
 
             //铁制套装
             _itemDataMap.Add(ItemType.IronSword, new ItemData { Name = "铁剑", IconPath = "res://Assets/AtlasTextures/IronSword.tres", MaxDur = 100 });
-            _itemDataMap.Add(ItemType.IronBow, new ItemData { Name = "铁弓", IconPath = "res://Assets/AtlasTextures/WoodAxe.tres", MaxDur = 100 });
+            _itemDataMap.Add(ItemType.IronBow, new ItemData { Name = "铁弓", IconPath = "res://Assets/AtlasTextures/IronBow.tres", MaxDur = 100, CanProject = true });
             _itemDataMap.Add(ItemType.IronPickaxe, new ItemData { Name = "铁镐", IconPath = "res://Assets/AtlasTextures/IronPickaxe.tres", MaxDur = 100 });
             _itemDataMap.Add(ItemType.IronAxe, new ItemData { Name = "铁斧", IconPath = "res://Assets/AtlasTextures/IronAxe.tres", MaxDur = 100 });
             _itemDataMap.Add(ItemType.IronPot, new ItemData { Name = "铁壶", IconPath = "res://Assets/AtlasTextures/IronPot.tres", MaxDur = 100 });
@@ -56,7 +60,7 @@ namespace Solo.Scripts.System.ItemSystem
 
             //金制装备
             _itemDataMap.Add(ItemType.GoldSword, new ItemData { Name = "金剑", IconPath = "res://Assets/AtlasTextures/GoldSword.tres", MaxDur = 100 });
-            _itemDataMap.Add(ItemType.GoldBow, new ItemData { Name = "金弓", IconPath = "res://Assets/AtlasTextures/WoodAxe.tres", MaxDur = 100 });
+            _itemDataMap.Add(ItemType.GoldBow, new ItemData { Name = "金弓", IconPath = "res://Assets/AtlasTextures/GoldBow.tres", MaxDur = 100, CanProject = true });
             _itemDataMap.Add(ItemType.GoldPickaxe, new ItemData { Name = "金镐", IconPath = "res://Assets/AtlasTextures/GoldPickaxe.tres", MaxDur = 100 });
             _itemDataMap.Add(ItemType.GoldAxe, new ItemData { Name = "金斧", IconPath = "res://Assets/AtlasTextures/GoldAxe.tres", MaxDur = 100 });
             _itemDataMap.Add(ItemType.GoldPot, new ItemData { Name = "金壶", IconPath = "res://Assets/AtlasTextures/GoldPot.tres", MaxDur = 100 });
@@ -67,7 +71,7 @@ namespace Solo.Scripts.System.ItemSystem
 
             //玉制套装
             _itemDataMap.Add(ItemType.JadeSword, new ItemData { Name = "玉剑", IconPath = "res://Assets/AtlasTextures/JadeSword.tres", MaxDur = 100 });
-            _itemDataMap.Add(ItemType.JadeBow, new ItemData { Name = "玉弓", IconPath = "res://Assets/AtlasTextures/WoodAxe.tres", MaxDur = 100 });
+            _itemDataMap.Add(ItemType.JadeBow, new ItemData { Name = "玉弓", IconPath = "res://Assets/AtlasTextures/JadeBow.tres", MaxDur = 100, CanProject = true });
             _itemDataMap.Add(ItemType.JadePickaxe, new ItemData { Name = "玉镐", IconPath = "res://Assets/AtlasTextures/JadePickaxe.tres", MaxDur = 100 });
             _itemDataMap.Add(ItemType.JadeAxe, new ItemData { Name = "玉斧", IconPath = "res://Assets/AtlasTextures/JadeAxe.tres", MaxDur = 100 });
             _itemDataMap.Add(ItemType.JadePot, new ItemData { Name = "玉壶", IconPath = "res://Assets/AtlasTextures/JadePot.tres", MaxDur = 100 });
@@ -82,6 +86,7 @@ namespace Solo.Scripts.System.ItemSystem
             _itemDataMap.Add(ItemType.BuildingCraft, new ItemData { Name = "天工殿", MaxCount = 99, IconPath = "res://Assets/AtlasTextures/BuildingCraft.tres", IsBuilding = true });
             _itemDataMap.Add(ItemType.ToolCraft, new ItemData { Name = "锻器台", MaxCount = 99, IconPath = "res://Assets/AtlasTextures/ToolCraft.tres", IsBuilding = true });
             _itemDataMap.Add(ItemType.ArmorCraft, new ItemData { Name = "织锦阁", MaxCount = 99, IconPath = "res://Assets/AtlasTextures/ArmorCraft.tres", IsBuilding = true });
+            _itemDataMap.Add(ItemType.MagicCraft, new ItemData { Name = "符箓台", MaxCount = 99, IconPath = "res://Assets/AtlasTextures/MainBase.tres", IsBuilding = true });
             _itemDataMap.Add(ItemType.ItemBox, new ItemData { Name = "乾坤箱", MaxCount = 99, IconPath = "res://Assets/AtlasTextures/MainBase.tres", IsBuilding = true });
         }
 

@@ -17,5 +17,6 @@ namespace Solo.Scripts.System.ItemSystem
         public bool IsConsumable = false;
         public float HpBonus = 0;
         public float MpBonus = 0;
+        public bool CanProject = false;
     }
 }

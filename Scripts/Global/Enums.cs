@@ -96,6 +96,8 @@
         Silver,//银, 银白色
         Gold,//金, 直接捡的, 不用冶炼
 
+        Arrow,//箭, 后面考虑是否要区分等级
+
         Banana,
 
 
@@ -146,6 +148,7 @@
         BuildingCraft,//建筑合成台
         ToolCraft,//工具合成台
         ArmorCraft,//防具合成台
+        MagicCraft,//法术合成台
         Crucible,//熔炉
         ItemBox,//储物箱
 

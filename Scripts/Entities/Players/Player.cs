@@ -19,6 +19,7 @@ namespace Solo.Scripts.Entities.Players
         Interact,//交互
         Build,//建造状态
         Comsume,//消耗物品
+        Aim,//瞄准状态
         Death,
         BagUI,
     }
@@ -39,7 +40,7 @@ namespace Solo.Scripts.Entities.Players
         //[Export] public PackedScene DropItemPs;
 
         private ShaderMaterial _shaderMaterial;
-        private float _atkLongPressDuration = 0.5f;//长按判断阈值
+        private float _atkLongPressDuration = 0.3f;//长按判断阈值
         private float _atkLongPressTimer = 0f;
         private bool _isAtkLongPressTimerValid = true;
 
@@ -98,7 +99,7 @@ namespace Solo.Scripts.Entities.Players
         [Export] private Label _mpLb;
         [Export] private Label _debugLb;
         [Export] private DeathView _deathView;
-
+        [Export] public Texture2D _aimTexture;
 
         public override void _Ready()
         {
@@ -220,6 +221,9 @@ namespace Solo.Scripts.Entities.Players
                 case PlayerState.Comsume:
                     EnterComsume();
                     break;
+                case PlayerState.Aim:
+                    EnterAim();
+                    break;
                 case PlayerState.Death:
                     EnterDeath();
                     break;
@@ -255,6 +259,9 @@ namespace Solo.Scripts.Entities.Players
                     break;
                 case PlayerState.Comsume:
                     UpdateComsume(delta);
+                    break;
+                case PlayerState.Aim:
+                    UpdateAim(delta);
                     break;
                 case PlayerState.Death:
                     UpdateDeath(delta);
@@ -327,6 +334,11 @@ namespace Solo.Scripts.Entities.Players
                     ChangeState(PlayerState.Comsume);
                     return;
                 }
+                else if (FastBarInventory.ItemInstanceList[CurFastBarIndex] != null && ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).CanProject)
+                {
+                    ChangeState(PlayerState.Aim);
+                    return;
+                }
             }
 
             if (Input.IsActionJustPressed("Interact"))
@@ -395,6 +407,11 @@ namespace Solo.Scripts.Entities.Players
                 else if (FastBarInventory.ItemInstanceList[CurFastBarIndex] != null && ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).IsConsumable)
                 {
                     ChangeState(PlayerState.Comsume);
+                    return;
+                }
+                else if (FastBarInventory.ItemInstanceList[CurFastBarIndex] != null && ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).CanProject)
+                {
+                    ChangeState(PlayerState.Aim);
                     return;
                 }
             }
@@ -470,6 +487,11 @@ namespace Solo.Scripts.Entities.Players
                 else if (FastBarInventory.ItemInstanceList[CurFastBarIndex] != null && ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).IsConsumable)
                 {
                     ChangeState(PlayerState.Comsume);
+                    return;
+                }
+                else if (FastBarInventory.ItemInstanceList[CurFastBarIndex] != null && ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).CanProject)
+                {
+                    ChangeState(PlayerState.Aim);
                     return;
                 }
             }
@@ -739,7 +761,6 @@ namespace Solo.Scripts.Entities.Players
                 {
                     qiRangeable.ShowQiRange(false);
                 }
-                _atkLongPressTimer = 0;
                 ChangeState(PlayerState.Idle);
                 return;
             }
@@ -776,6 +797,71 @@ namespace Solo.Scripts.Entities.Players
                 ChangeState(PlayerState.Idle);
                 return;
             }
+        }
+        #endregion
+
+        #region Aim
+        private void EnterAim()
+        {
+            ResetAnim();
+            _animTween = CreateTween().SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out).SetLoops();
+            _animTween.TweenProperty(BodyRoot, "scale", new Vector2(1.5f, 0.8f), 0.2f);
+            _animTween.TweenProperty(BodyRoot, "scale", new Vector2(1.0f, 1.0f), 0.2f);
+            Input.SetCustomMouseCursor(_aimTexture, Input.CursorShape.Arrow, _aimTexture.GetSize() / 2);
+            _isAtkLongPressTimerValid = false;
+        }
+        private void UpdateAim(float delta)
+        {
+            if (Input.IsActionJustReleased("Atk"))
+            {
+                Input.SetCustomMouseCursor(null, Input.CursorShape.Arrow);
+                GD.Print("开炮!!!");
+                ItemType curItemType = FastBarInventory.ItemInstanceList[CurFastBarIndex].Type;
+                switch (curItemType)
+                {
+                    case ItemType.WoodBow:
+                    case ItemType.IronBow:
+                    case ItemType.GoldBow:
+                    case ItemType.JadeBow:
+                        //尝试扣除一个弓箭
+                        int removeCount = FastBarInventory.RemoveItemByType(ItemType.Arrow, 1);//先在快捷栏里扣
+                        if (removeCount != 1)
+                        {
+                            removeCount = BagInventory.RemoveItemByType(ItemType.Arrow, 1);//若快捷栏没有, 去背包里扣
+                        }
+                        if (removeCount == 1)
+                        {
+                            //发射弓箭, 
+                        }
+
+                        break;
+
+                }
+                _atkLongPressTimer = 0;
+                _isAtkLongPressTimerValid = true;
+                ChangeState(PlayerState.Idle);
+                return;
+            }
+            if (Input.IsActionJustPressed("Interact"))
+            {
+                Input.SetCustomMouseCursor(null, Input.CursorShape.Arrow);
+                ChangeState(PlayerState.Idle);
+                return;
+            }
+
+
+            Vector2 input = Input.GetVector("MoveLeft", "MoveRight", "MoveForward", "MoveBack");
+            if (input != Vector2.Zero)
+                _curDir = input;
+            if ((GetGlobalMousePosition() - GlobalPosition).X < 0)
+                SpriteRoot.Scale = new Vector2(-1, 1);
+            else if ((GetGlobalMousePosition() - GlobalPosition).X > 0)
+                SpriteRoot.Scale = new Vector2(1, 1);
+            if (GameManager.Instance.ChunkManager.GetTileType(GlobalPosition) == TileType.Water)
+                Velocity = input * TotalMoveSpeed / 4;
+            else
+                Velocity = input * TotalMoveSpeed;
+            MoveAndSlide();
         }
         #endregion
 
@@ -883,6 +969,70 @@ namespace Solo.Scripts.Entities.Players
             }
         }
         #endregion
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
