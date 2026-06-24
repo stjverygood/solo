@@ -36,6 +36,9 @@ namespace Solo.Scripts.Entities.Players
         [Export] private Sprite2D _bootSprite;
         [Export] private Camera2D _camera;
 
+        //发射物ps
+        [Export] private PackedScene _arrowPs;
+
 
         //[Export] public PackedScene DropItemPs;
 
@@ -832,10 +835,11 @@ namespace Solo.Scripts.Entities.Players
                         if (removeCount == 1)
                         {
                             //发射弓箭, 
+                            Arrow arrow = _arrowPs.Instantiate<Arrow>();
+                            GetTree().CurrentScene.AddChild(arrow);
+                            arrow.Init(this, GlobalPosition, GetGlobalMousePosition(), _atk);
                         }
-
                         break;
-
                 }
                 _atkLongPressTimer = 0;
                 _isAtkLongPressTimerValid = true;

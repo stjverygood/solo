@@ -151,6 +151,11 @@
         MagicCraft,//法术合成台
         Crucible,//熔炉
         ItemBox,//储物箱
-
     }
+
+    //public enum ProjectileType
+    //{
+    //    Arrow,
+    //    Fireball,
+    //}
 }

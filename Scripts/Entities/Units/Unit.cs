@@ -524,7 +524,7 @@ namespace Solo.Scripts.Entities.Units
         #endregion
 
         #region Hurt
-        private Node2D curAtker = null;
+        private Vector2 _curAtkerPos;
         private float _hurtDuration = 0.15f;
         private float _hurtTimer = 0f;
         private void EnterHurt()
@@ -552,7 +552,7 @@ namespace Solo.Scripts.Entities.Units
                 ChangeState(UnitState.Idle);
                 return;
             }
-            _curDir = (GlobalPosition - curAtker.GlobalPosition).Normalized();
+            _curDir = (GlobalPosition - _curAtkerPos).Normalized();
             Velocity = _curDir * 200;
             MoveAndSlide();
         }
@@ -791,7 +791,7 @@ namespace Solo.Scripts.Entities.Units
 
 
             _curHp -= damage;
-            curAtker = atker;
+            _curAtkerPos = atker.GlobalPosition;
             ChangeState(UnitState.Hurt);
             return;
         }
