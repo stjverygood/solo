@@ -169,7 +169,7 @@ namespace Solo.Scripts.Global
 
         //时间系统
         public float TimeRatio = 0;//0天黑, 0.25黎明, 0.5中午, 0.75日落, 1天黑; 白天 : 0.25-0.75, 晚上 : 0.75 - 后一天0.25
-        private float DayDuration = 60f * 1;
+        private float DayDuration = 60f * 3;
         private float _curTime = 0;
         private void UpdateGameTime(float delta)
         {

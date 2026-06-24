@@ -31,6 +31,9 @@ namespace Solo.Scripts.Entities.Units
     {
         public UnitType Type;
         public TargetType TargetType;
+
+        private float _dleDistSq = 300 * 300;
+
         private float _maxHp;
         private float _curHp;
         private float _patrolRadius;
@@ -55,11 +58,13 @@ namespace Solo.Scripts.Entities.Units
         private ShaderMaterial _shaderMaterial;
         private Tween _animTween;
 
-        public void Init(UnitType type, Vector2 worldPos)
+        public void Init(UnitType type, Vector2 worldPos, bool isDay)
         {
             GameManager.Instance.UnitList.Add(this);
+            _isDay = isDay;
 
             Type = type;
+
             GlobalPosition = worldPos;
             UnitData unitData = UnitDataManager.Instance.GetUnitData(Type);
             TargetType = unitData.TargetType;
@@ -101,6 +106,7 @@ namespace Solo.Scripts.Entities.Units
         {
             UpdataState((float)delta);
             _debugLb.Text = _curState.ToString() + " " + _curFearTargetList.Count;
+            RefreshChunkPos();
         }
 
         private void ChangeState(UnitState newState)
@@ -215,6 +221,11 @@ namespace Solo.Scripts.Entities.Units
         }
         private void UpdateIdle(float delta)
         {
+            if (GlobalPosition.DistanceSquaredTo(GameManager.Instance.Player.GlobalPosition) >= _dleDistSq)
+            {
+                return;
+            }
+
             _idleTimer += delta;
             if (_idleTimer >= _idleDuration)
             {
@@ -255,6 +266,12 @@ namespace Solo.Scripts.Entities.Units
         }
         private void UpdatePatrol(float delta)
         {
+            if (GlobalPosition.DistanceSquaredTo(GameManager.Instance.Player.GlobalPosition) >= _dleDistSq)
+            {
+                ChangeState(UnitState.Idle);
+                return;
+            }
+
             if (_naviAgent.IsNavigationFinished())
             {
                 ChangeState(UnitState.Idle);
@@ -306,6 +323,12 @@ namespace Solo.Scripts.Entities.Units
         }
         private void UpdateChase(float delta)
         {
+            if (GlobalPosition.DistanceSquaredTo(GameManager.Instance.Player.GlobalPosition) >= _dleDistSq)
+            {
+                ChangeState(UnitState.Idle);
+                return;
+            }
+
             RefreshFearTargetList();
             if (_curFearTargetList.Count != 0)
             {
@@ -357,7 +380,7 @@ namespace Solo.Scripts.Entities.Units
             //_animTween.TweenProperty(_animRoot, "rotation", 1.3f, 0.05f);
             _animTween.TweenCallback(Callable.From(() =>
             {
-                _curAtkTarget.TakeDamage(10, null);
+                _curAtkTarget.TakeDamage(this, 5, null);
                 //foreach (Node2D viewNode in _viewNodeList)
                 //{
                 //    if (!IsInstanceValid(viewNode)) continue;
@@ -385,7 +408,11 @@ namespace Solo.Scripts.Entities.Units
         }
         private void UpdateAtk(float delta)
         {
-
+            if (GlobalPosition.DistanceSquaredTo(GameManager.Instance.Player.GlobalPosition) >= _dleDistSq)
+            {
+                ChangeState(UnitState.Idle);
+                return;
+            }
         }
         private void ExitAtk()
         {
@@ -400,6 +427,12 @@ namespace Solo.Scripts.Entities.Units
         }
         private void UpdateEscape(float delta)
         {
+            if (GlobalPosition.DistanceSquaredTo(GameManager.Instance.Player.GlobalPosition) >= _dleDistSq)
+            {
+                ChangeState(UnitState.Idle);
+                return;
+            }
+
             RefreshFearTargetList();
             if (_curFearTargetList.Count == 0)//无恐惧目标
             {
@@ -471,6 +504,12 @@ namespace Solo.Scripts.Entities.Units
         }
         private void UpdateCd(float delta)
         {
+            if (GlobalPosition.DistanceSquaredTo(GameManager.Instance.Player.GlobalPosition) >= _dleDistSq)
+            {
+                ChangeState(UnitState.Idle);
+                return;
+            }
+
             CdTimer += delta;
             if (CdTimer >= _cdDuration)
             {
@@ -485,13 +524,37 @@ namespace Solo.Scripts.Entities.Units
         #endregion
 
         #region Hurt
+        private Node2D curAtker = null;
+        private float _hurtDuration = 0.15f;
+        private float _hurtTimer = 0f;
         private void EnterHurt()
         {
 
         }
         private void UpdateHurt(float delta)
         {
+            if (_curHp <= 0)
+            {
+                ChangeState(UnitState.Death);
+                return;
+            }
 
+            if (GlobalPosition.DistanceSquaredTo(GameManager.Instance.Player.GlobalPosition) >= _dleDistSq)
+            {
+                ChangeState(UnitState.Idle);
+                return;
+            }
+
+            _hurtTimer += delta;
+            if (_hurtTimer >= _hurtDuration)
+            {
+                _hurtTimer = 0;
+                ChangeState(UnitState.Idle);
+                return;
+            }
+            _curDir = (GlobalPosition - curAtker.GlobalPosition).Normalized();
+            Velocity = _curDir * 200;
+            MoveAndSlide();
         }
         private void ExitHurt()
         {
@@ -502,11 +565,33 @@ namespace Solo.Scripts.Entities.Units
         #region Death
         private void EnterDeath()
         {
-
+            _curHp = 0;
+            CollisionLayer = 0;
+            CollisionMask = 0;
+            ResetAnim();
+            _animTween = CreateTween().SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out);
+            _animTween.TweenProperty(_animRoot, "scale", new Vector2(0f, 0f), 0.5f);
+            _animTween.Finished += () =>
+            {
+                foreach ((ItemType, int, int) tuple in _dropItemList)
+                {
+                    DropItem dropItem = DropItemPs.Instantiate<DropItem>();
+                    GetTree().CurrentScene.AddChild(dropItem);
+                    dropItem.Init(new ItemInstance() { Type = tuple.Item1, Count = Random.Shared.Next(tuple.Item2, tuple.Item3 + 1) }, Position);
+                    dropItem.ApplyForce();
+                }
+                GameManager.Instance.UnitList.Remove(this);
+                QueueFree();
+            };
         }
+
         private void UpdateDeath(float delta)
         {
-
+            //if (GlobalPosition.DistanceSquaredTo(GameManager.Instance.Player.GlobalPosition) >= _dleDistSq)
+            //{
+            //    ChangeState(UnitState.Idle);
+            //    return;
+            //}
         }
         private void ExitDeath()
         {
@@ -572,40 +657,6 @@ namespace Solo.Scripts.Entities.Units
             //GlobalPosition += safeVelocity * (float)GetPhysicsProcessDeltaTime();
         }
 
-
-
-        private void Die()
-        {
-            //GameManager.Instance.ChunkManager.RemoveItem(this, GlobalPosition);
-            _curHp = 0;
-            //掉落物品
-            foreach ((ItemType, int, int) tuple in _dropItemList)
-            {
-                DropItem dropItem = DropItemPs.Instantiate<DropItem>();
-                GetTree().CurrentScene.AddChild(dropItem);
-                dropItem.Init(new ItemInstance() { Type = tuple.Item1, Count = Random.Shared.Next(tuple.Item2, tuple.Item3 + 1) }, Position);
-                dropItem.ApplyForce();
-            }
-            //GameManager.Instance.ChunkManager.RemoveItem(this, GlobalPosition);
-            GameManager.Instance.UnitList.Remove(this);
-            QueueFree();
-        }
-
-
-        //public virtual void ShowOutline(bool isShow)
-        //{
-        //    if (isShow)
-        //    {
-        //        _shaderMaterial.SetShaderParameter("outline_color", new Godot.Color(1, 1, 1));//162, 38, 51
-        //        _shaderMaterial.SetShaderParameter("outline_width", 1);
-        //    }
-        //    else
-        //    {
-        //        _shaderMaterial.SetShaderParameter("outline_width", 0.0f);
-        //    }
-        //}
-
-
         private float HandleDamage(ItemType? dmgItemType, float damage)
         {
             float resDmg = damage;
@@ -656,10 +707,6 @@ namespace Solo.Scripts.Entities.Units
         }
 
 
-        //private Node2D _curFearNode = null;
-        //private Node2D _curNearestHostileNode = null;
-        //private List<Node2D> _viewNodeList = new List<Node2D>();
-        //private ITargetable _curFearTarget = null;
         private List<ITargetable> _curFearTargetList = new List<ITargetable>();
         private ITargetable _curAtkTarget = null;
         private List<ITargetable> _viewTargetList = new List<ITargetable>();//先用targetlist是因为fear和atk会动态调整, 若先分类就做不到动态了(过滤规则会动态变化, 不能先过滤好, 而是要动态过滤)
@@ -726,27 +773,27 @@ namespace Solo.Scripts.Entities.Units
             return GlobalPosition;
         }
 
-        public void TakeDamage(float damage, ItemType? itemType)
+        public void TakeDamage(Node2D atker, float damage, ItemType? itemType)
         {
+
+
             damage = HandleDamage(itemType, damage);
             Tween animTween = CreateTween().SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out);
-            animTween.TweenProperty(_animRoot, "skew", 0.2f, 0.1f);
+            animTween.TweenProperty(_animRoot, "scale", new Vector2(0.8f, 0.8f), 0.1f);
             animTween.Parallel().TweenProperty(_sprite.Material, "shader_parameter/flash_modifier", 1.0f, 0.1f);
-            animTween.TweenProperty(_animRoot, "skew", -0.2f, 0.1f);
+            animTween.TweenProperty(_animRoot, "scale", new Vector2(1.2f, 1.2f), 0.1f);
             animTween.Parallel().TweenProperty(_sprite.Material, "shader_parameter/flash_modifier", 0.0f, 0.1f);
-            animTween.TweenProperty(_animRoot, "skew", 0f, 0.1f);
+            animTween.TweenProperty(_animRoot, "scale", new Vector2(1f, 1f), 0.1f);
+
             FloatTextLb floatTextLb = GameManager.Instance.FloatTextLbPs.Instantiate<FloatTextLb>();
             GetTree().CurrentScene.AddChild(floatTextLb);
-            floatTextLb.Init($"-{damage}", GlobalPosition);
-            _curHp -= damage;
-            //_damageCooldownTimer = 0f;
-            //_healTimer = 0f;
-            //RefreshHpBar();
-            if (_curHp <= 0)
-            {
-                Die();
+            floatTextLb.Init($"-{damage}", GlobalPosition, new Color(162 / 256f, 38 / 256f, 51 / 256f));
 
-            }
+
+            _curHp -= damage;
+            curAtker = atker;
+            ChangeState(UnitState.Hurt);
+            return;
         }
 
         public bool CanInteract()
@@ -803,6 +850,26 @@ namespace Solo.Scripts.Entities.Units
         public TargetType GetTargetType()
         {
             return TargetType;
+        }
+
+        private Vector2I _curChunkPos;
+        private bool _isDay = true;//占用白天单位名额
+        private void RefreshChunkPos()
+        {
+            if (GameManager.Instance.ChunkManager.CurActiveChunkMap.ContainsKey(_curChunkPos) == false)
+                return;
+            if (_isDay)
+            {
+                GameManager.Instance.ChunkManager.CurActiveChunkMap[_curChunkPos].DayUnitList.Remove(this);
+                _curChunkPos = GameManager.Instance.ChunkManager.WorldToChunkPos(GlobalPosition);
+                GameManager.Instance.ChunkManager.CurActiveChunkMap[_curChunkPos].DayUnitList.Add(this);
+            }
+            else
+            {
+                GameManager.Instance.ChunkManager.CurActiveChunkMap[_curChunkPos].NightUnitList.Remove(this);
+                _curChunkPos = GameManager.Instance.ChunkManager.WorldToChunkPos(GlobalPosition);
+                GameManager.Instance.ChunkManager.CurActiveChunkMap[_curChunkPos].NightUnitList.Add(this);
+            }
         }
     }
 

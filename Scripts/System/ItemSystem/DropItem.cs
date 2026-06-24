@@ -82,7 +82,7 @@ namespace Solo.Scripts.System.ItemSystem
         {
             return GlobalPosition;
         }
-        public void TakeDamage(float damage, ItemType? itemType)
+        public void TakeDamage(Node2D atker, float damage, ItemType? itemType)
         {
             return;
         }

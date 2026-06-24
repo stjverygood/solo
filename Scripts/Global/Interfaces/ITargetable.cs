@@ -10,7 +10,7 @@ namespace Solo.Scripts.Global.Interfaces
         public TargetType GetTargetType();
 
         public bool CanAtk();
-        public void TakeDamage(float damage, ItemType? itemType);
+        public void TakeDamage(Node2D atker, float damage, ItemType? itemType);
 
         public bool CanInteract();
         public void Interact();

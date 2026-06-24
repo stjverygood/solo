@@ -54,6 +54,9 @@ corner_radius_top_right = 12
 corner_radius_bottom_right = 12
 corner_radius_bottom_left = 12
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_8ildv"]
+size = Vector2(800, 500)
+
 [node name="Player" type="CharacterBody2D" unique_id=1144409017 node_paths=PackedStringArray("SpriteRoot", "BodyRoot", "_sprite", "_helmetSprite", "_ArmorSprite", "_bootSprite", "_camera", "_selfView", "_bagInventoryView", "_fastBarInventoryView", "_hpPb", "_hpLb", "_mpPb", "_mpLb", "_debugLb", "_deathView", "_handNode", "_handSprite")]
 y_sort_enabled = true
 script = ExtResource("1_lxeke")
@@ -82,7 +85,6 @@ position = Vector2(0, -5)
 shape = SubResource("CircleShape2D_jw8fk")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=173865742]
-zoom = Vector2(1.5, 1.5)
 position_smoothing_enabled = true
 
 [node name="SpriteRoot" type="Node2D" parent="." unique_id=700917934]
@@ -211,6 +213,7 @@ offset_bottom = -184.0
 visible = false
 
 [node name="DebugLabel" type="Label" parent="." unique_id=1146679472]
+visible = false
 offset_left = -66.0
 offset_top = -15.0
 offset_right = -12.0
@@ -223,3 +226,9 @@ text = "asdf"
 [node name="NavigationObstacle2D" type="NavigationObstacle2D" parent="." unique_id=1630283297]
 position = Vector2(0, -7)
 radius = 11.11
+
+[node name="Area2D" type="Area2D" parent="." unique_id=2007169960]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D" unique_id=118237025]
+position = Vector2(0, -2.5)
+shape = SubResource("RectangleShape2D_8ildv")

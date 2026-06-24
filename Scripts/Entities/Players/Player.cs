@@ -39,6 +39,9 @@ namespace Solo.Scripts.Entities.Players
         //[Export] public PackedScene DropItemPs;
 
         private ShaderMaterial _shaderMaterial;
+        private float _atkLongPressDuration = 0.5f;//长按判断阈值
+        private float _atkLongPressTimer = 0f;
+        private bool _isAtkLongPressTimerValid = true;
 
         //人物属性
         public Vector2 StartPoint = new Vector2(0, 0);//出生点
@@ -168,7 +171,7 @@ namespace Solo.Scripts.Entities.Players
                         GD.Print("快捷检测：按下了 1");
                         break;
                     case Key.Key2:
-                        TakeDamage(50, null);
+                        TakeDamage(this, 50, null);
                         GD.Print("快捷检测：按下了 2");
                         break;
                     case Key.Key3:
@@ -278,8 +281,6 @@ namespace Solo.Scripts.Entities.Players
                 return;
             }
 
-
-
             if (Input.IsActionJustPressed("Bag"))
             {
                 ChangeState(PlayerState.BagUI);
@@ -302,10 +303,20 @@ namespace Solo.Scripts.Entities.Players
 
 
             CheckTarget();
-            //RefreshNearestTarget();//每帧刷新最近的target
-            if (Input.IsActionJustPressed("Atk"))
+            if (Input.IsActionPressed("Atk"))
+                _atkLongPressTimer += delta;
+            if (Input.IsActionJustReleased("Atk"))
             {
-                //根据物品, 若是buildingItem, 转到建筑模式
+                if (_isAtkLongPressTimerValid && _atkLongPressTimer < _atkLongPressDuration)//普通单击
+                {
+                    ChangeState(PlayerState.Atk);
+                    return;
+                }
+                _isAtkLongPressTimerValid = true;//建筑, 投掷道具, 取消后会把这个值置为false, 防止再次触发单击/长按
+                _atkLongPressTimer = 0;
+            }
+            if (_isAtkLongPressTimerValid && _atkLongPressTimer > _atkLongPressDuration)//触发长按
+            {
                 if (FastBarInventory.ItemInstanceList[CurFastBarIndex] != null && ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).IsBuilding)
                 {
                     ChangeState(PlayerState.Build);
@@ -314,11 +325,6 @@ namespace Solo.Scripts.Entities.Players
                 else if (FastBarInventory.ItemInstanceList[CurFastBarIndex] != null && ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).IsConsumable)
                 {
                     ChangeState(PlayerState.Comsume);
-                    return;
-                }
-                else
-                {
-                    ChangeState(PlayerState.Atk);
                     return;
                 }
             }
@@ -367,7 +373,19 @@ namespace Solo.Scripts.Entities.Players
             }
 
             CheckTarget();
-            if (Input.IsActionJustPressed("Atk"))
+            if (Input.IsActionPressed("Atk"))
+                _atkLongPressTimer += delta;
+            if (Input.IsActionJustReleased("Atk"))
+            {
+                if (_isAtkLongPressTimerValid && _atkLongPressTimer < _atkLongPressDuration)//普通单击
+                {
+                    ChangeState(PlayerState.Atk);
+                    return;
+                }
+                _isAtkLongPressTimerValid = true;//建筑, 投掷道具, 取消后会把这个值置为false, 防止再次触发单击/长按
+                _atkLongPressTimer = 0;
+            }
+            if (_isAtkLongPressTimerValid && _atkLongPressTimer > _atkLongPressDuration)//触发长按
             {
                 if (FastBarInventory.ItemInstanceList[CurFastBarIndex] != null && ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).IsBuilding)
                 {
@@ -379,12 +397,8 @@ namespace Solo.Scripts.Entities.Players
                     ChangeState(PlayerState.Comsume);
                     return;
                 }
-                else
-                {
-                    ChangeState(PlayerState.Atk);
-                    return;
-                }
             }
+
             if (Input.IsActionJustPressed("Interact"))
             {
                 ChangeState(PlayerState.Interact);
@@ -434,7 +448,19 @@ namespace Solo.Scripts.Entities.Players
             }
 
             CheckTarget();
-            if (Input.IsActionJustPressed("Atk"))
+            if (Input.IsActionPressed("Atk"))
+                _atkLongPressTimer += delta;
+            if (Input.IsActionJustReleased("Atk"))
+            {
+                if (_isAtkLongPressTimerValid && _atkLongPressTimer < _atkLongPressDuration)//普通单击
+                {
+                    ChangeState(PlayerState.Atk);
+                    return;
+                }
+                _isAtkLongPressTimerValid = true;//建筑, 投掷道具, 取消后会把这个值置为false, 防止再次触发单击/长按
+                _atkLongPressTimer = 0;
+            }
+            if (_isAtkLongPressTimerValid && _atkLongPressTimer > _atkLongPressDuration)//触发长按
             {
                 if (FastBarInventory.ItemInstanceList[CurFastBarIndex] != null && ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).IsBuilding)
                 {
@@ -444,11 +470,6 @@ namespace Solo.Scripts.Entities.Players
                 else if (FastBarInventory.ItemInstanceList[CurFastBarIndex] != null && ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).IsConsumable)
                 {
                     ChangeState(PlayerState.Comsume);
-                    return;
-                }
-                else
-                {
-                    ChangeState(PlayerState.Atk);
                     return;
                 }
             }
@@ -536,7 +557,7 @@ namespace Solo.Scripts.Entities.Players
         private void EnterAtk()
         {
             ResetAnim();
-
+            _atkLongPressTimer = 0;
             if (_curTarget == null || _curTarget.IsVaild() == false || _curTarget.CanAtk() == false)
             {
                 ChangeState(PlayerState.Idle);
@@ -564,7 +585,7 @@ namespace Solo.Scripts.Entities.Players
                     }
                     _fastBarInventoryView.RefreshSlot(CurFastBarIndex);
                 }
-                _curTarget.TakeDamage(_atk, FastBarInventory.ItemInstanceList[CurFastBarIndex]?.Type);
+                _curTarget.TakeDamage(this, _atk, FastBarInventory.ItemInstanceList[CurFastBarIndex]?.Type);
                 TakeMp(1f);
             }));
 
@@ -666,6 +687,7 @@ namespace Solo.Scripts.Entities.Players
             {
                 qiRangeable.ShowQiRange(true);
             }
+            _isAtkLongPressTimerValid = false;
         }
         private void UpdateBuild(float delta)
         {
@@ -694,31 +716,31 @@ namespace Solo.Scripts.Entities.Players
 
             Vector2 mousePos = GetGlobalMousePosition();
             _curBuildingPreview.RefreshPosition(mousePos);
-            if (Input.IsActionJustPressed("Atk"))
+
+            if (Input.IsActionJustReleased("Atk"))
             {
                 bool isBuild = _curBuildingPreview.Build(mousePos);                if (isBuild)
                 {
                     int remainCount = FastBarInventory.RemoveItemByIndex(CurFastBarIndex, 1);
-                    if (remainCount == 0)//count = 0, 空手, 并且切到Idle
-                    {
-                        _curBuildingPreview.QueueFree();
-                        foreach (IQiRangeable qiRangeable in GameManager.Instance.IQiRangeableList)
-                        {
-                            qiRangeable.ShowQiRange(false);
-                        }
-                        ChangeState(PlayerState.Idle);
-                        return;
-                    }
                 }
-            }
-            if (Input.IsActionJustPressed("Interact"))
-            {
-                ChangeState(PlayerState.Idle);
                 _curBuildingPreview.QueueFree();
                 foreach (IQiRangeable qiRangeable in GameManager.Instance.IQiRangeableList)
                 {
                     qiRangeable.ShowQiRange(false);
                 }
+                _atkLongPressTimer = 0;
+                ChangeState(PlayerState.Idle);
+                return;
+            }
+            if (Input.IsActionJustPressed("Interact"))
+            {
+                _curBuildingPreview.QueueFree();
+                foreach (IQiRangeable qiRangeable in GameManager.Instance.IQiRangeableList)
+                {
+                    qiRangeable.ShowQiRange(false);
+                }
+                _atkLongPressTimer = 0;
+                ChangeState(PlayerState.Idle);
                 return;
             }
         }
@@ -734,10 +756,20 @@ namespace Solo.Scripts.Entities.Players
             _animTween.TweenProperty(BodyRoot, "scale", new Vector2(1.5f, 0.8f), 0.2f);
             _animTween.TweenProperty(BodyRoot, "scale", new Vector2(1.0f, 1.0f), 0.2f);
             _comsumeTimer = 0;
+            _atkLongPressTimer = 0;
+            _isAtkLongPressTimerValid = false;
         }
         private void UpdateComsume(float delta)
         {
             _comsumeTimer += delta;
+
+            if (Input.IsActionJustPressed("Interact"))
+            {
+
+                ChangeState(PlayerState.Idle);
+                return;
+            }
+
             if (_comsumeTimer >= _comsumeDuration)
             {
                 ComsumeItem();
@@ -746,7 +778,6 @@ namespace Solo.Scripts.Entities.Players
             }
         }
         #endregion
-
 
         #region Death
         private void EnterDeath()
@@ -877,13 +908,13 @@ namespace Solo.Scripts.Entities.Players
                 _curTarget = null;
             }
 
-            //若当前手持物是building, IsConsumable, 跳过
-            if (FastBarInventory.ItemInstanceList[CurFastBarIndex] != null)
-            {
-                ItemData itemData = ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type);
-                if (itemData.IsBuilding || itemData.IsConsumable)
-                    return;
-            }
+            ////若当前手持物是building, IsConsumable, 跳过
+            //if (FastBarInventory.ItemInstanceList[CurFastBarIndex] != null)
+            //{
+            //    ItemData itemData = ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type);
+            //    if (itemData.IsBuilding || itemData.IsConsumable)
+            //        return;
+            //}
 
 
             Vector2 mousePos = GetGlobalMousePosition();
@@ -1118,7 +1149,7 @@ namespace Solo.Scripts.Entities.Players
         {
             return GlobalPosition;
         }
-        public void TakeDamage(float damage, ItemType? itemType)
+        public void TakeDamage(Node2D atker, float damage, ItemType? itemType)
         {
             float totalDef = _def;
             for (int i = 0; i < ArmorInventory.ItemInstanceList.Count; i++)

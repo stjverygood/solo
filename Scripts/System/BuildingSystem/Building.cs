@@ -68,7 +68,7 @@ namespace Solo.Scripts.System.BuildingSystem
         {
             return GlobalPosition;
         }
-        public void TakeDamage(float damage, ItemType? itemType)
+        public void TakeDamage(Node2D atker, float damage, ItemType? itemType)
         {
             Tween animTween = CreateTween().SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out);
             animTween.TweenProperty(_animRoot, "scale", new Vector2(0.8f, 0.8f), 0.1f);

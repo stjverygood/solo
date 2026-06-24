@@ -1,5 +1,6 @@
 using Godot;
 using Solo.Scripts.Entities.Players;
+using Solo.Scripts.Entities.Units;
 using Solo.Scripts.Global;
 using Solo.Scripts.System.BuildingSystem;
 using Solo.Scripts.System.BuildingSystem.Buildings;
@@ -11,7 +12,6 @@ using Tree = Solo.Scripts.System.BuildingSystem.Buildings.Tree;
 
 namespace Solo.Scripts.System.ChunkSystem
 {
-
     //public struct TileInfo
     //{
     //    //public TileType Type;
@@ -30,7 +30,7 @@ namespace Solo.Scripts.System.ChunkSystem
         private FastNoiseLite _noise = new FastNoiseLite();
         private int _chunkSize = 8;       // 每个区块的瓦片数量
         private int _tileSize = 16;        // 每个瓦片的像素大小
-        private int _renderDistance = 4;  // 玩家视野内的区块半径
+        private int _renderDistance = 3;  // 区块渲染距离
         private string _seedString;
         public Dictionary<Vector2I, Chunk> CurActiveChunkMap = new Dictionary<Vector2I, Chunk>();
         public Dictionary<Vector2I, ChunkSaveData> ChunkSaveDataMap = new Dictionary<Vector2I, ChunkSaveData>();
@@ -73,6 +73,9 @@ namespace Solo.Scripts.System.ChunkSystem
             if (player == null)
                 return;
             Vector2I playerChunkPos = WorldToChunkPos(player.GlobalPosition);// 获取玩家所在的区块坐标
+
+            GenerateUnit((float)delta);
+
             for (int x = -_renderDistance; x <= _renderDistance; x++)//生存区块
             {
                 for (int y = -_renderDistance; y <= _renderDistance; y++)
@@ -293,6 +296,16 @@ namespace Solo.Scripts.System.ChunkSystem
                 if (IsInstanceValid(dropItem))
                     dropItem.QueueFree();
             }
+            foreach (Unit dayUnit in curChunk.DayUnitList)
+            {
+                if (IsInstanceValid(dayUnit))
+                    dayUnit.QueueFree();
+            }
+            foreach (Unit night in curChunk.NightUnitList)
+            {
+                if (IsInstanceValid(night))
+                    night.QueueFree();
+            }
             ChunkSaveDataMap[chunkPos] = curChunkData;
             CurActiveChunkMap.Remove(chunkPos);
         }
@@ -336,6 +349,72 @@ namespace Solo.Scripts.System.ChunkSystem
                 CurActiveChunkMap[chunkPos].DropItemList.Remove(dropItem);
             }
         }
+
+        //单位生成 : 在玩家圆环内随机取点, 判断该点所属区块的单位数量, 若符合生成条件(中立单位容量和敌对单位容量, 非水), 生成
+        //
+        private int _dayUnitChunkCapacity = 1;
+        private int _nightUnitChunkCapacity = 1;
+        private List<UnitType> _dayUnitTypeList = new List<UnitType>() { UnitType.Fox };
+        private List<UnitType> _nightUnitTypeList = new List<UnitType>() { UnitType.Wolf };
+
+        private float _generateUnitDuration = 1;
+        private float _generateUnitTimer = 0;
+        private void GenerateUnit(float delta)
+        {
+            _generateUnitTimer += delta;
+            if (_generateUnitTimer < _generateUnitDuration)
+                return;
+            _generateUnitTimer = 0;//最后成功才重置计时器, 若中途有失败退出, 下次直接重试
+
+            float randomX = 0;//随机x
+            if (GD.Randf() < 0.5f)
+                randomX = (float)GD.RandRange(GameManager.Instance.Player.GlobalPosition.X - 300, GameManager.Instance.Player.GlobalPosition.X - 200);
+            else
+                randomX = (float)GD.RandRange(GameManager.Instance.Player.GlobalPosition.X + 200, GameManager.Instance.Player.GlobalPosition.X + 300);
+
+            float randomY = 0;//随机y
+            if (GD.Randf() < 0.5f)
+                randomY = (float)GD.RandRange(GameManager.Instance.Player.GlobalPosition.Y - 200, GameManager.Instance.Player.GlobalPosition.Y - 300);
+            else
+                randomY = (float)GD.RandRange(GameManager.Instance.Player.GlobalPosition.Y + 200, GameManager.Instance.Player.GlobalPosition.Y + 300);
+
+            Vector2 generatePosition = new Vector2(randomX, randomY);
+
+            // 打印测试结果
+            //GD.Print($"generatePosition : {generatePosition}");
+
+            if (GetTileType(generatePosition) == TileType.Water)//非可活动区域
+                return;
+
+            //生成 : 
+            //天亮, 在天亮单位列表里随机, 占用天亮单位容量
+            Vector2I chunkPos = WorldToChunkPos(generatePosition);
+            Chunk curChunk = CurActiveChunkMap[chunkPos];
+            if (GameManager.Instance.TimeRatio >= 0.25 && GameManager.Instance.TimeRatio <= 0.75)//白天
+            {
+                if (curChunk.DayUnitList.Count >= _dayUnitChunkCapacity)//超过了该区块白天单位上限
+                    return;
+                UnitType unitType = _dayUnitTypeList[GD.RandRange(0, _dayUnitTypeList.Count - 1)];
+                Unit unit = _unitPs.Instantiate<Unit>();
+                GetTree().CurrentScene.AddChild(unit);
+                unit.Init(unitType, generatePosition, true);
+            }
+            else//夜晚
+            {
+                if (curChunk.NightUnitList.Count >= _nightUnitChunkCapacity)
+                    return;
+                UnitType unitType = _nightUnitTypeList[GD.RandRange(0, _nightUnitTypeList.Count - 1)];
+                Unit unit = _unitPs.Instantiate<Unit>();
+                GetTree().CurrentScene.AddChild(unit);
+                unit.Init(unitType, generatePosition, false);
+            }
+
+
+
+
+        }
+
+
 
         public override void _ExitTree()
         {
