@@ -74,6 +74,7 @@
         ArmorCraft,//防具合成台
         Crucible,//熔炉
         ItemBox,//储物箱
+        TreeGrow,//树苗
     }
 
     //记录全游戏物品的type
@@ -152,6 +153,7 @@
         MagicCraft,//法术合成台
         Crucible,//熔炉
         ItemBox,//储物箱
+        TreeGrow,//树苗
     }
 
     //public enum ProjectileType

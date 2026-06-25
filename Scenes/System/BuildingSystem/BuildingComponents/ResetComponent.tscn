@@ -1,6 +1,0 @@
-[gd_scene format=3 uid="uid://dku6p73oe78s"]
-
-[ext_resource type="Script" uid="uid://jgasd5bqaw0j" path="res://Scripts/System/BuildingSystem/BuildingComponents/ResetComponent.cs" id="1_dqk0t"]
-
-[node name="ResetComponent" type="Node2D" unique_id=246606794]
-script = ExtResource("1_dqk0t")

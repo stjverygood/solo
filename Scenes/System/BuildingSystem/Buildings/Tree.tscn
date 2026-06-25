@@ -1,7 +1,9 @@
 [gd_scene format=3 uid="uid://n6epwj0fdw1i"]
 
 [ext_resource type="Script" uid="uid://dwvk18yng3bmk" path="res://Scripts/System/BuildingSystem/Buildings/Tree.cs" id="1_ojq6a"]
+[ext_resource type="Texture2D" uid="uid://d2lieohix3oui" path="res://Assets/AtlasTextures/Earth.tres" id="2_aanks"]
 [ext_resource type="Shader" uid="uid://i3lcvke3ll2n" path="res://Assets/Shaders/Outline.gdshader" id="2_g0p4k"]
+[ext_resource type="Texture2D" uid="uid://cp6nwpoomj3hj" path="res://Assets/AtlasTextures/Shadow16px.tres" id="2_t862x"]
 [ext_resource type="Texture2D" uid="uid://c8bqlw3qj8bok" path="res://Assets/AtlasTextures/Tree.tres" id="3_t862x"]
 [ext_resource type="PackedScene" uid="uid://b061vtrr1tw5d" path="res://Scenes/Global/HpBar.tscn" id="4_ojq6a"]
 
@@ -21,17 +23,28 @@ _animRoot = NodePath("AnimRoot")
 _sprite = NodePath("AnimRoot/Sprite2D")
 _hpBar = NodePath("HpBar")
 
+[node name="EarthSprite2D" type="Sprite2D" parent="." unique_id=512760339]
+visible = false
+texture = ExtResource("2_aanks")
+
+[node name="ShadowSprite2D" type="Sprite2D" parent="." unique_id=282443843]
+position = Vector2(0, 3)
+scale = Vector2(1, 0.5)
+texture = ExtResource("2_t862x")
+
 [node name="AnimRoot" type="Node2D" parent="." unique_id=78964809]
 
 [node name="Sprite2D" type="Sprite2D" parent="AnimRoot" unique_id=1035429755]
 material = SubResource("ShaderMaterial_6jykq")
-position = Vector2(0, -8)
+position = Vector2(0, -10)
 texture = ExtResource("3_t862x")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=238573282]
+visible = false
 shape = SubResource("RectangleShape2D_wbo7l")
 
 [node name="NavigationObstacle2D" type="NavigationObstacle2D" parent="." unique_id=382558469]
+visible = false
 radius = 8.0
 vertices = PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)
 

@@ -71,6 +71,7 @@ namespace Solo.Scripts.System.CraftSystem
                     CraftItemList.Add(new CraftItem(ItemType.WoodBoot, new List<(ItemType, int)>() { (ItemType.Wood, 4), (ItemType.Rope, 5), (ItemType.Silk, 5) }));
                     CraftItemList.Add(new CraftItem(ItemType.Arrow, new List<(ItemType, int)>() { (ItemType.Wood, 4), (ItemType.Rope, 5), (ItemType.Silk, 5) }));
                     CraftItemList.Add(new CraftItem(ItemType.Fireball, new List<(ItemType, int)>() { (ItemType.Wood, 4), (ItemType.Rope, 5), (ItemType.Silk, 5) }));
+                    CraftItemList.Add(new CraftItem(ItemType.TreeGrow, new List<(ItemType, int)>() { (ItemType.Wood, 4), (ItemType.Rope, 5), (ItemType.Silk, 5) }));
                     break;
                 case CraftViewType.Building://建筑合成台
                     CraftItemList.Add(new CraftItem(ItemType.MainBase, new List<(ItemType, int)>() { (ItemType.MainBaseStone, 0), (ItemType.Wood, 0), (ItemType.Stone, 0) }));

@@ -36,6 +36,9 @@ public partial class BuildingPreview : Node2D
             case ItemType.ItemBox:
                 Type = BuildingType.ItemBox;
                 break;
+            case ItemType.TreeGrow:
+                Type = BuildingType.TreeGrow;
+                break;
         }
         BuildingData buildingData = BuildingDataManager.Instance.GetBuildingData(Type);
         _sprite.Texture = GD.Load<Texture2D>(buildingData.TexturePath);
@@ -107,6 +110,12 @@ public partial class BuildingPreview : Node2D
                 ArmorCraft armorCraft = armorCraftPs.Instantiate<ArmorCraft>();
                 armorCraft.Init(Type, GlobalPosition);
                 GetTree().CurrentScene.AddChild(armorCraft);
+                break;
+            case BuildingType.TreeGrow:
+                PackedScene treeGrowPs = GD.Load<PackedScene>(buildingData.TscnPath);
+                TreeGrow treeGrow = treeGrowPs.Instantiate<TreeGrow>();
+                treeGrow.Init(Type, GlobalPosition);
+                GetTree().CurrentScene.AddChild(treeGrow);
                 break;
         }
         return true;

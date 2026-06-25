@@ -89,6 +89,7 @@ namespace Solo.Scripts.System.ItemSystem
             _itemDataMap.Add(ItemType.ArmorCraft, new ItemData { Name = "织锦阁", MaxCount = 99, IconPath = "res://Assets/AtlasTextures/ArmorCraft.tres", IsBuilding = true });
             _itemDataMap.Add(ItemType.MagicCraft, new ItemData { Name = "符箓台", MaxCount = 99, IconPath = "res://Assets/AtlasTextures/MainBase.tres", IsBuilding = true });
             _itemDataMap.Add(ItemType.ItemBox, new ItemData { Name = "乾坤箱", MaxCount = 99, IconPath = "res://Assets/AtlasTextures/MainBase.tres", IsBuilding = true });
+            _itemDataMap.Add(ItemType.TreeGrow, new ItemData { Name = "树苗", MaxCount = 99, IconPath = "res://Assets/AtlasTextures/TreeGrow.tres", IsBuilding = true });
         }
 
         public ItemData GetItemData(ItemType type)

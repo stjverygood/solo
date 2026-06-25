@@ -90,6 +90,16 @@ namespace Solo.Scripts.System.BuildingSystem
                 TscnPath = "res://Scenes/System/BuildingSystem/Buildings/ArmorCraft.tscn",
                 DropItemList = new List<(ItemType, int, int)>() { (ItemType.Stone, 1, 3), },
             });
+            _buildingDataMap.Add(BuildingType.TreeGrow, new BuildingData()
+            {
+                TargetType = TargetType.BuildingCraft,
+                Width = 1,
+                Height = 1,
+                MaxHp = 100,
+                TexturePath = "res://Assets/AtlasTextures/TreeGrow.tres",
+                TscnPath = "res://Scenes/System/BuildingSystem/Buildings/TreeGrow.tscn",
+                DropItemList = new List<(ItemType, int, int)>() { (ItemType.Stone, 1, 3), },
+            });
         }
 
         public BuildingData GetBuildingData(BuildingType type)

@@ -667,7 +667,10 @@ namespace Solo.Scripts.Entities.Players
             {
                 TriggerScreenShake(1);//震屏
                 _curTarget.Interact();
-
+                if (_curTarget is TreeGrow treeGrow && FastBarInventory.ItemInstanceList[CurFastBarIndex] != null)
+                {
+                    treeGrow.Watering(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type);
+                }
             }));
 
             _animTween.Parallel().TweenProperty(BodyRoot, "scale", new Vector2(1f, 1f), 0.1f);
