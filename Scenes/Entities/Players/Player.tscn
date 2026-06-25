@@ -8,10 +8,10 @@
 [ext_resource type="PackedScene" uid="uid://d24xyf4tuo8wn" path="res://Scenes/System/ItemSystem/Projectiles/Fireball.tscn" id="3_cbjid"]
 [ext_resource type="PackedScene" uid="uid://das8eij0ua5tt" path="res://Scenes/System/BuildingSystem/BuildingPreview.tscn" id="3_f0b02"]
 [ext_resource type="PackedScene" uid="uid://cegl0cmno78dg" path="res://Scenes/System/InventorySystem/BagInventoryView.tscn" id="3_lxeke"]
-[ext_resource type="Texture2D" uid="uid://o4hfa45sxt1m" path="res://Assets/AtlasTextures/WoodAxe.tres" id="4_3gn43"]
 [ext_resource type="PackedScene" uid="uid://557c5e8cwx11" path="res://Scenes/System/InventorySystem/FastBarInventoryView.tscn" id="4_y25d7"]
 [ext_resource type="FontFile" uid="uid://chelxpn5elvbb" path="res://Assets/zpix.ttf" id="5_rnj17"]
 [ext_resource type="PackedScene" uid="uid://bv36kio2oi60f" path="res://Scenes/Entities/Players/SelfView.tscn" id="6_7qy38"]
+[ext_resource type="Texture2D" uid="uid://4l1ykgdsxh5w" path="res://Assets/AtlasTextures/WoodPot.tres" id="8_cbjid"]
 [ext_resource type="PackedScene" uid="uid://d3ptuijhfhmm0" path="res://Scenes/Entities/Players/DeathView.tscn" id="11_oet8y"]
 [ext_resource type="PackedScene" uid="uid://ch5mbcfvw4tu3" path="res://Scenes/Entities/Players/DiscardView.tscn" id="11_ynm40"]
 
@@ -60,16 +60,18 @@ corner_radius_bottom_left = 12
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_8ildv"]
 size = Vector2(800, 500)
 
-[node name="Player" type="CharacterBody2D" unique_id=1144409017 node_paths=PackedStringArray("SpriteRoot", "BodyRoot", "_sprite", "_helmetSprite", "_ArmorSprite", "_bootSprite", "_camera", "_selfView", "_bagInventoryView", "_fastBarInventoryView", "_hpPb", "_hpLb", "_mpPb", "_mpLb", "_debugLb", "_deathView", "_handNode", "_handSprite")]
+[node name="Player" type="CharacterBody2D" unique_id=1144409017 node_paths=PackedStringArray("_camera", "_bodyRootNode", "_animRootNode", "_bodySprite", "_helmetSprite", "_ArmorSprite", "_bootSprite", "_handRootNode", "_handSprite", "_selfView", "_bagInventoryView", "_fastBarInventoryView", "_hpPb", "_hpLb", "_mpPb", "_mpLb", "_debugLb", "_deathView")]
 y_sort_enabled = true
 script = ExtResource("1_lxeke")
-SpriteRoot = NodePath("SpriteRoot")
-BodyRoot = NodePath("SpriteRoot/BodyRoot")
-_sprite = NodePath("SpriteRoot/BodyRoot/Sprite")
-_helmetSprite = NodePath("SpriteRoot/BodyRoot/HelmetNode/HelmetSprite")
-_ArmorSprite = NodePath("SpriteRoot/BodyRoot/ArmorNode/ArmorSprite")
-_bootSprite = NodePath("SpriteRoot/BodyRoot/BootNode/BootSprite")
 _camera = NodePath("Camera2D")
+_bodyRootNode = NodePath("BodyRootNode")
+_animRootNode = NodePath("BodyRootNode/AnimRootNode")
+_bodySprite = NodePath("BodyRootNode/AnimRootNode/BodySprite")
+_helmetSprite = NodePath("BodyRootNode/AnimRootNode/HelmetSprite")
+_ArmorSprite = NodePath("BodyRootNode/AnimRootNode/ArmorSprite")
+_bootSprite = NodePath("BodyRootNode/AnimRootNode/BootSprite")
+_handRootNode = NodePath("BodyRootNode/HandRootNode")
+_handSprite = NodePath("BodyRootNode/HandRootNode/HandSprite2D")
 _arrowPs = ExtResource("2_ynm40")
 _fireballPs = ExtResource("3_cbjid")
 _selfView = NodePath("CanvasLayer/SelfView")
@@ -83,8 +85,6 @@ _debugLb = NodePath("DebugLabel")
 _deathView = NodePath("CanvasLayer/DeathView")
 _aimTexture = ExtResource("2_oet8y")
 _buildingPreviewPs = ExtResource("3_f0b02")
-_handNode = NodePath("SpriteRoot/HandNode")
-_handSprite = NodePath("SpriteRoot/HandNode/Sprite2D")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1924437222]
 position = Vector2(0, -5)
@@ -94,36 +94,38 @@ shape = SubResource("CircleShape2D_jw8fk")
 zoom = Vector2(1.5, 1.5)
 position_smoothing_enabled = true
 
-[node name="SpriteRoot" type="Node2D" parent="." unique_id=700917934]
+[node name="BodyRootNode" type="Node2D" parent="." unique_id=700917934]
 
-[node name="BodyRoot" type="Node2D" parent="SpriteRoot" unique_id=727127429]
+[node name="AnimRootNode" type="Node2D" parent="BodyRootNode" unique_id=727127429]
 
-[node name="Sprite" type="Sprite2D" parent="SpriteRoot/BodyRoot" unique_id=13186832]
+[node name="BodySprite" type="Sprite2D" parent="BodyRootNode/AnimRootNode" unique_id=13186832]
 material = SubResource("ShaderMaterial_tqe6c")
 position = Vector2(0, -15)
 texture = ExtResource("3_3gn43")
 
-[node name="HelmetNode" type="Node2D" parent="SpriteRoot/BodyRoot" unique_id=140242760]
+[node name="HelmetSprite" type="Sprite2D" parent="BodyRootNode/AnimRootNode" unique_id=1412268932]
 position = Vector2(0, -20)
 
-[node name="HelmetSprite" type="Sprite2D" parent="SpriteRoot/BodyRoot/HelmetNode" unique_id=1412268932]
-
-[node name="ArmorNode" type="Node2D" parent="SpriteRoot/BodyRoot" unique_id=1841738930]
+[node name="ArmorSprite" type="Sprite2D" parent="BodyRootNode/AnimRootNode" unique_id=959745519]
 position = Vector2(0, -11)
 
-[node name="ArmorSprite" type="Sprite2D" parent="SpriteRoot/BodyRoot/ArmorNode" unique_id=959745519]
-
-[node name="BootNode" type="Node2D" parent="SpriteRoot/BodyRoot" unique_id=1443841212]
+[node name="BootSprite" type="Sprite2D" parent="BodyRootNode/AnimRootNode" unique_id=1388988529]
 position = Vector2(0, -3)
 
-[node name="BootSprite" type="Sprite2D" parent="SpriteRoot/BodyRoot/BootNode" unique_id=1388988529]
+[node name="ColorRect" type="ColorRect" parent="BodyRootNode/AnimRootNode" unique_id=1403986975]
+offset_left = 8.0
+offset_top = -33.0
+offset_right = 16.0
+offset_bottom = -25.0
 
-[node name="HandNode" type="Node2D" parent="SpriteRoot" unique_id=129208459]
-position = Vector2(5, -9)
+[node name="HandRootNode" type="Node2D" parent="BodyRootNode" unique_id=129208459]
+z_index = 1
+position = Vector2(6, -8)
 
-[node name="Sprite2D" type="Sprite2D" parent="SpriteRoot/HandNode" unique_id=216393619]
-position = Vector2(3, -3)
-texture = ExtResource("4_3gn43")
+[node name="HandSprite2D" type="Sprite2D" parent="BodyRootNode/HandRootNode" unique_id=881647694]
+position = Vector2(0, -7)
+rotation = -0.017453292
+texture = ExtResource("8_cbjid")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=374399419]
 

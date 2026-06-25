@@ -26,15 +26,20 @@ namespace Solo.Scripts.Entities.Players
 
     public partial class Player : CharacterBody2D, ITargetable
     {
-        private Vector2 _curDir = Vector2.Right;
         public PlayerState CurState;
-        [Export] public Node2D SpriteRoot;//附带上身体之外的交互点, 比如后面拍建筑的定位点, 用于控制功能交互的
-        [Export] public Node2D BodyRoot;//仅仅是身体的根节点, 用于控制动画
-        [Export] private Sprite2D _sprite;
+        private Vector2 _curMoveDir = Vector2.Right;//移动朝向, 记录最后一次移动输入方向
+        //private Vector2 _curFaceDir = Vector2.Right;//脸部方向, 记录鼠标方向
+        [Export] private Camera2D _camera;
+
+        [Export] private Node2D _bodyRootNode;//身体根节点
+        [Export] private Node2D _animRootNode;//身体动画跟节点
+        [Export] private Sprite2D _bodySprite;//身体sprite, 用于材质
         [Export] private Sprite2D _helmetSprite;
         [Export] private Sprite2D _ArmorSprite;
         [Export] private Sprite2D _bootSprite;
-        [Export] private Camera2D _camera;
+
+        [Export] private Node2D _handRootNode;//手部根节点
+        [Export] private Sprite2D _handSprite;//手持物sprite
 
         //发射物ps
         [Export] private PackedScene _arrowPs;
@@ -125,10 +130,10 @@ namespace Solo.Scripts.Entities.Players
             FastBarInventory.ItemInstanceList = SaveManager.Instance.CurSaveData.FastBarInventoryList;
             CurFastBarIndex = SaveManager.Instance.CurSaveData.FastBarIndex;
 
-            if (_sprite.Material is ShaderMaterial shaderMat)
+            if (_bodySprite.Material is ShaderMaterial shaderMat)
             {
                 _shaderMaterial = (ShaderMaterial)shaderMat.Duplicate();// 关键：复制一份材质，确保每个实例的材质相互独立
-                _sprite.Material = _shaderMaterial;// 记得把复制后的独立材质重新赋给当前的 Sprite2D
+                _bodySprite.Material = _shaderMaterial;// 记得把复制后的独立材质重新赋给当前的 Sprite2D
             }
             ShowOutline(false);
 
@@ -281,8 +286,8 @@ namespace Solo.Scripts.Entities.Players
         {
             ResetAnim();
             _animTween = CreateTween().SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out).SetLoops();
-            _animTween.TweenProperty(BodyRoot, "scale", new Vector2(1.1f, 0.9f), 0.5f);
-            _animTween.TweenProperty(BodyRoot, "scale", new Vector2(1.0f, 1.0f), 0.5f);
+            _animTween.TweenProperty(_animRootNode, "scale", new Vector2(1.1f, 0.9f), 0.5f);
+            _animTween.TweenProperty(_animRootNode, "scale", new Vector2(1.0f, 1.0f), 0.5f);
         }
         private void UpdateIdle(float delta)
         {
@@ -357,6 +362,8 @@ namespace Solo.Scripts.Entities.Players
                 ChangeState(PlayerState.Walk);
                 return;
             }
+
+            RefreshFaceDir();
         }
         #endregion
 
@@ -365,8 +372,8 @@ namespace Solo.Scripts.Entities.Players
         {
             ResetAnim();
             _animTween = CreateTween().SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out).SetLoops();
-            _animTween.TweenProperty(BodyRoot, "skew", 0.1f, 0.3f);// 走动效果：左右晃动或轻微拉伸
-            _animTween.TweenProperty(BodyRoot, "skew", -0.1f, 0.3f);
+            _animTween.TweenProperty(_animRootNode, "skew", 0.1f, 0.3f);// 走动效果：左右晃动或轻微拉伸
+            _animTween.TweenProperty(_animRootNode, "skew", -0.1f, 0.3f);
         }
         private void UpdateWalk(float delta)
         {
@@ -433,21 +440,20 @@ namespace Solo.Scripts.Entities.Players
             if (Input.IsActionJustPressed("Next"))
                 ChangeCurFastBarIndex(true);
 
-            Vector2 input = Input.GetVector("MoveLeft", "MoveRight", "MoveForward", "MoveBack");
-            if (input == Vector2.Zero)
+            Vector2 moveInput = Input.GetVector("MoveLeft", "MoveRight", "MoveForward", "MoveBack");
+            if (moveInput == Vector2.Zero)
             {
                 ChangeState(PlayerState.Idle);
                 return;
             }
-            _curDir = input;
-            if (input.X < 0)
-                SpriteRoot.Scale = new Vector2(-1, 1);
-            else if (input.X > 0)
-                SpriteRoot.Scale = new Vector2(1, 1);
+
+            RefreshFaceDir();
+
+            _curMoveDir = moveInput;
             if (GameManager.Instance.ChunkManager.GetTileType(GlobalPosition) == TileType.Water)
-                Velocity = input * TotalMoveSpeed / 4;
+                Velocity = _curMoveDir * TotalMoveSpeed / 4;
             else
-                Velocity = input * TotalMoveSpeed;
+                Velocity = _curMoveDir * TotalMoveSpeed;
             MoveAndSlide();
         }
         #endregion
@@ -457,8 +463,8 @@ namespace Solo.Scripts.Entities.Players
         {
             ResetAnim();
             _animTween = CreateTween().SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out).SetLoops();
-            _animTween.TweenProperty(BodyRoot, "skew", 0.1f, 0.1f);// 走动效果：左右晃动或轻微拉伸
-            _animTween.TweenProperty(BodyRoot, "skew", -0.1f, 0.1f);
+            _animTween.TweenProperty(_animRootNode, "skew", 0.1f, 0.1f);// 走动效果：左右晃动或轻微拉伸
+            _animTween.TweenProperty(_animRootNode, "skew", -0.1f, 0.1f);
         }
         private void UpdateRun(float delta)
         {
@@ -511,22 +517,19 @@ namespace Solo.Scripts.Entities.Players
             if (Input.IsActionJustPressed("Next"))
                 ChangeCurFastBarIndex(true);
 
-            Vector2 input = Input.GetVector("MoveLeft", "MoveRight", "MoveForward", "MoveBack");
-            if (input == Vector2.Zero || Input.IsActionPressed("Dash") == false)
+            RefreshFaceDir();
+
+            Vector2 moveInput = Input.GetVector("MoveLeft", "MoveRight", "MoveForward", "MoveBack");
+            if (moveInput == Vector2.Zero || Input.IsActionPressed("Dash") == false)
             {
                 ChangeState(PlayerState.Idle);
                 return;
             }
-            _curDir = input;
-            if (input.X < 0)
-                SpriteRoot.Scale = new Vector2(-1, 1);
-            else if (input.X > 0)
-                SpriteRoot.Scale = new Vector2(1, 1);
-            //TouchArea.Rotation = input.Angle();
+            _curMoveDir = moveInput;
             if (GameManager.Instance.ChunkManager.GetTileType(GlobalPosition) == TileType.Water)
-                Velocity = input * TotalMoveSpeed / 2;
+                Velocity = _curMoveDir * TotalMoveSpeed / 2;
             else
-                Velocity = input * TotalMoveSpeed * 2;
+                Velocity = _curMoveDir * TotalMoveSpeed * 2;
             MoveAndSlide();
         }
         #endregion
@@ -539,8 +542,8 @@ namespace Solo.Scripts.Entities.Players
         {
             ResetAnim();
             _animTween = CreateTween().SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out).SetLoops();
-            _animTween.TweenProperty(BodyRoot, "skew", 0.1f, 0.3f);// 走动效果：左右晃动或轻微拉伸
-            _animTween.TweenProperty(BodyRoot, "skew", -0.1f, 0.3f);
+            _animTween.TweenProperty(_animRootNode, "skew", 0.1f, 0.3f);// 走动效果：左右晃动或轻微拉伸
+            _animTween.TweenProperty(_animRootNode, "skew", -0.1f, 0.3f);
             _dashTimer = 0;
             TakeMp(1);
         }
@@ -567,6 +570,7 @@ namespace Solo.Scripts.Entities.Players
                 }
             }
 
+            RefreshFaceDir();
 
             ConsumeDuration(delta, 0.3f);
             if (Input.IsActionJustPressed("Pre"))
@@ -574,7 +578,7 @@ namespace Solo.Scripts.Entities.Players
             if (Input.IsActionJustPressed("Next"))
                 ChangeCurFastBarIndex(true);
 
-            Velocity = _curDir * _dashSpeed;
+            Velocity = _curMoveDir * _dashSpeed;
             MoveAndSlide();
         }
         #endregion
@@ -591,13 +595,13 @@ namespace Solo.Scripts.Entities.Players
             }
 
             if (_curTarget.GetWorldPosition().X - GlobalPosition.X < 0)
-                SpriteRoot.Scale = new Vector2(-1, 1);
+                _bodyRootNode.Scale = new Vector2(-1, 1);
             else
-                SpriteRoot.Scale = new Vector2(1, 1);
+                _bodyRootNode.Scale = new Vector2(1, 1);
 
             _animTween = CreateTween().SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out);
-            _animTween.Parallel().TweenProperty(BodyRoot, "scale", new Vector2(0.8f, 0.8f), 0.05f);//出手动画
-            _animTween.TweenProperty(_handNode, "rotation", 1.3f, 0.05f);
+            _animTween.Parallel().TweenProperty(_animRootNode, "scale", new Vector2(0.8f, 0.8f), 0.05f);//出手动画
+            _animTween.TweenProperty(_handRootNode, "rotation", 1.3f, 0.05f);
             _animTween.TweenCallback(Callable.From(() =>
             {
                 TriggerScreenShake(1);//震屏
@@ -615,8 +619,8 @@ namespace Solo.Scripts.Entities.Players
                 TakeMp(1f);
             }));
 
-            _animTween.Parallel().TweenProperty(BodyRoot, "scale", new Vector2(1f, 1f), 0.1f);
-            _animTween.TweenProperty(_handNode, "rotation", 0, 0.1f);
+            _animTween.Parallel().TweenProperty(_animRootNode, "scale", new Vector2(1f, 1f), 0.1f);
+            _animTween.TweenProperty(_handRootNode, "rotation", 0, 0.1f);
             _animTween.Finished += () =>
             {
                 ChangeState(PlayerState.Idle);
@@ -656,13 +660,13 @@ namespace Solo.Scripts.Entities.Players
             }
 
             if (_curTarget.GetWorldPosition().X - GlobalPosition.X < 0)
-                SpriteRoot.Scale = new Vector2(-1, 1);
+                _bodyRootNode.Scale = new Vector2(-1, 1);
             else
-                SpriteRoot.Scale = new Vector2(1, 1);
+                _bodyRootNode.Scale = new Vector2(1, 1);
 
 
             _animTween = CreateTween().SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out);
-            _animTween.Parallel().TweenProperty(BodyRoot, "scale", new Vector2(0.8f, 0.8f), 0.05f);//出手动画
+            _animTween.Parallel().TweenProperty(_animRootNode, "scale", new Vector2(0.8f, 0.8f), 0.05f);//出手动画
             _animTween.TweenCallback(Callable.From(() =>
             {
                 TriggerScreenShake(1);//震屏
@@ -673,7 +677,7 @@ namespace Solo.Scripts.Entities.Players
                 }
             }));
 
-            _animTween.Parallel().TweenProperty(BodyRoot, "scale", new Vector2(1f, 1f), 0.1f);
+            _animTween.Parallel().TweenProperty(_animRootNode, "scale", new Vector2(1f, 1f), 0.1f);
             _animTween.Finished += () =>
             {
                 if (_curTarget is BuildingCraft or ToolCraft or ArmorCraft)
@@ -706,8 +710,8 @@ namespace Solo.Scripts.Entities.Players
         {
             ResetAnim();
             _animTween = CreateTween().SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out).SetLoops();
-            _animTween.TweenProperty(BodyRoot, "skew", 0.1f, 0.3f);// 走动效果：左右晃动或轻微拉伸
-            _animTween.TweenProperty(BodyRoot, "skew", -0.1f, 0.3f);
+            _animTween.TweenProperty(_animRootNode, "skew", 0.1f, 0.3f);// 走动效果：左右晃动或轻微拉伸
+            _animTween.TweenProperty(_animRootNode, "skew", -0.1f, 0.3f);
 
             _curBuildingPreview = _buildingPreviewPs.Instantiate<BuildingPreview>();
             GetTree().CurrentScene.AddChild(_curBuildingPreview);
@@ -730,13 +734,11 @@ namespace Solo.Scripts.Entities.Players
                 return;
             }
 
+            RefreshFaceDir();
+
             Vector2 input = Input.GetVector("MoveLeft", "MoveRight", "MoveForward", "MoveBack");
             if (input != Vector2.Zero)
-                _curDir = input;
-            if (input.X < 0)
-                SpriteRoot.Scale = new Vector2(-1, 1);
-            else if (input.X > 0)
-                SpriteRoot.Scale = new Vector2(1, 1);
+                _curMoveDir = input;
             if (GameManager.Instance.ChunkManager.GetTileType(GlobalPosition) == TileType.Water)
                 Velocity = input * TotalMoveSpeed / 4;
             else
@@ -758,6 +760,7 @@ namespace Solo.Scripts.Entities.Players
                     qiRangeable.ShowQiRange(false);
                 }
                 _atkLongPressTimer = 0;
+                _isAtkLongPressTimerValid = true;
                 ChangeState(PlayerState.Idle);
                 return;
             }
@@ -781,8 +784,8 @@ namespace Solo.Scripts.Entities.Players
         {
             ResetAnim();
             _animTween = CreateTween().SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out).SetLoops();
-            _animTween.TweenProperty(BodyRoot, "scale", new Vector2(1.5f, 0.8f), 0.2f);
-            _animTween.TweenProperty(BodyRoot, "scale", new Vector2(1.0f, 1.0f), 0.2f);
+            _animTween.TweenProperty(_animRootNode, "scale", new Vector2(1.5f, 0.8f), 0.2f);
+            _animTween.TweenProperty(_animRootNode, "scale", new Vector2(1.0f, 1.0f), 0.2f);
             _comsumeTimer = 0;
             _atkLongPressTimer = 0;
             _isAtkLongPressTimerValid = false;
@@ -812,8 +815,8 @@ namespace Solo.Scripts.Entities.Players
         {
             ResetAnim();
             _animTween = CreateTween().SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out).SetLoops();
-            _animTween.TweenProperty(BodyRoot, "scale", new Vector2(1.5f, 0.8f), 0.2f);
-            _animTween.TweenProperty(BodyRoot, "scale", new Vector2(1.0f, 1.0f), 0.2f);
+            _animTween.TweenProperty(_animRootNode, "scale", new Vector2(1.5f, 0.8f), 0.2f);
+            _animTween.TweenProperty(_animRootNode, "scale", new Vector2(1.0f, 1.0f), 0.2f);
             Input.SetCustomMouseCursor(_aimTexture, Input.CursorShape.Arrow, _aimTexture.GetSize() / 2);
             _isAtkLongPressTimerValid = false;
         }
@@ -862,14 +865,11 @@ namespace Solo.Scripts.Entities.Players
                 return;
             }
 
+            RefreshFaceDir();
 
             Vector2 input = Input.GetVector("MoveLeft", "MoveRight", "MoveForward", "MoveBack");
             if (input != Vector2.Zero)
-                _curDir = input;
-            if ((GetGlobalMousePosition() - GlobalPosition).X < 0)
-                SpriteRoot.Scale = new Vector2(-1, 1);
-            else if ((GetGlobalMousePosition() - GlobalPosition).X > 0)
-                SpriteRoot.Scale = new Vector2(1, 1);
+                _curMoveDir = input;
             if (GameManager.Instance.ChunkManager.GetTileType(GlobalPosition) == TileType.Water)
                 Velocity = input * TotalMoveSpeed / 4;
             else
@@ -888,7 +888,7 @@ namespace Solo.Scripts.Entities.Players
             //1. 播放死亡动画
             ResetAnim();
             _animTween = CreateTween().SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out);
-            _animTween.TweenProperty(SpriteRoot, "scale", new Vector2(0.01f, 0.01f), 1f);
+            _animTween.TweenProperty(_bodyRootNode, "scale", new Vector2(0.01f, 0.01f), 1f);
             _animTween.Finished += () =>
             {
                 //2. 爆装备
@@ -948,8 +948,8 @@ namespace Solo.Scripts.Entities.Players
         {
             ResetAnim();
             _animTween = CreateTween().SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out).SetLoops();
-            _animTween.TweenProperty(BodyRoot, "scale", new Vector2(1.2f, 0.8f), 0.5f);
-            _animTween.TweenProperty(BodyRoot, "scale", new Vector2(1.0f, 1.0f), 0.5f);
+            _animTween.TweenProperty(_animRootNode, "scale", new Vector2(1.2f, 0.8f), 0.5f);
+            _animTween.TweenProperty(_animRootNode, "scale", new Vector2(1.0f, 1.0f), 0.5f);
 
             _selfView.Visible = true;
             _bagInventoryView.Visible = true;
@@ -1054,11 +1054,11 @@ namespace Solo.Scripts.Entities.Players
         {
             if (_animTween != null && _animTween.IsRunning())
                 _animTween.Kill();
-            BodyRoot.Scale = Vector2.One;
-            BodyRoot.Skew = 0f;
-            BodyRoot.Modulate = Colors.White;
-            BodyRoot.Rotation = 0f;
-            BodyRoot.Modulate = Colors.White;
+            _animRootNode.Scale = Vector2.One;
+            _animRootNode.Skew = 0f;
+            _animRootNode.Modulate = Colors.White;
+            _animRootNode.Rotation = 0f;
+            _animRootNode.Modulate = Colors.White;
         }
 
         // 用鼠标检测目标, 当前范围检测, 触发攻击/交互时再判断距离
@@ -1179,8 +1179,7 @@ namespace Solo.Scripts.Entities.Players
 
 
         public int CurFastBarIndex;//玩家当前手持的物品, 攻击时要把这个连同攻击力一起传过去给受击者, 让受击者处理受多少伤害, 工具不对要大打折扣
-        [Export] private Node2D _handNode;
-        [Export] private Sprite2D _handSprite;
+
 
         private Node2D _curEquipmentNode = null;
         private void ChangeCurFastBarIndex(bool isNext)
@@ -1207,12 +1206,46 @@ namespace Solo.Scripts.Entities.Players
         private void RefreshHandNode()
         {
             _handSprite.Texture = null;
+            _handSprite.Position = new Vector2(0f, 0f);
+            _handSprite.RotationDegrees = 0;
+            _handSprite.Scale = new Vector2(1f, 1f);
+
             if (FastBarInventory.ItemInstanceList[CurFastBarIndex] == null)
                 return;
-            if (ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).IsBuilding == false)
+
+            _handSprite.Texture = GD.Load<Texture2D>(ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).IconPath);
+            ItemType itemType = FastBarInventory.ItemInstanceList[CurFastBarIndex].Type;
+            if (ItemDataManager.Instance.GetItemData(itemType).IsBuilding)
             {
-                _handSprite.Texture = GD.Load<Texture2D>(ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).IconPath);
+                //建筑物, 缩小
+                _handSprite.Scale = new Vector2(0.2f, 0.2f);
             }
+            if (itemType == ItemType.WoodSword || itemType == ItemType.WoodAxe || itemType == ItemType.WoodPickaxe || itemType == ItemType.WoodRod ||
+                itemType == ItemType.IronSword || itemType == ItemType.IronAxe || itemType == ItemType.IronPickaxe || itemType == ItemType.IronRod ||
+                itemType == ItemType.GoldSword || itemType == ItemType.GoldAxe || itemType == ItemType.GoldPickaxe || itemType == ItemType.GoldRod ||
+                itemType == ItemType.JadeSword || itemType == ItemType.JadeAxe || itemType == ItemType.JadePickaxe || itemType == ItemType.JadeRod
+                )
+            {
+                _handSprite.Position = new Vector2(0f, -7f);
+                _handSprite.RotationDegrees = -45;
+            }
+            if (itemType == ItemType.WoodBow || itemType == ItemType.IronBow || itemType == ItemType.GoldBow || itemType == ItemType.JadeBow || itemType == ItemType.Fireball)
+            {
+                //_handSprite.Position = new Vector2(0f, -7f);
+                _handSprite.RotationDegrees = 45;
+            }
+        }
+        private void RefreshFaceDir()
+        {
+            Vector2 mousePosition = GetGlobalMousePosition();
+            Vector2 direction = mousePosition - _handRootNode.GlobalPosition;
+            _handRootNode.GlobalRotation = direction.Angle();
+
+            Vector2 curFaceDir = (GetGlobalMousePosition() - GlobalPosition).Normalized();
+            if (curFaceDir.X < 0)
+                _bodyRootNode.Scale = new Vector2(-1, 1);
+            else if (curFaceDir.X > 0)
+                _bodyRootNode.Scale = new Vector2(1, 1);
         }
 
         private void RefreshArmorVisuals()
@@ -1327,11 +1360,11 @@ namespace Solo.Scripts.Entities.Players
             float finalDamage = Mathf.Max(0, damage - totalDef);
 
             Tween animTween = CreateTween().SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out);
-            animTween.TweenProperty(SpriteRoot, "scale", new Vector2(0.8f, 0.8f), 0.1f);
-            animTween.Parallel().TweenProperty(_sprite.Material, "shader_parameter/flash_modifier", 1.0f, 0.1f);
-            animTween.TweenProperty(SpriteRoot, "scale", new Vector2(1.2f, 1.2f), 0.1f);
-            animTween.Parallel().TweenProperty(_sprite.Material, "shader_parameter/flash_modifier", 0.0f, 0.1f);
-            animTween.TweenProperty(SpriteRoot, "scale", new Vector2(1f, 1f), 0.1f);
+            animTween.TweenProperty(_bodyRootNode, "scale", new Vector2(0.8f, 0.8f), 0.1f);
+            animTween.Parallel().TweenProperty(_bodySprite.Material, "shader_parameter/flash_modifier", 1.0f, 0.1f);
+            animTween.TweenProperty(_bodyRootNode, "scale", new Vector2(1.2f, 1.2f), 0.1f);
+            animTween.Parallel().TweenProperty(_bodySprite.Material, "shader_parameter/flash_modifier", 0.0f, 0.1f);
+            animTween.TweenProperty(_bodyRootNode, "scale", new Vector2(1f, 1f), 0.1f);
             FloatTextLb floatTextLb = GameManager.Instance.FloatTextLbPs.Instantiate<FloatTextLb>();
             GetTree().CurrentScene.AddChild(floatTextLb);
             floatTextLb.Init($"-{finalDamage}", GlobalPosition, new Color(162 / 256f, 38 / 256f, 51 / 256f));//162, 38, 51
