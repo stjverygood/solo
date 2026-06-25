@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://dpkxkwy3ger5n" path="res://Scripts/Entities/Players/Player.cs" id="1_lxeke"]
 [ext_resource type="Texture2D" uid="uid://c5cysx8uva6i2" path="res://Assets/AtlasTextures/AimIcon.tres" id="2_oet8y"]
+[ext_resource type="PackedScene" uid="uid://5hfwgc7q0vcs" path="res://Scenes/Entities/Players/FishingFloat.tscn" id="2_sod1g"]
 [ext_resource type="PackedScene" uid="uid://bnq2kgnwy4iaa" path="res://Scenes/System/ItemSystem/Projectiles/Arrow.tscn" id="2_ynm40"]
 [ext_resource type="Texture2D" uid="uid://cmlghpyvrsitg" path="res://Assets/AtlasTextures/Player.tres" id="3_3gn43"]
 [ext_resource type="Shader" uid="uid://i3lcvke3ll2n" path="res://Assets/Shaders/Outline.gdshader" id="3_4xrd3"]
@@ -72,6 +73,7 @@ _ArmorSprite = NodePath("BodyRootNode/AnimRootNode/ArmorSprite")
 _bootSprite = NodePath("BodyRootNode/AnimRootNode/BootSprite")
 _handRootNode = NodePath("BodyRootNode/HandRootNode")
 _handSprite = NodePath("BodyRootNode/HandRootNode/HandSprite2D")
+_fishingFloatPs = ExtResource("2_sod1g")
 _arrowPs = ExtResource("2_ynm40")
 _fireballPs = ExtResource("3_cbjid")
 _selfView = NodePath("CanvasLayer/SelfView")
@@ -111,12 +113,6 @@ position = Vector2(0, -11)
 
 [node name="BootSprite" type="Sprite2D" parent="BodyRootNode/AnimRootNode" unique_id=1388988529]
 position = Vector2(0, -3)
-
-[node name="ColorRect" type="ColorRect" parent="BodyRootNode/AnimRootNode" unique_id=1403986975]
-offset_left = 8.0
-offset_top = -33.0
-offset_right = 16.0
-offset_bottom = -25.0
 
 [node name="HandRootNode" type="Node2D" parent="BodyRootNode" unique_id=129208459]
 z_index = 1

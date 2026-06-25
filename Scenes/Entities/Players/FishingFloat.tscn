@@ -1,0 +1,20 @@
+[gd_scene format=3 uid="uid://5hfwgc7q0vcs"]
+
+[ext_resource type="Texture2D" uid="uid://bnir8v61rjlqg" path="res://Assets/AtlasTextures/FishingFloat.tres" id="1_71bgm"]
+[ext_resource type="Script" uid="uid://dcaghyfq4hlfa" path="res://Scripts/Entities/Players/FishingFloat.cs" id="1_kvca8"]
+[ext_resource type="Texture2D" uid="uid://bgcrk82beoduc" path="res://Assets/AtlasTextures/White1px.tres" id="2_chscd"]
+
+[node name="FishingFloat" type="Node2D" unique_id=695110521 node_paths=PackedStringArray("_fishLine", "_floatSprite")]
+z_index = 1
+script = ExtResource("1_kvca8")
+_fishLine = NodePath("Line2D")
+_floatSprite = NodePath("Sprite2D")
+
+[node name="Line2D" type="Line2D" parent="." unique_id=1150641671]
+texture_filter = 1
+points = PackedVector2Array(12.8, 4.384616, 15.200001, 6.0769234, 8.2, 7.7692313, 1.8000002, 4.692308, 4.6, 2.0769231)
+width = 1.0
+texture = ExtResource("2_chscd")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=929752279]
+texture = ExtResource("1_71bgm")

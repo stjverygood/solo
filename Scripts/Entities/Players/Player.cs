@@ -20,6 +20,7 @@ namespace Solo.Scripts.Entities.Players
         Build,//建造状态
         Comsume,//消耗物品
         Aim,//瞄准状态
+        Fishing,
         Death,
         BagUI,
     }
@@ -40,6 +41,8 @@ namespace Solo.Scripts.Entities.Players
 
         [Export] private Node2D _handRootNode;//手部根节点
         [Export] private Sprite2D _handSprite;//手持物sprite
+
+        [Export] private PackedScene _fishingFloatPs;
 
         //发射物ps
         [Export] private PackedScene _arrowPs;
@@ -233,6 +236,9 @@ namespace Solo.Scripts.Entities.Players
                 case PlayerState.Aim:
                     EnterAim();
                     break;
+                case PlayerState.Fishing:
+                    EnterFishing();
+                    break;
                 case PlayerState.Death:
                     EnterDeath();
                     break;
@@ -271,6 +277,9 @@ namespace Solo.Scripts.Entities.Players
                     break;
                 case PlayerState.Aim:
                     UpdateAim(delta);
+                    break;
+                case PlayerState.Fishing:
+                    UpdateFishing(delta);
                     break;
                 case PlayerState.Death:
                     UpdateDeath(delta);
@@ -343,7 +352,7 @@ namespace Solo.Scripts.Entities.Players
                     ChangeState(PlayerState.Comsume);
                     return;
                 }
-                else if (FastBarInventory.ItemInstanceList[CurFastBarIndex] != null && ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).CanProject)
+                else if (FastBarInventory.ItemInstanceList[CurFastBarIndex] != null && ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).CanAiming)
                 {
                     ChangeState(PlayerState.Aim);
                     return;
@@ -420,7 +429,7 @@ namespace Solo.Scripts.Entities.Players
                     ChangeState(PlayerState.Comsume);
                     return;
                 }
-                else if (FastBarInventory.ItemInstanceList[CurFastBarIndex] != null && ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).CanProject)
+                else if (FastBarInventory.ItemInstanceList[CurFastBarIndex] != null && ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).CanAiming)
                 {
                     ChangeState(PlayerState.Aim);
                     return;
@@ -499,7 +508,7 @@ namespace Solo.Scripts.Entities.Players
                     ChangeState(PlayerState.Comsume);
                     return;
                 }
-                else if (FastBarInventory.ItemInstanceList[CurFastBarIndex] != null && ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).CanProject)
+                else if (FastBarInventory.ItemInstanceList[CurFastBarIndex] != null && ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).CanAiming)
                 {
                     ChangeState(PlayerState.Aim);
                     return;
@@ -792,6 +801,12 @@ namespace Solo.Scripts.Entities.Players
         }
         private void UpdateComsume(float delta)
         {
+            if (_curHp <= 0)
+            {
+                ChangeState(PlayerState.Death);
+                return;
+            }
+
             _comsumeTimer += delta;
 
             if (Input.IsActionJustPressed("Interact"))
@@ -822,6 +837,12 @@ namespace Solo.Scripts.Entities.Players
         }
         private void UpdateAim(float delta)
         {
+            if (_curHp <= 0)
+            {
+                ChangeState(PlayerState.Death);
+                return;
+            }
+
             if (Input.IsActionJustReleased("Atk"))
             {
                 Input.SetCustomMouseCursor(null, Input.CursorShape.Arrow);
@@ -852,6 +873,14 @@ namespace Solo.Scripts.Entities.Players
                         GetTree().CurrentScene.AddChild(fireball);
                         fireball.Init(this, GlobalPosition, GetGlobalMousePosition(), _atk);
                         break;
+                    case ItemType.WoodRod:
+                    case ItemType.IronRod:
+                    case ItemType.GoldRod:
+                    case ItemType.JadeRod:
+                        _atkLongPressTimer = 0;
+                        _isAtkLongPressTimerValid = true;
+                        ChangeState(PlayerState.Fishing);
+                        return;
                 }
                 _atkLongPressTimer = 0;
                 _isAtkLongPressTimerValid = true;
@@ -875,6 +904,44 @@ namespace Solo.Scripts.Entities.Players
             else
                 Velocity = input * TotalMoveSpeed;
             MoveAndSlide();
+        }
+        #endregion
+
+        #region Fishing
+        private FishingFloat fishingFloat;
+        private void EnterFishing()
+        {
+            ResetAnim();
+            _animTween = CreateTween().SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out).SetLoops();
+            _animTween.TweenProperty(_animRootNode, "scale", new Vector2(1.1f, 0.9f), 0.5f);
+            _animTween.TweenProperty(_animRootNode, "scale", new Vector2(1.0f, 1.0f), 0.5f);
+
+            Vector2 mousePos = GetGlobalMousePosition();
+            if (GameManager.Instance.ChunkManager.GetTileType(mousePos) != TileType.Water)
+            {
+                ChangeState(PlayerState.Idle);
+                return;
+            }
+
+            fishingFloat = _fishingFloatPs.Instantiate<FishingFloat>();
+            GetTree().CurrentScene.AddChild(fishingFloat);
+            fishingFloat.Init(_handSprite.GlobalPosition, mousePos);
+        }
+        private void UpdateFishing(float delta)
+        {
+            if (_curHp <= 0)
+            {
+                fishingFloat.QueueFree();
+                ChangeState(PlayerState.Death);
+                return;
+            }
+
+            if (Input.IsActionJustPressed("Interact"))
+            {
+                fishingFloat.QueueFree();
+                ChangeState(PlayerState.Idle);
+                return;
+            }
         }
         #endregion
 
