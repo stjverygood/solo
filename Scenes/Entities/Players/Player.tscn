@@ -234,5 +234,5 @@ radius = 11.11
 [node name="Area2D" type="Area2D" parent="." unique_id=2007169960]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D" unique_id=118237025]
-position = Vector2(0, -2.5)
+position = Vector2(-1, -1)
 shape = SubResource("RectangleShape2D_8ildv")
