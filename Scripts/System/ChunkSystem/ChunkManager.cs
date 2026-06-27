@@ -2,6 +2,7 @@ using Godot;
 using Solo.Scripts.Entities.Players;
 using Solo.Scripts.Entities.Units;
 using Solo.Scripts.Global;
+using Solo.Scripts.Global.Interfaces;
 using Solo.Scripts.System.BuildingSystem;
 using Solo.Scripts.System.BuildingSystem.Buildings;
 using Solo.Scripts.System.ItemSystem;
@@ -42,9 +43,28 @@ namespace Solo.Scripts.System.ChunkSystem
 
         private Dictionary<TileType, List<Vector2I>> TileCoordsListMap = new Dictionary<TileType, List<Vector2I>>()
         {
-            { TileType.Grass, new List<Vector2I>(){ new Vector2I(7, 6)}},
-            { TileType.Stone, new List<Vector2I>(){new Vector2I(7, 7)}},
-            { TileType.Water, new List<Vector2I>(){ new Vector2I(7, 8)}},
+            { TileType.Grass, new List<Vector2I>(){ new Vector2I(1, 7)}},
+            { TileType.Water, new List<Vector2I>(){ new Vector2I(1, 8)}},
+            { TileType.Stone, new List<Vector2I>(){new Vector2I(1, 9)}},
+
+            { TileType.GrassWaterLeft, new List<Vector2I>(){new Vector2I(3, 5)}},
+            { TileType.GrassWaterRight, new List<Vector2I>(){new Vector2I(1, 5)}},
+            { TileType.GrassWaterUp, new List<Vector2I>(){new Vector2I(2, 6)}},
+            { TileType.GrassWaterDown, new List<Vector2I>(){new Vector2I(2, 4)}},
+
+            { TileType.GrassWaterLeftUp, new List<Vector2I>(){new Vector2I(6, 4)}},
+            { TileType.GrassWaterLeftRight, new List<Vector2I>(){new Vector2I(6, 8)}},
+            { TileType.GrassWaterLeftDown, new List<Vector2I>(){new Vector2I(6, 5)}},
+            { TileType.GrassWaterRightUp, new List<Vector2I>(){new Vector2I(7, 4)}},
+            { TileType.GrassWaterUpDown, new List<Vector2I>(){new Vector2I(5, 7)}},
+            { TileType.GrassWaterRightDown, new List<Vector2I>(){new Vector2I(7, 5)}},
+
+            { TileType.GrassWaterNoLeft, new List<Vector2I>(){new Vector2I(13, 5)}},
+            { TileType.GrassWaterNoRight, new List<Vector2I>(){new Vector2I(11, 5)}},
+            { TileType.GrassWaterNoUp, new List<Vector2I>(){new Vector2I(12, 6)}},
+            { TileType.GrassWaterNoDown, new List<Vector2I>(){new Vector2I(12, 4)}},
+
+            { TileType.GrassWaterAll, new List<Vector2I>(){new Vector2I(17, 4)}},
         };
         private Dictionary<Vector2I, TileType> TileTypeMap = new Dictionary<Vector2I, TileType>();//用于反查
 
@@ -112,7 +132,232 @@ namespace Solo.Scripts.System.ChunkSystem
         {
             Chunk curChunk = new Chunk();
             CurActiveChunkMap[chunkPos] = curChunk;
-            if (ChunkSaveDataMap.TryGetValue(chunkPos, out ChunkSaveData existChunkData))
+            if (ChunkSaveDataMap.TryGetValue(chunkPos, out ChunkSaveData existChunkData) == false)
+            {
+                //新生成区块
+
+                // 存储当前正在计算的逻辑生态（方便快速读取邻居）
+                Dictionary<Vector2I, TileType> localLogicMap = new Dictionary<Vector2I, TileType>();
+                for (int x = -1; x <= _chunkSize; x++)// 为了能检测到边界格子，循环范围向外扩大 1 格 (-1 到 _chunkSize)
+                {
+                    for (int y = -1; y <= _chunkSize; y++)
+                    {
+                        int globalX = chunkPos.X * _chunkSize + x;
+                        int globalY = chunkPos.Y * _chunkSize + y;
+                        Vector2I globalPos = new Vector2I(globalX, globalY);
+
+                        float noiseVal = _noise.GetNoise2D(globalX, globalY);
+                        if (noiseVal < 0)
+                            localLogicMap[globalPos] = TileType.Water;
+                        else if (noiseVal < 0.35f)
+                            localLogicMap[globalPos] = TileType.Grass;
+                        else
+                            localLogicMap[globalPos] = TileType.Stone;
+                    }
+                }
+                // 真正遍历当前区块的格子，进行 SetCell
+                for (int x = 0; x < _chunkSize; x++)
+                {
+                    for (int y = 0; y < _chunkSize; y++)
+                    {
+                        int globalX = chunkPos.X * _chunkSize + x;
+                        int globalY = chunkPos.Y * _chunkSize + y;
+                        Vector2I globalPos = new Vector2I(globalX, globalY);
+                        TileType myType = localLogicMap[globalPos];
+                        if (myType == TileType.Water)
+                        {
+                            Vector2I rdTileCoords = TileCoordsListMap[TileType.Water][Random.Shared.Next(TileCoordsListMap[TileType.Water].Count)];
+                            _tileMapLayer.SetCell(new Vector2I(globalX, globalY), 0, rdTileCoords);
+                            //Vector2I rdTileCoords = TileCoordsListMap[TileType.Water][Random.Shared.Next(TileCoordsListMap[TileType.Water].Count)];
+                            //_tileMapLayer.SetCell(new Vector2I(globalX, globalY), 0, rdTileCoords);
+                            Vector2 snapPos = GameManager.Instance.BuildingManager.SnapToCell(BuildingType.Water, new Vector2I(globalX * _tileSize, globalY * _tileSize));
+                            GameManager.Instance.BuildingManager.Place(BuildingType.Water, snapPos);
+                        }
+                        else if (myType == TileType.Stone)
+                        {
+                            Vector2I rdTileCoords = TileCoordsListMap[TileType.Stone][Random.Shared.Next(TileCoordsListMap[TileType.Stone].Count)];
+                            _tileMapLayer.SetCell(new Vector2I(globalX, globalY), 0, rdTileCoords);
+                            //_tileMapLayer.SetCell(new Vector2I(globalX, globalY), _tileTypeInfoMap[TileType.Stone].SourceId, _tileTypeInfoMap[TileType.Stone].AtlasCoords);
+                            if (GD.Randf() < 0.2)
+                            {
+                                Vector2 curTilePos = new Vector2(globalX * _tileSize, globalY * _tileSize) + new Vector2(_tileSize / 2f, _tileSize / 2f);
+                                Vector2 snapPos = GameManager.Instance.BuildingManager.SnapToCell(BuildingType.Stone, curTilePos);
+                                if (GameManager.Instance.BuildingManager.CanPlaced(BuildingType.Stone, snapPos) && WorldToChunkPos(snapPos) == chunkPos)
+                                {
+                                    PackedScene stonePs = GD.Load<PackedScene>(BuildingDataManager.Instance.GetBuildingData(BuildingType.Stone).TscnPath);
+                                    Stone stone = stonePs.Instantiate<Stone>();
+                                    GetTree().CurrentScene.AddChild(stone);
+                                    stone.Init(BuildingType.Stone, snapPos);
+                                }
+                            }
+                        }
+                        else if (myType == TileType.Grass)
+                        {
+                            // 当自己是草时，检查四周邻居是否是水
+                            bool leftIsWater = localLogicMap[globalPos + Vector2I.Left] == TileType.Water;
+                            bool rightIsWater = localLogicMap[globalPos + Vector2I.Right] == TileType.Water;
+                            bool upIsWater = localLogicMap[globalPos + Vector2I.Up] == TileType.Water;
+                            bool downIsWater = localLogicMap[globalPos + Vector2I.Down] == TileType.Water;
+
+                            TileType grassTileType = TileType.Grass; // 默认是纯草
+
+                            if (leftIsWater && !rightIsWater && !upIsWater && !downIsWater)//1
+                                grassTileType = TileType.GrassWaterLeft;
+                            else if (!leftIsWater && rightIsWater && !upIsWater && !downIsWater)
+                                grassTileType = TileType.GrassWaterRight;
+                            else if (!leftIsWater && !rightIsWater && upIsWater && !downIsWater)
+                                grassTileType = TileType.GrassWaterUp;
+                            else if (!leftIsWater && !rightIsWater && !upIsWater && downIsWater)
+                                grassTileType = TileType.GrassWaterDown;
+
+                            else if (leftIsWater && rightIsWater && !upIsWater && !downIsWater)//2
+                                grassTileType = TileType.GrassWaterLeftRight;
+                            else if (leftIsWater && !rightIsWater && upIsWater && !downIsWater)
+                                grassTileType = TileType.GrassWaterLeftUp;
+                            else if (leftIsWater && !rightIsWater && !upIsWater && downIsWater)
+                                grassTileType = TileType.GrassWaterLeftDown;
+                            else if (!leftIsWater && rightIsWater && upIsWater && !downIsWater)
+                                grassTileType = TileType.GrassWaterRightUp;
+                            else if (!leftIsWater && rightIsWater && !upIsWater && downIsWater)
+                                grassTileType = TileType.GrassWaterRightDown;
+                            else if (!leftIsWater && !rightIsWater && upIsWater && downIsWater)
+                                grassTileType = TileType.GrassWaterUpDown;
+
+                            else if (!leftIsWater && rightIsWater && upIsWater && downIsWater)//3
+                                grassTileType = TileType.GrassWaterNoLeft;
+                            else if (leftIsWater && !rightIsWater && upIsWater && downIsWater)
+                                grassTileType = TileType.GrassWaterNoRight;
+                            else if (leftIsWater && rightIsWater && !upIsWater && downIsWater)
+                                grassTileType = TileType.GrassWaterNoUp;
+                            else if (leftIsWater && rightIsWater && upIsWater && !downIsWater)
+                                grassTileType = TileType.GrassWaterNoDown;
+
+                            else if (leftIsWater && rightIsWater && upIsWater && downIsWater)//4
+                                grassTileType = TileType.GrassWaterAll;
+
+
+                            Vector2I rdTileCoords = TileCoordsListMap[grassTileType][0];
+                            _tileMapLayer.SetCell(globalPos, 0, rdTileCoords);
+
+                            float rd = GD.Randf();
+                            if (rd < 0.1)//树
+                            {
+                                Vector2 curTilePos = new Vector2(globalX * _tileSize, globalY * _tileSize) + new Vector2(_tileSize / 2f, _tileSize / 2f);
+                                Vector2 snapPos = GameManager.Instance.BuildingManager.SnapToCell(BuildingType.Tree, curTilePos);
+                                if (GameManager.Instance.BuildingManager.CanPlaced(BuildingType.Tree, snapPos) && WorldToChunkPos(snapPos) == chunkPos)
+                                {
+                                    PackedScene treePs = GD.Load<PackedScene>(BuildingDataManager.Instance.GetBuildingData(BuildingType.Tree).TscnPath);
+                                    Tree tree = treePs.Instantiate<Tree>();
+                                    GetTree().CurrentScene.AddChild(tree);
+                                    tree.Init(BuildingType.Tree, snapPos);
+                                }
+                            }
+                            else if (rd < 0.15)
+                            {
+                                Vector2 tileWorldPos = new Vector2(globalX * _tileSize, globalY * _tileSize);
+                                Vector2 offset = new Vector2(_tileSize / 2f, _tileSize / 2f);// 计算偏移量，使物体位于瓦片中心 (假设 _tileSize 是 16，偏移就是 8)
+                                DropItem goldDropItem = DropItemPs.Instantiate<DropItem>();
+                                GetTree().CurrentScene.AddChild(goldDropItem);
+                                goldDropItem.Init(new ItemInstance() { Type = ItemType.Grass, Count = 3 }, tileWorldPos + offset);
+                            }
+                            else if (rd < 0.2)
+                            {
+                                Vector2 tileWorldPos = new Vector2(globalX * _tileSize, globalY * _tileSize);
+                                Vector2 offset = new Vector2(_tileSize / 2f, _tileSize / 2f);// 计算偏移量，使物体位于瓦片中心 (假设 _tileSize 是 16，偏移就是 8)
+                                DropItem bananaDropItem = DropItemPs.Instantiate<DropItem>();
+                                GetTree().CurrentScene.AddChild(bananaDropItem);
+                                bananaDropItem.Init(new ItemInstance() { Type = ItemType.Banana, Count = 3 }, tileWorldPos + offset);
+                            }
+                        }
+                    }
+                }
+
+                //for (int x = 0; x < _chunkSize; x++)
+                //{
+                //    for (int y = 0; y < _chunkSize; y++)
+                //    {
+                //        int globalX = chunkPos.X * _chunkSize + x;
+                //        int globalY = chunkPos.Y * _chunkSize + y;
+                //        float noiseVal = _noise.GetNoise2D(globalX, globalY);
+                //        if (noiseVal < 0)//水
+                //        {
+
+                //            Vector2I rdTileCoords = TileCoordsListMap[TileType.Water][Random.Shared.Next(TileCoordsListMap[TileType.Water].Count)];
+                //            _tileMapLayer.SetCell(new Vector2I(globalX, globalY), 0, rdTileCoords);
+                //            Vector2 snapPos = GameManager.Instance.BuildingManager.SnapToCell(BuildingType.Water, new Vector2I(globalX * _tileSize, globalY * _tileSize));
+                //            GameManager.Instance.BuildingManager.Place(BuildingType.Water, snapPos);
+                //        }
+                //        else if (noiseVal < 0.35)//草
+                //        {
+                //            Vector2I rdTileCoords = TileCoordsListMap[TileType.Grass][Random.Shared.Next(TileCoordsListMap[TileType.Grass].Count)];
+                //            _tileMapLayer.SetCell(new Vector2I(globalX, globalY), 0, rdTileCoords);
+                //            //随机生成
+                //            float rd = GD.Randf();
+                //            if (rd < 0.1)//树
+                //            {
+                //                Vector2 curTilePos = new Vector2(globalX * _tileSize, globalY * _tileSize) + new Vector2(_tileSize / 2f, _tileSize / 2f);
+                //                Vector2 snapPos = GameManager.Instance.BuildingManager.SnapToCell(BuildingType.Tree, curTilePos);
+                //                if (GameManager.Instance.BuildingManager.CanPlaced(BuildingType.Tree, snapPos) && WorldToChunkPos(snapPos) == chunkPos)
+                //                {
+                //                    PackedScene treePs = GD.Load<PackedScene>(BuildingDataManager.Instance.GetBuildingData(BuildingType.Tree).TscnPath);
+                //                    Tree tree = treePs.Instantiate<Tree>();
+                //                    GetTree().CurrentScene.AddChild(tree);
+                //                    tree.Init(BuildingType.Tree, snapPos);
+                //                }
+                //            }
+                //            else if (rd < 0.15)
+                //            {
+                //                Vector2 tileWorldPos = new Vector2(globalX * _tileSize, globalY * _tileSize);
+                //                Vector2 offset = new Vector2(_tileSize / 2f, _tileSize / 2f);// 计算偏移量，使物体位于瓦片中心 (假设 _tileSize 是 16，偏移就是 8)
+                //                DropItem goldDropItem = DropItemPs.Instantiate<DropItem>();
+                //                GetTree().CurrentScene.AddChild(goldDropItem);
+                //                goldDropItem.Init(new ItemInstance() { Type = ItemType.Grass, Count = 3 }, tileWorldPos + offset);
+                //            }
+                //            else if (rd < 0.2)
+                //            {
+                //                Vector2 tileWorldPos = new Vector2(globalX * _tileSize, globalY * _tileSize);
+                //                Vector2 offset = new Vector2(_tileSize / 2f, _tileSize / 2f);// 计算偏移量，使物体位于瓦片中心 (假设 _tileSize 是 16，偏移就是 8)
+                //                DropItem bananaDropItem = DropItemPs.Instantiate<DropItem>();
+                //                GetTree().CurrentScene.AddChild(bananaDropItem);
+                //                bananaDropItem.Init(new ItemInstance() { Type = ItemType.Banana, Count = 3 }, tileWorldPos + offset);
+                //            }
+                //        }
+                //        else//石
+                //        {
+                //            Vector2I rdTileCoords = TileCoordsListMap[TileType.Stone][Random.Shared.Next(TileCoordsListMap[TileType.Stone].Count)];
+                //            _tileMapLayer.SetCell(new Vector2I(globalX, globalY), 0, rdTileCoords);
+                //            //_tileMapLayer.SetCell(new Vector2I(globalX, globalY), _tileTypeInfoMap[TileType.Stone].SourceId, _tileTypeInfoMap[TileType.Stone].AtlasCoords);
+                //            if (GD.Randf() < 0.2)
+                //            {
+                //                Vector2 curTilePos = new Vector2(globalX * _tileSize, globalY * _tileSize) + new Vector2(_tileSize / 2f, _tileSize / 2f);
+                //                Vector2 snapPos = GameManager.Instance.BuildingManager.SnapToCell(BuildingType.Stone, curTilePos);
+                //                if (GameManager.Instance.BuildingManager.CanPlaced(BuildingType.Stone, snapPos) && WorldToChunkPos(snapPos) == chunkPos)
+                //                {
+                //                    PackedScene stonePs = GD.Load<PackedScene>(BuildingDataManager.Instance.GetBuildingData(BuildingType.Stone).TscnPath);
+                //                    Stone stone = stonePs.Instantiate<Stone>();
+                //                    GetTree().CurrentScene.AddChild(stone);
+                //                    stone.Init(BuildingType.Stone, snapPos);
+                //                }
+                //            }
+                //        }
+                //    }
+                //}
+
+                // 第一个区块(0,0)首次生成时，必定掉落1个太古源石，位置随机
+                if (chunkPos == Vector2I.Zero)
+                {
+                    float randomX = (float)GD.RandRange(0, _chunkSize * _tileSize);
+                    float randomY = (float)GD.RandRange(0, _chunkSize * _tileSize);
+                    Vector2 randomPos = new Vector2(
+                        chunkPos.X * _chunkSize * _tileSize + randomX,
+                        chunkPos.Y * _chunkSize * _tileSize + randomY
+                    );
+                    DropItem stoneDrop = DropItemPs.Instantiate<DropItem>();
+                    GetTree().CurrentScene.AddChild(stoneDrop);
+                    stoneDrop.Init(new ItemInstance() { Type = ItemType.MainBaseStone, Count = 1 }, randomPos);
+                }
+            }
+            else
             {
                 //恢复区块
                 for (int x = 0; x < _chunkSize; x++)
@@ -165,108 +410,6 @@ namespace Solo.Scripts.System.ChunkSystem
                     DropItem.Init(dropItemData.Instance, new Vector2(dropItemData.X, dropItemData.Y));
                 }
             }
-            else
-            {
-                //新生成区块
-                for (int x = 0; x < _chunkSize; x++)
-                {
-                    for (int y = 0; y < _chunkSize; y++)
-                    {
-                        int globalX = chunkPos.X * _chunkSize + x;
-                        int globalY = chunkPos.Y * _chunkSize + y;
-                        float noiseVal = _noise.GetNoise2D(globalX, globalY);
-                        if (noiseVal < 0)//水
-                        {
-
-                            Vector2I rdTileCoords = TileCoordsListMap[TileType.Water][Random.Shared.Next(TileCoordsListMap[TileType.Water].Count)];
-                            _tileMapLayer.SetCell(new Vector2I(globalX, globalY), 0, rdTileCoords);
-                            Vector2 snapPos = GameManager.Instance.BuildingManager.SnapToCell(BuildingType.Water, new Vector2I(globalX * _tileSize, globalY * _tileSize));
-                            GameManager.Instance.BuildingManager.Place(BuildingType.Water, snapPos);
-                        }
-                        else if (noiseVal < 0.35)//草
-                        {
-                            Vector2I rdTileCoords = TileCoordsListMap[TileType.Grass][Random.Shared.Next(TileCoordsListMap[TileType.Grass].Count)];
-                            _tileMapLayer.SetCell(new Vector2I(globalX, globalY), 0, rdTileCoords);
-                            //随机生成
-                            float rd = GD.Randf();
-                            if (rd < 0.1)//树
-                            {
-                                Vector2 curTilePos = new Vector2(globalX * _tileSize, globalY * _tileSize) + new Vector2(_tileSize / 2f, _tileSize / 2f);
-                                Vector2 snapPos = GameManager.Instance.BuildingManager.SnapToCell(BuildingType.Tree, curTilePos);
-                                if (GameManager.Instance.BuildingManager.CanPlaced(BuildingType.Tree, snapPos) && WorldToChunkPos(snapPos) == chunkPos)
-                                {
-                                    PackedScene treePs = GD.Load<PackedScene>(BuildingDataManager.Instance.GetBuildingData(BuildingType.Tree).TscnPath);
-                                    Tree tree = treePs.Instantiate<Tree>();
-                                    GetTree().CurrentScene.AddChild(tree);
-                                    tree.Init(BuildingType.Tree, snapPos);
-                                }
-                            }
-                            else if (rd < 0.15)
-                            {
-                                Vector2 tileWorldPos = new Vector2(globalX * _tileSize, globalY * _tileSize);
-                                Vector2 offset = new Vector2(_tileSize / 2f, _tileSize / 2f);// 计算偏移量，使物体位于瓦片中心 (假设 _tileSize 是 16，偏移就是 8)
-                                DropItem goldDropItem = DropItemPs.Instantiate<DropItem>();
-                                GetTree().CurrentScene.AddChild(goldDropItem);
-                                goldDropItem.Init(new ItemInstance() { Type = ItemType.Grass, Count = 3 }, tileWorldPos + offset);
-                            }
-                            else if (rd < 0.2)
-                            {
-                                Vector2 tileWorldPos = new Vector2(globalX * _tileSize, globalY * _tileSize);
-                                Vector2 offset = new Vector2(_tileSize / 2f, _tileSize / 2f);// 计算偏移量，使物体位于瓦片中心 (假设 _tileSize 是 16，偏移就是 8)
-                                DropItem bananaDropItem = DropItemPs.Instantiate<DropItem>();
-                                GetTree().CurrentScene.AddChild(bananaDropItem);
-                                bananaDropItem.Init(new ItemInstance() { Type = ItemType.Banana, Count = 3 }, tileWorldPos + offset);
-                            }
-                        }
-                        else//石
-                        {
-                            Vector2I rdTileCoords = TileCoordsListMap[TileType.Stone][Random.Shared.Next(TileCoordsListMap[TileType.Stone].Count)];
-                            _tileMapLayer.SetCell(new Vector2I(globalX, globalY), 0, rdTileCoords);
-                            //_tileMapLayer.SetCell(new Vector2I(globalX, globalY), _tileTypeInfoMap[TileType.Stone].SourceId, _tileTypeInfoMap[TileType.Stone].AtlasCoords);
-                            if (GD.Randf() < 0.2)
-                            {
-                                Vector2 curTilePos = new Vector2(globalX * _tileSize, globalY * _tileSize) + new Vector2(_tileSize / 2f, _tileSize / 2f);
-                                Vector2 snapPos = GameManager.Instance.BuildingManager.SnapToCell(BuildingType.Stone, curTilePos);
-                                if (GameManager.Instance.BuildingManager.CanPlaced(BuildingType.Stone, snapPos) && WorldToChunkPos(snapPos) == chunkPos)
-                                {
-                                    PackedScene stonePs = GD.Load<PackedScene>(BuildingDataManager.Instance.GetBuildingData(BuildingType.Stone).TscnPath);
-                                    Stone stone = stonePs.Instantiate<Stone>();
-                                    GetTree().CurrentScene.AddChild(stone);
-                                    stone.Init(BuildingType.Stone, snapPos);
-                                }
-                            }
-                        }
-                    }
-                }
-
-                //if (GD.Randf() < 0.2)
-                //{
-                //    Unit unit = _unitPs.Instantiate<Unit>();
-                //    GetTree().CurrentScene.AddChild(unit);
-                //    unit.Init(UnitType.Wolf, new Vector2(chunkPos.X * _chunkSize * _tileSize + GD.RandRange(0, _chunkSize * _tileSize), chunkPos.Y * _chunkSize * _tileSize + GD.RandRange(0, _chunkSize * _tileSize)));
-                //}
-                //if (GD.Randf() < 0.2)
-                //{
-                //    Unit unit = _unitPs.Instantiate<Unit>();
-                //    GetTree().CurrentScene.AddChild(unit);
-                //    unit.Init(UnitType.Fox, new Vector2(chunkPos.X * _chunkSize * _tileSize + GD.RandRange(0, _chunkSize * _tileSize), chunkPos.Y * _chunkSize * _tileSize + GD.RandRange(0, _chunkSize * _tileSize)));
-                //}
-
-                // 第一个区块(0,0)首次生成时，必定掉落1个太古源石，位置随机
-                if (chunkPos == Vector2I.Zero)
-                {
-                    float randomX = (float)GD.RandRange(0, _chunkSize * _tileSize);
-                    float randomY = (float)GD.RandRange(0, _chunkSize * _tileSize);
-                    Vector2 randomPos = new Vector2(
-                        chunkPos.X * _chunkSize * _tileSize + randomX,
-                        chunkPos.Y * _chunkSize * _tileSize + randomY
-                    );
-                    DropItem stoneDrop = DropItemPs.Instantiate<DropItem>();
-                    GetTree().CurrentScene.AddChild(stoneDrop);
-                    stoneDrop.Init(new ItemInstance() { Type = ItemType.MainBaseStone, Count = 1 }, randomPos);
-                }
-
-            }
         }
 
         private void UnloadChunk(Vector2I chunkPos)
@@ -287,6 +430,8 @@ namespace Solo.Scripts.System.ChunkSystem
             {
                 curChunkData.BuildingSaveDataList.Add(new BuildingSaveData() { Type = building.Type, X = building.GlobalPosition.X, Y = building.GlobalPosition.Y });
                 GameManager.Instance.BuildingManager.Remove(building.Type, building.GlobalPosition);
+                if (building is IQiRangeable qiRangeable)
+                    GameManager.Instance.IQiRangeableList.Remove(qiRangeable);
                 if (IsInstanceValid(building))
                     building.QueueFree();
             }

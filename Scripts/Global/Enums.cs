@@ -16,6 +16,25 @@
         Grass,
         Water,
         Stone,
+
+        GrassWaterLeft,
+        GrassWaterRight,
+        GrassWaterUp,
+        GrassWaterDown,
+
+        GrassWaterLeftUp,
+        GrassWaterLeftRight,
+        GrassWaterLeftDown,
+        GrassWaterRightUp,
+        GrassWaterUpDown,
+        GrassWaterRightDown,
+
+        GrassWaterNoLeft,
+        GrassWaterNoRight,
+        GrassWaterNoUp,
+        GrassWaterNoDown,
+
+        GrassWaterAll,
     }
 
     //单位类型

@@ -59,9 +59,9 @@ namespace Solo.Scripts.System.BuildingSystem
                 return;
             _healTimer = 0;
             _curHp++;
-            SetCurHp(_curHp);
             if (_curHp > _maxHp)
-                SetCurHp(_maxHp);
+                _curHp = _maxHp;
+            SetCurHp(_curHp);
         }
 
         public Vector2 GetWorldPosition()
@@ -102,7 +102,6 @@ namespace Solo.Scripts.System.BuildingSystem
         }
         protected virtual void Die()
         {
-            GameManager.Instance.ChunkManager.RemoveItem(this, GlobalPosition);
             SetCurHp(0);
             //掉落物品
             foreach ((ItemType, int, int) tuple in _dropItemList)

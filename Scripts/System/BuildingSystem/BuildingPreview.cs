@@ -69,11 +69,8 @@ public partial class BuildingPreview : Node2D
 
     public bool Build(Vector2 mousePos)
     {
-        Vector2 snapPos = GameManager.Instance.BuildingManager.SnapToCell(Type, mousePos);
-        //bool canPlace = GameManager.Instance.BuildingManager.CanPlaced(Type, snapPos);
         if (!_canPlace)
             return false;
-        GameManager.Instance.BuildingManager.Place(Type, snapPos);
 
         BuildingData buildingData = BuildingDataManager.Instance.GetBuildingData(Type);
 

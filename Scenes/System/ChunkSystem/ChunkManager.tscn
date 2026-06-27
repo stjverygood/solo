@@ -1,7 +1,6 @@
 [gd_scene format=4 uid="uid://c364av0qjs5rx"]
 
 [ext_resource type="Script" uid="uid://scul4uk12av0" path="res://Scripts/System/ChunkSystem/ChunkManager.cs" id="1_c2qkc"]
-[ext_resource type="PackedScene" uid="uid://dkxvgd7m5vqru" path="res://Scenes/System/BuildingSystem/Building.tscn" id="2_0m8wa"]
 [ext_resource type="PackedScene" uid="uid://fexciysj5hdb" path="res://Scenes/Entities/Units/Unit.tscn" id="4_cqtpm"]
 [ext_resource type="TileSet" uid="uid://r1ghkbiqrc1b" path="res://Assets/Tileset/tileset.tres" id="4_hijxa"]
 [ext_resource type="PackedScene" uid="uid://qw0q5wipafhq" path="res://Scenes/System/ItemSystem/DropItem.tscn" id="4_qtd3p"]
@@ -10,7 +9,6 @@
 z_index = -10
 script = ExtResource("1_c2qkc")
 _tileMapLayer = NodePath("TileMapLayer")
-_buildingPs = ExtResource("2_0m8wa")
 DropItemPs = ExtResource("4_qtd3p")
 _unitPs = ExtResource("4_cqtpm")
 
