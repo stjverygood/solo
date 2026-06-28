@@ -15,7 +15,6 @@
     {
         Grass,
         Water,
-        Stone,
 
         GrassWaterLeft,
         GrassWaterRight,
