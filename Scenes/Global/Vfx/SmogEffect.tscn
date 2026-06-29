@@ -1,0 +1,27 @@
+[gd_scene format=3 uid="uid://ctirqhkrgk72m"]
+
+[ext_resource type="Script" uid="uid://dxsk8tje7a6r1" path="res://Scripts/Global/Vfx/SmogEffect.cs" id="1_j7clg"]
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_57mx8"]
+light_mode = 1
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_vytdk"]
+particle_flag_disable_z = true
+emission_shape = 1
+emission_sphere_radius = 9.55
+direction = Vector3(-1.045, 0, 0)
+initial_velocity_max = 90.0
+scale_max = 2.0
+color = Color(2.1168277, 0.36701384, 0, 1)
+
+[node name="SmogEffect" type="Node2D" unique_id=1807347200 node_paths=PackedStringArray("_particles")]
+script = ExtResource("1_j7clg")
+_particles = NodePath("GPUParticles2D")
+
+[node name="GPUParticles2D" type="GPUParticles2D" parent="." unique_id=266633225]
+modulate = Color(1, 0.805, 0.55, 1)
+material = SubResource("CanvasItemMaterial_57mx8")
+position = Vector2(-1, 0)
+amount = 16
+trail_enabled = true
+process_material = SubResource("ParticleProcessMaterial_vytdk")

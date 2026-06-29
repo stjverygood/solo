@@ -17,7 +17,7 @@
 [ext_resource type="PackedScene" uid="uid://ch5mbcfvw4tu3" path="res://Scenes/Entities/Players/DiscardView.tscn" id="11_ynm40"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_jw8fk"]
-radius = 7.0
+radius = 5.0990195
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_tqe6c"]
 shader = ExtResource("3_4xrd3")
@@ -25,6 +25,16 @@ shader_parameter/outline_color = Color(0.96, 0.93, 0.73, 1)
 shader_parameter/outline_width = 1.0
 shader_parameter/flash_modifier = 0.0
 shader_parameter/flash_color = Color(1, 1, 1, 1)
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_wdnd1"]
+particle_flag_disable_z = true
+direction = Vector3(0, -1, 0)
+initial_velocity_min = 26.07
+initial_velocity_max = 68.86
+gravity = Vector3(0, 150, 0)
+scale_min = 0.0
+scale_max = 3.34
+color = Color(0.5716493, 0.5716493, 0.57164925, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_0527a"]
 bg_color = Color(0.14901961, 0.16862746, 0.26666668, 0)
@@ -89,10 +99,11 @@ _aimTexture = ExtResource("2_oet8y")
 _buildingPreviewPs = ExtResource("3_f0b02")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1924437222]
-position = Vector2(0, -5)
+position = Vector2(0, -4)
 shape = SubResource("CircleShape2D_jw8fk")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=173865742]
+zoom = Vector2(1.5, 1.5)
 position_smoothing_enabled = true
 
 [node name="BodyRootNode" type="Node2D" parent="." unique_id=700917934]
@@ -121,6 +132,16 @@ position = Vector2(6, -8)
 position = Vector2(0, -7)
 rotation = -0.017453292
 texture = ExtResource("8_cbjid")
+
+[node name="NavigationObstacle2D" type="NavigationObstacle2D" parent="." unique_id=1630283297]
+position = Vector2(0, -7)
+radius = 11.11
+
+[node name="GPUParticles2D" type="GPUParticles2D" parent="." unique_id=2072942402]
+position = Vector2(-1, 1)
+amount = 16
+lifetime = 0.47000000000000003
+process_material = SubResource("ParticleProcessMaterial_wdnd1")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=374399419]
 
@@ -217,6 +238,7 @@ offset_bottom = -184.0
 visible = false
 
 [node name="DebugLabel" type="Label" parent="." unique_id=1146679472]
+visible = false
 offset_left = -66.0
 offset_top = -15.0
 offset_right = -12.0
@@ -226,12 +248,9 @@ theme_override_fonts/font = ExtResource("5_rnj17")
 theme_override_font_sizes/font_size = 24
 text = "asdf"
 
-[node name="NavigationObstacle2D" type="NavigationObstacle2D" parent="." unique_id=1630283297]
-position = Vector2(0, -7)
-radius = 11.11
+[node name="TestRangeArea2D" type="Area2D" parent="." unique_id=2007169960]
+visible = false
 
-[node name="Area2D" type="Area2D" parent="." unique_id=2007169960]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D" unique_id=118237025]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="TestRangeArea2D" unique_id=118237025]
 position = Vector2(-1, -1)
 shape = SubResource("RectangleShape2D_8ildv")

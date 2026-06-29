@@ -8,7 +8,17 @@
 [sub_resource type="CircleShape2D" id="CircleShape2D_5dc2d"]
 radius = 52.009613
 
+[sub_resource type="Gradient" id="Gradient_jxtak"]
+colors = PackedColorArray(0, 0, 0, 1, 1, 1, 1, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_tlkoy"]
+gradient = SubResource("Gradient_jxtak")
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(0.5, 0)
+
 [node name="Fireball" type="Area2D" unique_id=1367049546 node_paths=PackedStringArray("_explosionArea")]
+z_index = 1
 script = ExtResource("1_tlkoy")
 _explosionArea = NodePath("ExplosionArea2D")
 
@@ -24,3 +34,7 @@ texture = ExtResource("1_s47wh")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="ExplosionArea2D" unique_id=1346236062]
 shape = SubResource("CircleShape2D_5dc2d")
+
+[node name="PointLight2D" type="PointLight2D" parent="." unique_id=1703128760]
+position = Vector2(-11, 0)
+texture = SubResource("GradientTexture2D_tlkoy")

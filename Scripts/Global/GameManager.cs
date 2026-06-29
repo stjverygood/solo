@@ -25,10 +25,7 @@ namespace Solo.Scripts.Global
         [Export] private PackedScene _loadingViewPs;
         [Export] private PackedScene _saveListMenuPs;
         [Export] private PackedScene _mainLevelPs;
-        [Export] private PackedScene _chunkManagerPs;
-        [Export] private PackedScene _playerPs;
         [Export] private PauseView _pauseView;
-        [Export] private DeathView _deathView;
 
 
         public Player Player;
@@ -37,7 +34,9 @@ namespace Solo.Scripts.Global
         public ChunkManager ChunkManager;
         public BuildingManager BuildingManager;
 
-
+        //vfx
+        [Export] public PackedScene ExplosionEffectPs;
+        [Export] public PackedScene SmogEffectPs;
 
         public override void _Ready()
         {

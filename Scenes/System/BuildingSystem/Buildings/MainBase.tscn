@@ -27,6 +27,19 @@ shader_parameter/flash_color = Color(1, 1, 1, 1)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_wl7sm"]
 size = Vector2(64, 32)
 
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_yxouj"]
+particle_flag_disable_z = true
+emission_shape_scale = Vector3(37.22, 7.54, 1)
+emission_shape = 3
+emission_box_extents = Vector3(1, 1, 1)
+direction = Vector3(0, -1, 0)
+spread = 23.94
+initial_velocity_max = 10.0
+gravity = Vector3(0, 0, 0)
+scale_min = 0.5
+scale_max = 1.5
+color = Color(0, 2.5032542, 1.7757881, 1)
+
 [sub_resource type="CircleShape2D" id="CircleShape2D_36k1t"]
 radius = 200.0
 
@@ -38,6 +51,7 @@ _sprite = NodePath("AnimRoot/Sprite2D")
 _hpBar = NodePath("HpBar")
 
 [node name="ColorRect" type="ColorRect" parent="." unique_id=695928099]
+visible = false
 material = SubResource("ShaderMaterial_wl7sm")
 offset_left = -210.0
 offset_top = -211.0
@@ -62,6 +76,12 @@ offset_left = -14.999999
 offset_top = -42.0
 offset_right = 294.99997
 offset_bottom = 28.0
+
+[node name="GPUParticles2D" type="GPUParticles2D" parent="." unique_id=1692055583]
+position = Vector2(1, 22)
+amount = 30
+lifetime = 3.0
+process_material = SubResource("ParticleProcessMaterial_yxouj")
 
 [node name="Area2D" type="Area2D" parent="." unique_id=85828480]
 visible = false

@@ -3,12 +3,13 @@
 [ext_resource type="Script" uid="uid://dfdmitrwv0kqk" path="res://Scripts/Global/GameManager.cs" id="1_g4tje"]
 [ext_resource type="PackedScene" uid="uid://b0h5soh7rcqn1" path="res://Scenes/Levels/StartMenu.tscn" id="2_6j0h0"]
 [ext_resource type="PackedScene" uid="uid://qw0q5wipafhq" path="res://Scenes/System/ItemSystem/DropItem.tscn" id="2_cxcem"]
-[ext_resource type="PackedScene" uid="uid://bwctbm6eq64vu" path="res://Scenes/Entities/Players/Player.tscn" id="2_okfta"]
 [ext_resource type="PackedScene" uid="uid://ddos2w52gxb06" path="res://Scenes/Global/FloatTextLb.tscn" id="2_xy3kr"]
 [ext_resource type="PackedScene" uid="uid://bu5uihu26jmpm" path="res://Scenes/System/SaveSystem/SaveListView.tscn" id="3_enwxu"]
 [ext_resource type="PackedScene" uid="uid://74dd0d5dwyxc" path="res://Scenes/Levels/LoadingView.tscn" id="3_h7we0"]
 [ext_resource type="PackedScene" uid="uid://c5etro6u3u1vl" path="res://Scenes/Levels/MainLevel.tscn" id="5_rssbt"]
 [ext_resource type="PackedScene" uid="uid://dx8thbx4w752g" path="res://Scenes/System/UiSystem/PauseView.tscn" id="7_rssbt"]
+[ext_resource type="PackedScene" uid="uid://bsffwmtiifund" path="res://Scenes/Global/Vfx/ExplosionEffect.tscn" id="9_q6kuj"]
+[ext_resource type="PackedScene" uid="uid://ctirqhkrgk72m" path="res://Scenes/Global/Vfx/SmogEffect.tscn" id="9_r1yu4"]
 
 [node name="GameManager" type="Node" unique_id=1034362425 node_paths=PackedStringArray("_pauseView")]
 script = ExtResource("1_g4tje")
@@ -18,8 +19,9 @@ _startMenuPs = ExtResource("2_6j0h0")
 _loadingViewPs = ExtResource("3_h7we0")
 _saveListMenuPs = ExtResource("3_enwxu")
 _mainLevelPs = ExtResource("5_rssbt")
-_playerPs = ExtResource("2_okfta")
 _pauseView = NodePath("CanvasLayer/PauseView")
+ExplosionEffectPs = ExtResource("9_q6kuj")
+SmogEffectPs = ExtResource("9_r1yu4")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=606242839]
 layer = 3

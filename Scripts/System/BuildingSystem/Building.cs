@@ -70,14 +70,18 @@ namespace Solo.Scripts.System.BuildingSystem
         }
         public void TakeDamage(Node2D atker, float damage, ItemType? itemType)
         {
+            //Tween animTween = CreateTween().SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out);
+            //animTween.TweenProperty(_animRoot, "scale", new Vector2(0.8f, 0.8f), 0.1f);
+            //animTween.Parallel().TweenProperty(_sprite.Material, "shader_parameter/flash_modifier", 1.0f, 0.1f);
+            //animTween.TweenProperty(_animRoot, "scale", new Vector2(1.2f, 1.2f), 0.1f);
+            //animTween.Parallel().TweenProperty(_sprite.Material, "shader_parameter/flash_modifier", 0.0f, 0.1f);
+            //animTween.TweenProperty(_animRoot, "scale", new Vector2(1f, 1f), 0.1f);
+
             Tween animTween = CreateTween().SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out);
-            animTween.TweenProperty(_animRoot, "scale", new Vector2(0.8f, 0.8f), 0.1f);
-            animTween.Parallel().TweenProperty(_sprite.Material, "shader_parameter/flash_modifier", 1.0f, 0.1f);
-            animTween.TweenProperty(_animRoot, "scale", new Vector2(1.2f, 1.2f), 0.1f);
-            animTween.Parallel().TweenProperty(_sprite.Material, "shader_parameter/flash_modifier", 0.0f, 0.1f);
-            animTween.TweenProperty(_animRoot, "scale", new Vector2(1f, 1f), 0.1f);
-
-
+            // 1. 在 0.1 秒内闪白（修改器达到 1.0）
+            animTween.TweenProperty(_sprite.Material, "shader_parameter/flash_modifier", 1.0f, 0.1f);
+            // 2. 紧接着在 0.1 秒内恢复原状（修改器回到 0.0）
+            animTween.TweenProperty(_sprite.Material, "shader_parameter/flash_modifier", 0.0f, 0.1f);
 
             _damageCooldownTimer = 0f;
             _healTimer = 0f;

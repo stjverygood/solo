@@ -294,9 +294,12 @@ namespace Solo.Scripts.Entities.Players
         private void EnterIdle()
         {
             ResetAnim();
-            _animTween = CreateTween().SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out).SetLoops();
-            _animTween.TweenProperty(_animRootNode, "scale", new Vector2(1.1f, 0.9f), 0.5f);
-            _animTween.TweenProperty(_animRootNode, "scale", new Vector2(1.0f, 1.0f), 0.5f);
+
+            _animTween = CreateTween().SetLoops();
+            _animTween.TweenProperty(_animRootNode, "scale", new Vector2(1.02f, 0.98f), 0.2)
+                .SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out);
+            _animTween.Chain().TweenProperty(_animRootNode, "scale", new Vector2(0.98f, 1.02f), 0.2)
+                .SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.In);
         }
         private void UpdateIdle(float delta)
         {
@@ -846,7 +849,6 @@ namespace Solo.Scripts.Entities.Players
             if (Input.IsActionJustReleased("Atk"))
             {
                 Input.SetCustomMouseCursor(null, Input.CursorShape.Arrow);
-                GD.Print("开炮!!!");
                 ItemType curItemType = FastBarInventory.ItemInstanceList[CurFastBarIndex].Type;
                 switch (curItemType)
                 {
@@ -869,9 +871,23 @@ namespace Solo.Scripts.Entities.Players
                         }
                         break;
                     case ItemType.Fireball:
+
                         Fireball fireball = _fireballPs.Instantiate<Fireball>();
                         GetTree().CurrentScene.AddChild(fireball);
                         fireball.Init(this, GlobalPosition, GetGlobalMousePosition(), _atk);
+
+                        //GetTree().CreateTimer(0.1).Timeout += () =>
+                        //{
+                        //    Fireball fireball = _fireballPs.Instantiate<Fireball>();
+                        //    GetTree().CurrentScene.AddChild(fireball);
+                        //    fireball.Init(this, GlobalPosition, GetGlobalMousePosition(), _atk);
+                        //    GetTree().CreateTimer(0.1).Timeout += () =>
+                        //    {
+                        //        Fireball fireball = _fireballPs.Instantiate<Fireball>();
+                        //        GetTree().CurrentScene.AddChild(fireball);
+                        //        fireball.Init(this, GlobalPosition, GetGlobalMousePosition(), _atk);
+                        //    };
+                        //};
                         break;
                     case ItemType.WoodRod:
                     case ItemType.IronRod:
@@ -1121,6 +1137,7 @@ namespace Solo.Scripts.Entities.Players
         {
             if (_animTween != null && _animTween.IsRunning())
                 _animTween.Kill();
+            _animRootNode.Position = Vector2.Zero;
             _animRootNode.Scale = Vector2.One;
             _animRootNode.Skew = 0f;
             _animRootNode.Modulate = Colors.White;
