@@ -19,12 +19,32 @@ namespace Solo.Scripts.System.BuildingSystem
             _buildingDataMap.Add(BuildingType.Tree, new BuildingData()
             {
                 TargetType = TargetType.Tree,
-                Width = 1,
+                Width = 2,
                 Height = 1,
                 //TextureHeight = 2,
                 MaxHp = 100,
                 TexturePath = "res://Assets/AtlasTextures/Tree.tres",
                 TscnPath = "res://Scenes/System/BuildingSystem/Buildings/Tree.tscn",
+                DropItemList = new List<(ItemType, int, int)>() { (ItemType.Wood, 2, 6), },
+            });
+            _buildingDataMap.Add(BuildingType.SongShu, new BuildingData()
+            {
+                TargetType = TargetType.Tree,
+                Width = 2,
+                Height = 1,
+                MaxHp = 100,
+                TexturePath = "res://Assets/AtlasTextures/SongShu.tres",
+                TscnPath = "res://Scenes/System/BuildingSystem/Buildings/SongShu.tscn",
+                DropItemList = new List<(ItemType, int, int)>() { (ItemType.Wood, 2, 6), },
+            });
+            _buildingDataMap.Add(BuildingType.SongBai, new BuildingData()
+            {
+                TargetType = TargetType.Tree,
+                Width = 2,
+                Height = 1,
+                MaxHp = 100,
+                TexturePath = "res://Assets/AtlasTextures/SongBai.tres",
+                TscnPath = "res://Scenes/System/BuildingSystem/Buildings/SongBai.tscn",
                 DropItemList = new List<(ItemType, int, int)>() { (ItemType.Wood, 2, 6), },
             });
             _buildingDataMap.Add(BuildingType.Stone, new BuildingData()

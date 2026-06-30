@@ -12,8 +12,8 @@ shader_parameter/outline_width = 0.618000029355
 shader_parameter/flash_modifier = 0.0
 shader_parameter/flash_color = Color(1, 1, 1, 1)
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_ynywl"]
-size = Vector2(32, 16)
+[sub_resource type="CircleShape2D" id="CircleShape2D_y36i3"]
+radius = 8.0
 
 [node name="Stone" type="StaticBody2D" unique_id=868836603 node_paths=PackedStringArray("_animRoot", "_sprite", "_hpBar")]
 script = ExtResource("1_kclqx")
@@ -25,11 +25,12 @@ _hpBar = NodePath("HpBar")
 
 [node name="Sprite2D" type="Sprite2D" parent="AnimRoot" unique_id=368666539]
 material = SubResource("ShaderMaterial_kso2v")
-position = Vector2(0, -8)
+position = Vector2(1, -8)
+scale = Vector2(0.4, 0.4)
 texture = ExtResource("3_kclqx")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1113699585]
-shape = SubResource("RectangleShape2D_ynywl")
+shape = SubResource("CircleShape2D_y36i3")
 
 [node name="NavigationObstacle2D" type="NavigationObstacle2D" parent="." unique_id=834280423]
 vertices = PackedVector2Array(-16, -8, -16, 8, 16, 8, 16, -8)

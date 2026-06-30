@@ -84,6 +84,8 @@
     {
         Water,//水上无法拍建筑
         Tree,
+        SongBai,//松柏
+        SongShu,//松树
         Stone,
         MainBase,//聚灵之源
         Flag,//法旗

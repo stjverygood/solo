@@ -1,0 +1,55 @@
+[gd_scene format=3 uid="uid://dxnfc0fg5g1r1"]
+
+[ext_resource type="Script" uid="uid://dwvk18yng3bmk" path="res://Scripts/System/BuildingSystem/Buildings/Tree.cs" id="1_q2eq3"]
+[ext_resource type="Texture2D" uid="uid://d2lieohix3oui" path="res://Assets/AtlasTextures/Earth.tres" id="2_ihgao"]
+[ext_resource type="Texture2D" uid="uid://cp6nwpoomj3hj" path="res://Assets/AtlasTextures/Shadow16px.tres" id="3_ab8bp"]
+[ext_resource type="Shader" uid="uid://i3lcvke3ll2n" path="res://Assets/Shaders/Outline.gdshader" id="4_l75u0"]
+[ext_resource type="Texture2D" uid="uid://dq3x065i3yxe" path="res://Assets/AtlasTextures/SongBai.tres" id="5_0jyem"]
+[ext_resource type="PackedScene" uid="uid://b061vtrr1tw5d" path="res://Scenes/Global/HpBar.tscn" id="6_m81wy"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_6jykq"]
+shader = ExtResource("4_l75u0")
+shader_parameter/outline_color = Color(1, 1, 1, 1)
+shader_parameter/outline_width = 0.618000029355
+shader_parameter/flash_modifier = 0.0
+shader_parameter/flash_color = Color(1, 1, 1, 1)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_d7vv8"]
+radius = 8.0
+
+[node name="SongBai" type="StaticBody2D" unique_id=380748304 node_paths=PackedStringArray("_animRoot", "_sprite", "_hpBar")]
+script = ExtResource("1_q2eq3")
+_animRoot = NodePath("AnimRoot")
+_sprite = NodePath("AnimRoot/Sprite2D")
+_hpBar = NodePath("HpBar")
+
+[node name="EarthSprite2D" type="Sprite2D" parent="." unique_id=512760339]
+visible = false
+texture = ExtResource("2_ihgao")
+
+[node name="ShadowSprite2D" type="Sprite2D" parent="." unique_id=282443843]
+position = Vector2(9.625, 3.0000002)
+scale = Vector2(3.671875, 0.92187506)
+texture = ExtResource("3_ab8bp")
+
+[node name="AnimRoot" type="Node2D" parent="." unique_id=78964809]
+
+[node name="Sprite2D" type="Sprite2D" parent="AnimRoot" unique_id=1035429755]
+material = SubResource("ShaderMaterial_6jykq")
+position = Vector2(9, -26)
+texture = ExtResource("5_0jyem")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=238573282]
+position = Vector2(1, -1)
+shape = SubResource("CircleShape2D_d7vv8")
+
+[node name="NavigationObstacle2D" type="NavigationObstacle2D" parent="." unique_id=382558469]
+visible = false
+radius = 8.0
+vertices = PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)
+
+[node name="HpBar" parent="." unique_id=1624310174 instance=ExtResource("6_m81wy")]
+offset_left = -5.0000005
+offset_top = -68.00001
+offset_right = 304.99997
+offset_bottom = 1.9999924

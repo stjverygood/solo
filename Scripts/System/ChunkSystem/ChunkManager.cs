@@ -192,9 +192,24 @@ namespace Solo.Scripts.System.ChunkSystem
                         Vector2 snapPos = GameManager.Instance.BuildingManager.SnapToCell(BuildingType.Tree, tileWorldPos + offset);
                         if (GameManager.Instance.BuildingManager.CanPlaced(BuildingType.Tree, snapPos) && WorldToChunkPos(snapPos) == chunkPos)
                         {
-                            Tree tree = GD.Load<PackedScene>(BuildingDataManager.Instance.GetBuildingData(BuildingType.Tree).TscnPath).Instantiate<Tree>();
-                            GetTree().CurrentScene.AddChild(tree);
-                            tree.Init(BuildingType.Tree, snapPos);
+                            if (GD.Randf() < 0.4)
+                            {
+                                Tree tree = GD.Load<PackedScene>(BuildingDataManager.Instance.GetBuildingData(BuildingType.Tree).TscnPath).Instantiate<Tree>();
+                                GetTree().CurrentScene.AddChild(tree);
+                                tree.Init(BuildingType.Tree, snapPos);
+                            }
+                            else if (GD.Randf() < 0.8)
+                            {
+                                Tree tree = GD.Load<PackedScene>(BuildingDataManager.Instance.GetBuildingData(BuildingType.SongShu).TscnPath).Instantiate<Tree>();
+                                GetTree().CurrentScene.AddChild(tree);
+                                tree.Init(BuildingType.SongShu, snapPos);
+                            }
+                            //else
+                            //{
+                            //    Tree tree = GD.Load<PackedScene>(BuildingDataManager.Instance.GetBuildingData(BuildingType.SongBai).TscnPath).Instantiate<Tree>();
+                            //    GetTree().CurrentScene.AddChild(tree);
+                            //    tree.Init(BuildingType.SongBai, snapPos);
+                            //}
                         }
                     }
                     else if (rd < 0.15)

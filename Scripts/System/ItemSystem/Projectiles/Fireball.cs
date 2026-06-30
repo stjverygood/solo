@@ -50,7 +50,8 @@ namespace Solo.Scripts.System.ItemSystem
         {
             if (body is ITargetable target && target != _projecter && target is not DropItem)
             {
-                foreach (ITargetable targetable in _explosionTargetList)
+                var targets = new List<ITargetable>(_explosionTargetList);
+                foreach (ITargetable targetable in targets)
                 {
                     if (targetable.IsVaild())
                     {
