@@ -1,28 +1,27 @@
 [gd_scene format=3 uid="uid://bji8v2soe8d4o"]
 
-[ext_resource type="Script" uid="uid://c435ms1p74wxs" path="res://Scripts/System/InventorySystem/InventoryView.cs" id="1_o8xfp"]
-[ext_resource type="PackedScene" uid="uid://v2bqvrhiyu14" path="res://Scenes/System/InventorySystem/InventorySlotView.tscn" id="2_rxog8"]
+[ext_resource type="Script" uid="uid://c435ms1p74wxs" path="res://Scripts/System/InventorySystem/InventoryView.cs" id="1_7fqhp"]
+[ext_resource type="PackedScene" uid="uid://v2bqvrhiyu14" path="res://Scenes/System/InventorySystem/InventorySlotView.tscn" id="2_j0bsv"]
 
 [node name="ArmorInventoryView" type="Control" unique_id=658431685 node_paths=PackedStringArray("_gridContainer")]
+custom_minimum_size = Vector2(80, 300)
 layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_right = -1056.0
-offset_bottom = -384.0
-grow_horizontal = 2
-grow_vertical = 2
-script = ExtResource("1_o8xfp")
-SlotViewPs = ExtResource("2_rxog8")
-_gridContainer = NodePath("GridContainer")
+anchors_preset = 0
+script = ExtResource("1_7fqhp")
+SlotViewPs = ExtResource("2_j0bsv")
+_gridContainer = NodePath("PanelContainer/GridContainer")
 
-[node name="GridContainer" type="GridContainer" parent="." unique_id=1179832778]
+[node name="PanelContainer" type="PanelContainer" parent="." unique_id=968169853]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_right = -24.0
 grow_horizontal = 2
 grow_vertical = 2
+
+[node name="GridContainer" type="GridContainer" parent="PanelContainer" unique_id=1179832778]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
 theme_override_constants/h_separation = 2
 theme_override_constants/v_separation = 24

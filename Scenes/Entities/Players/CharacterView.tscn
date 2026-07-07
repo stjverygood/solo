@@ -1,0 +1,38 @@
+[gd_scene format=3 uid="uid://b8so1e8mc7j47"]
+
+[ext_resource type="PackedScene" uid="uid://cfu7wy1op48g5" path="res://Scenes/System/CraftSystem/CraftView.tscn" id="1_7ae8y"]
+[ext_resource type="Script" uid="uid://cdwnxbnr2fkb1" path="res://Scripts/Entities/Players/CharacterView.cs" id="1_hfcn2"]
+
+[sub_resource type="ButtonGroup" id="ButtonGroup_srdpw"]
+
+[node name="CharacterView" type="Control" unique_id=610426356 node_paths=PackedStringArray("_fastCraftView")]
+layout_mode = 3
+anchors_preset = 0
+script = ExtResource("1_hfcn2")
+_fastCraftView = NodePath("PanelContainer/VBoxContainer/CraftView")
+
+[node name="PanelContainer" type="PanelContainer" parent="." unique_id=31633694]
+layout_mode = 0
+offset_right = 182.0
+offset_bottom = 28.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer" unique_id=185975886]
+layout_mode = 2
+alignment = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer/VBoxContainer" unique_id=115850035]
+layout_mode = 2
+alignment = 1
+
+[node name="PlayerInfoBtn" type="Button" parent="PanelContainer/VBoxContainer/HBoxContainer" unique_id=1986967787]
+layout_mode = 2
+text = "修士境界"
+
+[node name="FastCraftBtn" type="Button" parent="PanelContainer/VBoxContainer/HBoxContainer" unique_id=1015454507]
+layout_mode = 2
+text = "便携造物台"
+
+[node name="CraftView" parent="PanelContainer/VBoxContainer" unique_id=1489113954 instance=ExtResource("1_7ae8y")]
+layout_mode = 2
+size_flags_horizontal = 4
+_btnGroup = SubResource("ButtonGroup_srdpw")

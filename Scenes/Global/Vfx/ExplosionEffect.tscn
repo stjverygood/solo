@@ -29,6 +29,7 @@ scale_curve = SubResource("CurveTexture_rutet")
 color = Color(1.7770933, 0.73861766, 0.42255992, 1)
 
 [node name="ExplosionEffect" type="Node2D" unique_id=1538666864 node_paths=PackedStringArray("particles")]
+z_index = 1
 script = ExtResource("1_thrn4")
 particles = NodePath("GPUParticles2D")
 

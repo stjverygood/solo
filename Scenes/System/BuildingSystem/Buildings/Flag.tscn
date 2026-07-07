@@ -4,7 +4,7 @@
 [ext_resource type="Shader" uid="uid://1mycks5hhrfy" path="res://Assets/Shaders/Aura.gdshader" id="2_jt4qb"]
 [ext_resource type="Shader" uid="uid://i3lcvke3ll2n" path="res://Assets/Shaders/Outline.gdshader" id="3_dqv5f"]
 [ext_resource type="Texture2D" uid="uid://dvagrujp1joh7" path="res://Assets/AtlasTextures/Flag.tres" id="4_kb6hb"]
-[ext_resource type="PackedScene" uid="uid://b061vtrr1tw5d" path="res://Scenes/Global/HpBar.tscn" id="5_uy6ya"]
+[ext_resource type="PackedScene" uid="uid://dgrarrj2s36w8" path="res://Scenes/UI/HpBar.tscn" id="5_kb6hb"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_wl7sm"]
 shader = ExtResource("2_jt4qb")
@@ -57,14 +57,14 @@ shape = SubResource("RectangleShape2D_wl7sm")
 [node name="NavigationObstacle2D" type="NavigationObstacle2D" parent="." unique_id=926142465]
 vertices = PackedVector2Array(-8, 0, -8, 16, 8, 16, 8, 0)
 
-[node name="HpBar" parent="." unique_id=1624310174 instance=ExtResource("5_uy6ya")]
-offset_left = -14.999999
-offset_top = -25.000002
-offset_right = 294.99997
-offset_bottom = 45.0
-
 [node name="Area2D" type="Area2D" parent="." unique_id=85828480]
 visible = false
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D" unique_id=496196687]
 shape = SubResource("CircleShape2D_36k1t")
+
+[node name="HpBar" parent="." unique_id=369810414 instance=ExtResource("5_kb6hb")]
+offset_left = -28.0
+offset_top = -23.0
+offset_right = 521.99994
+offset_bottom = 36.999992

@@ -6,6 +6,8 @@
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_r1xys"]
 bg_color = Color(0.15294118, 0.15294118, 0.15294118, 0.6509804)
 
+[sub_resource type="Theme" id="Theme_8ue6d"]
+
 [node name="DeathView" type="Control" unique_id=1940583019 node_paths=PackedStringArray("_exitBtn", "_restartBtn")]
 layout_mode = 3
 anchors_preset = 15
@@ -39,7 +41,7 @@ grow_horizontal = 2
 theme_override_constants/outline_size = 64
 theme_override_fonts/font = ExtResource("1_lxl8r")
 theme_override_font_sizes/font_size = 128
-text = "大道磨灭"
+text = "身死道消"
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -49,9 +51,7 @@ offset_left = 246.0
 offset_top = 430.0
 offset_right = 497.0
 offset_bottom = 513.0
-theme_override_constants/outline_size = 32
-theme_override_fonts/font = ExtResource("1_lxl8r")
-theme_override_font_sizes/font_size = 40
+theme = SubResource("Theme_8ue6d")
 text = "返回主菜单"
 
 [node name="RestartBtn" type="Button" parent="Panel" unique_id=2076908316]

@@ -1,0 +1,95 @@
+[gd_scene format=3 uid="uid://b0h5soh7rcqn1"]
+
+[ext_resource type="Script" uid="uid://2tg34jhra5bk" path="res://Scripts/Levels/StartMenu.cs" id="1_aoyix"]
+
+[node name="StartMenu" type="Control" unique_id=771200124 node_paths=PackedStringArray("_startBtn", "_settingBtn", "_collectionBtn", "_aboutBtn", "_exitBtn")]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_aoyix")
+_startBtn = NodePath("ColorRect/VBoxContainer/StartBtn")
+_settingBtn = NodePath("ColorRect/VBoxContainer/SettingBtn")
+_collectionBtn = NodePath("ColorRect/VBoxContainer/CollectionBtn")
+_aboutBtn = NodePath("ColorRect/VBoxContainer/AboutBtn")
+_exitBtn = NodePath("ColorRect/VBoxContainer/ExitBtn")
+
+[node name="ColorRect" type="ColorRect" parent="." unique_id=1593247487]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.33660764, 0.3366076, 0.3366076, 1)
+
+[node name="Label" type="Label" parent="ColorRect" unique_id=1159784240]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -304.0
+offset_top = 148.0
+offset_right = 216.0
+offset_bottom = 302.0
+grow_horizontal = 2
+theme_override_constants/outline_size = 133
+theme_override_font_sizes/font_size = 96
+text = "我独自修行"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Label2" type="Label" parent="ColorRect" unique_id=362802437]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -224.0
+offset_top = 35.0
+offset_right = 136.0
+offset_bottom = 167.0
+grow_horizontal = 2
+theme_override_constants/outline_size = 133
+theme_override_font_sizes/font_size = 96
+text = "SOLO"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="VBoxContainer" type="VBoxContainer" parent="ColorRect" unique_id=112092356]
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = 220.0
+offset_top = -65.0
+offset_right = 404.0
+offset_bottom = 379.0
+grow_vertical = 2
+theme_override_constants/separation = 51
+
+[node name="StartBtn" type="Button" parent="ColorRect/VBoxContainer" unique_id=1038261233]
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "开始游戏"
+
+[node name="SettingBtn" type="Button" parent="ColorRect/VBoxContainer" unique_id=780967780]
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "设置"
+
+[node name="CollectionBtn" type="Button" parent="ColorRect/VBoxContainer" unique_id=1309182682]
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "游戏收藏"
+
+[node name="AboutBtn" type="Button" parent="ColorRect/VBoxContainer" unique_id=1293112212]
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "开发团队"
+
+[node name="ExitBtn" type="Button" parent="ColorRect/VBoxContainer" unique_id=2122446353]
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "退出游戏"

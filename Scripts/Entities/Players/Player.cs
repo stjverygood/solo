@@ -2,7 +2,6 @@ using Godot;
 using Solo.Scripts.Global;
 using Solo.Scripts.Global.Interfaces;
 using Solo.Scripts.System.BuildingSystem.Buildings;
-using Solo.Scripts.System.CraftSystem;
 using Solo.Scripts.System.InventorySystem;
 using Solo.Scripts.System.ItemSystem;
 using Solo.Scripts.System.SaveSystem;
@@ -42,6 +41,9 @@ namespace Solo.Scripts.Entities.Players
         [Export] private Node2D _handRootNode;//手部根节点
         [Export] private Sprite2D _handSprite;//手持物sprite
 
+        [Export] private GpuParticles2D _walkGrassParticles;//走在草上的粒子系统
+        [Export] private GpuParticles2D _walkWaterParticles;
+
         [Export] private PackedScene _fishingFloatPs;
 
         //发射物ps
@@ -51,7 +53,7 @@ namespace Solo.Scripts.Entities.Players
 
         //[Export] public PackedScene DropItemPs;
 
-        private ShaderMaterial _shaderMaterial;
+        //private ShaderMaterial _shaderMaterial;
         private float _atkLongPressDuration = 0.3f;//长按判断阈值
         private float _atkLongPressTimer = 0f;
         private bool _isAtkLongPressTimerValid = true;
@@ -97,17 +99,18 @@ namespace Solo.Scripts.Entities.Players
         public int ResCapacity = 1000;//资源存储上限
         private Tween _animTween; // 用于管理当前动画
 
-        public Inventory BagInventory = new Inventory();//背包
-        public Inventory ArmorInventory = new Inventory();//装备栏
-        public Inventory FastBarInventory = new Inventory();//快捷栏
+        public Inventory BagInventory;//背包
+        public Inventory ArmorInventory;//装备栏
+        public Inventory FastBarInventory;//快捷栏
 
+        [Export] private CharacterView _characterView;
+        [Export] private ItemView _itemView;
 
-        [Export] private SelfView _selfView;
-        [Export] private InventoryView _bagInventoryView;
+        //[Export] private SelfView _selfView;
         [Export] private InventoryView _fastBarInventoryView;
-        [Export] private ProgressBar _hpPb;
+        [Export] private TextureProgressBar _hpTpb;
         [Export] private Label _hpLb;
-        [Export] private ProgressBar _mpPb;
+        [Export] private TextureProgressBar _mpTpb;
         [Export] private Label _mpLb;
         [Export] private Label _debugLb;
         [Export] private DeathView _deathView;
@@ -125,20 +128,22 @@ namespace Solo.Scripts.Entities.Players
             _maxMp = playerSaveData.MaxMp;
             SetCurMp(playerSaveData.CurMp);
 
-            BagInventory.GuidStr = SaveManager.Instance.CurSaveData.BagInventoryGuidStr;
-            BagInventory.ItemInstanceList = SaveManager.Instance.CurSaveData.BagInventoryList;
-            ArmorInventory.GuidStr = SaveManager.Instance.CurSaveData.ArmorInventoryGuidStr;
-            ArmorInventory.ItemInstanceList = SaveManager.Instance.CurSaveData.ArmorInventoryList;
-            FastBarInventory.GuidStr = SaveManager.Instance.CurSaveData.FastBarInventoryGuidStr;
-            FastBarInventory.ItemInstanceList = SaveManager.Instance.CurSaveData.FastBarInventoryList;
+
+            FastBarInventory = new Inventory(SaveManager.Instance.CurSaveData.FastBarInventoryGuidStr, SaveManager.Instance.CurSaveData.FastBarInventoryList);
+            BagInventory = new Inventory(SaveManager.Instance.CurSaveData.BagInventoryGuidStr, SaveManager.Instance.CurSaveData.BagInventoryList);
+            ArmorInventory = new Inventory(SaveManager.Instance.CurSaveData.ArmorInventoryGuidStr, SaveManager.Instance.CurSaveData.ArmorInventoryList);
+            //左
+            _characterView.Init();
+            _characterView.Visible = false;
+            //右
+            _itemView.Init(BagInventory, ArmorInventory);
+            _itemView.Visible = false;
+
+            //下
             CurFastBarIndex = SaveManager.Instance.CurSaveData.FastBarIndex;
 
-            if (_bodySprite.Material is ShaderMaterial shaderMat)
-            {
-                _shaderMaterial = (ShaderMaterial)shaderMat.Duplicate();// 关键：复制一份材质，确保每个实例的材质相互独立
-                _bodySprite.Material = _shaderMaterial;// 记得把复制后的独立材质重新赋给当前的 Sprite2D
-            }
-            ShowOutline(false);
+
+
 
             _curAtkRange = _meleeAtkRange;//todo : 根据itemdata的israngeitem来决定攻击范围
             _curAtkRangeSq = _curAtkRange * _curAtkRange;
@@ -153,12 +158,12 @@ namespace Solo.Scripts.Entities.Players
             }
             ChangeState(PlayerState.Idle);
 
-            _selfView.BasicCraftView.RefreshType(CraftViewType.Basic);
-            _selfView.Visible = false;
-            _bagInventoryView.Init(BagInventory);
-            _selfView.ArmorView.ArmorInventoryView.Init(ArmorInventory);
+
+
+            //_selfView.BasicCraftView.RefreshType(CraftType.Basic);
+            //_selfView.Visible = false;
+            //_selfView.ArmorView.ArmorInventoryView.Init(ArmorInventory);
             _fastBarInventoryView.Init(FastBarInventory);
-            _bagInventoryView.Visible = false;
             _fastBarInventoryView.SetSelected(CurFastBarIndex, true);
             RefreshHandNode();
             RefreshArmorVisuals();
@@ -201,6 +206,7 @@ namespace Solo.Scripts.Entities.Players
 
         private void ChangeState(PlayerState newState)
         {
+            ExitState(CurState);
             CurState = newState;
             EnterState(newState);
         }
@@ -289,6 +295,48 @@ namespace Solo.Scripts.Entities.Players
                     break;
             }
         }
+        private void ExitState(PlayerState state)
+        {
+            switch (state)
+            {
+                case PlayerState.Idle:
+                    ExitIdle();
+                    break;
+                case PlayerState.Walk:
+                    ExitWalk();
+                    break;
+                case PlayerState.Run:
+                    ExitRun();
+                    break;
+                case PlayerState.Dash:
+                    ExitDash();
+                    break;
+                case PlayerState.Atk:
+                    ExitAtk();
+                    break;
+                case PlayerState.Interact:
+                    ExitInteract();
+                    break;
+                case PlayerState.Build:
+                    ExitBuild();
+                    break;
+                case PlayerState.Comsume:
+                    ExitComsume();
+                    break;
+                case PlayerState.Aim:
+                    ExitAim();
+                    break;
+                case PlayerState.Fishing:
+                    ExitFishing();
+                    break;
+                case PlayerState.Death:
+                    ExitDeath();
+                    break;
+                case PlayerState.BagUI:
+                    ExitBagUI();
+                    break;
+            }
+        }
 
         #region Idle
         private void EnterIdle()
@@ -300,6 +348,9 @@ namespace Solo.Scripts.Entities.Players
                 .SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out);
             _animTween.Chain().TweenProperty(_animRootNode, "scale", new Vector2(0.98f, 1.02f), 0.2)
                 .SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.In);
+
+            _walkGrassParticles.Emitting = false;
+            _walkWaterParticles.Emitting = false;
         }
         private void UpdateIdle(float delta)
         {
@@ -376,6 +427,10 @@ namespace Solo.Scripts.Entities.Players
             }
 
             RefreshFaceDir();
+        }
+        private void ExitIdle()
+        {
+
         }
         #endregion
 
@@ -463,10 +518,23 @@ namespace Solo.Scripts.Entities.Players
 
             _curMoveDir = moveInput;
             if (GameManager.Instance.ChunkManager.GetTileType(GlobalPosition) == TileType.Water)
+            {
                 Velocity = _curMoveDir * TotalMoveSpeed / 4;
+                _walkGrassParticles.Emitting = false;
+                _walkWaterParticles.Emitting = true;
+            }
             else
+            {
                 Velocity = _curMoveDir * TotalMoveSpeed;
+                _walkGrassParticles.Emitting = true;
+                _walkWaterParticles.Emitting = false;
+            }
             MoveAndSlide();
+        }
+        private void ExitWalk()
+        {
+            _walkGrassParticles.Emitting = false;
+            _walkWaterParticles.Emitting = false;
         }
         #endregion
 
@@ -544,6 +612,11 @@ namespace Solo.Scripts.Entities.Players
                 Velocity = _curMoveDir * TotalMoveSpeed * 2;
             MoveAndSlide();
         }
+        private void ExitRun()
+        {
+            _walkGrassParticles.Emitting = false;
+            _walkWaterParticles.Emitting = false;
+        }
         #endregion
 
         #region Dash
@@ -592,6 +665,10 @@ namespace Solo.Scripts.Entities.Players
 
             Velocity = _curMoveDir * _dashSpeed;
             MoveAndSlide();
+        }
+        private void ExitDash()
+        {
+
         }
         #endregion
 
@@ -657,6 +734,10 @@ namespace Solo.Scripts.Entities.Players
                 MoveAndSlide();
             }
         }
+        private void ExitAtk()
+        {
+
+        }
         #endregion
 
         #region Interact
@@ -712,6 +793,10 @@ namespace Solo.Scripts.Entities.Players
                 ChangeState(PlayerState.Death);
                 return;
             }
+        }
+        private void ExitInteract()
+        {
+
         }
         #endregion
 
@@ -787,6 +872,10 @@ namespace Solo.Scripts.Entities.Players
                 return;
             }
         }
+        private void ExitBuild()
+        {
+
+        }
         #endregion
 
         #region Comsume
@@ -825,6 +914,10 @@ namespace Solo.Scripts.Entities.Players
                 ChangeState(PlayerState.Idle);
                 return;
             }
+        }
+        private void ExitComsume()
+        {
+
         }
         #endregion
 
@@ -876,18 +969,18 @@ namespace Solo.Scripts.Entities.Players
                         GetTree().CurrentScene.AddChild(fireball);
                         fireball.Init(this, GlobalPosition, GetGlobalMousePosition(), _atk);
 
-                        //GetTree().CreateTimer(0.1).Timeout += () =>
-                        //{
-                        //    Fireball fireball = _fireballPs.Instantiate<Fireball>();
-                        //    GetTree().CurrentScene.AddChild(fireball);
-                        //    fireball.Init(this, GlobalPosition, GetGlobalMousePosition(), _atk);
-                        //    GetTree().CreateTimer(0.1).Timeout += () =>
-                        //    {
-                        //        Fireball fireball = _fireballPs.Instantiate<Fireball>();
-                        //        GetTree().CurrentScene.AddChild(fireball);
-                        //        fireball.Init(this, GlobalPosition, GetGlobalMousePosition(), _atk);
-                        //    };
-                        //};
+                        GetTree().CreateTimer(0.1).Timeout += () =>
+                        {
+                            Fireball fireball = _fireballPs.Instantiate<Fireball>();
+                            GetTree().CurrentScene.AddChild(fireball);
+                            fireball.Init(this, GlobalPosition, GetGlobalMousePosition(), _atk);
+                            GetTree().CreateTimer(0.1).Timeout += () =>
+                            {
+                                Fireball fireball = _fireballPs.Instantiate<Fireball>();
+                                GetTree().CurrentScene.AddChild(fireball);
+                                fireball.Init(this, GlobalPosition, GetGlobalMousePosition(), _atk);
+                            };
+                        };
                         break;
                     case ItemType.WoodRod:
                     case ItemType.IronRod:
@@ -920,6 +1013,10 @@ namespace Solo.Scripts.Entities.Players
             else
                 Velocity = input * TotalMoveSpeed;
             MoveAndSlide();
+        }
+        private void ExitAim()
+        {
+
         }
         #endregion
 
@@ -958,6 +1055,10 @@ namespace Solo.Scripts.Entities.Players
                 ChangeState(PlayerState.Idle);
                 return;
             }
+        }
+        private void ExitFishing()
+        {
+
         }
         #endregion
 
@@ -1024,6 +1125,10 @@ namespace Solo.Scripts.Entities.Players
                 return;
             }
         }
+        private void ExitDeath()
+        {
+
+        }
         #endregion
 
         #region BagUI
@@ -1034,35 +1139,45 @@ namespace Solo.Scripts.Entities.Players
             _animTween.TweenProperty(_animRootNode, "scale", new Vector2(1.2f, 0.8f), 0.5f);
             _animTween.TweenProperty(_animRootNode, "scale", new Vector2(1.0f, 1.0f), 0.5f);
 
-            _selfView.Visible = true;
-            _bagInventoryView.Visible = true;
-            if (_curInteractingNode is BuildingCraft)
-            {
-                _selfView.ChangeView(SelfViewTarget.OtherCraftView, CraftViewType.Building);
-            }
-            else if (_curInteractingNode is ToolCraft)
-            {
-                _selfView.ChangeView(SelfViewTarget.OtherCraftView, CraftViewType.Tool);
-            }
-            else if (_curInteractingNode is ArmorCraft)
-            {
-                _selfView.ChangeView(SelfViewTarget.OtherCraftView, CraftViewType.Armor);
-            }
-            else
-            {
-                _selfView.ChangeView(SelfViewTarget.EquipmentView);
-            }
+            _characterView.Visible = true;
+            _itemView.Visible = true;
+            //if (_curInteractingNode is BuildingCraft)
+            //{
+            //    _selfView.ChangeView(SelfViewTarget.OtherCraftView, CraftType.Building);
+            //}
+            //else if (_curInteractingNode is ToolCraft)
+            //{
+            //    _selfView.ChangeView(SelfViewTarget.OtherCraftView, CraftType.Tool);
+            //}
+            //else if (_curInteractingNode is ArmorCraft)
+            //{
+            //    _selfView.ChangeView(SelfViewTarget.OtherCraftView, CraftType.Armor);
+            //}
+            //else
+            //{
+            //    _selfView.ChangeView(SelfViewTarget.EquipmentView);
+            //}
             _curInteractingNode = null;
+
+            Tween tween = CreateTween().SetParallel(true);
+            tween.TweenProperty(_camera, "zoom", new Vector2(10, 10), 0.3f).SetTrans(Tween.TransitionType.Cubic).SetEase(Tween.EaseType.Out);
+            tween.TweenProperty(_camera, "offset", new Vector2(40, -10), 0.3f).SetTrans(Tween.TransitionType.Cubic).SetEase(Tween.EaseType.Out);
         }
         private void UpdateBagUI(float delta)
         {
             if (Input.IsActionJustPressed("Bag") || Input.IsActionJustPressed("Back"))
             {
-                _selfView.Visible = false;
-                _bagInventoryView.Visible = false;
+                _characterView.Visible = false;
+                _itemView.Visible = false;
                 ChangeState(PlayerState.Idle);
                 return;
             }
+        }
+        private void ExitBagUI()
+        {
+            Tween tween = CreateTween().SetParallel(true);
+            tween.TweenProperty(_camera, "zoom", new Vector2(3, 3), 0.3f).SetTrans(Tween.TransitionType.Cubic).SetEase(Tween.EaseType.Out);
+            tween.TweenProperty(_camera, "offset", new Vector2(0, 0), 0.3f).SetTrans(Tween.TransitionType.Cubic).SetEase(Tween.EaseType.Out);
         }
         #endregion
 
@@ -1188,6 +1303,7 @@ namespace Solo.Scripts.Entities.Players
 
         }
 
+        #region 背包
         public Inventory GetInventoryByGuid(string guid)
         {
             if (guid == FastBarInventory.GuidStr) return FastBarInventory;
@@ -1250,7 +1366,7 @@ namespace Solo.Scripts.Entities.Players
             }
         }
 
-        public int AddItemToInventory(ItemInstance itemInstance)
+        public int AddItem(ItemInstance itemInstance)
         {
             itemInstance.Count -= FastBarInventory.AddItemInstance(itemInstance);//优先添加到快捷栏
             if (itemInstance.Count != 0)//有剩余就添加到背包
@@ -1260,7 +1376,17 @@ namespace Solo.Scripts.Entities.Players
             RefreshHandNode();
             return itemInstance.Count;
         }
-
+        public int RemoveItem(ItemType type, int count)
+        {
+            int remainingCount = count; // 记录还需要扣除多少个
+            remainingCount -= BagInventory.RemoveItemByType(type, remainingCount);
+            if (remainingCount > 0)
+            {
+                remainingCount -= FastBarInventory.RemoveItemByType(type, remainingCount);
+            }
+            return remainingCount;
+        }
+        #endregion
 
         public int CurFastBarIndex;//玩家当前手持的物品, 攻击时要把这个连同攻击力一起传过去给受击者, 让受击者处理受多少伤害, 工具不对要大打折扣
 
@@ -1359,7 +1485,7 @@ namespace Solo.Scripts.Entities.Players
                 }
             }
 
-            _selfView?.ArmorView?.RefreshVisuals(ArmorInventory);
+            //_selfView?.ArmorView?.RefreshVisuals(ArmorInventory);
         }
 
 
@@ -1389,15 +1515,15 @@ namespace Solo.Scripts.Entities.Players
         private void SetCurHp(float curHp)
         {
             _curHp = curHp;
-            _hpPb.MaxValue = _maxHp;
-            _hpPb.Value = _curHp;
+            _hpTpb.MaxValue = _maxHp;
+            _hpTpb.Value = _curHp;
             _hpLb.Text = $"{_curHp:f0}/{_maxHp:f0}";
         }
         private void SetCurMp(float curHg)
         {
             _curMp = curHg;
-            _mpPb.MaxValue = _maxMp;
-            _mpPb.Value = _curMp;
+            _mpTpb.MaxValue = _maxMp;
+            _mpTpb.Value = _curMp;
             _mpLb.Text = $"{_curMp:f0}/{_maxHp:f0}";
         }
 
@@ -1445,9 +1571,9 @@ namespace Solo.Scripts.Entities.Players
 
             Tween animTween = CreateTween().SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out);
             animTween.TweenProperty(_bodyRootNode, "scale", new Vector2(0.8f, 0.8f), 0.1f);
-            animTween.Parallel().TweenProperty(_bodySprite.Material, "shader_parameter/flash_modifier", 1.0f, 0.1f);
+            //animTween.Parallel().TweenProperty(_bodySprite.Material, "shader_parameter/flash_modifier", 1.0f, 0.1f);
             animTween.TweenProperty(_bodyRootNode, "scale", new Vector2(1.2f, 1.2f), 0.1f);
-            animTween.Parallel().TweenProperty(_bodySprite.Material, "shader_parameter/flash_modifier", 0.0f, 0.1f);
+            //animTween.Parallel().TweenProperty(_bodySprite.Material, "shader_parameter/flash_modifier", 0.0f, 0.1f);
             animTween.TweenProperty(_bodyRootNode, "scale", new Vector2(1f, 1f), 0.1f);
             FloatTextLb floatTextLb = GameManager.Instance.FloatTextLbPs.Instantiate<FloatTextLb>();
             GetTree().CurrentScene.AddChild(floatTextLb);
@@ -1477,15 +1603,15 @@ namespace Solo.Scripts.Entities.Players
 
         public void ShowOutline(bool isShow)
         {
-            if (isShow)
-            {
-                _shaderMaterial.SetShaderParameter("outline_color", new Godot.Color(1, 1, 1));
-                _shaderMaterial.SetShaderParameter("outline_width", 1);
-            }
-            else
-            {
-                _shaderMaterial.SetShaderParameter("outline_width", 0.0f);
-            }
+            //if (isShow)
+            //{
+            //    _shaderMaterial.SetShaderParameter("outline_color", new Godot.Color(1, 1, 1));
+            //    _shaderMaterial.SetShaderParameter("outline_width", 1);
+            //}
+            //else
+            //{
+            //    _shaderMaterial.SetShaderParameter("outline_width", 0.0f);
+            //}
         }
 
         public void Interact()
@@ -1587,6 +1713,8 @@ namespace Solo.Scripts.Entities.Players
             if (remainCount == 0)
                 RefreshHandNode();
         }
+
+
     }
 }
 

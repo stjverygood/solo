@@ -1,0 +1,26 @@
+[gd_resource type="Theme" format=3 uid="uid://cll71ura8smkw"]
+
+[ext_resource type="FontFile" uid="uid://chelxpn5elvbb" path="res://Assets/zpix.ttf" id="1_5qecu"]
+[ext_resource type="Texture2D" uid="uid://ti1hips25mtu" path="res://Assets/AtlasTextures/UI/ButtonHover.tres" id="2_wvah3"]
+[ext_resource type="Texture2D" uid="uid://dwgjchyleuf8e" path="res://Assets/AtlasTextures/UI/ButtonNormal.tres" id="3_8ue6d"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_6xbv5"]
+texture = ExtResource("2_wvah3")
+texture_margin_left = 5.0
+texture_margin_top = 3.0
+texture_margin_right = 6.0
+texture_margin_bottom = 4.0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_one8q"]
+texture = ExtResource("3_8ue6d")
+texture_margin_left = 5.0
+texture_margin_top = 3.0
+texture_margin_right = 6.0
+texture_margin_bottom = 4.0
+
+[resource]
+Button/colors/font_color = Color(0.88, 0.88, 0.88, 1)
+Button/font_sizes/font_size = 16
+Button/fonts/font = ExtResource("1_5qecu")
+Button/styles/hover = SubResource("StyleBoxTexture_6xbv5")
+Button/styles/normal = SubResource("StyleBoxTexture_one8q")

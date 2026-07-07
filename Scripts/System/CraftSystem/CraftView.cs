@@ -1,159 +1,140 @@
 using Godot;
 using Solo.Scripts.Global;
 using Solo.Scripts.System.ItemSystem;
-using System.Collections.Generic;
 
 namespace Solo.Scripts.System.CraftSystem
 {
-    //物品合成台的类型
-    public enum CraftViewType
-    {
-        Basic,//直接能打开
-        Building,//合成建筑的, 需要在建筑合成台交互
-        Seed,//合成种子的
-        Weapon, //剑, 弓
-        Tool,//镐,斧,壶, 鱼竿
-        Armor,//盔甲鞋
-    }
+
 
     public partial class CraftView : Control
     {
-        [Export] public CraftViewType Type;
-        [Export] private GridContainer _slotGc;
-        [Export] private PackedScene _slotViewPs;
-        [Export] private ButtonGroup _btnGroup;
-        [Export] private Label _selectedItemNameLb;
-        [Export] private Label _selectedItemRequiredLb;
-        [Export] private Button _craftBtn;
-        private List<CraftItem> CraftItemList = new List<CraftItem>();
-        private CraftItem _curCraftItem;
+        public CraftType Type;
 
-        public override void _Ready()
+        [Export] private GridContainer _slotGc;
+        [Export] private ButtonGroup _btnGroup;
+        [Export] private PackedScene _craftItemViewPs;
+
+        [Export] private GridContainer _requiredItemGc;
+        [Export] private PackedScene _requiredItemViewPs;
+
+        [Export] private Label _curCraftItemNameLb;
+        [Export] private Label _curCraftItemCountLb;
+        [Export] private HSlider _countSlider;
+        [Export] private Button _craftBtn;
+
+        private ItemType _curCraftItemType;
+        private int _curCraftCount;
+
+        public void Init(CraftType type)
         {
+            Type = type;
+
+            //todo : 1.列表
+            foreach (Node child in _slotGc.GetChildren())// 先清空grid
+                child.QueueFree();
+            //2. 默认选中第一个
+            _countSlider.ValueChanged += (value) =>
+            {
+                GD.Print(" " + _curCraftItemType + " " + value);
+                _curCraftCount = (int)value;
+                RefreshRequiredItemList();
+            };
+
+            CraftData data = CraftDataManager.Instance.GetCraftData(Type);
+            for (int i = 0; i < data.ItemList.Count; i++)
+            {
+
+                CraftItemView itemView = _craftItemViewPs.Instantiate<CraftItemView>();
+                itemView.Init(data.ItemList[i], i, _btnGroup);
+                itemView.Toggled += (selectedCraftItemView) =>
+                {
+                    //被选中的逻辑
+
+                    _curCraftItemType = selectedCraftItemView.Type;
+                    _curCraftCount = 1;
+                    _curCraftItemNameLb.Text = ItemDataManager.Instance.GetItemData(_curCraftItemType).Name;
+                    _curCraftItemCountLb.Text = "*1";
+                    RefreshCountSlider();//刷新滑块, 计算最大值, 当前值重置成1
+                    RefreshRequiredItemList();//刷新需要材料gc
+                };
+                _slotGc.AddChild(itemView);
+                if (i == 0)
+                    itemView.SetSelected();
+
+
+            }
+
             _craftBtn.Pressed += () =>
             {
-                if (_curCraftItem == null) return;
-                if (!GameManager.Instance.IsDebugMode)
+                if (GameManager.Instance.IsDebugMode)
                 {
-                    foreach ((ItemType, int) t in _curCraftItem.RequiredItemList)
-                    {
-                        int remain = t.Item2;
-                        remain -= GameManager.Instance.Player.BagInventory.RemoveItemByType(t.Item1, remain);
-                        GameManager.Instance.Player.FastBarInventory.RemoveItemByType(t.Item1, remain);
-                    }
+
                 }
-                GameManager.Instance.Player.AddItemToInventory(new ItemInstance() { Type = _curCraftItem.Type, Count = 1, CurDur = ItemDataManager.Instance.GetItemData(_curCraftItem.Type).MaxDur });
-                CheckCanCraft();
+
+                foreach ((ItemType, int) tuple in ItemDataManager.Instance.GetItemData(_curCraftItemType).CraftRequiredItemList)
+                {
+                    GameManager.Instance.Player.RemoveItem(tuple.Item1, tuple.Item2 * _curCraftCount);
+                }
+                GameManager.Instance.Player.AddItem(new ItemInstance() { Type = _curCraftItemType, Count = _curCraftCount, CurDur = ItemDataManager.Instance.GetItemData(_curCraftItemType).MaxDur });
+                RefreshCountSlider();
             };
         }
 
-        public void RefreshType(CraftViewType type)
+        public void RefreshCountSlider()
         {
-            Type = type;
-            foreach (Node child in _slotGc.GetChildren())// 先清空grid
-                child.QueueFree();
-            CraftItemList.Clear();
-
-            switch (Type)
+            //GD.Print(craftItemType + " RefreshCountSlider");
+            //遍历每个材料, 看看背包能合成多少个, 如何取最少材料的那个
+            int minCount = int.MaxValue;
+            foreach ((ItemType, int) tuple in ItemDataManager.Instance.GetItemData(_curCraftItemType).CraftRequiredItemList)
             {
-                case CraftViewType.Basic://徒手的只能做木套
-                    CraftItemList.Add(new CraftItem(ItemType.MainBase, new List<(ItemType, int)>() { (ItemType.MainBaseStone, 0), (ItemType.Wood, 0), (ItemType.Stone, 0) }));
-                    CraftItemList.Add(new CraftItem(ItemType.BuildingCraft, new List<(ItemType, int)>() { (ItemType.MainBaseStone, 0), (ItemType.Wood, 0), (ItemType.Stone, 0) }));
-                    CraftItemList.Add(new CraftItem(ItemType.Rope, new List<(ItemType, int)>() { (ItemType.Grass, 1) }));
-                    CraftItemList.Add(new CraftItem(ItemType.WoodSword, new List<(ItemType, int)>() { (ItemType.Wood, 3), (ItemType.Rope, 5) }));
-                    CraftItemList.Add(new CraftItem(ItemType.WoodBow, new List<(ItemType, int)>() { (ItemType.Wood, 4), (ItemType.Rope, 5) }));
-                    CraftItemList.Add(new CraftItem(ItemType.WoodPickaxe, new List<(ItemType, int)>() { (ItemType.Wood, 4), (ItemType.Rope, 5) }));
-                    CraftItemList.Add(new CraftItem(ItemType.WoodAxe, new List<(ItemType, int)>() { (ItemType.Wood, 3), (ItemType.Rope, 5) }));
-                    CraftItemList.Add(new CraftItem(ItemType.WoodPot, new List<(ItemType, int)>() { (ItemType.Wood, 4), (ItemType.Rope, 5) }));
-                    CraftItemList.Add(new CraftItem(ItemType.WoodRod, new List<(ItemType, int)>() { (ItemType.Wood, 3), (ItemType.Rope, 5) }));
-                    CraftItemList.Add(new CraftItem(ItemType.WoodHelmet, new List<(ItemType, int)>() { (ItemType.Wood, 4), (ItemType.Rope, 5), (ItemType.Silk, 5) }));
-                    CraftItemList.Add(new CraftItem(ItemType.WoodArmor, new List<(ItemType, int)>() { (ItemType.Wood, 3), (ItemType.Rope, 5), (ItemType.Silk, 5) }));
-                    CraftItemList.Add(new CraftItem(ItemType.WoodBoot, new List<(ItemType, int)>() { (ItemType.Wood, 4), (ItemType.Rope, 5), (ItemType.Silk, 5) }));
-                    CraftItemList.Add(new CraftItem(ItemType.Arrow, new List<(ItemType, int)>() { (ItemType.Wood, 4), (ItemType.Rope, 5), (ItemType.Silk, 5) }));
-                    CraftItemList.Add(new CraftItem(ItemType.Fireball, new List<(ItemType, int)>() { (ItemType.Wood, 4), (ItemType.Rope, 5), (ItemType.Silk, 5) }));
-                    CraftItemList.Add(new CraftItem(ItemType.TreeGrow, new List<(ItemType, int)>() { (ItemType.Wood, 4), (ItemType.Rope, 5), (ItemType.Silk, 5) }));
-                    break;
-                case CraftViewType.Building://建筑合成台
-                    CraftItemList.Add(new CraftItem(ItemType.MainBase, new List<(ItemType, int)>() { (ItemType.MainBaseStone, 0), (ItemType.Wood, 0), (ItemType.Stone, 0) }));
-                    CraftItemList.Add(new CraftItem(ItemType.Flag, new List<(ItemType, int)>() { (ItemType.MainBaseStone, 0), (ItemType.Wood, 0), (ItemType.Stone, 0) }));
-                    CraftItemList.Add(new CraftItem(ItemType.ToolCraft, new List<(ItemType, int)>() { (ItemType.MainBaseStone, 0), (ItemType.Wood, 0), (ItemType.Stone, 0) }));
-                    CraftItemList.Add(new CraftItem(ItemType.ArmorCraft, new List<(ItemType, int)>() { (ItemType.MainBaseStone, 0), (ItemType.Wood, 0), (ItemType.Stone, 0) }));
-                    break;
-                case CraftViewType.Weapon://高级武器合成台
-                    CraftItemList.Add(new CraftItem(ItemType.IronSword, new List<(ItemType, int)>() { (ItemType.Iron, 0) }));
-                    CraftItemList.Add(new CraftItem(ItemType.IronBow, new List<(ItemType, int)>() { (ItemType.Iron, 0) }));
-                    CraftItemList.Add(new CraftItem(ItemType.GoldSword, new List<(ItemType, int)>() { (ItemType.Gold, 0) }));
-                    CraftItemList.Add(new CraftItem(ItemType.GoldBow, new List<(ItemType, int)>() { (ItemType.Gold, 0) }));
-                    CraftItemList.Add(new CraftItem(ItemType.JadeSword, new List<(ItemType, int)>() { (ItemType.Gold, 0) }));
-                    CraftItemList.Add(new CraftItem(ItemType.JadeBow, new List<(ItemType, int)>() { (ItemType.Gold, 0) }));
-                    break;
-                case CraftViewType.Tool://高级工具合成台
-                    CraftItemList.Add(new CraftItem(ItemType.IronPickaxe, new List<(ItemType, int)>() { (ItemType.Iron, 0) }));
-                    CraftItemList.Add(new CraftItem(ItemType.IronAxe, new List<(ItemType, int)>() { (ItemType.Iron, 0) }));
-                    CraftItemList.Add(new CraftItem(ItemType.IronPot, new List<(ItemType, int)>() { (ItemType.Iron, 0) }));
-                    CraftItemList.Add(new CraftItem(ItemType.IronRod, new List<(ItemType, int)>() { (ItemType.Iron, 0) }));
-                    CraftItemList.Add(new CraftItem(ItemType.GoldPickaxe, new List<(ItemType, int)>() { (ItemType.Gold, 0) }));
-                    CraftItemList.Add(new CraftItem(ItemType.GoldAxe, new List<(ItemType, int)>() { (ItemType.Gold, 0) }));
-                    CraftItemList.Add(new CraftItem(ItemType.GoldPot, new List<(ItemType, int)>() { (ItemType.Gold, 0) }));
-                    CraftItemList.Add(new CraftItem(ItemType.GoldRod, new List<(ItemType, int)>() { (ItemType.Gold, 0) }));
-                    CraftItemList.Add(new CraftItem(ItemType.JadePickaxe, new List<(ItemType, int)>() { (ItemType.Gold, 0) }));
-                    CraftItemList.Add(new CraftItem(ItemType.JadeAxe, new List<(ItemType, int)>() { (ItemType.Gold, 0) }));
-                    CraftItemList.Add(new CraftItem(ItemType.JadePot, new List<(ItemType, int)>() { (ItemType.Gold, 0) }));
-                    CraftItemList.Add(new CraftItem(ItemType.JadeRod, new List<(ItemType, int)>() { (ItemType.Gold, 0) }));
-                    break;
-                case CraftViewType.Armor://高级防具合成台
-                    CraftItemList.Add(new CraftItem(ItemType.IronHelmet, new List<(ItemType, int)>() { (ItemType.Iron, 0) }));
-                    CraftItemList.Add(new CraftItem(ItemType.IronArmor, new List<(ItemType, int)>() { (ItemType.Iron, 0) }));
-                    CraftItemList.Add(new CraftItem(ItemType.IronBoot, new List<(ItemType, int)>() { (ItemType.Iron, 0) }));
-                    CraftItemList.Add(new CraftItem(ItemType.GoldHelmet, new List<(ItemType, int)>() { (ItemType.Gold, 0) }));
-                    CraftItemList.Add(new CraftItem(ItemType.GoldArmor, new List<(ItemType, int)>() { (ItemType.Gold, 0) }));
-                    CraftItemList.Add(new CraftItem(ItemType.GoldBoot, new List<(ItemType, int)>() { (ItemType.Gold, 0) }));
-                    CraftItemList.Add(new CraftItem(ItemType.JadeHelmet, new List<(ItemType, int)>() { (ItemType.Gold, 0) }));
-                    CraftItemList.Add(new CraftItem(ItemType.JadeArmor, new List<(ItemType, int)>() { (ItemType.Gold, 0) }));
-                    CraftItemList.Add(new CraftItem(ItemType.JadeBoot, new List<(ItemType, int)>() { (ItemType.Gold, 0) }));
-                    break;
+                int itemCount = GameManager.Instance.Player.FastBarInventory.GetItemCount(tuple.Item1) + GameManager.Instance.Player.BagInventory.GetItemCount(tuple.Item1);
+                int canCraftCount = itemCount / tuple.Item2;
+                if (canCraftCount < minCount)
+                    minCount = canCraftCount;
             }
-
-            for (int i = 0; i < CraftItemList.Count; i++)
-            {
-                CraftSlotView slotView = _slotViewPs.Instantiate<CraftSlotView>();
-                slotView.Init(i, _btnGroup, CraftItemList[i]);
-                slotView.Toggled += (selectedSlotView) =>
-                {
-                    //被选中的逻辑
-                    _curCraftItem = selectedSlotView.CraftItem;
-                    _selectedItemNameLb.Text = ItemDataManager.Instance.GetItemData(selectedSlotView.CraftItem.Type).Name;
-                    string requiredStr = "所需材料 : ";
-                    foreach ((ItemType, int) t in selectedSlotView.CraftItem.RequiredItemList)
-                    {
-                        requiredStr += $"{ItemDataManager.Instance.GetItemData(t.Item1).Name} * {t.Item2}, ";
-                    }
-                    _selectedItemRequiredLb.Text = requiredStr;
-                    CheckCanCraft();
-                };
-                _slotGc.AddChild(slotView);
-                if (i == 0)
-                    slotView.SetSelected();
-            }
+            _countSlider.MinValue = 1;
+            _countSlider.MaxValue = minCount;
+            _countSlider.Value = 1;
         }
 
-        private void CheckCanCraft()
+        public void RefreshRequiredItemList()
         {
-            if (GameManager.Instance.IsDebugMode)
+            foreach (Node child in _requiredItemGc.GetChildren())// 先清空grid
+                child.QueueFree();
+
+            bool canCraft = true;
+
+            foreach ((ItemType, int) tuple in ItemDataManager.Instance.GetItemData(_curCraftItemType).CraftRequiredItemList)
             {
-                _craftBtn.Disabled = false;
-                return;
-            }
-            foreach ((ItemType, int) t in _curCraftItem.RequiredItemList)
-            {
-                int count = GameManager.Instance.Player.FastBarInventory.GetItemCount(t.Item1) + GameManager.Instance.Player.BagInventory.GetItemCount(t.Item1);
-                if (count < t.Item2)
+                RequiredItemView requiredItemView = _requiredItemViewPs.Instantiate<RequiredItemView>();
+                requiredItemView.Init(tuple.Item1, tuple.Item2 * _curCraftCount);
+                _requiredItemGc.AddChild(requiredItemView);
+
+                int itemCount = GameManager.Instance.Player.FastBarInventory.GetItemCount(tuple.Item1) + GameManager.Instance.Player.BagInventory.GetItemCount(tuple.Item1);
+                if (itemCount < tuple.Item2 * _curCraftCount)
                 {
-                    _craftBtn.Disabled = true;
-                    return;
+                    canCraft = false;
+                    requiredItemView.SetIsEnough(false);
+                }
+                else
+                {
+                    requiredItemView.SetIsEnough(true);
                 }
             }
-            _craftBtn.Disabled = false;
+
+
+            if (canCraft == true)
+            {
+                _craftBtn.Disabled = false;
+                _curCraftItemNameLb.Modulate = Color.Color8(1, 1, 1);
+                _curCraftItemCountLb.Modulate = Color.Color8(1, 1, 1);
+            }
+            else
+            {
+                _craftBtn.Disabled = true;
+                _curCraftItemNameLb.Modulate = Color.Color8(162, 38, 51);
+                _curCraftItemCountLb.Modulate = Color.Color8(162, 38, 51);
+            }
         }
     }
 }

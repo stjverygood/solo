@@ -5,73 +5,107 @@
 [ext_resource type="PackedScene" uid="uid://5hfwgc7q0vcs" path="res://Scenes/Entities/Players/FishingFloat.tscn" id="2_sod1g"]
 [ext_resource type="PackedScene" uid="uid://bnq2kgnwy4iaa" path="res://Scenes/System/ItemSystem/Projectiles/Arrow.tscn" id="2_ynm40"]
 [ext_resource type="Texture2D" uid="uid://cmlghpyvrsitg" path="res://Assets/AtlasTextures/Player.tres" id="3_3gn43"]
-[ext_resource type="Shader" uid="uid://i3lcvke3ll2n" path="res://Assets/Shaders/Outline.gdshader" id="3_4xrd3"]
 [ext_resource type="PackedScene" uid="uid://d24xyf4tuo8wn" path="res://Scenes/System/ItemSystem/Projectiles/Fireball.tscn" id="3_cbjid"]
 [ext_resource type="PackedScene" uid="uid://das8eij0ua5tt" path="res://Scenes/System/BuildingSystem/BuildingPreview.tscn" id="3_f0b02"]
-[ext_resource type="PackedScene" uid="uid://cegl0cmno78dg" path="res://Scenes/System/InventorySystem/BagInventoryView.tscn" id="3_lxeke"]
 [ext_resource type="PackedScene" uid="uid://557c5e8cwx11" path="res://Scenes/System/InventorySystem/FastBarInventoryView.tscn" id="4_y25d7"]
 [ext_resource type="FontFile" uid="uid://chelxpn5elvbb" path="res://Assets/zpix.ttf" id="5_rnj17"]
-[ext_resource type="PackedScene" uid="uid://bv36kio2oi60f" path="res://Scenes/Entities/Players/SelfView.tscn" id="6_7qy38"]
 [ext_resource type="Texture2D" uid="uid://4l1ykgdsxh5w" path="res://Assets/AtlasTextures/WoodPot.tres" id="8_cbjid"]
-[ext_resource type="PackedScene" uid="uid://d3ptuijhfhmm0" path="res://Scenes/Entities/Players/DeathView.tscn" id="11_oet8y"]
-[ext_resource type="PackedScene" uid="uid://ch5mbcfvw4tu3" path="res://Scenes/Entities/Players/DiscardView.tscn" id="11_ynm40"]
+[ext_resource type="Texture2D" uid="uid://8e254e6sobd0" path="res://Assets/Png/ui.png" id="10_wom6s"]
+[ext_resource type="PackedScene" uid="uid://d3ptuijhfhmm0" path="res://Scenes/UI/DeathView.tscn" id="11_oet8y"]
+[ext_resource type="PackedScene" uid="uid://b8so1e8mc7j47" path="res://Scenes/Entities/Players/CharacterView.tscn" id="15_sod1g"]
+[ext_resource type="Script" uid="uid://cdwnxbnr2fkb1" path="res://Scripts/Entities/Players/CharacterView.cs" id="15_wom6s"]
+[ext_resource type="PackedScene" uid="uid://cimwlv2uhqpt" path="res://Scenes/Entities/Players/ItemView.tscn" id="16_wom6s"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_jw8fk"]
 radius = 5.0990195
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_tqe6c"]
-shader = ExtResource("3_4xrd3")
-shader_parameter/outline_color = Color(0.96, 0.93, 0.73, 1)
-shader_parameter/outline_width = 1.0
-shader_parameter/flash_modifier = 0.0
-shader_parameter/flash_color = Color(1, 1, 1, 1)
+[sub_resource type="AtlasTexture" id="AtlasTexture_08ldj"]
+atlas = ExtResource("10_wom6s")
+region = Rect2(51, 161, 10, 9)
 
-[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_wdnd1"]
-particle_flag_disable_z = true
-direction = Vector3(0, -1, 0)
-initial_velocity_min = 26.07
-initial_velocity_max = 68.86
-gravity = Vector3(0, 150, 0)
-scale_min = 0.0
-scale_max = 3.34
-color = Color(0.5716493, 0.5716493, 0.57164925, 1)
+[sub_resource type="AtlasTexture" id="AtlasTexture_yxouj"]
+atlas = ExtResource("10_wom6s")
+region = Rect2(63, 162, 55, 6)
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_0527a"]
-bg_color = Color(0.14901961, 0.16862746, 0.26666668, 0)
-border_width_left = 4
-border_width_top = 4
-border_width_right = 4
-border_width_bottom = 4
-border_color = Color(0, 0, 0, 1)
-corner_radius_top_left = 16
-corner_radius_top_right = 16
-corner_radius_bottom_right = 16
-corner_radius_bottom_left = 16
-expand_margin_left = 4.0
-expand_margin_top = 4.0
-expand_margin_right = 4.0
-expand_margin_bottom = 4.0
+[sub_resource type="AtlasTexture" id="AtlasTexture_wdnd1"]
+atlas = ExtResource("10_wom6s")
+region = Rect2(64, 172, 53, 4)
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_rnj17"]
-bg_color = Color(0.63529414, 0.14901961, 0.2, 1)
-border_color = Color(0, 0, 0, 1)
-corner_radius_top_left = 12
-corner_radius_top_right = 12
-corner_radius_bottom_right = 12
-corner_radius_bottom_left = 12
+[sub_resource type="AtlasTexture" id="AtlasTexture_rutet"]
+atlas = ExtResource("10_wom6s")
+region = Rect2(51, 176, 11, 11)
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_4xrd3"]
-bg_color = Color(0, 0.6, 0.85882354, 1)
-border_color = Color(0, 0, 0, 1)
-corner_radius_top_left = 12
-corner_radius_top_right = 12
-corner_radius_bottom_right = 12
-corner_radius_bottom_left = 12
+[sub_resource type="AtlasTexture" id="AtlasTexture_wom6s"]
+atlas = ExtResource("10_wom6s")
+region = Rect2(63, 178, 55, 6)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_n0q0x"]
+atlas = ExtResource("10_wom6s")
+region = Rect2(64, 188, 53, 4)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_8ildv"]
 size = Vector2(800, 500)
 
-[node name="Player" type="CharacterBody2D" unique_id=1144409017 node_paths=PackedStringArray("_camera", "_bodyRootNode", "_animRootNode", "_bodySprite", "_helmetSprite", "_ArmorSprite", "_bootSprite", "_handRootNode", "_handSprite", "_selfView", "_bagInventoryView", "_fastBarInventoryView", "_hpPb", "_hpLb", "_mpPb", "_mpLb", "_debugLb", "_deathView")]
+[sub_resource type="Gradient" id="Gradient_wom6s"]
+colors = PackedColorArray(0.59583336, 1, 0.029999971, 1, 0.0333333, 0.25, 0, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_n0q0x"]
+gradient = SubResource("Gradient_wom6s")
+
+[sub_resource type="Curve" id="Curve_2hmx1"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_avkiy"]
+curve = SubResource("Curve_2hmx1")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_t82er"]
+particle_flag_disable_z = true
+angle_min = -179.99998
+angle_max = 180.00002
+direction = Vector3(0, -1, 0)
+spread = 110.106
+initial_velocity_min = 50.0
+initial_velocity_max = 120.0
+gravity = Vector3(0, 300, 0)
+damping_min = 20.0
+damping_max = 20.0
+scale_min = 1.5
+scale_max = 3.0
+scale_curve = SubResource("CurveTexture_avkiy")
+color = Color(0.5716493, 0.5716493, 0.57164925, 1)
+color_ramp = SubResource("GradientTexture1D_n0q0x")
+
+[sub_resource type="Gradient" id="Gradient_sod1g"]
+colors = PackedColorArray(0.029999971, 0.6928334, 1, 1, 0, 0.22500002, 0.25, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_ex883"]
+gradient = SubResource("Gradient_sod1g")
+
+[sub_resource type="Curve" id="Curve_wom6s"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_sdrt1"]
+curve = SubResource("Curve_wom6s")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_4vg5v"]
+particle_flag_disable_z = true
+angle_min = -179.99998
+angle_max = 180.00002
+direction = Vector3(-1, -0.5, 0)
+initial_velocity_min = 50.0
+initial_velocity_max = 120.0
+gravity = Vector3(0, 300, 0)
+damping_min = 20.0
+damping_max = 20.0
+scale_min = 1.5
+scale_max = 3.0
+scale_curve = SubResource("CurveTexture_sdrt1")
+color = Color(0.5716493, 0.5716493, 0.57164925, 1)
+color_ramp = SubResource("GradientTexture1D_ex883")
+
+[node name="Player" type="CharacterBody2D" unique_id=1144409017 node_paths=PackedStringArray("_camera", "_bodyRootNode", "_animRootNode", "_bodySprite", "_helmetSprite", "_ArmorSprite", "_bootSprite", "_handRootNode", "_handSprite", "_walkGrassParticles", "_walkWaterParticles", "_characterView", "_itemView", "_fastBarInventoryView", "_hpTpb", "_hpLb", "_mpTpb", "_mpLb", "_debugLb", "_deathView")]
 y_sort_enabled = true
 script = ExtResource("1_lxeke")
 _camera = NodePath("Camera2D")
@@ -83,16 +117,18 @@ _ArmorSprite = NodePath("BodyRootNode/AnimRootNode/ArmorSprite")
 _bootSprite = NodePath("BodyRootNode/AnimRootNode/BootSprite")
 _handRootNode = NodePath("BodyRootNode/HandRootNode")
 _handSprite = NodePath("BodyRootNode/HandRootNode/HandSprite2D")
+_walkGrassParticles = NodePath("Particles/WalkGrassParticles")
+_walkWaterParticles = NodePath("Particles/WalkWaterParticles")
 _fishingFloatPs = ExtResource("2_sod1g")
 _arrowPs = ExtResource("2_ynm40")
 _fireballPs = ExtResource("3_cbjid")
-_selfView = NodePath("CanvasLayer/SelfView")
-_bagInventoryView = NodePath("CanvasLayer/BagInventoryView")
+_characterView = NodePath("CanvasLayer/CharacterView")
+_itemView = NodePath("CanvasLayer/ItemView")
 _fastBarInventoryView = NodePath("CanvasLayer/FastBarInventoryView")
-_hpPb = NodePath("CanvasLayer/HpPb")
-_hpLb = NodePath("CanvasLayer/HpPb/HpLb")
-_mpPb = NodePath("CanvasLayer/MpPb")
-_mpLb = NodePath("CanvasLayer/MpPb/MpLb")
+_hpTpb = NodePath("CanvasLayer/State/HpTpb")
+_hpLb = NodePath("CanvasLayer/State/HpLb")
+_mpTpb = NodePath("CanvasLayer/State/MpTpb")
+_mpLb = NodePath("CanvasLayer/State/MpLb")
 _debugLb = NodePath("DebugLabel")
 _deathView = NodePath("CanvasLayer/DeathView")
 _aimTexture = ExtResource("2_oet8y")
@@ -103,7 +139,7 @@ position = Vector2(0, -4)
 shape = SubResource("CircleShape2D_jw8fk")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=173865742]
-zoom = Vector2(1.5, 1.5)
+zoom = Vector2(3, 3)
 position_smoothing_enabled = true
 
 [node name="BodyRootNode" type="Node2D" parent="." unique_id=700917934]
@@ -111,7 +147,6 @@ position_smoothing_enabled = true
 [node name="AnimRootNode" type="Node2D" parent="BodyRootNode" unique_id=727127429]
 
 [node name="BodySprite" type="Sprite2D" parent="BodyRootNode/AnimRootNode" unique_id=13186832]
-material = SubResource("ShaderMaterial_tqe6c")
 position = Vector2(0, -15)
 texture = ExtResource("3_3gn43")
 
@@ -125,7 +160,6 @@ position = Vector2(0, -11)
 position = Vector2(0, -3)
 
 [node name="HandRootNode" type="Node2D" parent="BodyRootNode" unique_id=129208459]
-z_index = 1
 position = Vector2(6, -8)
 
 [node name="HandSprite2D" type="Sprite2D" parent="BodyRootNode/HandRootNode" unique_id=881647694]
@@ -137,83 +171,101 @@ texture = ExtResource("8_cbjid")
 position = Vector2(0, -7)
 radius = 11.11
 
-[node name="GPUParticles2D" type="GPUParticles2D" parent="." unique_id=2072942402]
-position = Vector2(-1, 1)
-amount = 16
-lifetime = 0.47000000000000003
-process_material = SubResource("ParticleProcessMaterial_wdnd1")
-
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=374399419]
 
-[node name="HpPb" type="ProgressBar" parent="CanvasLayer" unique_id=1911015625]
-offset_left = 416.0
-offset_top = 502.0
-offset_right = 535.0
-offset_bottom = 538.0
-theme_override_styles/background = SubResource("StyleBoxFlat_0527a")
-theme_override_styles/fill = SubResource("StyleBoxFlat_rnj17")
-value = 45.57
-show_percentage = false
+[node name="State" type="Control" parent="CanvasLayer" unique_id=873120106]
+layout_mode = 3
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -20.0
+offset_top = -40.0
+offset_right = 20.0
+grow_horizontal = 2
+grow_vertical = 0
 
-[node name="HpLb" type="Label" parent="CanvasLayer/HpPb" unique_id=809045055]
+[node name="HpIcon" type="TextureRect" parent="CanvasLayer/State" unique_id=1830496681]
+layout_mode = 0
+offset_left = -361.0
+offset_top = -89.0
+offset_right = -321.0
+offset_bottom = -49.0
+texture = SubResource("AtlasTexture_08ldj")
+
+[node name="HpLb" type="Label" parent="CanvasLayer/State" unique_id=809045055]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_left = -337.0
+offset_top = -81.0
+offset_right = -207.0
+offset_bottom = -97.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/outline_size = 16
 theme_override_fonts/font = ExtResource("5_rnj17")
 theme_override_font_sizes/font_size = 24
-text = "fukinghealthy"
+text = "1000/1000"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="MpPb" type="ProgressBar" parent="CanvasLayer" unique_id=1609693081]
-offset_left = 615.0
-offset_top = 500.0
-offset_right = 734.0
-offset_bottom = 536.0
-theme_override_styles/background = SubResource("StyleBoxFlat_0527a")
-theme_override_styles/fill = SubResource("StyleBoxFlat_4xrd3")
-value = 45.57
-show_percentage = false
+[node name="HpTpb" type="TextureProgressBar" parent="CanvasLayer/State" unique_id=1807173123]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 0.035
+anchor_bottom = 0.062000003
+offset_left = -356.0
+offset_top = -37.0
+offset_right = -302.4
+offset_bottom = -32.146626
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(3, 3)
+value = 14.0
+texture_under = SubResource("AtlasTexture_yxouj")
+texture_progress = SubResource("AtlasTexture_wdnd1")
+texture_progress_offset = Vector2(1, 1)
 
-[node name="MpLb" type="Label" parent="CanvasLayer/MpPb" unique_id=1450420962]
+[node name="MpIcon" type="TextureRect" parent="CanvasLayer/State" unique_id=754701527]
+layout_mode = 0
+offset_left = 261.0
+offset_top = -84.0
+offset_right = 301.0
+offset_bottom = -44.0
+texture = SubResource("AtlasTexture_rutet")
+
+[node name="MpLb" type="Label" parent="CanvasLayer/State" unique_id=1450420962]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_left = 272.0
+offset_top = -76.0
+offset_right = 406.0
+offset_bottom = -92.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/outline_size = 16
 theme_override_fonts/font = ExtResource("5_rnj17")
 theme_override_font_sizes/font_size = 24
-text = "fukinghungury"
+text = "100/100"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="BagInventoryView" parent="CanvasLayer" unique_id=2038670647 instance=ExtResource("3_lxeke")]
-anchors_preset = 6
-anchor_left = 1.0
-anchor_top = 0.5
-anchor_right = 1.0
-anchor_bottom = 0.5
-offset_left = -570.0
-offset_top = -229.0
-offset_right = -210.0
-offset_bottom = 131.0
-grow_horizontal = 0
-
-[node name="DiscardView" parent="CanvasLayer/BagInventoryView" unique_id=640664064 instance=ExtResource("11_ynm40")]
-anchor_right = 0.07
-anchor_bottom = 0.125
-offset_left = 389.68
-offset_top = 276.5
-offset_right = 469.68
-offset_bottom = 356.5
-grow_horizontal = 2
-grow_vertical = 2
+[node name="MpTpb" type="TextureProgressBar" parent="CanvasLayer/State" unique_id=1264956069]
+layout_mode = 0
+offset_left = 261.00006
+offset_top = -34.0
+offset_right = 316.00006
+offset_bottom = -27.333313
+scale = Vector2(3, 3)
+value = 14.0
+texture_under = SubResource("AtlasTexture_wom6s")
+texture_progress = SubResource("AtlasTexture_n0q0x")
+texture_progress_offset = Vector2(1, 1)
 
 [node name="FastBarInventoryView" parent="CanvasLayer" unique_id=1473412187 instance=ExtResource("4_y25d7")]
 anchors_preset = 7
@@ -228,14 +280,32 @@ offset_bottom = 0.0
 grow_horizontal = 2
 grow_vertical = 0
 
-[node name="SelfView" parent="CanvasLayer" unique_id=1555358295 instance=ExtResource("6_7qy38")]
-offset_left = 250.0
-offset_top = 64.0
-offset_right = -602.0
-offset_bottom = -184.0
-
 [node name="DeathView" parent="CanvasLayer" unique_id=1940583019 instance=ExtResource("11_oet8y")]
 visible = false
+
+[node name="ItemView" parent="CanvasLayer" unique_id=1779590837 instance=ExtResource("16_wom6s")]
+offset_left = 1230.0
+offset_top = 392.0
+offset_right = 1230.0
+offset_bottom = 392.0
+
+[node name="ColorRect" type="ColorRect" parent="CanvasLayer" unique_id=1993069275]
+visible = false
+offset_left = 423.0
+offset_top = 124.0
+offset_right = 1180.0
+offset_bottom = 873.0
+
+[node name="CharacterView" parent="CanvasLayer" unique_id=610426356 instance=ExtResource("15_sod1g")]
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = 619.0
+offset_top = -235.0
+offset_right = 619.0
+offset_bottom = -235.0
+grow_vertical = 2
+script = ExtResource("15_wom6s")
 
 [node name="DebugLabel" type="Label" parent="." unique_id=1146679472]
 visible = false
@@ -254,3 +324,21 @@ visible = false
 [node name="CollisionShape2D" type="CollisionShape2D" parent="TestRangeArea2D" unique_id=118237025]
 position = Vector2(-1, -1)
 shape = SubResource("RectangleShape2D_8ildv")
+
+[node name="Particles" type="Node2D" parent="." unique_id=1477545276]
+visible = false
+
+[node name="WalkGrassParticles" type="GPUParticles2D" parent="Particles" unique_id=2072942402]
+position = Vector2(-1, 1)
+amount = 10
+lifetime = 0.5
+explosiveness = 0.55
+trail_lifetime = 0.11
+process_material = SubResource("ParticleProcessMaterial_t82er")
+
+[node name="WalkWaterParticles" type="GPUParticles2D" parent="Particles" unique_id=607143288]
+position = Vector2(-1, 1)
+amount = 10
+lifetime = 0.5
+explosiveness = 0.8
+process_material = SubResource("ParticleProcessMaterial_4vg5v")

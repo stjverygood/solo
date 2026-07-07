@@ -10,12 +10,12 @@ public partial class InventorySlotView : Control
     [Export] private TextureRect _iconTr;
     [Export] private Label _nameLb;
     [Export] private Label _countLb;
-    [Export] private ProgressBar _durPb;
+    [Export] private TextureProgressBar _durTpb;
     private ItemInstance _itemInstance;
     private int _index;
     private InventoryView _parent;
-    [Export] private StyleBoxFlat _normalStyle;
-    [Export] private StyleBoxFlat _selectedStyle;
+    [Export] private StyleBoxTexture _normalStyle;
+    [Export] private StyleBoxTexture _selectedStyle;
 
     public void Init(InventoryView parent, int index)
     {
@@ -35,7 +35,7 @@ public partial class InventorySlotView : Control
             _iconTr.Texture = null;
             _nameLb.Text = "";
             _countLb.Text = "";
-            _durPb.Visible = false;
+            _durTpb.Visible = false;
             return;
         }
 
@@ -46,13 +46,13 @@ public partial class InventorySlotView : Control
         _nameLb.Text = $"{itemData.Name}";
         if (itemData.MaxDur == -1)
         {
-            _durPb.Visible = false;
+            _durTpb.Visible = false;
         }
         else
         {
-            _durPb.Visible = true;
-            _durPb.MaxValue = itemData.MaxDur;
-            _durPb.Value = itemInstance.CurDur;
+            _durTpb.Visible = true;
+            _durTpb.MaxValue = itemData.MaxDur;
+            _durTpb.Value = itemInstance.CurDur;
         }
     }
 

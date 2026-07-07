@@ -57,6 +57,17 @@
         OtherCraftView,
     }
 
+    //物品合成台的类型
+    public enum CraftType
+    {
+        Fast,//直接能打开
+        Building,//合成建筑的, 需要在建筑合成台交互
+        Seed,//合成种子的
+        Weapon, //剑, 弓
+        Tool,//镐,斧,壶, 鱼竿
+        Armor,//盔甲鞋
+    }
+
     public enum TargetType
     {
         DropItem,

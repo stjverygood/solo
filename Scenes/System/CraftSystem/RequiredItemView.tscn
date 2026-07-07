@@ -1,0 +1,38 @@
+[gd_scene format=3 uid="uid://de7ohbctef38p"]
+
+[ext_resource type="Script" uid="uid://ct43tybvffbpn" path="res://Scripts/System/CraftSystem/RequiredItemView.cs" id="1_3ta7p"]
+[ext_resource type="Texture2D" uid="uid://d4igqp371y5" path="res://Assets/icon.svg" id="1_siqbs"]
+
+[node name="RequiredItemView" type="PanelContainer" unique_id=1327174266 node_paths=PackedStringArray("_iconTr", "_nameLb", "_countLb")]
+offset_right = 89.0
+offset_bottom = 11.0
+script = ExtResource("1_3ta7p")
+_iconTr = NodePath("HBoxContainer/IconTr")
+_nameLb = NodePath("HBoxContainer/NameLb")
+_countLb = NodePath("HBoxContainer/CountLb")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=1129131677]
+layout_mode = 2
+
+[node name="IconTr" type="TextureRect" parent="HBoxContainer" unique_id=1215016066]
+custom_minimum_size = Vector2(16, 16)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+texture = ExtResource("1_siqbs")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="NameLb" type="Label" parent="HBoxContainer" unique_id=1934370019]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "木头木头木"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="CountLb" type="Label" parent="HBoxContainer" unique_id=384154840]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "*99"
+horizontal_alignment = 1
+vertical_alignment = 1

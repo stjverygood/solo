@@ -1,4 +1,5 @@
 ﻿using Solo.Scripts.Global;
+using System.Collections.Generic;
 
 namespace Solo.Scripts.System.ItemSystem
 {
@@ -18,5 +19,7 @@ namespace Solo.Scripts.System.ItemSystem
         public float HpBonus = 0;
         public float MpBonus = 0;
         public bool CanAiming = false;
+
+        public List<(ItemType, int)> CraftRequiredItemList;//合成所需的材料
     }
 }

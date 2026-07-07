@@ -1,8 +1,9 @@
 using Godot;
 namespace Solo.Scripts.Global
 {
-    public partial class HpBar : ProgressBar
+    public partial class HpBar : Control
     {
+        [Export] public TextureProgressBar _hpTpb;
         [Export] public Label _hpLb;
         public void Init()
         {
@@ -17,8 +18,8 @@ namespace Solo.Scripts.Global
                 return;
             }
             Visible = true;
-            MaxValue = maxHp;
-            Value = curHp;
+            _hpTpb.MaxValue = maxHp;
+            _hpTpb.Value = curHp;
             _hpLb.Text = $"{curHp:f0}/{maxHp:f0}";
         }
     }

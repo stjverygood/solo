@@ -11,6 +11,12 @@ namespace Solo.Scripts.System.InventorySystem
         public List<ItemInstance> ItemInstanceList = new List<ItemInstance>();
         public Action<int> SlotChanged;//用于通知ui哪个格子变了, 修改ui格子数据
 
+        public Inventory(string guidStr, List<ItemInstance> itemInstanceList)
+        {
+            GuidStr = guidStr;
+            ItemInstanceList = itemInstanceList;
+        }
+
         public int AddItemInstance(ItemInstance instance)//自动添加, 比如捡东西, 双击其他背包的物品, 返回成功添加的物品数量
         {
             int remainCount = instance.Count;//记录当前剩余数量

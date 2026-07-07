@@ -94,7 +94,7 @@ namespace Solo.Scripts.System.ChunkSystem
                 return;
             Vector2I playerChunkPos = WorldToChunkPos(player.GlobalPosition);// 获取玩家所在的区块坐标
 
-            GenerateUnit((float)delta);
+            //GenerateUnit((float)delta);
 
             for (int x = -_renderDistance; x <= _renderDistance; x++)//生存区块
             {

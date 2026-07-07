@@ -5,7 +5,7 @@
 [ext_resource type="Texture2D" uid="uid://cp6nwpoomj3hj" path="res://Assets/AtlasTextures/Shadow16px.tres" id="3_wcids"]
 [ext_resource type="Shader" uid="uid://i3lcvke3ll2n" path="res://Assets/Shaders/Outline.gdshader" id="4_y43y6"]
 [ext_resource type="Texture2D" uid="uid://bj41nxm3dy4wa" path="res://Assets/AtlasTextures/SongShu.tres" id="5_qiulo"]
-[ext_resource type="PackedScene" uid="uid://b061vtrr1tw5d" path="res://Scenes/Global/HpBar.tscn" id="6_q31dc"]
+[ext_resource type="PackedScene" uid="uid://dgrarrj2s36w8" path="res://Scenes/UI/HpBar.tscn" id="6_qiulo"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_6jykq"]
 shader = ExtResource("4_y43y6")
@@ -48,8 +48,8 @@ visible = false
 radius = 8.0
 vertices = PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)
 
-[node name="HpBar" parent="." unique_id=1624310174 instance=ExtResource("6_q31dc")]
-offset_left = -15.0
-offset_top = -99.99999
-offset_right = 294.99997
-offset_bottom = -29.999992
+[node name="HpBar" parent="." unique_id=369810414 instance=ExtResource("6_qiulo")]
+offset_left = -27.0
+offset_top = -77.0
+offset_right = 522.99994
+offset_bottom = -17.000008

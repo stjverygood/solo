@@ -4,7 +4,7 @@
 [ext_resource type="Script" uid="uid://u4sccffsggkn" path="res://Scripts/System/BuildingSystem/Buildings/MainBase.cs" id="1_oiup2"]
 [ext_resource type="Shader" uid="uid://1mycks5hhrfy" path="res://Assets/Shaders/Aura.gdshader" id="2_36k1t"]
 [ext_resource type="Texture2D" uid="uid://bgbc8y1xxyjde" path="res://Assets/AtlasTextures/MainBase.tres" id="2_oiup2"]
-[ext_resource type="PackedScene" uid="uid://b061vtrr1tw5d" path="res://Scenes/Global/HpBar.tscn" id="3_36k1t"]
+[ext_resource type="PackedScene" uid="uid://dgrarrj2s36w8" path="res://Scenes/UI/HpBar.tscn" id="5_36k1t"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_wl7sm"]
 shader = ExtResource("2_36k1t")
@@ -71,12 +71,6 @@ shape = SubResource("RectangleShape2D_wl7sm")
 [node name="NavigationObstacle2D" type="NavigationObstacle2D" parent="." unique_id=926142465]
 vertices = PackedVector2Array(-32, 0, -32, 32, 32, 32, 32, 0)
 
-[node name="HpBar" parent="." unique_id=1624310174 instance=ExtResource("3_36k1t")]
-offset_left = -14.999999
-offset_top = -42.0
-offset_right = 294.99997
-offset_bottom = 28.0
-
 [node name="GPUParticles2D" type="GPUParticles2D" parent="." unique_id=1692055583]
 position = Vector2(1, 22)
 amount = 30
@@ -88,3 +82,9 @@ visible = false
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D" unique_id=496196687]
 shape = SubResource("CircleShape2D_36k1t")
+
+[node name="HpBar" parent="." unique_id=369810414 instance=ExtResource("5_36k1t")]
+offset_left = -28.0
+offset_top = -23.0
+offset_right = 521.99994
+offset_bottom = 36.999992

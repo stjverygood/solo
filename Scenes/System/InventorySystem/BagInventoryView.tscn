@@ -2,18 +2,18 @@
 
 [ext_resource type="Script" uid="uid://c435ms1p74wxs" path="res://Scripts/System/InventorySystem/InventoryView.cs" id="1_rlath"]
 [ext_resource type="PackedScene" uid="uid://v2bqvrhiyu14" path="res://Scenes/System/InventorySystem/InventorySlotView.tscn" id="2_yuokq"]
+[ext_resource type="Texture2D" uid="uid://8e254e6sobd0" path="res://Assets/Png/ui.png" id="3_yuokq"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_rlath"]
-bg_color = Color(0, 0, 0, 0.1)
-border_width_left = 4
-border_width_top = 4
-border_width_right = 4
-border_width_bottom = 4
-border_color = Color(0, 0, 0, 0.6)
-corner_radius_top_left = 24
-corner_radius_top_right = 24
-corner_radius_bottom_right = 24
-corner_radius_bottom_left = 24
+[sub_resource type="AtlasTexture" id="AtlasTexture_wdnd1"]
+atlas = ExtResource("3_yuokq")
+region = Rect2(51, 83, 59, 59)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_yxouj"]
+texture = SubResource("AtlasTexture_wdnd1")
+texture_margin_left = 20.0
+texture_margin_top = 20.0
+texture_margin_right = 20.0
+texture_margin_bottom = 20.0
 
 [node name="BagInventoryView" type="Control" unique_id=2038670647 node_paths=PackedStringArray("_gridContainer")]
 custom_minimum_size = Vector2(360, 360)
@@ -26,30 +26,21 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_rlath")
 SlotViewPs = ExtResource("2_yuokq")
-_gridContainer = NodePath("BgPanel/GridContainer")
+_gridContainer = NodePath("PanelContainer/GridContainer")
 
-[node name="BgPanel" type="Panel" parent="." unique_id=657237335]
+[node name="PanelContainer" type="PanelContainer" parent="." unique_id=314034005]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_rlath")
+theme_override_styles/panel = SubResource("StyleBoxTexture_yxouj")
 
-[node name="GridContainer" type="GridContainer" parent="BgPanel" unique_id=1213265653]
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -163.0
-offset_top = -163.0
-offset_right = 163.0
-offset_bottom = 163.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_constants/h_separation = 2
-theme_override_constants/v_separation = 2
+[node name="GridContainer" type="GridContainer" parent="PanelContainer" unique_id=1213265653]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_constants/h_separation = 8
+theme_override_constants/v_separation = 16
 columns = 4

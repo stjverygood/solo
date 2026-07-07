@@ -15,6 +15,7 @@ scale_max = 2.0
 color = Color(2.1168277, 0.36701384, 0, 1)
 
 [node name="SmogEffect" type="Node2D" unique_id=1807347200 node_paths=PackedStringArray("_particles")]
+z_index = 1
 script = ExtResource("1_j7clg")
 _particles = NodePath("GPUParticles2D")
 
