@@ -2,22 +2,45 @@
 
 [ext_resource type="PackedScene" uid="uid://cfu7wy1op48g5" path="res://Scenes/System/CraftSystem/CraftView.tscn" id="1_7ae8y"]
 [ext_resource type="Script" uid="uid://cdwnxbnr2fkb1" path="res://Scripts/Entities/Players/CharacterView.cs" id="1_hfcn2"]
+[ext_resource type="Texture2D" uid="uid://8e254e6sobd0" path="res://Assets/Png/ui.png" id="2_srdpw"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_srdpw"]
+atlas = ExtResource("2_srdpw")
+region = Rect2(144, 144, 16, 16)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_8neig"]
+texture = SubResource("AtlasTexture_srdpw")
+texture_margin_left = 6.0
+texture_margin_top = 6.0
+texture_margin_right = 6.0
+texture_margin_bottom = 6.0
 
 [sub_resource type="ButtonGroup" id="ButtonGroup_srdpw"]
 
-[node name="CharacterView" type="Control" unique_id=610426356 node_paths=PackedStringArray("_fastCraftView")]
+[node name="CharacterView" type="Control" unique_id=1785653158 node_paths=PackedStringArray("_fastCraftView")]
 layout_mode = 3
 anchors_preset = 0
 script = ExtResource("1_hfcn2")
 _fastCraftView = NodePath("PanelContainer/VBoxContainer/CraftView")
 
 [node name="PanelContainer" type="PanelContainer" parent="." unique_id=31633694]
-layout_mode = 0
-offset_right = 182.0
-offset_bottom = 28.0
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -128.0
+offset_top = -144.0
+offset_right = 128.0
+offset_bottom = 144.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxTexture_8neig")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer" unique_id=185975886]
 layout_mode = 2
+theme_override_constants/separation = 4
 alignment = 1
 
 [node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer/VBoxContainer" unique_id=115850035]

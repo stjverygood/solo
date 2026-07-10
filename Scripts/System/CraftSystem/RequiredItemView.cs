@@ -21,13 +21,13 @@ public partial class RequiredItemView : PanelContainer
     {
         if (isEnough)
         {
-            _nameLb.Modulate = new Color(1, 1, 1);//162, 38, 51
-            _countLb.Modulate = new Color(1, 1, 1);
+            _nameLb.Modulate = Color.Color8(62, 137, 72);//99, 199, 77
+            _countLb.Modulate = Color.Color8(62, 137, 72);
         }
         else
         {
-            _nameLb.Modulate = Color.Color8(162, 38, 51);//162, 38, 51
-            _countLb.Modulate = Color.Color8(162, 38, 51);
+            _nameLb.Modulate = Color.Color8(228, 59, 68);//162, 38, 51
+            _countLb.Modulate = Color.Color8(228, 59, 68);
         }
     }
 }

@@ -37,6 +37,7 @@ namespace Solo.Scripts.Global
         //vfx
         [Export] public PackedScene ExplosionEffectPs;
         [Export] public PackedScene SmogEffectPs;
+        [Export] public PackedScene SwordWavePs;
 
         public override void _Ready()
         {
@@ -116,25 +117,21 @@ namespace Solo.Scripts.Global
                         GetTree().Paused = true;
                         return;
                     }
-                    if (newState == GameState.StartMenu)
-                    {
-                        _curState = newState;
-                        GetTree().Paused = false;
+                    //if (newState == GameState.StartMenu)
+                    //{
+                    //    _curState = newState;
+                    //    GetTree().Paused = false;
 
-                        SaveManager.Instance.CurSaveData.PlayerSaveData = Player.GetSaveData();
-                        SaveManager.Instance.CurSaveData.BagInventoryGuidStr = Player.BagInventory.GuidStr;
-                        SaveManager.Instance.CurSaveData.BagInventoryList = Player.BagInventory.ItemInstanceList;
-                        SaveManager.Instance.CurSaveData.FastBarInventoryGuidStr = Player.FastBarInventory.GuidStr;
-                        SaveManager.Instance.CurSaveData.FastBarInventoryList = Player.FastBarInventory.ItemInstanceList;
-                        SaveManager.Instance.CurSaveData.FastBarIndex = Player.CurFastBarIndex;
-                        ChunkManager.SaveActiveChunk();
-                        SaveManager.Instance.CurSaveData.ChunkSaveDataList = ChunkManager.ChunkSaveDataMap.Values.ToList();
-                        SaveManager.Instance.WriteCurSaveData();
+                    //    SaveManager.Instance.CurSaveData.PlayerSaveData = Player.GetSaveData();
 
-                        GetTree().ChangeSceneToPacked(_startMenuPs);
-                        _pauseView.Visible = false;
-                        return;
-                    }
+                    //    ChunkManager.SaveActiveChunk();
+                    //    SaveManager.Instance.CurSaveData.ChunkSaveDataList = ChunkManager.ChunkSaveDataMap.Values.ToList();
+                    //    SaveManager.Instance.WriteCurSaveData();
+
+                    //    GetTree().ChangeSceneToPacked(_startMenuPs);
+                    //    _pauseView.Visible = false;
+                    //    return;
+                    //}
                     break;
                 case GameState.Pause:
                     if (newState == GameState.Play)
@@ -149,11 +146,6 @@ namespace Solo.Scripts.Global
                         GetTree().Paused = false;
 
                         SaveManager.Instance.CurSaveData.PlayerSaveData = Player.GetSaveData();
-                        SaveManager.Instance.CurSaveData.BagInventoryGuidStr = Player.BagInventory.GuidStr;
-                        SaveManager.Instance.CurSaveData.BagInventoryList = Player.BagInventory.ItemInstanceList;
-                        SaveManager.Instance.CurSaveData.FastBarInventoryGuidStr = Player.FastBarInventory.GuidStr;
-                        SaveManager.Instance.CurSaveData.FastBarInventoryList = Player.FastBarInventory.ItemInstanceList;
-                        SaveManager.Instance.CurSaveData.FastBarIndex = Player.CurFastBarIndex;
                         ChunkManager.SaveActiveChunk();
                         SaveManager.Instance.CurSaveData.ChunkSaveDataList = ChunkManager.ChunkSaveDataMap.Values.ToList();
                         SaveManager.Instance.WriteCurSaveData();

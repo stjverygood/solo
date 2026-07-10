@@ -7,14 +7,15 @@
 [ext_resource type="Texture2D" uid="uid://cmlghpyvrsitg" path="res://Assets/AtlasTextures/Player.tres" id="3_3gn43"]
 [ext_resource type="PackedScene" uid="uid://d24xyf4tuo8wn" path="res://Scenes/System/ItemSystem/Projectiles/Fireball.tscn" id="3_cbjid"]
 [ext_resource type="PackedScene" uid="uid://das8eij0ua5tt" path="res://Scenes/System/BuildingSystem/BuildingPreview.tscn" id="3_f0b02"]
-[ext_resource type="PackedScene" uid="uid://557c5e8cwx11" path="res://Scenes/System/InventorySystem/FastBarInventoryView.tscn" id="4_y25d7"]
 [ext_resource type="FontFile" uid="uid://chelxpn5elvbb" path="res://Assets/zpix.ttf" id="5_rnj17"]
+[ext_resource type="PackedScene" uid="uid://cfu7wy1op48g5" path="res://Scenes/System/CraftSystem/CraftView.tscn" id="7_sod1g"]
 [ext_resource type="Texture2D" uid="uid://4l1ykgdsxh5w" path="res://Assets/AtlasTextures/WoodPot.tres" id="8_cbjid"]
 [ext_resource type="Texture2D" uid="uid://8e254e6sobd0" path="res://Assets/Png/ui.png" id="10_wom6s"]
 [ext_resource type="PackedScene" uid="uid://d3ptuijhfhmm0" path="res://Scenes/UI/DeathView.tscn" id="11_oet8y"]
 [ext_resource type="PackedScene" uid="uid://b8so1e8mc7j47" path="res://Scenes/Entities/Players/CharacterView.tscn" id="15_sod1g"]
-[ext_resource type="Script" uid="uid://cdwnxbnr2fkb1" path="res://Scripts/Entities/Players/CharacterView.cs" id="15_wom6s"]
-[ext_resource type="PackedScene" uid="uid://cimwlv2uhqpt" path="res://Scenes/Entities/Players/ItemView.tscn" id="16_wom6s"]
+[ext_resource type="PackedScene" uid="uid://bgqqv5e610s5p" path="res://Scenes/Entities/Players/InventoryManagerView.tscn" id="15_wom6s"]
+[ext_resource type="PackedScene" uid="uid://dvq4r1yjqbmte" path="res://Scenes/Entities/Players/StateView.tscn" id="16_wom6s"]
+[ext_resource type="PackedScene" uid="uid://cx380rlsg85x5" path="res://Scenes/Entities/Players/FastBarView.tscn" id="17_n0q0x"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_jw8fk"]
 radius = 5.0990195
@@ -105,7 +106,7 @@ scale_curve = SubResource("CurveTexture_sdrt1")
 color = Color(0.5716493, 0.5716493, 0.57164925, 1)
 color_ramp = SubResource("GradientTexture1D_ex883")
 
-[node name="Player" type="CharacterBody2D" unique_id=1144409017 node_paths=PackedStringArray("_camera", "_bodyRootNode", "_animRootNode", "_bodySprite", "_helmetSprite", "_ArmorSprite", "_bootSprite", "_handRootNode", "_handSprite", "_walkGrassParticles", "_walkWaterParticles", "_characterView", "_itemView", "_fastBarInventoryView", "_hpTpb", "_hpLb", "_mpTpb", "_mpLb", "_debugLb", "_deathView")]
+[node name="Player" type="CharacterBody2D" unique_id=1144409017 node_paths=PackedStringArray("_camera", "_bodyRootNode", "_animRootNode", "_bodySprite", "_helmetSprite", "_ArmorSprite", "_bootSprite", "_handRootNode", "_handSprite", "_walkGrassParticles", "_walkWaterParticles", "_leftViewRootControl", "_characterView", "_inventoryManagerView", "_fastBarView", "_hpTpb", "_hpLb", "_mpTpb", "_mpLb", "_debugLb", "_deathView")]
 y_sort_enabled = true
 script = ExtResource("1_lxeke")
 _camera = NodePath("Camera2D")
@@ -122,9 +123,11 @@ _walkWaterParticles = NodePath("Particles/WalkWaterParticles")
 _fishingFloatPs = ExtResource("2_sod1g")
 _arrowPs = ExtResource("2_ynm40")
 _fireballPs = ExtResource("3_cbjid")
+_leftViewRootControl = NodePath("CanvasLayer/LeftViewControl")
 _characterView = NodePath("CanvasLayer/CharacterView")
-_itemView = NodePath("CanvasLayer/ItemView")
-_fastBarInventoryView = NodePath("CanvasLayer/FastBarInventoryView")
+_inventoryManagerView = NodePath("CanvasLayer/InventoryView")
+_fastBarView = NodePath("CanvasLayer/FastBarView")
+_craftViewPs = ExtResource("7_sod1g")
 _hpTpb = NodePath("CanvasLayer/State/HpTpb")
 _hpLb = NodePath("CanvasLayer/State/HpLb")
 _mpTpb = NodePath("CanvasLayer/State/MpTpb")
@@ -139,7 +142,6 @@ position = Vector2(0, -4)
 shape = SubResource("CircleShape2D_jw8fk")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=173865742]
-zoom = Vector2(3, 3)
 position_smoothing_enabled = true
 
 [node name="BodyRootNode" type="Node2D" parent="." unique_id=700917934]
@@ -174,15 +176,17 @@ radius = 11.11
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=374399419]
 
 [node name="State" type="Control" parent="CanvasLayer" unique_id=873120106]
+visible = false
 layout_mode = 3
 anchors_preset = 7
 anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
-offset_left = -20.0
-offset_top = -40.0
-offset_right = 20.0
+offset_left = -422.0
+offset_top = -24.0
+offset_right = -382.0
+offset_bottom = 16.0
 grow_horizontal = 2
 grow_vertical = 0
 
@@ -267,48 +271,54 @@ texture_under = SubResource("AtlasTexture_wom6s")
 texture_progress = SubResource("AtlasTexture_n0q0x")
 texture_progress_offset = Vector2(1, 1)
 
-[node name="FastBarInventoryView" parent="CanvasLayer" unique_id=1473412187 instance=ExtResource("4_y25d7")]
-anchors_preset = 7
-anchor_left = 0.5
-anchor_top = 1.0
-anchor_right = 0.5
-anchor_bottom = 1.0
-offset_left = -175.0
-offset_top = -100.0
-offset_right = 175.0
-offset_bottom = 0.0
-grow_horizontal = 2
-grow_vertical = 0
-
 [node name="DeathView" parent="CanvasLayer" unique_id=1940583019 instance=ExtResource("11_oet8y")]
 visible = false
 
-[node name="ItemView" parent="CanvasLayer" unique_id=1779590837 instance=ExtResource("16_wom6s")]
-offset_left = 1230.0
-offset_top = 392.0
-offset_right = 1230.0
-offset_bottom = 392.0
-
-[node name="ColorRect" type="ColorRect" parent="CanvasLayer" unique_id=1993069275]
-visible = false
-offset_left = 423.0
-offset_top = 124.0
-offset_right = 1180.0
-offset_bottom = 873.0
-
-[node name="CharacterView" parent="CanvasLayer" unique_id=610426356 instance=ExtResource("15_sod1g")]
-anchors_preset = 4
+[node name="LeftViewControl" type="Control" parent="CanvasLayer" unique_id=411317025]
+layout_mode = 3
+anchors_preset = 8
+anchor_left = 0.5
 anchor_top = 0.5
+anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = 619.0
-offset_top = -235.0
-offset_right = 619.0
-offset_bottom = -235.0
+offset_left = 52.0
+offset_top = -119.0
+offset_right = 92.0
+offset_bottom = -79.0
+grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("15_wom6s")
+
+[node name="CharacterView" parent="CanvasLayer" unique_id=1785653158 instance=ExtResource("15_sod1g")]
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -136.0
+offset_top = -3.0
+offset_right = -136.0
+offset_bottom = -3.0
+grow_horizontal = 0
+grow_vertical = 2
+
+[node name="InventoryView" parent="CanvasLayer" unique_id=989028457 instance=ExtResource("15_wom6s")]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -78.0
+offset_top = 1.0
+offset_right = -78.0
+offset_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="StateView" parent="CanvasLayer" unique_id=1520820595 instance=ExtResource("16_wom6s")]
+
+[node name="FastBarView" parent="CanvasLayer" unique_id=1217924179 instance=ExtResource("17_n0q0x")]
 
 [node name="DebugLabel" type="Label" parent="." unique_id=1146679472]
-visible = false
 offset_left = -66.0
 offset_top = -15.0
 offset_right = -12.0

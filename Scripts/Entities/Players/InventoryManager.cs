@@ -1,0 +1,84 @@
+﻿using Solo.Scripts.Global;
+using Solo.Scripts.System.InventorySystem;
+using Solo.Scripts.System.ItemSystem;
+using Solo.Scripts.System.SaveSystem;
+
+namespace Solo.Scripts.Entities.Players
+{
+    public class InventoryManager
+    {
+        public Inventory FastBarInventory;//快捷栏
+        public Inventory BagInventory;//背包
+        public Inventory EquipmentInventory;//装备栏
+
+
+
+        public InventoryManager()
+        {
+            FastBarInventory = new Inventory(SaveManager.Instance.CurSaveData.PlayerSaveData.FastBarInventorySlotList);
+            BagInventory = new Inventory(SaveManager.Instance.CurSaveData.PlayerSaveData.BagInventorySlotList);
+            EquipmentInventory = new Inventory(SaveManager.Instance.CurSaveData.PlayerSaveData.EquipmentInventorySlotList);
+        }
+
+        public void SwapItem(Inventory sourceInventory, int sourceIndex, Inventory targetInventory, int targetIndex)
+        {
+            ItemInstance sourceItem = sourceInventory.GetItem(sourceIndex);
+            ItemInstance targetItem = targetInventory.GetItem(targetIndex);
+            if (!sourceInventory.CanSetSlot(sourceIndex, targetItem) ||
+                !targetInventory.CanSetSlot(targetIndex, sourceItem))
+            {
+                return;
+            }
+            sourceInventory.SetSlot(sourceIndex, targetItem);
+            targetInventory.SetSlot(targetIndex, sourceItem);
+        }
+
+        public void RemoveItem(Inventory sourceInventory, int sourceIndex)
+        {
+            sourceInventory.ClearSlot(sourceIndex);
+        }
+
+        public ItemType? GetCurItemType(int index)
+        {
+            ItemInstance itemInstance = FastBarInventory.GetItem(index);
+            return itemInstance?.Type;
+        }
+
+        public int GetItemCount(ItemType itemType)
+        {
+            return FastBarInventory.GetItemCount(itemType) + BagInventory.GetItemCount(itemType);
+        }
+
+        public int AddItem(ItemInstance itemInstance)
+        {
+            itemInstance.Count -= FastBarInventory.AddItem(itemInstance);//优先添加到快捷栏
+            if (itemInstance.Count != 0)//有剩余就添加到背包
+            {
+                itemInstance.Count -= BagInventory.AddItem(itemInstance);
+            }
+            return itemInstance.Count;
+        }
+        public int RemoveItem(ItemType type, int count)
+        {
+            int remainingCount = count; // 记录还需要扣除多少个
+            remainingCount -= BagInventory.RemoveItem(type, remainingCount);
+            if (remainingCount > 0)
+            {
+                remainingCount -= FastBarInventory.RemoveItem(type, remainingCount);
+            }
+            return remainingCount;
+        }
+
+        public int GetEquipmentDef()
+        {
+            int def = 0;
+            for (int i = 0; i < EquipmentInventory.SlotList.Count; i++)
+            {
+                if (EquipmentInventory.SlotList[i].ItemInstance == null)
+                    continue;
+                def += ItemDataManager.Instance.GetItemData(EquipmentInventory.SlotList[i].ItemInstance.Type).DefBonus;
+            }
+            return def;
+        }
+    }
+}

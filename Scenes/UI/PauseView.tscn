@@ -13,10 +13,10 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_f5svr")
-_continueBtn = NodePath("Panel/ContinueBtn")
-_exitBtn = NodePath("Panel/ExitBtn")
+_continueBtn = NodePath("PanelContainer/VBoxContainer/HBoxContainer/ContinueBtn")
+_exitBtn = NodePath("PanelContainer/VBoxContainer/HBoxContainer/ExitBtn")
 
-[node name="Panel" type="Panel" parent="." unique_id=809275021]
+[node name="PanelContainer" type="PanelContainer" parent="." unique_id=1635176512]
 z_index = 100
 layout_mode = 1
 anchors_preset = 15
@@ -26,35 +26,30 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_2lff8")
 
-[node name="Label" type="Label" parent="Panel" unique_id=1286541556]
-layout_mode = 1
-anchors_preset = 5
-anchor_left = 0.5
-anchor_right = 0.5
-offset_left = -386.0
-offset_right = 386.0
-offset_bottom = 246.0
-grow_horizontal = 2
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer" unique_id=1178191012]
+layout_mode = 2
+theme_override_constants/separation = 72
+alignment = 1
+
+[node name="Label" type="Label" parent="PanelContainer/VBoxContainer" unique_id=1286541556]
+layout_mode = 2
 theme_override_constants/outline_size = 35
 theme_override_font_sizes/font_size = 110
 text = "游戏暂停"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="ContinueBtn" type="Button" parent="Panel" unique_id=1736558182]
-layout_mode = 0
-offset_left = 246.0
-offset_top = 430.0
-offset_right = 469.0
-offset_bottom = 513.0
+[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer/VBoxContainer" unique_id=1509443837]
+layout_mode = 2
+theme_override_constants/separation = 51
+alignment = 1
+
+[node name="ContinueBtn" type="Button" parent="PanelContainer/VBoxContainer/HBoxContainer" unique_id=1736558182]
+layout_mode = 2
 theme_override_font_sizes/font_size = 33
 text = "继续游戏"
 
-[node name="ExitBtn" type="Button" parent="Panel" unique_id=1905759895]
-layout_mode = 0
-offset_left = 692.0
-offset_top = 430.0
-offset_right = 917.0
-offset_bottom = 509.0
+[node name="ExitBtn" type="Button" parent="PanelContainer/VBoxContainer/HBoxContainer" unique_id=1905759895]
+layout_mode = 2
 theme_override_font_sizes/font_size = 33
 text = "保存并退出"

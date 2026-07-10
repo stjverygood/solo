@@ -12,6 +12,7 @@ namespace Solo.Scripts.System.CraftSystem
         {
             _craftDataMap.Add(CraftType.Fast, new CraftData()
             {
+                Name = "便携造物台",
                 ItemList = new List<ItemType>()
                 {
                     ItemType.MainBase,
@@ -34,6 +35,7 @@ namespace Solo.Scripts.System.CraftSystem
             });
             _craftDataMap.Add(CraftType.Building, new CraftData()
             {
+                Name = "天工殿",
                 ItemList = new List<ItemType>()
                 {
                     ItemType.Flag,
@@ -44,6 +46,7 @@ namespace Solo.Scripts.System.CraftSystem
             });
             _craftDataMap.Add(CraftType.Weapon, new CraftData()
             {
+                Name = "兵器库",
                 ItemList = new List<ItemType>()
                 {
                     ItemType.IronSword,
@@ -57,6 +60,7 @@ namespace Solo.Scripts.System.CraftSystem
             });
             _craftDataMap.Add(CraftType.Tool, new CraftData()
             {
+                Name = "工具合成台",
                 ItemList = new List<ItemType>()
                 {
                     ItemType.IronPickaxe,
@@ -76,6 +80,7 @@ namespace Solo.Scripts.System.CraftSystem
             });
             _craftDataMap.Add(CraftType.Armor, new CraftData()
             {
+                Name = "防具合成台",
                 ItemList = new List<ItemType>()
                 {
                     ItemType.IronHelmet,

@@ -11,7 +11,7 @@ namespace Solo.Scripts.System.ItemSystem
 
         private ItemDataManager()
         {
-            //材料
+            #region 材料
             _itemDataMap.Add(ItemType.MainBaseStone, new ItemData
             {
                 Name = "太古源石",
@@ -167,12 +167,15 @@ namespace Solo.Scripts.System.ItemSystem
                     (ItemType.Silk, 5),
                 },
             });
+            #endregion
+
+            #region 法术, 发射物
             _itemDataMap.Add(ItemType.Fireball, new ItemData
             {
                 Name = "火球符箓",
                 MaxCount = 99,
                 IconPath = "res://Assets/AtlasTextures/Fireball.tres",
-                CanAiming = true,
+                CanAim = true,
                 CraftRequiredItemList = new List<(ItemType, int)>()
                 {
                     (ItemType.Wood, 4),
@@ -180,25 +183,24 @@ namespace Solo.Scripts.System.ItemSystem
                     (ItemType.Silk, 5),
                 },
             });
+            #endregion
 
-
-
-            //可消耗品
+            #region 消耗品CanConsume
             _itemDataMap.Add(ItemType.Banana, new ItemData
             {
                 Name = "蕉",
                 MaxCount = 99,
                 IconPath = "res://Assets/AtlasTextures/Banana.tres",
-                IsConsumable = true,
+                CanConsume = true,
                 MpBonus = 5,
                 CraftRequiredItemList = new List<(ItemType, int)>()
                 {
 
                 },
             });
+            #endregion
 
-
-            //木制套装
+            #region 武器
             _itemDataMap.Add(ItemType.WoodSword, new ItemData
             {
                 Name = "木剑",
@@ -209,41 +211,98 @@ namespace Solo.Scripts.System.ItemSystem
                     (ItemType.Wood, 3),
                     (ItemType.Rope, 5),
                 },
+                CanAim = true,
             });
+            _itemDataMap.Add(ItemType.IronSword, new ItemData
+            {
+                Name = "铁剑",
+                IconPath = "res://Assets/AtlasTextures/IronSword.tres",
+                MaxDur = 100,
+                CraftRequiredItemList = new List<(ItemType, int)>()
+                {
+                    (ItemType.Iron, 5),
+                    (ItemType.Wood, 2),
+                },
+                CanAim = true,
+            });
+            _itemDataMap.Add(ItemType.GoldSword, new ItemData
+            {
+                Name = "金剑",
+                IconPath = "res://Assets/AtlasTextures/GoldSword.tres",
+                MaxDur = 100,
+                CraftRequiredItemList = new List<(ItemType, int)>()
+                {
+                    (ItemType.Gold, 5),
+                    (ItemType.Iron, 2),
+                },
+                CanAim = true,
+            });
+            _itemDataMap.Add(ItemType.JadeSword, new ItemData
+            {
+                Name = "玉剑",
+                IconPath = "res://Assets/AtlasTextures/JadeSword.tres",
+                MaxDur = 100,
+                CraftRequiredItemList = new List<(ItemType, int)>()
+                {
+                    (ItemType.Gold, 6),
+                    (ItemType.Iron, 3),
+                },
+                CanAim = true,
+            });
+
+
             _itemDataMap.Add(ItemType.WoodBow, new ItemData
             {
                 Name = "木弓",
                 IconPath = "res://Assets/AtlasTextures/WoodBow.tres",
                 MaxDur = 100,
-                CanAiming = true,
+                CanAim = true,
                 CraftRequiredItemList = new List<(ItemType, int)>()
                 {
                     (ItemType.Wood, 4),
                     (ItemType.Rope, 5),
                 },
             });
-            _itemDataMap.Add(ItemType.WoodPickaxe, new ItemData
+            _itemDataMap.Add(ItemType.IronBow, new ItemData
             {
-                Name = "木镐",
-                IconPath = "res://Assets/AtlasTextures/WoodPickaxe.tres",
+                Name = "铁弓",
+                IconPath = "res://Assets/AtlasTextures/IronBow.tres",
                 MaxDur = 100,
+                CanAim = true,
                 CraftRequiredItemList = new List<(ItemType, int)>()
                 {
-                    (ItemType.Wood, 4),
-                    (ItemType.Rope, 5),
+                    (ItemType.Iron, 4),
+                    (ItemType.Rope, 3),
                 },
             });
-            _itemDataMap.Add(ItemType.WoodAxe, new ItemData
+            _itemDataMap.Add(ItemType.GoldBow, new ItemData
             {
-                Name = "木斧",
-                IconPath = "res://Assets/AtlasTextures/WoodAxe.tres",
+                Name = "金弓",
+                IconPath = "res://Assets/AtlasTextures/GoldBow.tres",
                 MaxDur = 100,
+                CanAim = true,
                 CraftRequiredItemList = new List<(ItemType, int)>()
                 {
-                    (ItemType.Wood, 3),
-                    (ItemType.Rope, 5),
+                    (ItemType.Gold, 4),
+                    (ItemType.Rope, 3),
                 },
             });
+            _itemDataMap.Add(ItemType.JadeBow, new ItemData
+            {
+                Name = "玉弓",
+                IconPath = "res://Assets/AtlasTextures/JadeBow.tres",
+                MaxDur = 100,
+                CanAim = true,
+                CraftRequiredItemList = new List<(ItemType, int)>()
+                {
+                    (ItemType.Gold, 5),
+                    (ItemType.Rope, 3),
+                    (ItemType.Silk, 3),
+                },
+            });
+            #endregion
+
+            #region 工具
             _itemDataMap.Add(ItemType.WoodPot, new ItemData
             {
                 Name = "木壶",
@@ -260,13 +319,62 @@ namespace Solo.Scripts.System.ItemSystem
                 Name = "木竿",
                 IconPath = "res://Assets/AtlasTextures/WoodRod.tres",
                 MaxDur = 100,
-                CanAiming = true,
+                CanAim = true,
                 CraftRequiredItemList = new List<(ItemType, int)>()
                 {
                     (ItemType.Wood, 3),
                     (ItemType.Rope, 5),
                 },
             });
+
+            _itemDataMap.Add(ItemType.GoldPot, new ItemData
+            {
+                Name = "金壶",
+                IconPath = "res://Assets/AtlasTextures/GoldPot.tres",
+                MaxDur = 100,
+                CraftRequiredItemList = new List<(ItemType, int)>()
+                {
+                    (ItemType.Gold, 3),
+                },
+            });
+            _itemDataMap.Add(ItemType.GoldRod, new ItemData
+            {
+                Name = "金竿",
+                IconPath = "res://Assets/AtlasTextures/GoldRod.tres",
+                MaxDur = 100,
+                CanAim = true,
+                CraftRequiredItemList = new List<(ItemType, int)>()
+                {
+                    (ItemType.Gold, 3),
+                    (ItemType.Rope, 3),
+                },
+            });
+
+            _itemDataMap.Add(ItemType.JadePot, new ItemData
+            {
+                Name = "玉壶",
+                IconPath = "res://Assets/AtlasTextures/JadePot.tres",
+                MaxDur = 100,
+                CraftRequiredItemList = new List<(ItemType, int)>()
+                {
+                    (ItemType.Gold, 5),
+                },
+            });
+            _itemDataMap.Add(ItemType.JadeRod, new ItemData
+            {
+                Name = "玉竿",
+                IconPath = "res://Assets/AtlasTextures/JadeRod.tres",
+                MaxDur = 100,
+                CanAim = true,
+                CraftRequiredItemList = new List<(ItemType, int)>()
+                {
+                    (ItemType.Gold, 4),
+                    (ItemType.Rope, 3),
+                },
+            });
+            #endregion
+
+            #region 法宝
             _itemDataMap.Add(ItemType.WoodHelmet, new ItemData
             {
                 Name = "木盔",
@@ -314,74 +422,6 @@ namespace Solo.Scripts.System.ItemSystem
                 },
             });
 
-            //铁制套装
-            _itemDataMap.Add(ItemType.IronSword, new ItemData
-            {
-                Name = "铁剑",
-                IconPath = "res://Assets/AtlasTextures/IronSword.tres",
-                MaxDur = 100,
-                CraftRequiredItemList = new List<(ItemType, int)>()
-                {
-                    (ItemType.Iron, 5),
-                    (ItemType.Wood, 2),
-                },
-            });
-            _itemDataMap.Add(ItemType.IronBow, new ItemData
-            {
-                Name = "铁弓",
-                IconPath = "res://Assets/AtlasTextures/IronBow.tres",
-                MaxDur = 100,
-                CanAiming = true,
-                CraftRequiredItemList = new List<(ItemType, int)>()
-                {
-                    (ItemType.Iron, 4),
-                    (ItemType.Rope, 3),
-                },
-            });
-            _itemDataMap.Add(ItemType.IronPickaxe, new ItemData
-            {
-                Name = "铁镐",
-                IconPath = "res://Assets/AtlasTextures/IronPickaxe.tres",
-                MaxDur = 100,
-                CraftRequiredItemList = new List<(ItemType, int)>()
-                {
-                    (ItemType.Iron, 5),
-                    (ItemType.Wood, 3),
-                },
-            });
-            _itemDataMap.Add(ItemType.IronAxe, new ItemData
-            {
-                Name = "铁斧",
-                IconPath = "res://Assets/AtlasTextures/IronAxe.tres",
-                MaxDur = 100,
-                CraftRequiredItemList = new List<(ItemType, int)>()
-                {
-                    (ItemType.Iron, 4),
-                    (ItemType.Wood, 2),
-                },
-            });
-            _itemDataMap.Add(ItemType.IronPot, new ItemData
-            {
-                Name = "铁壶",
-                IconPath = "res://Assets/AtlasTextures/IronPot.tres",
-                MaxDur = 100,
-                CraftRequiredItemList = new List<(ItemType, int)>()
-                {
-                    (ItemType.Iron, 3),
-                },
-            });
-            _itemDataMap.Add(ItemType.IronRod, new ItemData
-            {
-                Name = "铁竿",
-                IconPath = "res://Assets/AtlasTextures/IronRod.tres",
-                MaxDur = 100,
-                CanAiming = true,
-                CraftRequiredItemList = new List<(ItemType, int)>()
-                {
-                    (ItemType.Iron, 3),
-                    (ItemType.Rope, 3),
-                },
-            });
             _itemDataMap.Add(ItemType.IronHelmet, new ItemData
             {
                 Name = "铁盔",
@@ -426,74 +466,6 @@ namespace Solo.Scripts.System.ItemSystem
                 },
             });
 
-            //金制装备
-            _itemDataMap.Add(ItemType.GoldSword, new ItemData
-            {
-                Name = "金剑",
-                IconPath = "res://Assets/AtlasTextures/GoldSword.tres",
-                MaxDur = 100,
-                CraftRequiredItemList = new List<(ItemType, int)>()
-                {
-                    (ItemType.Gold, 5),
-                    (ItemType.Iron, 2),
-                },
-            });
-            _itemDataMap.Add(ItemType.GoldBow, new ItemData
-            {
-                Name = "金弓",
-                IconPath = "res://Assets/AtlasTextures/GoldBow.tres",
-                MaxDur = 100,
-                CanAiming = true,
-                CraftRequiredItemList = new List<(ItemType, int)>()
-                {
-                    (ItemType.Gold, 4),
-                    (ItemType.Rope, 3),
-                },
-            });
-            _itemDataMap.Add(ItemType.GoldPickaxe, new ItemData
-            {
-                Name = "金镐",
-                IconPath = "res://Assets/AtlasTextures/GoldPickaxe.tres",
-                MaxDur = 100,
-                CraftRequiredItemList = new List<(ItemType, int)>()
-                {
-                    (ItemType.Gold, 5),
-                    (ItemType.Wood, 3),
-                },
-            });
-            _itemDataMap.Add(ItemType.GoldAxe, new ItemData
-            {
-                Name = "金斧",
-                IconPath = "res://Assets/AtlasTextures/GoldAxe.tres",
-                MaxDur = 100,
-                CraftRequiredItemList = new List<(ItemType, int)>()
-                {
-                    (ItemType.Gold, 4),
-                    (ItemType.Wood, 2),
-                },
-            });
-            _itemDataMap.Add(ItemType.GoldPot, new ItemData
-            {
-                Name = "金壶",
-                IconPath = "res://Assets/AtlasTextures/GoldPot.tres",
-                MaxDur = 100,
-                CraftRequiredItemList = new List<(ItemType, int)>()
-                {
-                    (ItemType.Gold, 3),
-                },
-            });
-            _itemDataMap.Add(ItemType.GoldRod, new ItemData
-            {
-                Name = "金竿",
-                IconPath = "res://Assets/AtlasTextures/GoldRod.tres",
-                MaxDur = 100,
-                CanAiming = true,
-                CraftRequiredItemList = new List<(ItemType, int)>()
-                {
-                    (ItemType.Gold, 3),
-                    (ItemType.Rope, 3),
-                },
-            });
             _itemDataMap.Add(ItemType.GoldHelmet, new ItemData
             {
                 Name = "金盔",
@@ -538,75 +510,6 @@ namespace Solo.Scripts.System.ItemSystem
                 },
             });
 
-            //玉制套装
-            _itemDataMap.Add(ItemType.JadeSword, new ItemData
-            {
-                Name = "玉剑",
-                IconPath = "res://Assets/AtlasTextures/JadeSword.tres",
-                MaxDur = 100,
-                CraftRequiredItemList = new List<(ItemType, int)>()
-                {
-                    (ItemType.Gold, 6),
-                    (ItemType.Iron, 3),
-                },
-            });
-            _itemDataMap.Add(ItemType.JadeBow, new ItemData
-            {
-                Name = "玉弓",
-                IconPath = "res://Assets/AtlasTextures/JadeBow.tres",
-                MaxDur = 100,
-                CanAiming = true,
-                CraftRequiredItemList = new List<(ItemType, int)>()
-                {
-                    (ItemType.Gold, 5),
-                    (ItemType.Rope, 3),
-                    (ItemType.Silk, 3),
-                },
-            });
-            _itemDataMap.Add(ItemType.JadePickaxe, new ItemData
-            {
-                Name = "玉镐",
-                IconPath = "res://Assets/AtlasTextures/JadePickaxe.tres",
-                MaxDur = 100,
-                CraftRequiredItemList = new List<(ItemType, int)>()
-                {
-                    (ItemType.Gold, 6),
-                    (ItemType.Iron, 3),
-                },
-            });
-            _itemDataMap.Add(ItemType.JadeAxe, new ItemData
-            {
-                Name = "玉斧",
-                IconPath = "res://Assets/AtlasTextures/JadeAxe.tres",
-                MaxDur = 100,
-                CraftRequiredItemList = new List<(ItemType, int)>()
-                {
-                    (ItemType.Gold, 5),
-                    (ItemType.Iron, 2),
-                },
-            });
-            _itemDataMap.Add(ItemType.JadePot, new ItemData
-            {
-                Name = "玉壶",
-                IconPath = "res://Assets/AtlasTextures/JadePot.tres",
-                MaxDur = 100,
-                CraftRequiredItemList = new List<(ItemType, int)>()
-                {
-                    (ItemType.Gold, 5),
-                },
-            });
-            _itemDataMap.Add(ItemType.JadeRod, new ItemData
-            {
-                Name = "玉竿",
-                IconPath = "res://Assets/AtlasTextures/JadeRod.tres",
-                MaxDur = 100,
-                CanAiming = true,
-                CraftRequiredItemList = new List<(ItemType, int)>()
-                {
-                    (ItemType.Gold, 4),
-                    (ItemType.Rope, 3),
-                },
-            });
             _itemDataMap.Add(ItemType.JadeHelmet, new ItemData
             {
                 Name = "玉盔",
@@ -650,14 +553,144 @@ namespace Solo.Scripts.System.ItemSystem
                     (ItemType.Silk, 3),
                 },
             });
+            #endregion
 
-            //建筑
+
+            //木制套装
+            _itemDataMap.Add(ItemType.WoodPickaxe, new ItemData
+            {
+                Name = "木镐",
+                IconPath = "res://Assets/AtlasTextures/WoodPickaxe.tres",
+                MaxDur = 100,
+                CraftRequiredItemList = new List<(ItemType, int)>()
+                {
+                    (ItemType.Wood, 4),
+                    (ItemType.Rope, 5),
+                },
+            });
+            _itemDataMap.Add(ItemType.WoodAxe, new ItemData
+            {
+                Name = "木斧",
+                IconPath = "res://Assets/AtlasTextures/WoodAxe.tres",
+                MaxDur = 100,
+                CraftRequiredItemList = new List<(ItemType, int)>()
+                {
+                    (ItemType.Wood, 3),
+                    (ItemType.Rope, 5),
+                },
+            });
+
+            _itemDataMap.Add(ItemType.IronPot, new ItemData
+            {
+                Name = "铁壶",
+                IconPath = "res://Assets/AtlasTextures/IronPot.tres",
+                MaxDur = 100,
+                CraftRequiredItemList = new List<(ItemType, int)>()
+                {
+                    (ItemType.Iron, 3),
+                },
+            });
+            _itemDataMap.Add(ItemType.IronRod, new ItemData
+            {
+                Name = "铁竿",
+                IconPath = "res://Assets/AtlasTextures/IronRod.tres",
+                MaxDur = 100,
+                CanAim = true,
+                CraftRequiredItemList = new List<(ItemType, int)>()
+                {
+                    (ItemType.Iron, 3),
+                    (ItemType.Rope, 3),
+                },
+            });
+
+            //铁制套装
+
+            _itemDataMap.Add(ItemType.IronPickaxe, new ItemData
+            {
+                Name = "铁镐",
+                IconPath = "res://Assets/AtlasTextures/IronPickaxe.tres",
+                MaxDur = 100,
+                CraftRequiredItemList = new List<(ItemType, int)>()
+                {
+                    (ItemType.Iron, 5),
+                    (ItemType.Wood, 3),
+                },
+            });
+            _itemDataMap.Add(ItemType.IronAxe, new ItemData
+            {
+                Name = "铁斧",
+                IconPath = "res://Assets/AtlasTextures/IronAxe.tres",
+                MaxDur = 100,
+                CraftRequiredItemList = new List<(ItemType, int)>()
+                {
+                    (ItemType.Iron, 4),
+                    (ItemType.Wood, 2),
+                },
+            });
+
+
+
+            //金制装备
+
+            _itemDataMap.Add(ItemType.GoldPickaxe, new ItemData
+            {
+                Name = "金镐",
+                IconPath = "res://Assets/AtlasTextures/GoldPickaxe.tres",
+                MaxDur = 100,
+                CraftRequiredItemList = new List<(ItemType, int)>()
+                {
+                    (ItemType.Gold, 5),
+                    (ItemType.Wood, 3),
+                },
+            });
+            _itemDataMap.Add(ItemType.GoldAxe, new ItemData
+            {
+                Name = "金斧",
+                IconPath = "res://Assets/AtlasTextures/GoldAxe.tres",
+                MaxDur = 100,
+                CraftRequiredItemList = new List<(ItemType, int)>()
+                {
+                    (ItemType.Gold, 4),
+                    (ItemType.Wood, 2),
+                },
+            });
+
+
+
+            //玉制套装
+
+            _itemDataMap.Add(ItemType.JadePickaxe, new ItemData
+            {
+                Name = "玉镐",
+                IconPath = "res://Assets/AtlasTextures/JadePickaxe.tres",
+                MaxDur = 100,
+                CraftRequiredItemList = new List<(ItemType, int)>()
+                {
+                    (ItemType.Gold, 6),
+                    (ItemType.Iron, 3),
+                },
+            });
+            _itemDataMap.Add(ItemType.JadeAxe, new ItemData
+            {
+                Name = "玉斧",
+                IconPath = "res://Assets/AtlasTextures/JadeAxe.tres",
+                MaxDur = 100,
+                CraftRequiredItemList = new List<(ItemType, int)>()
+                {
+                    (ItemType.Gold, 5),
+                    (ItemType.Iron, 2),
+                },
+            });
+
+
+
+            #region 建筑CanBuild
             _itemDataMap.Add(ItemType.MainBase, new ItemData
             {
                 Name = "聚灵之源",
                 MaxCount = 99,
                 IconPath = "res://Assets/AtlasTextures/MainBase.tres",
-                IsBuilding = true,
+                CanBuild = true,
                 CraftRequiredItemList = new List<(ItemType, int)>()
                 {
                     (ItemType.MainBaseStone, 3),
@@ -670,7 +703,7 @@ namespace Solo.Scripts.System.ItemSystem
                 Name = "法旗",
                 MaxCount = 99,
                 IconPath = "res://Assets/AtlasTextures/Flag.tres",
-                IsBuilding = true,
+                CanBuild = true,
                 CraftRequiredItemList = new List<(ItemType, int)>()
                 {
                     (ItemType.Wood, 5),
@@ -682,7 +715,7 @@ namespace Solo.Scripts.System.ItemSystem
                 Name = "天工殿",
                 MaxCount = 99,
                 IconPath = "res://Assets/AtlasTextures/BuildingCraft.tres",
-                IsBuilding = true,
+                CanBuild = true,
                 CraftRequiredItemList = new List<(ItemType, int)>()
                 {
                     (ItemType.Wood, 15),
@@ -694,7 +727,7 @@ namespace Solo.Scripts.System.ItemSystem
                 Name = "锻器台",
                 MaxCount = 99,
                 IconPath = "res://Assets/AtlasTextures/ToolCraft.tres",
-                IsBuilding = true,
+                CanBuild = true,
                 CraftRequiredItemList = new List<(ItemType, int)>()
                 {
                     (ItemType.Iron, 5),
@@ -707,7 +740,7 @@ namespace Solo.Scripts.System.ItemSystem
                 Name = "织锦阁",
                 MaxCount = 99,
                 IconPath = "res://Assets/AtlasTextures/ArmorCraft.tres",
-                IsBuilding = true,
+                CanBuild = true,
                 CraftRequiredItemList = new List<(ItemType, int)>()
                 {
                     (ItemType.Silk, 10),
@@ -719,7 +752,7 @@ namespace Solo.Scripts.System.ItemSystem
                 Name = "符箓台",
                 MaxCount = 99,
                 IconPath = "res://Assets/AtlasTextures/MainBase.tres",
-                IsBuilding = true,
+                CanBuild = true,
                 CraftRequiredItemList = new List<(ItemType, int)>()
                 {
                     (ItemType.Wood, 10),
@@ -732,7 +765,7 @@ namespace Solo.Scripts.System.ItemSystem
                 Name = "乾坤箱",
                 MaxCount = 99,
                 IconPath = "res://Assets/AtlasTextures/MainBase.tres",
-                IsBuilding = true,
+                CanBuild = true,
                 CraftRequiredItemList = new List<(ItemType, int)>()
                 {
                     (ItemType.Wood, 8),
@@ -745,7 +778,7 @@ namespace Solo.Scripts.System.ItemSystem
                 Name = "树苗",
                 MaxCount = 99,
                 IconPath = "res://Assets/AtlasTextures/TreeGrow.tres",
-                IsBuilding = true,
+                CanBuild = true,
                 CraftRequiredItemList = new List<(ItemType, int)>()
                 {
                     (ItemType.Wood, 4),
@@ -753,6 +786,7 @@ namespace Solo.Scripts.System.ItemSystem
                     (ItemType.Silk, 5),
                 },
             });
+            #endregion
         }
 
         public ItemData GetItemData(ItemType type)

@@ -1,0 +1,158 @@
+[gd_scene format=3 uid="uid://dxxlrj5i2nwjc"]
+
+[ext_resource type="Script" uid="uid://bdtiq6d5spf0b" path="res://Scripts/Entities/Players/FastBarSlot.cs" id="1_ih86w"]
+[ext_resource type="Texture2D" uid="uid://d4igqp371y5" path="res://Assets/icon.svg" id="2_p4pfp"]
+[ext_resource type="Texture2D" uid="uid://8e254e6sobd0" path="res://Assets/Png/ui.png" id="3_dfew3"]
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_00qfv"]
+load_path = "res://.godot/imported/ui.png-cbe33512c76dff232120e87ecbdf7441.ctex"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_26bak"]
+atlas = SubResource("CompressedTexture2D_00qfv")
+region = Rect2(48, 0, 16, 16)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_lrtyg"]
+texture = SubResource("AtlasTexture_26bak")
+texture_margin_left = 8.0
+texture_margin_top = 8.0
+texture_margin_right = 8.0
+texture_margin_bottom = 8.0
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_mpiw1"]
+load_path = "res://.godot/imported/ui.png-cbe33512c76dff232120e87ecbdf7441.ctex"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kbxd7"]
+atlas = SubResource("CompressedTexture2D_mpiw1")
+region = Rect2(112, 0, 16, 16)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_27nqs"]
+texture = SubResource("AtlasTexture_kbxd7")
+texture_margin_left = 8.0
+texture_margin_top = 8.0
+texture_margin_right = 8.0
+texture_margin_bottom = 8.0
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_jpifq"]
+load_path = "res://.godot/imported/ui.png-cbe33512c76dff232120e87ecbdf7441.ctex"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qpjso"]
+atlas = SubResource("CompressedTexture2D_jpifq")
+region = Rect2(80, 0, 16, 16)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_468ix"]
+texture = SubResource("AtlasTexture_qpjso")
+texture_margin_left = 8.0
+texture_margin_top = 8.0
+texture_margin_right = 8.0
+texture_margin_bottom = 8.0
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_468ix"]
+atlas = ExtResource("3_dfew3")
+region = Rect2(48, 32, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vb2wc"]
+atlas = ExtResource("3_dfew3")
+region = Rect2(48, 48, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_j7ln4"]
+atlas = SubResource("AtlasTexture_vb2wc")
+
+[node name="FastBarSlot" type="PanelContainer" unique_id=877712543 node_paths=PackedStringArray("_indexLb", "_iconTr", "_nameLb", "_countLb", "_durTpb", "_bgBtn")]
+custom_minimum_size = Vector2(24, 24)
+mouse_filter = 2
+script = ExtResource("1_ih86w")
+_indexLb = NodePath("BgBtn/IndexLb")
+_iconTr = NodePath("BgBtn/TextureRect")
+_nameLb = NodePath("BgBtn/NameLb")
+_countLb = NodePath("BgBtn/CountLb")
+_durTpb = NodePath("BgBtn/DurTpb")
+_bgBtn = NodePath("BgBtn")
+
+[node name="BgBtn" type="Button" parent="." unique_id=327029081]
+layout_mode = 2
+mouse_filter = 2
+theme_override_styles/normal = SubResource("StyleBoxTexture_lrtyg")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_27nqs")
+theme_override_styles/hover = SubResource("StyleBoxTexture_468ix")
+toggle_mode = true
+
+[node name="TextureRect" type="TextureRect" parent="BgBtn" unique_id=1053183995]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -8.0
+offset_top = -8.0
+offset_right = 8.0
+offset_bottom = 8.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("2_p4pfp")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="CountLb" type="Label" parent="BgBtn" unique_id=1697866988]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 11.0
+offset_top = 5.0
+offset_right = 6.0
+offset_bottom = 6.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 6
+text = "1"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="NameLb" type="Label" parent="BgBtn" unique_id=1724544202]
+visible = false
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -33.0
+offset_top = 7.0
+offset_right = 32.0
+offset_bottom = 23.0
+grow_horizontal = 2
+theme_override_constants/outline_size = 6
+theme_override_font_sizes/font_size = 14
+text = "asdfasdf"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="DurTpb" type="TextureProgressBar" parent="BgBtn" unique_id=1641860590]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -8.0
+offset_top = -13.0
+offset_right = 8.0
+offset_bottom = 3.0
+grow_horizontal = 2
+grow_vertical = 0
+value = 100.0
+texture_under = SubResource("AtlasTexture_468ix")
+texture_progress = SubResource("AtlasTexture_j7ln4")
+texture_progress_offset = Vector2(0, -1)
+
+[node name="IndexLb" type="Label" parent="BgBtn" unique_id=466566184]
+layout_mode = 0
+offset_left = -4.0
+offset_right = 12.0
+offset_bottom = 6.0
+theme_override_constants/outline_size = 2
+theme_override_font_sizes/font_size = 5
+text = "1"
+horizontal_alignment = 1
+vertical_alignment = 1

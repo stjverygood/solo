@@ -43,6 +43,14 @@
         Fox,
     }
 
+    public enum InventorySlotType
+    {
+        Common,//普通格子, 什么都能放
+        Helmet,
+        Armor,
+        Boot,
+    }
+
     public enum ArmorSlotType
     {
         Helmet,
@@ -57,6 +65,12 @@
         OtherCraftView,
     }
 
+    public enum LeftViewType
+    {
+        None,
+        BuildingCraftView,
+
+    }
     //物品合成台的类型
     public enum CraftType
     {

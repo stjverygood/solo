@@ -104,7 +104,7 @@ namespace Solo.Scripts.System.ItemSystem
 
         public void Interact()
         {
-            int remainCount = GameManager.Instance.Player.AddItem(ItemInstance);
+            int remainCount = GameManager.Instance.Player.InventoryManager.AddItem(ItemInstance);
             if (remainCount == 0)
             {
                 GameManager.Instance.ChunkManager.RemoveItem(this, Position);

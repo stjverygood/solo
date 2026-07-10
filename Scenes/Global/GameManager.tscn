@@ -10,6 +10,7 @@
 [ext_resource type="PackedScene" uid="uid://dx8thbx4w752g" path="res://Scenes/UI/PauseView.tscn" id="7_rssbt"]
 [ext_resource type="PackedScene" uid="uid://bsffwmtiifund" path="res://Scenes/Global/Vfx/ExplosionEffect.tscn" id="9_q6kuj"]
 [ext_resource type="PackedScene" uid="uid://ctirqhkrgk72m" path="res://Scenes/Global/Vfx/SmogEffect.tscn" id="9_r1yu4"]
+[ext_resource type="PackedScene" uid="uid://cpnhgdkigonpa" path="res://Scenes/Global/Vfx/SwordWave.tscn" id="10_r1yu4"]
 
 [node name="GameManager" type="Node" unique_id=1034362425 node_paths=PackedStringArray("_pauseView")]
 script = ExtResource("1_g4tje")
@@ -22,6 +23,7 @@ _mainLevelPs = ExtResource("5_rssbt")
 _pauseView = NodePath("CanvasLayer/PauseView")
 ExplosionEffectPs = ExtResource("9_q6kuj")
 SmogEffectPs = ExtResource("9_r1yu4")
+SwordWavePs = ExtResource("10_r1yu4")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=606242839]
 layer = 3

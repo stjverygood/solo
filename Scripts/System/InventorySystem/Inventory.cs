@@ -7,24 +7,22 @@ namespace Solo.Scripts.System.InventorySystem
 {
     public class Inventory
     {
-        public string GuidStr;
-        public List<ItemInstance> ItemInstanceList = new List<ItemInstance>();
+        public List<InventorySlot> SlotList = new List<InventorySlot>();
         public Action<int> SlotChanged;//用于通知ui哪个格子变了, 修改ui格子数据
 
-        public Inventory(string guidStr, List<ItemInstance> itemInstanceList)
+        public Inventory(List<InventorySlot> itemSlotList)
         {
-            GuidStr = guidStr;
-            ItemInstanceList = itemInstanceList;
+            SlotList = itemSlotList;
         }
 
-        public int AddItemInstance(ItemInstance instance)//自动添加, 比如捡东西, 双击其他背包的物品, 返回成功添加的物品数量
+        public int AddItem(ItemInstance instance)
         {
             int remainCount = instance.Count;//记录当前剩余数量
             if (ItemDataManager.Instance.GetItemData(instance.Type).MaxCount != 1)//能堆叠, instance是可合并的
             {
-                for (int i = 0; i < ItemInstanceList.Count; i++)//先遍历一次, 尝试合并
+                for (int i = 0; i < SlotList.Count; i++)//先遍历一次, 尝试合并
                 {
-                    ItemInstance curExistInstance = ItemInstanceList[i];
+                    ItemInstance curExistInstance = SlotList[i].ItemInstance;
                     if (curExistInstance == null || curExistInstance.Type != instance.Type)
                         continue;
 
@@ -39,88 +37,34 @@ namespace Solo.Scripts.System.InventorySystem
                             return instance.Count;
                     }
                 }
-                for (int i = 0; i < ItemInstanceList.Count; i++)//未能合并的, 遍历找到空格子, 新创建instance
+                for (int i = 0; i < SlotList.Count; i++)//未能合并的, 遍历找到空格子, 新创建instance
                 {
-                    if (ItemInstanceList[i] != null)
+                    if (SlotList[i].ItemInstance != null)
                         continue;
-                    ItemInstanceList[i] = new ItemInstance() { Type = instance.Type, Count = remainCount };
+                    SlotList[i].ItemInstance = new ItemInstance() { Type = instance.Type, Count = remainCount };
                     SlotChanged?.Invoke(i);
                     return instance.Count;
                 }
             }
             else//不可堆叠
             {
-                for (int i = 0; i < ItemInstanceList.Count; i++)
+                for (int i = 0; i < SlotList.Count; i++)
                 {
-                    if (ItemInstanceList[i] != null)
+                    if (SlotList[i].ItemInstance != null)
                         continue;
-                    ItemInstanceList[i] = new ItemInstance() { Type = instance.Type, Count = instance.Count, CurDur = instance.CurDur };
+                    SlotList[i].ItemInstance = new ItemInstance() { Type = instance.Type, Count = instance.Count, CurDur = instance.CurDur };
                     SlotChanged?.Invoke(i);
                     return 1;
                 }
             }
             return instance.Count - remainCount;
         }
-
-        public void RemoveItem(int index)//整个移除掉
-        {
-            ItemInstanceList[index] = null;
-            SlotChanged?.Invoke(index);
-        }
-
-        public bool SetSlot(int index, ItemInstance instance)
-        {
-            ItemInstanceList[index] = instance;
-            return true;
-        }
-
-        public void SwapItem(int sourceIndex, int targetIndex)
-        {
-            if (ItemInstanceList[sourceIndex] == null)
-                return;
-
-            if (ItemInstanceList[targetIndex] == null)// 目标格子为空，直接移动过去
-            {
-                ItemInstanceList[targetIndex] = ItemInstanceList[sourceIndex];
-                ItemInstanceList[sourceIndex] = null;
-                SlotChanged?.Invoke(sourceIndex);
-                SlotChanged?.Invoke(targetIndex);
-                return;
-            }
-
-            if (ItemInstanceList[sourceIndex].Type != ItemInstanceList[targetIndex].Type)// 两个物品类型不同，交互位置（单纯的对调）
-            {
-                ItemInstance temp = ItemInstanceList[sourceIndex];
-                ItemInstanceList[sourceIndex] = ItemInstanceList[targetIndex];
-                ItemInstanceList[targetIndex] = temp;
-                SlotChanged?.Invoke(sourceIndex);
-                SlotChanged?.Invoke(targetIndex);
-            }
-            else// 两个物品类型相同，尝试堆叠
-            {
-                int maxCount = ItemDataManager.Instance.GetItemData(ItemInstanceList[targetIndex].Type).MaxCount;
-                int targetCount = ItemInstanceList[targetIndex].Count;
-                int sourceCount = ItemInstanceList[sourceIndex].Count;
-                int canAddCount = maxCount - targetCount;// 目标格子还能放多少个
-                if (canAddCount > 0)
-                {
-                    int addCount = sourceCount > canAddCount ? canAddCount : sourceCount;// 实际能移动的数量
-                    ItemInstanceList[targetIndex].Count += addCount;
-                    ItemInstanceList[sourceIndex].Count -= addCount;
-                    if (ItemInstanceList[sourceIndex].Count <= 0)
-                        ItemInstanceList[sourceIndex] = null;
-                    SlotChanged?.Invoke(sourceIndex);
-                    SlotChanged?.Invoke(targetIndex);
-                }
-            }
-        }
-
-        public int RemoveItemByType(ItemType itemType, int count)//扣除指定数量的某类物品, 返回实际扣除了多少
+        public int RemoveItem(ItemType itemType, int count)//返回移除了多少个
         {
             int remainCount = count;
-            for (int i = 0; i < ItemInstanceList.Count; i++)
+            for (int i = 0; i < SlotList.Count; i++)
             {
-                ItemInstance instance = ItemInstanceList[i];
+                ItemInstance instance = SlotList[i].ItemInstance;
                 if (instance == null || instance.Type != itemType)
                     continue;
 
@@ -134,39 +78,72 @@ namespace Solo.Scripts.System.InventorySystem
                 else
                 {
                     remainCount -= instance.Count;
-                    ItemInstanceList[i] = null;
+                    SlotList[i].ItemInstance = null;
                     SlotChanged?.Invoke(i);
                 }
             }
             return count - remainCount;
         }
-
-        public int RemoveItemByIndex(int index, int count)//根据index删物品, 返回剩余物品数量
+        public void RemoveItemByIndex(int index, int count)
         {
-            ItemInstanceList[index].Count -= count;
-            if (ItemInstanceList[index].Count == 0)
+            SlotList[index].ItemInstance.Count -= count;
+            if (SlotList[index].ItemInstance.Count == 0)
             {
-                ItemInstanceList[index] = null;
+                SlotList[index].ItemInstance = null;
                 SlotChanged?.Invoke(index);
-                return 0;
+                return;
             }
             SlotChanged?.Invoke(index);
-            return ItemInstanceList[index].Count;
         }
-
         public int GetItemCount(ItemType itemType)//查询某个物品类型的总数量
         {
             int count = 0;
-            foreach (ItemInstance instance in ItemInstanceList)
+            foreach (InventorySlot slot in SlotList)
             {
-                if (instance == null)
+                if (slot.ItemInstance == null)
                     continue;
-                if (itemType == instance.Type)
+                if (itemType == slot.ItemInstance.Type)
                 {
-                    count += instance.Count;
+                    count += slot.ItemInstance.Count;
                 }
             }
             return count;
+        }
+        public void SwapItem(int sourceIndex, int targetIndex)
+        {
+            ItemInstance tempInstance = SlotList[sourceIndex].ItemInstance;
+            SlotList[sourceIndex].ItemInstance = SlotList[targetIndex].ItemInstance;
+            SlotList[targetIndex].ItemInstance = tempInstance;
+            SlotChanged?.Invoke(sourceIndex);
+            SlotChanged?.Invoke(targetIndex);
+        }
+        public ItemInstance GetItem(int index)
+        {
+            return SlotList[index].ItemInstance;
+        }
+
+        public bool CanSetSlot(int index, ItemInstance instance)
+        {
+            if (instance != null)
+            {
+                if (SlotList[index].Type == InventorySlotType.Helmet && instance.Type != ItemType.WoodHelmet && instance.Type != ItemType.IronHelmet && instance.Type != ItemType.GoldHelmet && instance.Type != ItemType.JadeHelmet)
+                    return false;
+                if (SlotList[index].Type == InventorySlotType.Armor && instance.Type != ItemType.WoodArmor && instance.Type != ItemType.IronArmor && instance.Type != ItemType.GoldArmor && instance.Type != ItemType.JadeArmor)
+                    return false;
+                if (SlotList[index].Type == InventorySlotType.Boot && instance.Type != ItemType.WoodBoot && instance.Type != ItemType.IronBoot && instance.Type != ItemType.GoldBoot && instance.Type != ItemType.JadeBoot)
+                    return false;
+            }
+            return true;
+        }
+        public void SetSlot(int index, ItemInstance instance)
+        {
+            SlotList[index].ItemInstance = instance;
+            SlotChanged?.Invoke(index);
+        }
+        public void ClearSlot(int index)
+        {
+            SlotList[index].ItemInstance = null;
+            SlotChanged?.Invoke(index);
         }
     }
 }

@@ -1,0 +1,30 @@
+[gd_scene format=3 uid="uid://qxvurh3gv0hg"]
+
+[ext_resource type="PackedScene" uid="uid://cfu7wy1op48g5" path="res://Scenes/System/CraftSystem/CraftView.tscn" id="1_02oki"]
+
+[sub_resource type="ButtonGroup" id="ButtonGroup_xjw8a"]
+
+[node name="BuildingCraftView" type="Control" unique_id=1498262539]
+layout_mode = 3
+anchors_preset = 0
+
+[node name="PanelContainer" type="PanelContainer" parent="." unique_id=2104852689]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer" unique_id=385451688]
+layout_mode = 2
+alignment = 1
+
+[node name="Label" type="Label" parent="PanelContainer/VBoxContainer" unique_id=825452373]
+layout_mode = 2
+theme_override_constants/outline_size = 13
+theme_override_font_sizes/font_size = 64
+text = "天工殿"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="CraftView" parent="PanelContainer/VBoxContainer" unique_id=1465566409 instance=ExtResource("1_02oki")]
+layout_mode = 2
+_btnGroup = SubResource("ButtonGroup_xjw8a")

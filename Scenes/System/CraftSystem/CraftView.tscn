@@ -1,36 +1,46 @@
 [gd_scene format=3 uid="uid://cfu7wy1op48g5"]
 
 [ext_resource type="Script" uid="uid://dft3ce0x6et2c" path="res://Scripts/System/CraftSystem/CraftView.cs" id="1_05l1g"]
+[ext_resource type="Texture2D" uid="uid://8e254e6sobd0" path="res://Assets/Png/ui.png" id="1_q0t68"]
 [ext_resource type="PackedScene" uid="uid://btoyhdgviw66m" path="res://Scenes/System/CraftSystem/CraftItemView.tscn" id="2_yhgba"]
 [ext_resource type="ButtonGroup" uid="uid://sf3o1ct34uct" path="res://Scenes/System/CraftSystem/BasicCraftSlotGroup.tres" id="3_klejn"]
 [ext_resource type="PackedScene" uid="uid://de7ohbctef38p" path="res://Scenes/System/CraftSystem/RequiredItemView.tscn" id="4_pn6id"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3ta7p"]
-content_margin_left = 8.0
-content_margin_top = 8.0
-content_margin_right = 8.0
-content_margin_bottom = 8.0
+[sub_resource type="AtlasTexture" id="AtlasTexture_q0t68"]
+atlas = ExtResource("1_q0t68")
+region = Rect2(176, 144, 16, 16)
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pn6id"]
-content_margin_left = 4.0
-content_margin_top = 4.0
-content_margin_right = 4.0
-content_margin_bottom = 4.0
-bg_color = Color(0.77443224, 0.5488879, 0.26730213, 1)
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_pn6id"]
+texture = SubResource("AtlasTexture_q0t68")
+texture_margin_left = 8.0
+texture_margin_top = 8.0
+texture_margin_right = 8.0
+texture_margin_bottom = 8.0
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dmnp2"]
+atlas = ExtResource("1_q0t68")
+region = Rect2(176, 144, 16, 16)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_cem6n"]
+texture = SubResource("AtlasTexture_dmnp2")
+texture_margin_left = 8.0
+texture_margin_top = 8.0
+texture_margin_right = 8.0
+texture_margin_bottom = 8.0
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_q0t68"]
 content_margin_left = 8.0
 content_margin_top = 8.0
 content_margin_right = 8.0
 content_margin_bottom = 8.0
-bg_color = Color(0.6, 0.41000003, 0, 1)
+bg_color = Color(0.6, 0.41000003, 0, 0)
 
-[node name="CraftView" type="PanelContainer" unique_id=1465566409 node_paths=PackedStringArray("_slotGc", "_requiredItemGc", "_curCraftItemNameLb", "_curCraftItemCountLb", "_countSlider", "_craftBtn")]
-custom_minimum_size = Vector2(420, 400)
-offset_right = 420.0
-offset_bottom = 446.0
-theme_override_styles/panel = SubResource("StyleBoxFlat_3ta7p")
+[node name="CraftView" type="PanelContainer" unique_id=1465566409 node_paths=PackedStringArray("_craftNameLb", "_slotGc", "_requiredItemGc", "_curCraftItemNameLb", "_curCraftItemCountLb", "_countSlider", "_craftBtn")]
+offset_right = 244.0
+offset_bottom = 247.0
+theme_override_styles/panel = SubResource("StyleBoxTexture_pn6id")
 script = ExtResource("1_05l1g")
+_craftNameLb = NodePath("VBoxContainer/CraftNameLb")
 _slotGc = NodePath("VBoxContainer/ScrollContainer/GridContainer")
 _btnGroup = ExtResource("3_klejn")
 _craftItemViewPs = ExtResource("2_yhgba")
@@ -43,11 +53,18 @@ _craftBtn = NodePath("VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/H
 
 [node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=1358548860]
 layout_mode = 2
-theme_override_constants/separation = 10
-alignment = 1
+theme_override_constants/separation = 8
+
+[node name="CraftNameLb" type="Label" parent="VBoxContainer" unique_id=361895864]
+layout_mode = 2
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 16
+text = "天工殿"
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="ScrollContainer" type="ScrollContainer" parent="VBoxContainer" unique_id=1038971939]
-custom_minimum_size = Vector2(320, 310.22)
+custom_minimum_size = Vector2(160, 100)
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
@@ -56,8 +73,8 @@ size_flags_vertical = 4
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
-theme_override_constants/h_separation = 8
-theme_override_constants/v_separation = 8
+theme_override_constants/h_separation = 4
+theme_override_constants/v_separation = 4
 columns = 4
 
 [node name="CraftSlotView46" parent="VBoxContainer/ScrollContainer/GridContainer" unique_id=1976074717 instance=ExtResource("2_yhgba")]
@@ -110,7 +127,7 @@ layout_mode = 2
 
 [node name="PanelContainer" type="PanelContainer" parent="VBoxContainer" unique_id=510523912]
 layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_pn6id")
+theme_override_styles/panel = SubResource("StyleBoxTexture_cem6n")
 
 [node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/PanelContainer" unique_id=826566860]
 layout_mode = 2
@@ -119,11 +136,11 @@ alignment = 1
 
 [node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/PanelContainer/HBoxContainer" unique_id=2020755125]
 layout_mode = 2
-theme_override_constants/separation = 8
+theme_override_constants/separation = 0
 alignment = 1
 
 [node name="PanelContainer" type="PanelContainer" parent="VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer" unique_id=1370280739]
-custom_minimum_size = Vector2(360, 60)
+custom_minimum_size = Vector2(120, 50)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_q0t68")
 
@@ -131,7 +148,8 @@ theme_override_styles/panel = SubResource("StyleBoxFlat_q0t68")
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
-theme_override_constants/h_separation = 8
+theme_override_constants/h_separation = 2
+theme_override_constants/v_separation = 2
 columns = 3
 
 [node name="RequiredItemView" parent="VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/PanelContainer/RequiredItemGc" unique_id=1327174266 instance=ExtResource("4_pn6id")]
@@ -148,9 +166,11 @@ visible = false
 layout_mode = 2
 
 [node name="RequiredItemView5" parent="VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/PanelContainer/RequiredItemGc" unique_id=1601744052 instance=ExtResource("4_pn6id")]
+visible = false
 layout_mode = 2
 
 [node name="RequiredItemView6" parent="VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/PanelContainer/RequiredItemGc" unique_id=753202908 instance=ExtResource("4_pn6id")]
+visible = false
 layout_mode = 2
 
 [node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer" unique_id=2132492962]
@@ -168,15 +188,18 @@ alignment = 1
 
 [node name="CraftItemNameLb" type="Label" parent="VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer/HBoxContainer" unique_id=1205559820]
 layout_mode = 2
-theme_override_font_sizes/font_size = 24
+theme_override_constants/outline_size = 8
+theme_override_font_sizes/font_size = 12
 text = "木剑"
 
 [node name="CraftItemCountLb" type="Label" parent="VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer/HBoxContainer" unique_id=1397025277]
 layout_mode = 2
+theme_override_constants/outline_size = 8
+theme_override_font_sizes/font_size = 12
 text = "*1"
 
 [node name="CountHSlider" type="HSlider" parent="VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer" unique_id=406100639]
-custom_minimum_size = Vector2(300, 0)
+custom_minimum_size = Vector2(128, 0)
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4

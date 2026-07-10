@@ -1,0 +1,62 @@
+[gd_scene format=3 uid="uid://cx380rlsg85x5"]
+
+[ext_resource type="Script" uid="uid://mf5c2ds87e7q" path="res://Scripts/Entities/Players/FastBarView.cs" id="1_6d2iq"]
+[ext_resource type="Texture2D" uid="uid://8e254e6sobd0" path="res://Assets/Png/ui.png" id="1_qjfe1"]
+[ext_resource type="PackedScene" uid="uid://dxxlrj5i2nwjc" path="res://Scenes/Entities/Players/FastBarSlot.tscn" id="2_6d2iq"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dfew3"]
+atlas = ExtResource("1_qjfe1")
+region = Rect2(208, 192, 16, 16)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_p4pfp"]
+texture = SubResource("AtlasTexture_dfew3")
+texture_margin_left = 2.0
+texture_margin_top = 2.0
+texture_margin_right = 2.0
+texture_margin_bottom = 2.0
+
+[node name="FastBarView" type="Control" unique_id=1217924179 node_paths=PackedStringArray("_slotGc")]
+layout_mode = 3
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 0
+script = ExtResource("1_6d2iq")
+_slotGc = NodePath("PanelContainer/GridContainer")
+_fastBarSlotPs = ExtResource("2_6d2iq")
+
+[node name="PanelContainer" type="PanelContainer" parent="." unique_id=159275970]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -48.5
+offset_top = -28.0
+offset_right = 48.5
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_styles/panel = SubResource("StyleBoxTexture_p4pfp")
+
+[node name="GridContainer" type="GridContainer" parent="PanelContainer" unique_id=874927374]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_constants/h_separation = -1
+columns = 4
+
+[node name="FastBarSlot" parent="PanelContainer/GridContainer" unique_id=877712543 instance=ExtResource("2_6d2iq")]
+layout_mode = 2
+
+[node name="FastBarSlot2" parent="PanelContainer/GridContainer" unique_id=1425458027 instance=ExtResource("2_6d2iq")]
+layout_mode = 2
+
+[node name="FastBarSlot3" parent="PanelContainer/GridContainer" unique_id=1987189876 instance=ExtResource("2_6d2iq")]
+layout_mode = 2
+
+[node name="FastBarSlot4" parent="PanelContainer/GridContainer" unique_id=197997933 instance=ExtResource("2_6d2iq")]
+layout_mode = 2

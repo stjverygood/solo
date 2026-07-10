@@ -10,6 +10,7 @@ namespace Solo.Scripts.System.CraftSystem
     {
         public CraftType Type;
 
+        [Export] private Label _craftNameLb;
         [Export] private GridContainer _slotGc;
         [Export] private ButtonGroup _btnGroup;
         [Export] private PackedScene _craftItemViewPs;
@@ -41,6 +42,8 @@ namespace Solo.Scripts.System.CraftSystem
             };
 
             CraftData data = CraftDataManager.Instance.GetCraftData(Type);
+            _craftNameLb.Text = data.Name;
+
             for (int i = 0; i < data.ItemList.Count; i++)
             {
 
@@ -60,23 +63,19 @@ namespace Solo.Scripts.System.CraftSystem
                 _slotGc.AddChild(itemView);
                 if (i == 0)
                     itemView.SetSelected();
-
-
             }
 
             _craftBtn.Pressed += () =>
             {
-                if (GameManager.Instance.IsDebugMode)
+                if (GameManager.Instance.IsDebugMode == false)//非调试模式要扣物品
                 {
-
+                    foreach ((ItemType, int) tuple in ItemDataManager.Instance.GetItemData(_curCraftItemType).CraftRequiredItemList)
+                        GameManager.Instance.Player.InventoryManager.RemoveItem(tuple.Item1, tuple.Item2 * _curCraftCount);
                 }
 
-                foreach ((ItemType, int) tuple in ItemDataManager.Instance.GetItemData(_curCraftItemType).CraftRequiredItemList)
-                {
-                    GameManager.Instance.Player.RemoveItem(tuple.Item1, tuple.Item2 * _curCraftCount);
-                }
-                GameManager.Instance.Player.AddItem(new ItemInstance() { Type = _curCraftItemType, Count = _curCraftCount, CurDur = ItemDataManager.Instance.GetItemData(_curCraftItemType).MaxDur });
+                GameManager.Instance.Player.InventoryManager.AddItem(new ItemInstance() { Type = _curCraftItemType, Count = _curCraftCount, CurDur = ItemDataManager.Instance.GetItemData(_curCraftItemType).MaxDur });
                 RefreshCountSlider();
+                RefreshRequiredItemList();
             };
         }
 
@@ -87,7 +86,7 @@ namespace Solo.Scripts.System.CraftSystem
             int minCount = int.MaxValue;
             foreach ((ItemType, int) tuple in ItemDataManager.Instance.GetItemData(_curCraftItemType).CraftRequiredItemList)
             {
-                int itemCount = GameManager.Instance.Player.FastBarInventory.GetItemCount(tuple.Item1) + GameManager.Instance.Player.BagInventory.GetItemCount(tuple.Item1);
+                int itemCount = GameManager.Instance.Player.InventoryManager.GetItemCount(tuple.Item1);
                 int canCraftCount = itemCount / tuple.Item2;
                 if (canCraftCount < minCount)
                     minCount = canCraftCount;
@@ -110,7 +109,7 @@ namespace Solo.Scripts.System.CraftSystem
                 requiredItemView.Init(tuple.Item1, tuple.Item2 * _curCraftCount);
                 _requiredItemGc.AddChild(requiredItemView);
 
-                int itemCount = GameManager.Instance.Player.FastBarInventory.GetItemCount(tuple.Item1) + GameManager.Instance.Player.BagInventory.GetItemCount(tuple.Item1);
+                int itemCount = GameManager.Instance.Player.InventoryManager.GetItemCount(tuple.Item1);
                 if (itemCount < tuple.Item2 * _curCraftCount)
                 {
                     canCraft = false;
@@ -126,14 +125,17 @@ namespace Solo.Scripts.System.CraftSystem
             if (canCraft == true)
             {
                 _craftBtn.Disabled = false;
-                _curCraftItemNameLb.Modulate = Color.Color8(1, 1, 1);
-                _curCraftItemCountLb.Modulate = Color.Color8(1, 1, 1);
+                _curCraftItemNameLb.Modulate = Color.Color8(62, 137, 72);
+                _curCraftItemCountLb.Modulate = Color.Color8(62, 137, 72);
             }
             else
             {
-                _craftBtn.Disabled = true;
-                _curCraftItemNameLb.Modulate = Color.Color8(162, 38, 51);
-                _curCraftItemCountLb.Modulate = Color.Color8(162, 38, 51);
+                if (GameManager.Instance.IsDebugMode)
+                    _craftBtn.Disabled = false;
+                else
+                    _craftBtn.Disabled = true;
+                _curCraftItemNameLb.Modulate = Color.Color8(228, 59, 68);
+                _curCraftItemCountLb.Modulate = Color.Color8(228, 59, 68);
             }
         }
     }

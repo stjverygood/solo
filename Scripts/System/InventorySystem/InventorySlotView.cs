@@ -1,142 +1,145 @@
 using Godot;
-using Godot.Collections;
 using Solo.Scripts.Global;
-using Solo.Scripts.System.InventorySystem;
 using Solo.Scripts.System.ItemSystem;
 
-public partial class InventorySlotView : Control
+namespace Solo.Scripts.System.InventorySystem
 {
-    [Export] private Panel _bgPanel;
-    [Export] private TextureRect _iconTr;
-    [Export] private Label _nameLb;
-    [Export] private Label _countLb;
-    [Export] private TextureProgressBar _durTpb;
-    private ItemInstance _itemInstance;
-    private int _index;
-    private InventoryView _parent;
-    [Export] private StyleBoxTexture _normalStyle;
-    [Export] private StyleBoxTexture _selectedStyle;
-
-    public void Init(InventoryView parent, int index)
+    public partial class InventorySlotView : PanelContainer
     {
-        _parent = parent;
-        _index = index;
-        _itemInstance = null;
-        SetData(null);
-        SetSelected(false);
-        PivotOffset = Size / 2;
-    }
+        [Export] private TextureRect _iconTr;
+        [Export] private Label _nameLb;
+        [Export] private Label _countLb;
+        [Export] private TextureProgressBar _durTpb;
+        private ItemInstance _itemInstance;
+        public int Index;
+        public Inventory Inventory;
 
-    public void SetData(ItemInstance itemInstance)
-    {
+        //style : 
+        private bool _isSelected;
+        private bool _isHover;
+        [Export] private StyleBoxTexture _normalStyle;
+        [Export] private StyleBoxTexture _hoverStyle;
+        [Export] private StyleBoxTexture _selectedStyle;
 
-        if (itemInstance == null)
+        public void Init(Inventory inventory, int index)
         {
-            _iconTr.Texture = null;
-            _nameLb.Text = "";
-            _countLb.Text = "";
-            _durTpb.Visible = false;
-            return;
-        }
+            Inventory = inventory;
+            Index = index;
+            _itemInstance = null;
+            SetData(null);
+            SetSelected(false);
+            PivotOffset = Size / 2;
 
-        _itemInstance = itemInstance;
-        ItemData itemData = ItemDataManager.Instance.GetItemData(_itemInstance.Type);
-        _iconTr.Texture = GD.Load<Texture2D>(itemData.IconPath);
-        _countLb.Text = itemData.MaxCount == 1 ? "" : $"{_itemInstance.Count}";
-        _nameLb.Text = $"{itemData.Name}";
-        if (itemData.MaxDur == -1)
-        {
-            _durTpb.Visible = false;
-        }
-        else
-        {
-            _durTpb.Visible = true;
-            _durTpb.MaxValue = itemData.MaxDur;
-            _durTpb.Value = itemInstance.CurDur;
-        }
-    }
-
-    public override Variant _GetDragData(Vector2 atPosition)
-    {
-        GD.Print("_GetDragData atPosition : " + atPosition);
-        if (_itemInstance == null)
-            return new Variant();
-
-        TextureRect previewIconTr = new TextureRect();
-        previewIconTr.Texture = _iconTr.Texture;
-        previewIconTr.ExpandMode = TextureRect.ExpandModeEnum.IgnoreSize;
-        previewIconTr.StretchMode = TextureRect.StretchModeEnum.Scale;
-        previewIconTr.Size = Size;
-
-        Control previewContainer = new Control();
-        previewContainer.ZIndex = 100;
-        previewContainer.AddChild(previewIconTr);
-        previewIconTr.Position = -atPosition;
-
-        SetDragPreview(previewContainer);
-
-        Dictionary dict = new Dictionary()
-        {
-            {"InventoryGuid", _parent.Inventory.GuidStr },
-            {"Index",_index },
-        };
-        return dict;
-    }
-
-    public override bool _CanDropData(Vector2 atPosition, Variant data)
-    {
-        if (_parent.Inventory.GuidStr == GameManager.Instance.Player.ArmorInventory.GuidStr)
-        {
-            Dictionary dict = (Dictionary)data;
-            string sourceGuid = (string)dict["InventoryGuid"];
-            int sourceIdx = (int)dict["Index"];
-            Inventory sourceInv = GameManager.Instance.Player.GetInventoryByGuid(sourceGuid);
-            if (sourceInv == null || sourceIdx >= sourceInv.ItemInstanceList.Count)
-                return false;
-            ItemInstance item = sourceInv.ItemInstanceList[sourceIdx];
-            if (item == null) return false;
-            ItemData itemData = ItemDataManager.Instance.GetItemData(item.Type);
-            return itemData.IsArmor && (int)itemData.ArmorSlot == _index;
-        }
-        return true;
-    }
-
-    public override void _DropData(Vector2 atPosition, Variant data)
-    {
-        Dictionary dict = (Dictionary)data;
-        string sourceInventoryGuid = (string)dict["InventoryGuid"];
-        int sourceIndex = (int)dict["Index"];
-        if (sourceInventoryGuid == _parent.Inventory.GuidStr)
-        {
-            if (sourceIndex == _index)
-                return;
-            if (_parent.Inventory.GuidStr == GameManager.Instance.Player.ArmorInventory.GuidStr)
+            MouseEntered += () =>
             {
-                ItemData srcData = ItemDataManager.Instance.GetItemData(_parent.Inventory.ItemInstanceList[sourceIndex].Type);
-                ItemData dstData = ItemDataManager.Instance.GetItemData(_parent.Inventory.ItemInstanceList[_index].Type);
-                if (!srcData.IsArmor || !dstData.IsArmor || srcData.ArmorSlot != dstData.ArmorSlot)
-                    return;
-            }
-            _parent.Inventory.SwapItem(sourceIndex, _index);
+                _isHover = true;
+                RefreshStyle();
+            };
+            MouseExited += () =>
+            {
+                _isHover = false;
+                RefreshStyle();
+            };
         }
-        else
-        {
-            GameManager.Instance.Player.SwapItemInterInventory(sourceInventoryGuid, sourceIndex, _parent.Inventory.GuidStr, _index);
-        }
-    }
 
-    public void SetSelected(bool isSelected)
-    {
-        if (isSelected)
+        public void SetData(ItemInstance itemInstance)
         {
-            Tween animTween = CreateTween().SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out);
-            animTween.TweenProperty(this, "scale", new Vector2(0.8f, 0.8f), 0.1f);
-            animTween.TweenProperty(this, "scale", Vector2.One, 0.1f);
-            _bgPanel.AddThemeStyleboxOverride("panel", _selectedStyle);
+            if (itemInstance == null)
+            {
+                _iconTr.Texture = null;
+                _nameLb.Text = "";
+                _countLb.Text = "";
+                _durTpb.Visible = false;
+                return;
+            }
+
+            _itemInstance = itemInstance;
+            ItemData itemData = ItemDataManager.Instance.GetItemData(_itemInstance.Type);
+            _iconTr.Texture = GD.Load<Texture2D>(itemData.IconPath);
+            _countLb.Text = itemData.MaxCount == 1 ? "" : $"{_itemInstance.Count}";
+            _nameLb.Text = $"{itemData.Name}";
+            if (itemData.MaxDur == -1)
+            {
+                _durTpb.Visible = false;
+            }
+            else
+            {
+                _durTpb.Visible = true;
+                _durTpb.MaxValue = itemData.MaxDur;
+                _durTpb.Value = itemInstance.CurDur;
+            }
         }
-        else
+
+
+        public override Variant _GetDragData(Vector2 atPosition)
         {
-            _bgPanel.AddThemeStyleboxOverride("panel", _normalStyle);
+            GD.Print("_GetDragData atPosition : " + atPosition);
+            if (_itemInstance == null)
+                return new Variant();
+
+            TextureRect previewIconTr = new TextureRect();
+            previewIconTr.Texture = _iconTr.Texture;
+            previewIconTr.ExpandMode = TextureRect.ExpandModeEnum.IgnoreSize;
+            previewIconTr.StretchMode = TextureRect.StretchModeEnum.Scale;
+            previewIconTr.Size = _iconTr.Size;
+
+            Control previewContainer = new Control();
+            previewContainer.ZIndex = 100;
+            previewContainer.AddChild(previewIconTr);
+            previewIconTr.Position = -atPosition;
+
+            SetDragPreview(previewContainer);
+            return this;
+        }
+
+        public override bool _CanDropData(Vector2 atPosition, Variant data)
+        {
+            return true;
+        }
+
+        public override void _DropData(Vector2 atPosition, Variant data)
+        {
+            InventorySlotView sourceSlotView = data.As<InventorySlotView>();
+            GameManager.Instance.Player.InventoryManager.SwapItem(sourceSlotView.Inventory, sourceSlotView.Index, Inventory, Index);
+        }
+
+        public void SetSelected(bool isSelected)
+        {
+            _isSelected = isSelected;
+            RefreshStyle();
+            if (isSelected)
+            {
+                Tween animTween = CreateTween().SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out);
+                animTween.TweenProperty(this, "scale", new Vector2(0.8f, 0.8f), 0.1f);
+                animTween.TweenProperty(this, "scale", Vector2.One, 0.1f);
+                AddThemeStyleboxOverride("panel", _selectedStyle);
+            }
+            else
+            {
+                AddThemeStyleboxOverride("panel", _normalStyle);
+            }
+        }
+
+        private void RefreshStyle()
+        {
+            if (_isSelected)
+            {
+                Tween animTween = CreateTween().SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out);
+                animTween.TweenProperty(this, "scale", new Vector2(0.9f, 0.9f), 0.1f);
+                animTween.TweenProperty(this, "scale", Vector2.One, 0.1f);
+                AddThemeStyleboxOverride("panel", _selectedStyle);
+            }
+            else if (_isHover)
+            {
+                Tween animTween = CreateTween().SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out);
+                animTween.TweenProperty(this, "scale", new Vector2(0.9f, 0.9f), 0.03f);
+                animTween.TweenProperty(this, "scale", Vector2.One, 0.1f);
+                AddThemeStyleboxOverride("panel", _hoverStyle);
+            }
+            else
+            {
+                AddThemeStyleboxOverride("panel", _normalStyle);
+            }
         }
     }
 }

@@ -1,0 +1,43 @@
+[gd_scene format=3 uid="uid://557c5e8cwx11"]
+
+[ext_resource type="Script" uid="uid://c435ms1p74wxs" path="res://Scripts/System/InventorySystem/InventoryView.cs" id="1_7dvsa"]
+[ext_resource type="PackedScene" uid="uid://v2bqvrhiyu14" path="res://Scenes/System/InventorySystem/InventorySlotView.tscn" id="2_gxlwl"]
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_m3113"]
+load_path = "res://.godot/imported/ui.png-cbe33512c76dff232120e87ecbdf7441.ctex"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vpdff"]
+atlas = SubResource("CompressedTexture2D_m3113")
+region = Rect2(144, 176, 16, 16)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_vsyut"]
+texture = SubResource("AtlasTexture_vpdff")
+texture_margin_left = 2.0
+texture_margin_top = 2.0
+texture_margin_right = 2.0
+texture_margin_bottom = 2.0
+
+[node name="FastBarInventoryView" type="PanelContainer" unique_id=1761972565 node_paths=PackedStringArray("_gridContainer")]
+offset_right = 152.0
+offset_bottom = 44.0
+theme_override_styles/panel = SubResource("StyleBoxTexture_vsyut")
+script = ExtResource("1_7dvsa")
+SlotViewPs = ExtResource("2_gxlwl")
+_gridContainer = NodePath("GridContainer")
+
+[node name="GridContainer" type="GridContainer" parent="." unique_id=1516157962]
+layout_mode = 2
+theme_override_constants/h_separation = 4
+columns = 4
+
+[node name="InventorySlotView" parent="GridContainer" unique_id=27743596 instance=ExtResource("2_gxlwl")]
+layout_mode = 2
+
+[node name="InventorySlotView2" parent="GridContainer" unique_id=1140511850 instance=ExtResource("2_gxlwl")]
+layout_mode = 2
+
+[node name="InventorySlotView3" parent="GridContainer" unique_id=1859552698 instance=ExtResource("2_gxlwl")]
+layout_mode = 2
+
+[node name="InventorySlotView4" parent="GridContainer" unique_id=1889990252 instance=ExtResource("2_gxlwl")]
+layout_mode = 2

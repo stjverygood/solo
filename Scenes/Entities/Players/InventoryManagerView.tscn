@@ -1,0 +1,62 @@
+[gd_scene format=3 uid="uid://bgqqv5e610s5p"]
+
+[ext_resource type="Script" uid="uid://flyt3u3xcjcg" path="res://Scripts/Entities/Players/InventoryManagerView.cs" id="1_uar4n"]
+[ext_resource type="PackedScene" uid="uid://bji8v2soe8d4o" path="res://Scenes/System/InventorySystem/Inventorys/EquipmentInventoryView.tscn" id="2_5pyiq"]
+[ext_resource type="PackedScene" uid="uid://cegl0cmno78dg" path="res://Scenes/System/InventorySystem/Inventorys/BagInventoryView.tscn" id="3_3s44e"]
+[ext_resource type="PackedScene" uid="uid://ch5mbcfvw4tu3" path="res://Scenes/Entities/Players/DiscardView.tscn" id="4_xqfss"]
+[ext_resource type="PackedScene" uid="uid://557c5e8cwx11" path="res://Scenes/System/InventorySystem/Inventorys/FastBarInventoryView.tscn" id="5_og80g"]
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_tfrxa"]
+load_path = "res://.godot/imported/ui.png-cbe33512c76dff232120e87ecbdf7441.ctex"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_lfrcf"]
+atlas = SubResource("CompressedTexture2D_tfrxa")
+region = Rect2(208, 144, 32, 32)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_cetw5"]
+texture = SubResource("AtlasTexture_lfrcf")
+texture_margin_left = 16.0
+texture_margin_top = 16.0
+texture_margin_right = 16.0
+texture_margin_bottom = 16.0
+
+[node name="InventoryView" type="Control" unique_id=989028457 node_paths=PackedStringArray("_fastInventoryView", "_bagInventoryView", "_equipmentInventoryView")]
+layout_mode = 3
+anchors_preset = 0
+script = ExtResource("1_uar4n")
+_fastInventoryView = NodePath("PanelContainer/GridContainer/FastBarInventoryView")
+_bagInventoryView = NodePath("PanelContainer/GridContainer/BagInventoryView")
+_equipmentInventoryView = NodePath("PanelContainer/GridContainer/EquipmentInventoryView")
+
+[node name="PanelContainer" type="PanelContainer" parent="." unique_id=1005022505]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -118.0
+offset_top = -118.0
+offset_right = 118.0
+offset_bottom = 118.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxTexture_cetw5")
+
+[node name="GridContainer" type="GridContainer" parent="PanelContainer" unique_id=628756251]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 8
+columns = 2
+
+[node name="EquipmentInventoryView" parent="PanelContainer/GridContainer" unique_id=658431685 instance=ExtResource("2_5pyiq")]
+layout_mode = 2
+
+[node name="BagInventoryView" parent="PanelContainer/GridContainer" unique_id=680474204 instance=ExtResource("3_3s44e")]
+layout_mode = 2
+
+[node name="DiscardView" parent="PanelContainer/GridContainer" unique_id=640664064 instance=ExtResource("4_xqfss")]
+layout_mode = 2
+
+[node name="FastBarInventoryView" parent="PanelContainer/GridContainer" unique_id=1761972565 instance=ExtResource("5_og80g")]
+layout_mode = 2
