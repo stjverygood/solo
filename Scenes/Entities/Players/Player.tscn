@@ -1,21 +1,68 @@
 [gd_scene format=3 uid="uid://bwctbm6eq64vu"]
 
 [ext_resource type="Script" uid="uid://dpkxkwy3ger5n" path="res://Scripts/Entities/Players/Player.cs" id="1_lxeke"]
-[ext_resource type="Texture2D" uid="uid://c5cysx8uva6i2" path="res://Assets/AtlasTextures/AimIcon.tres" id="2_oet8y"]
+[ext_resource type="Texture2D" uid="uid://c5cysx8uva6i2" path="res://Assets/AtlasTextures/UI/AimIcon.tres" id="2_oet8y"]
 [ext_resource type="PackedScene" uid="uid://5hfwgc7q0vcs" path="res://Scenes/Entities/Players/FishingFloat.tscn" id="2_sod1g"]
 [ext_resource type="PackedScene" uid="uid://bnq2kgnwy4iaa" path="res://Scenes/System/ItemSystem/Projectiles/Arrow.tscn" id="2_ynm40"]
 [ext_resource type="Texture2D" uid="uid://cmlghpyvrsitg" path="res://Assets/AtlasTextures/Player.tres" id="3_3gn43"]
 [ext_resource type="PackedScene" uid="uid://d24xyf4tuo8wn" path="res://Scenes/System/ItemSystem/Projectiles/Fireball.tscn" id="3_cbjid"]
 [ext_resource type="PackedScene" uid="uid://das8eij0ua5tt" path="res://Scenes/System/BuildingSystem/BuildingPreview.tscn" id="3_f0b02"]
+[ext_resource type="PackedScene" uid="uid://bqn8jrdyesh0w" path="res://Scenes/System/ItemSystem/Projectiles/SwordWave.tscn" id="5_avkiy"]
 [ext_resource type="FontFile" uid="uid://chelxpn5elvbb" path="res://Assets/zpix.ttf" id="5_rnj17"]
+[ext_resource type="PackedScene" uid="uid://1vvxok2xavwu" path="res://Scenes/System/ItemSystem/Projectiles/HammerWave.tscn" id="6_t82er"]
+[ext_resource type="Texture2D" uid="uid://bmhew47e5rlt7" path="res://Assets/AtlasTextures/UI/InteractIcon.tres" id="7_n0q0x"]
 [ext_resource type="PackedScene" uid="uid://cfu7wy1op48g5" path="res://Scenes/System/CraftSystem/CraftView.tscn" id="7_sod1g"]
 [ext_resource type="Texture2D" uid="uid://4l1ykgdsxh5w" path="res://Assets/AtlasTextures/WoodPot.tres" id="8_cbjid"]
+[ext_resource type="Texture2D" uid="uid://buuka3d1ksemr" path="res://Assets/Png/VfxAnimSheets/sprite-sheet.png" id="9_2hmx1"]
 [ext_resource type="Texture2D" uid="uid://8e254e6sobd0" path="res://Assets/Png/ui.png" id="10_wom6s"]
 [ext_resource type="PackedScene" uid="uid://d3ptuijhfhmm0" path="res://Scenes/UI/DeathView.tscn" id="11_oet8y"]
 [ext_resource type="PackedScene" uid="uid://b8so1e8mc7j47" path="res://Scenes/Entities/Players/CharacterView.tscn" id="15_sod1g"]
 [ext_resource type="PackedScene" uid="uid://bgqqv5e610s5p" path="res://Scenes/Entities/Players/InventoryManagerView.tscn" id="15_wom6s"]
 [ext_resource type="PackedScene" uid="uid://dvq4r1yjqbmte" path="res://Scenes/Entities/Players/StateView.tscn" id="16_wom6s"]
 [ext_resource type="PackedScene" uid="uid://cx380rlsg85x5" path="res://Scenes/Entities/Players/FastBarView.tscn" id="17_n0q0x"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_avkiy"]
+atlas = ExtResource("9_2hmx1")
+region = Rect2(0, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_t82er"]
+atlas = ExtResource("9_2hmx1")
+region = Rect2(128, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4vg5v"]
+atlas = ExtResource("9_2hmx1")
+region = Rect2(256, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1uj7u"]
+atlas = ExtResource("9_2hmx1")
+region = Rect2(384, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_s58pu"]
+atlas = ExtResource("9_2hmx1")
+region = Rect2(512, 0, 128, 128)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_yxouj"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_avkiy")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_t82er")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4vg5v")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1uj7u")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_s58pu")
+}],
+"loop": 1,
+"name": &"default",
+"speed": 10.0
+}]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_jw8fk"]
 radius = 5.0990195
@@ -106,7 +153,7 @@ scale_curve = SubResource("CurveTexture_sdrt1")
 color = Color(0.5716493, 0.5716493, 0.57164925, 1)
 color_ramp = SubResource("GradientTexture1D_ex883")
 
-[node name="Player" type="CharacterBody2D" unique_id=1144409017 node_paths=PackedStringArray("_camera", "_bodyRootNode", "_animRootNode", "_bodySprite", "_helmetSprite", "_ArmorSprite", "_bootSprite", "_handRootNode", "_handSprite", "_walkGrassParticles", "_walkWaterParticles", "_leftViewRootControl", "_characterView", "_inventoryManagerView", "_fastBarView", "_hpTpb", "_hpLb", "_mpTpb", "_mpLb", "_debugLb", "_deathView")]
+[node name="Player" type="CharacterBody2D" unique_id=1144409017 node_paths=PackedStringArray("_camera", "_bodyRootNode", "_animRootNode", "_bodySprite", "_helmetSprite", "_ArmorSprite", "_bootSprite", "_handRootNode", "_handSprite", "_walkGrassParticles", "_walkWaterParticles", "_leftViewRootControl", "_characterView", "_inventoryManagerView", "_fastBarView", "_hpTpb", "_hpLb", "_mpTpb", "_mpLb", "_debugLb", "_deathView", "_bgAnimSprite")]
 y_sort_enabled = true
 script = ExtResource("1_lxeke")
 _camera = NodePath("Camera2D")
@@ -123,6 +170,8 @@ _walkWaterParticles = NodePath("Particles/WalkWaterParticles")
 _fishingFloatPs = ExtResource("2_sod1g")
 _arrowPs = ExtResource("2_ynm40")
 _fireballPs = ExtResource("3_cbjid")
+_swordWavePs = ExtResource("5_avkiy")
+_hammerWavePs = ExtResource("6_t82er")
 _leftViewRootControl = NodePath("CanvasLayer/LeftViewControl")
 _characterView = NodePath("CanvasLayer/CharacterView")
 _inventoryManagerView = NodePath("CanvasLayer/InventoryView")
@@ -134,8 +183,14 @@ _mpTpb = NodePath("CanvasLayer/State/MpTpb")
 _mpLb = NodePath("CanvasLayer/State/MpLb")
 _debugLb = NodePath("DebugLabel")
 _deathView = NodePath("CanvasLayer/DeathView")
-_aimTexture = ExtResource("2_oet8y")
+_aimIconTexture = ExtResource("2_oet8y")
+_interactIconTexture = ExtResource("7_n0q0x")
+_bgAnimSprite = NodePath("AnimatedSprite2D")
 _buildingPreviewPs = ExtResource("3_f0b02")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1794381861]
+visible = false
+sprite_frames = SubResource("SpriteFrames_yxouj")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1924437222]
 position = Vector2(0, -4)

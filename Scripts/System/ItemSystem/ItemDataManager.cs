@@ -578,6 +578,7 @@ namespace Solo.Scripts.System.ItemSystem
                     (ItemType.Wood, 3),
                     (ItemType.Rope, 5),
                 },
+                CanAim = true,
             });
 
             _itemDataMap.Add(ItemType.IronPot, new ItemData

@@ -50,6 +50,8 @@ namespace Solo.Scripts.Entities.Players
         //发射物ps
         [Export] private PackedScene _arrowPs;
         [Export] private PackedScene _fireballPs;
+        [Export] private PackedScene _swordWavePs;
+        [Export] private PackedScene _hammerWavePs;
 
 
 
@@ -109,7 +111,10 @@ namespace Solo.Scripts.Entities.Players
         [Export] private Label _mpLb;
         [Export] private Label _debugLb;
         [Export] private DeathView _deathView;
-        [Export] public Texture2D _aimTexture;
+        [Export] public Texture2D _aimIconTexture;
+        [Export] public Texture2D _interactIconTexture;
+
+        [Export] AnimatedSprite2D _bgAnimSprite;
 
         public override void _Ready()
         {
@@ -123,7 +128,7 @@ namespace Solo.Scripts.Entities.Players
             _maxMp = playerSaveData.MaxMp;
             SetCurMp(playerSaveData.CurMp);
 
-
+            _bgAnimSprite.Play("default");
             //FastBarInventory = new Inventory(SaveManager.Instance.CurSaveData.FastBarInventoryGuidStr, SaveManager.Instance.CurSaveData.FastBarInventoryList);
             //BagInventory = new Inventory(SaveManager.Instance.CurSaveData.BagInventoryGuidStr, SaveManager.Instance.CurSaveData.BagInventoryList);
             //ArmorInventory = new Inventory(SaveManager.Instance.CurSaveData.EquipmentInventoryGuidStr, SaveManager.Instance.CurSaveData.EquipmentInventoryList);
@@ -142,7 +147,7 @@ namespace Solo.Scripts.Entities.Players
             {
                 RefreshHandNode();
             };
-
+            RefreshHandNode();
 
             _curAtkRange = _meleeAtkRange;//todo : 根据itemdata的israngeitem来决定攻击范围
             _curAtkRangeSq = _curAtkRange * _curAtkRange;
@@ -380,7 +385,6 @@ namespace Solo.Scripts.Entities.Players
             if (Input.IsActionJustPressed("Next"))
                 ChangeCurFastBarIndex(true);
 
-            CheckTarget();
             if (Input.IsActionJustPressed("Atk"))
             {
                 ItemType? itemType = InventoryManager.GetCurItemType(_curFastBarIndex);
@@ -398,37 +402,6 @@ namespace Solo.Scripts.Entities.Players
                     return;
                 }
             }
-
-            //if (Input.IsActionPressed("Atk"))
-            //    _atkLongPressTimer += delta;
-            //if (Input.IsActionJustReleased("Atk"))
-            //{
-            //    if (_isAtkLongPressTimerValid && _atkLongPressTimer < _atkLongPressDuration)//普通单击
-            //    {
-            //        ChangeState(PlayerState.Atk);
-            //        return;
-            //    }
-            //    _isAtkLongPressTimerValid = true;//建筑, 投掷道具, 取消后会把这个值置为false, 防止再次触发单击/长按
-            //    _atkLongPressTimer = 0;
-            //}
-            //if (_isAtkLongPressTimerValid && _atkLongPressTimer > _atkLongPressDuration)//触发长按
-            //{
-            //    //if (InventoryManager.GetCurFastBarItemType(CurFastBarIndex) != null && ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).IsBuilding)
-            //    //{
-            //    //    ChangeState(PlayerState.Build);
-            //    //    return;
-            //    //}
-            //    //else if (FastBarInventory.ItemInstanceList[CurFastBarIndex] != null && ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).IsConsumable)
-            //    //{
-            //    //    ChangeState(PlayerState.Comsume);
-            //    //    return;
-            //    //}
-            //    //else if (FastBarInventory.ItemInstanceList[CurFastBarIndex] != null && ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).CanAiming)
-            //    //{
-            //    //    ChangeState(PlayerState.Aim);
-            //    //    return;
-            //    //}
-            //}
 
             if (Input.IsActionJustPressed("Interact"))
             {
@@ -478,8 +451,6 @@ namespace Solo.Scripts.Entities.Players
                 ChangeState(PlayerState.Dash);
                 return;
             }
-
-            CheckTarget();
 
             if (Input.IsActionJustPressed("Atk"))
             {
@@ -558,8 +529,6 @@ namespace Solo.Scripts.Entities.Players
                 ChangeState(PlayerState.Death);
                 return;
             }
-
-            CheckTarget();
 
             if (Input.IsActionJustPressed("Atk"))
             {
@@ -674,12 +643,45 @@ namespace Solo.Scripts.Entities.Players
             Vector2 atkDir = (GetGlobalMousePosition() - GlobalPosition).Normalized();
 
             ItemType curItemType = (ItemType)InventoryManager.GetCurItemType(_curFastBarIndex);
+
+            float startRotation = _handRootNode.Rotation;
+            float attackRotation = startRotation + 1.3f; // 增加1.3弧度
             switch (curItemType)
             {
                 case ItemType.WoodSword:
-                    SwordWave swordWave = GameManager.Instance.SwordWavePs.Instantiate<SwordWave>();
+
+                    _animTween = CreateTween().SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out);
+                    _animTween.TweenProperty(_handRootNode, "rotation", attackRotation, 0.05f);
+
+                    SwordWave swordWave = _swordWavePs.Instantiate<SwordWave>();
                     GetTree().CurrentScene.AddChild(swordWave);
-                    swordWave.Play(GlobalPosition, atkDir);
+                    swordWave.Init(GlobalPosition, atkDir);
+
+
+                    _animTween.Parallel().TweenProperty(_animRootNode, "scale", new Vector2(1f, 1f), 0.1f);
+                    _animTween.TweenProperty(_handRootNode, "rotation", startRotation, 0.1f);
+                    _animTween.Finished += () =>
+                    {
+                        ChangeState(PlayerState.Idle);
+                        return;
+                    };
+                    break;
+                case ItemType.WoodAxe:
+                    _animTween = CreateTween().SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out);
+                    _animTween.TweenProperty(_handRootNode, "rotation", attackRotation, 0.05f);
+
+                    HammerWave hammerWave = _hammerWavePs.Instantiate<HammerWave>();
+                    GetTree().CurrentScene.AddChild(hammerWave);
+                    hammerWave.Init(GlobalPosition, atkDir);
+
+
+                    _animTween.Parallel().TweenProperty(_animRootNode, "scale", new Vector2(1f, 1f), 0.1f);
+                    _animTween.TweenProperty(_handRootNode, "rotation", startRotation, 0.1f);
+                    _animTween.Finished += () =>
+                    {
+                        ChangeState(PlayerState.Idle);
+                        return;
+                    };
                     break;
             }
             //_atkLongPressTimer = 0;
@@ -694,36 +696,29 @@ namespace Solo.Scripts.Entities.Players
             //else
             //    _bodyRootNode.Scale = new Vector2(1, 1);
 
-            float startRotation = _handRootNode.Rotation;
-            float attackRotation = startRotation + 1.3f; // 增加1.3弧度
 
-            _animTween = CreateTween().SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out);
-            _animTween.Parallel().TweenProperty(_animRootNode, "scale", new Vector2(0.8f, 0.8f), 0.05f);//出手动画
-            _animTween.TweenProperty(_handRootNode, "rotation", attackRotation, 0.05f);
-            _animTween.TweenCallback(Callable.From(() =>
-            {
-                TriggerScreenShake(1);//震屏
-                //if (FastBarInventory.ItemInstanceList[CurFastBarIndex] != null && ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).MaxDur != -1)//有工具耐久
-                //{
-                //    FastBarInventory.ItemInstanceList[CurFastBarIndex].CurDur--;
-                //    if (FastBarInventory.ItemInstanceList[CurFastBarIndex].CurDur <= 0)
-                //    {
-                //        FastBarInventory.RemoveItem(CurFastBarIndex);
-                //        RefreshHandNode();
-                //    }
-                //    _fastBarInventoryView.RefreshSlot(CurFastBarIndex);
-                //}
-                //_curTarget.TakeDamage(this, _atk, FastBarInventory.ItemInstanceList[CurFastBarIndex]?.Type);
-                TakeMp(1f);
-            }));
 
-            _animTween.Parallel().TweenProperty(_animRootNode, "scale", new Vector2(1f, 1f), 0.1f);
-            _animTween.TweenProperty(_handRootNode, "rotation", startRotation, 0.1f);
-            _animTween.Finished += () =>
-            {
-                ChangeState(PlayerState.Idle);
-                return;
-            };
+
+            //_animTween.Parallel().TweenProperty(_animRootNode, "scale", new Vector2(0.8f, 0.8f), 0.05f);//出手动画
+            //_animTween.TweenCallback(Callable.From(() =>
+            //{
+            //    //TriggerScreenShake(1);//震屏
+            //    //if (FastBarInventory.ItemInstanceList[CurFastBarIndex] != null && ItemDataManager.Instance.GetItemData(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type).MaxDur != -1)//有工具耐久
+            //    //{
+            //    //    FastBarInventory.ItemInstanceList[CurFastBarIndex].CurDur--;
+            //    //    if (FastBarInventory.ItemInstanceList[CurFastBarIndex].CurDur <= 0)
+            //    //    {
+            //    //        FastBarInventory.RemoveItem(CurFastBarIndex);
+            //    //        RefreshHandNode();
+            //    //    }
+            //    //    _fastBarInventoryView.RefreshSlot(CurFastBarIndex);
+            //    //}
+            //    //_curTarget.TakeDamage(this, _atk, FastBarInventory.ItemInstanceList[CurFastBarIndex]?.Type);
+            //    //TakeMp(1f);
+            //}));
+
+
+
         }
         private void UpdateAtk(float delta)
         {
@@ -754,67 +749,7 @@ namespace Solo.Scripts.Entities.Players
         private void EnterInteract()
         {
             ResetAnim();
-
-            if (_curTarget == null || _curTarget.IsVaild() == false || _curTarget.CanInteract() == false)
-            {
-                ChangeState(PlayerState.Idle);
-                return;
-            }
-
-            if (_curTarget.GetWorldPosition().X - GlobalPosition.X < 0)
-                _bodyRootNode.Scale = new Vector2(-1, 1);
-            else
-                _bodyRootNode.Scale = new Vector2(1, 1);
-
-            //后期或许可以改成, 先根据手持物+交互目标,再进入动画, 动画结束再执行交互逻辑 
-            _animTween = CreateTween().SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out);
-            _animTween.Parallel().TweenProperty(_animRootNode, "scale", new Vector2(0.8f, 0.8f), 0.05f);//出手动画
-            _animTween.TweenCallback(Callable.From(() =>
-            {
-                TriggerScreenShake(1);//震屏
-                _curTarget.Interact();
-                //if (_curTarget is TreeGrow treeGrow && FastBarInventory.ItemInstanceList[CurFastBarIndex] != null)
-                //{
-                //    treeGrow.Watering(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type);
-                //}
-            }));
-
-            _animTween.Parallel().TweenProperty(_animRootNode, "scale", new Vector2(1f, 1f), 0.1f);
-            _animTween.Finished += () =>
-            {
-                //交互逻辑 : 由手持物+交互目标决定具体交互逻辑(如食物+小猫 = 投喂)
-
-                if (_curTarget is BuildingCraft)
-                {
-                    CraftView buildingCraftView = _craftViewPs.Instantiate<CraftView>();
-                    buildingCraftView.Init(CraftType.Building);
-                    _leftViewRootControl.AddChild(buildingCraftView);
-                    _curLeftView = buildingCraftView;
-                    ChangeState(PlayerState.BagUI);
-                    return;
-                }
-                else if (_curTarget is ToolCraft)
-                {
-                    CraftView toolCraftView = _craftViewPs.Instantiate<CraftView>();
-                    toolCraftView.Init(CraftType.Tool);
-                    _leftViewRootControl.AddChild(toolCraftView);
-                    _curLeftView = toolCraftView;
-                    ChangeState(PlayerState.BagUI);
-                    return;
-                }
-                else if (_curTarget is ArmorCraft)
-                {
-                    CraftView armorCraftView = _craftViewPs.Instantiate<CraftView>();
-                    armorCraftView.Init(CraftType.Armor);
-                    _leftViewRootControl.AddChild(armorCraftView);
-                    _curLeftView = armorCraftView;
-                    ChangeState(PlayerState.BagUI);
-                    return;
-                }
-
-                ChangeState(PlayerState.Idle);
-                return;
-            };
+            Input.SetCustomMouseCursor(_interactIconTexture, Input.CursorShape.Arrow, _aimIconTexture.GetSize() / 2);
         }
         private void UpdateInteract(float delta)
         {
@@ -823,10 +758,89 @@ namespace Solo.Scripts.Entities.Players
                 ChangeState(PlayerState.Death);
                 return;
             }
+            if (Input.IsActionJustReleased("Atk"))
+            {
+                ChangeState(PlayerState.Death);
+                return;
+            }
+
+            RefreshFaceDir();
+            CheckTarget();
+            if (Input.IsActionJustReleased("Interact"))
+            {
+                //后期或许可以改成, 先根据手持物+交互目标,再进入动画, 动画结束再执行交互逻辑 
+                _animTween = CreateTween().SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out);
+                _animTween.Parallel().TweenProperty(_animRootNode, "scale", new Vector2(0.8f, 0.8f), 0.05f);//出手动画
+                _animTween.TweenCallback(Callable.From(() =>
+                {
+                    if (_curTarget != null && _curTarget.IsVaild())
+                    {
+                        TriggerScreenShake(1);//震屏       
+                        _curTarget.Interact();
+                    }
+
+                    //if (_curTarget is TreeGrow treeGrow && FastBarInventory.ItemInstanceList[CurFastBarIndex] != null)
+                    //{
+                    //    treeGrow.Watering(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type);
+                    //}
+                }));
+
+                _animTween.Parallel().TweenProperty(_animRootNode, "scale", new Vector2(1f, 1f), 0.1f);
+                _animTween.Finished += () =>
+                {
+                    //交互逻辑 : 由手持物+交互目标决定具体交互逻辑(如食物+小猫 = 投喂)
+
+                    if (_curTarget is BuildingCraft)
+                    {
+                        CraftView buildingCraftView = _craftViewPs.Instantiate<CraftView>();
+                        buildingCraftView.Init(CraftType.Building);
+                        _leftViewRootControl.AddChild(buildingCraftView);
+                        _curLeftView = buildingCraftView;
+                        ChangeState(PlayerState.BagUI);
+                        return;
+                    }
+                    else if (_curTarget is ToolCraft)
+                    {
+                        CraftView toolCraftView = _craftViewPs.Instantiate<CraftView>();
+                        toolCraftView.Init(CraftType.Tool);
+                        _leftViewRootControl.AddChild(toolCraftView);
+                        _curLeftView = toolCraftView;
+                        ChangeState(PlayerState.BagUI);
+                        return;
+                    }
+                    else if (_curTarget is ArmorCraft)
+                    {
+                        CraftView armorCraftView = _craftViewPs.Instantiate<CraftView>();
+                        armorCraftView.Init(CraftType.Armor);
+                        _leftViewRootControl.AddChild(armorCraftView);
+                        _curLeftView = armorCraftView;
+                        ChangeState(PlayerState.BagUI);
+                        return;
+                    }
+
+                    ChangeState(PlayerState.Idle);
+                    return;
+                };
+            }
+
+            Vector2 input = Input.GetVector("MoveLeft", "MoveRight", "MoveForward", "MoveBack");
+            if (input != Vector2.Zero)
+            {
+                if (GameManager.Instance.ChunkManager.GetTileType(GlobalPosition) == TileType.Water)
+                    Velocity = input * _moveSpeed / 8;
+                else
+                    Velocity = input * _moveSpeed / 2;
+                MoveAndSlide();
+            }
         }
         private void ExitInteract()
         {
-
+            Input.SetCustomMouseCursor(null, Input.CursorShape.Arrow);
+            if (_curTarget != null && _curTarget.IsVaild())
+            {
+                _curTarget.ShowOutline(false);
+                _curTarget = null;
+            }
         }
         #endregion
 
@@ -952,7 +966,7 @@ namespace Solo.Scripts.Entities.Players
             _animTween = CreateTween().SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out).SetLoops();
             _animTween.TweenProperty(_animRootNode, "scale", new Vector2(1.5f, 0.8f), 0.2f);
             _animTween.TweenProperty(_animRootNode, "scale", new Vector2(1.0f, 1.0f), 0.2f);
-            Input.SetCustomMouseCursor(_aimTexture, Input.CursorShape.Arrow, _aimTexture.GetSize() / 2);
+            Input.SetCustomMouseCursor(_aimIconTexture, Input.CursorShape.Arrow, _aimIconTexture.GetSize() / 2);
             //_isAtkLongPressTimerValid = false;
         }
         private void UpdateAim(float delta)
@@ -972,6 +986,7 @@ namespace Solo.Scripts.Entities.Players
                     case ItemType.IronSword:
                     case ItemType.GoldSword:
                     case ItemType.JadeSword:
+                    case ItemType.WoodAxe:
                         ChangeState(PlayerState.Atk);
                         return;
                 }

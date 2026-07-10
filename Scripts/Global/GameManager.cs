@@ -37,7 +37,6 @@ namespace Solo.Scripts.Global
         //vfx
         [Export] public PackedScene ExplosionEffectPs;
         [Export] public PackedScene SmogEffectPs;
-        [Export] public PackedScene SwordWavePs;
 
         public override void _Ready()
         {
