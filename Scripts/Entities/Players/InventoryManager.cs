@@ -69,16 +69,50 @@ namespace Solo.Scripts.Entities.Players
             return remainingCount;
         }
 
-        public int GetEquipmentDef()
+
+        public float GetAtkBonus()
         {
-            int def = 0;
+            int atkBonus = 0;
             for (int i = 0; i < EquipmentInventory.SlotList.Count; i++)
             {
                 if (EquipmentInventory.SlotList[i].ItemInstance == null)
                     continue;
-                def += ItemDataManager.Instance.GetItemData(EquipmentInventory.SlotList[i].ItemInstance.Type).DefBonus;
+                atkBonus += ItemDataManager.Instance.GetData(EquipmentInventory.SlotList[i].ItemInstance.Type).AtkBonus;
             }
-            return def;
+            return atkBonus;
+        }
+        public int GetDefBonus()
+        {
+            int defBonus = 0;
+            for (int i = 0; i < EquipmentInventory.SlotList.Count; i++)
+            {
+                if (EquipmentInventory.SlotList[i].ItemInstance == null)
+                    continue;
+                defBonus += ItemDataManager.Instance.GetData(EquipmentInventory.SlotList[i].ItemInstance.Type).DefBonus;
+            }
+            return defBonus;
+        }
+        public float GetMaxHpBonus()
+        {
+            float maxHpBonus = 0;
+            for (int i = 0; i < EquipmentInventory.SlotList.Count; i++)
+            {
+                if (EquipmentInventory.SlotList[i].ItemInstance == null)
+                    continue;
+                maxHpBonus += ItemDataManager.Instance.GetData(EquipmentInventory.SlotList[i].ItemInstance.Type).MaxHpBonus;
+            }
+            return maxHpBonus;
+        }
+        public float GetMaxQiBonus()
+        {
+            float maxQiBonus = 0;
+            for (int i = 0; i < EquipmentInventory.SlotList.Count; i++)
+            {
+                if (EquipmentInventory.SlotList[i].ItemInstance == null)
+                    continue;
+                maxQiBonus += ItemDataManager.Instance.GetData(EquipmentInventory.SlotList[i].ItemInstance.Type).MaxHpBonus;
+            }
+            return maxQiBonus;
         }
     }
 }

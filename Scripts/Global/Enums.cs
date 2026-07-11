@@ -10,6 +10,30 @@
         Pause,//按exc暂停游戏
     }
 
+    //境界类型
+    public enum RealmType
+    {
+        LianQi1,
+        LianQi2,
+        LianQi3,
+        LianQi4,
+        LianQi5,
+
+        ZhuJi1,
+        ZhuJi2,
+        ZhuJi3,
+
+        JinDan1,
+        JinDan2,
+        JinDan3,
+
+        YuanYin1,
+        YuanYin2,
+        YuanYin3,
+
+        HuaShen
+    }
+
     //地形类型
     public enum TileType
     {

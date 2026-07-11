@@ -40,7 +40,7 @@ public partial class BuildingPreview : Node2D
                 Type = BuildingType.TreeGrow;
                 break;
         }
-        BuildingData buildingData = BuildingDataManager.Instance.GetBuildingData(Type);
+        BuildingData buildingData = BuildingDataManager.Instance.GetData(Type);
         _sprite.Texture = GD.Load<Texture2D>(buildingData.TexturePath);
         RefreshPosition(mousePos);
     }
@@ -72,7 +72,7 @@ public partial class BuildingPreview : Node2D
         if (!_canPlace)
             return false;
 
-        BuildingData buildingData = BuildingDataManager.Instance.GetBuildingData(Type);
+        BuildingData buildingData = BuildingDataManager.Instance.GetData(Type);
 
         switch (Type)
         {

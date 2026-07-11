@@ -41,7 +41,7 @@ namespace Solo.Scripts.System.CraftSystem
                 RefreshRequiredItemList();
             };
 
-            CraftData data = CraftDataManager.Instance.GetCraftData(Type);
+            CraftData data = CraftDataManager.Instance.GetData(Type);
             _craftNameLb.Text = data.Name;
 
             for (int i = 0; i < data.ItemList.Count; i++)
@@ -55,7 +55,7 @@ namespace Solo.Scripts.System.CraftSystem
 
                     _curCraftItemType = selectedCraftItemView.Type;
                     _curCraftCount = 1;
-                    _curCraftItemNameLb.Text = ItemDataManager.Instance.GetItemData(_curCraftItemType).Name;
+                    _curCraftItemNameLb.Text = ItemDataManager.Instance.GetData(_curCraftItemType).Name;
                     _curCraftItemCountLb.Text = "*1";
                     RefreshCountSlider();//刷新滑块, 计算最大值, 当前值重置成1
                     RefreshRequiredItemList();//刷新需要材料gc
@@ -69,11 +69,11 @@ namespace Solo.Scripts.System.CraftSystem
             {
                 if (GameManager.Instance.IsDebugMode == false)//非调试模式要扣物品
                 {
-                    foreach ((ItemType, int) tuple in ItemDataManager.Instance.GetItemData(_curCraftItemType).CraftRequiredItemList)
+                    foreach ((ItemType, int) tuple in ItemDataManager.Instance.GetData(_curCraftItemType).CraftRequiredItemList)
                         GameManager.Instance.Player.InventoryManager.RemoveItem(tuple.Item1, tuple.Item2 * _curCraftCount);
                 }
 
-                GameManager.Instance.Player.InventoryManager.AddItem(new ItemInstance() { Type = _curCraftItemType, Count = _curCraftCount, CurDur = ItemDataManager.Instance.GetItemData(_curCraftItemType).MaxDur });
+                GameManager.Instance.Player.InventoryManager.AddItem(new ItemInstance() { Type = _curCraftItemType, Count = _curCraftCount, CurDur = ItemDataManager.Instance.GetData(_curCraftItemType).MaxDur });
                 RefreshCountSlider();
                 RefreshRequiredItemList();
             };
@@ -84,7 +84,7 @@ namespace Solo.Scripts.System.CraftSystem
             //GD.Print(craftItemType + " RefreshCountSlider");
             //遍历每个材料, 看看背包能合成多少个, 如何取最少材料的那个
             int minCount = int.MaxValue;
-            foreach ((ItemType, int) tuple in ItemDataManager.Instance.GetItemData(_curCraftItemType).CraftRequiredItemList)
+            foreach ((ItemType, int) tuple in ItemDataManager.Instance.GetData(_curCraftItemType).CraftRequiredItemList)
             {
                 int itemCount = GameManager.Instance.Player.InventoryManager.GetItemCount(tuple.Item1);
                 int canCraftCount = itemCount / tuple.Item2;
@@ -103,7 +103,7 @@ namespace Solo.Scripts.System.CraftSystem
 
             bool canCraft = true;
 
-            foreach ((ItemType, int) tuple in ItemDataManager.Instance.GetItemData(_curCraftItemType).CraftRequiredItemList)
+            foreach ((ItemType, int) tuple in ItemDataManager.Instance.GetData(_curCraftItemType).CraftRequiredItemList)
             {
                 RequiredItemView requiredItemView = _requiredItemViewPs.Instantiate<RequiredItemView>();
                 requiredItemView.Init(tuple.Item1, tuple.Item2 * _curCraftCount);

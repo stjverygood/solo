@@ -3,6 +3,7 @@
 [ext_resource type="PackedScene" uid="uid://cfu7wy1op48g5" path="res://Scenes/System/CraftSystem/CraftView.tscn" id="1_7ae8y"]
 [ext_resource type="Script" uid="uid://cdwnxbnr2fkb1" path="res://Scripts/Entities/Players/CharacterView.cs" id="1_hfcn2"]
 [ext_resource type="Texture2D" uid="uid://8e254e6sobd0" path="res://Assets/Png/ui.png" id="2_srdpw"]
+[ext_resource type="PackedScene" uid="uid://bbl4ldydpahmt" path="res://Scenes/Entities/Players/UI/AttributeView.tscn" id="3_8neig"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_srdpw"]
 atlas = ExtResource("2_srdpw")
@@ -15,13 +16,16 @@ texture_margin_top = 6.0
 texture_margin_right = 6.0
 texture_margin_bottom = 6.0
 
-[sub_resource type="ButtonGroup" id="ButtonGroup_srdpw"]
+[sub_resource type="ButtonGroup" id="ButtonGroup_8neig"]
 
-[node name="CharacterView" type="Control" unique_id=1785653158 node_paths=PackedStringArray("_fastCraftView")]
+[node name="CharacterView" type="Control" unique_id=1785653158 node_paths=PackedStringArray("_attributeViewBtn", "_fastCraftViewBtn", "_attributeView", "_fastCraftView")]
 layout_mode = 3
 anchors_preset = 0
 script = ExtResource("1_hfcn2")
-_fastCraftView = NodePath("PanelContainer/VBoxContainer/CraftView")
+_attributeViewBtn = NodePath("PanelContainer/VBoxContainer/HBoxContainer/AttributeViewBtn")
+_fastCraftViewBtn = NodePath("PanelContainer/VBoxContainer/HBoxContainer/FastCraftViewBtn")
+_attributeView = NodePath("PanelContainer/VBoxContainer/PanelContainer/AttributeView")
+_fastCraftView = NodePath("PanelContainer/VBoxContainer/PanelContainer/FastCraftView")
 
 [node name="PanelContainer" type="PanelContainer" parent="." unique_id=31633694]
 layout_mode = 1
@@ -47,15 +51,24 @@ alignment = 1
 layout_mode = 2
 alignment = 1
 
-[node name="PlayerInfoBtn" type="Button" parent="PanelContainer/VBoxContainer/HBoxContainer" unique_id=1986967787]
+[node name="AttributeViewBtn" type="Button" parent="PanelContainer/VBoxContainer/HBoxContainer" unique_id=1986967787]
 layout_mode = 2
+toggle_mode = true
 text = "修士境界"
 
-[node name="FastCraftBtn" type="Button" parent="PanelContainer/VBoxContainer/HBoxContainer" unique_id=1015454507]
+[node name="FastCraftViewBtn" type="Button" parent="PanelContainer/VBoxContainer/HBoxContainer" unique_id=1015454507]
 layout_mode = 2
+toggle_mode = true
 text = "便携造物台"
 
-[node name="CraftView" parent="PanelContainer/VBoxContainer" unique_id=1489113954 instance=ExtResource("1_7ae8y")]
+[node name="PanelContainer" type="PanelContainer" parent="PanelContainer/VBoxContainer" unique_id=520209668]
+custom_minimum_size = Vector2(300, 250)
+layout_mode = 2
+
+[node name="AttributeView" parent="PanelContainer/VBoxContainer/PanelContainer" unique_id=553775093 instance=ExtResource("3_8neig")]
+layout_mode = 2
+
+[node name="FastCraftView" parent="PanelContainer/VBoxContainer/PanelContainer" unique_id=1489113954 instance=ExtResource("1_7ae8y")]
 layout_mode = 2
 size_flags_horizontal = 4
-_btnGroup = SubResource("ButtonGroup_srdpw")
+_btnGroup = SubResource("ButtonGroup_8neig")

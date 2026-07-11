@@ -11,11 +11,11 @@ namespace Solo.Scripts.System.ItemSystem
         public int MaxDur = -1;
         public bool IsArmor = false;
         public ArmorSlotType ArmorSlot = ArmorSlotType.Helmet;
-        public int DefBonus = 0;
         public int AtkBonus = 0;
+        public int DefBonus = 0;
+        public float MaxHpBonus = 0;
+        public float MaxQiBonus = 0;
         public int MoveSpeedBonus = 0;
-        public float HpBonus = 0;
-        public float MpBonus = 0;
         public bool CanBuild = false;
         public bool CanAim = false;
         public bool CanConsume = false;

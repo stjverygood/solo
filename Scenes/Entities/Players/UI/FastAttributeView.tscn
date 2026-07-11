@@ -1,0 +1,57 @@
+[gd_scene format=3 uid="uid://lu2ulevw2hqn"]
+
+[ext_resource type="Script" uid="uid://b6lv3kf71702r" path="res://Scripts/Entities/Players/UI/FastAttributeView.cs" id="1_l6ss2"]
+
+[node name="FastAttributeView" type="Control" unique_id=1308229637 node_paths=PackedStringArray("_realmLb", "_hpLb", "_qiLb", "_expLb")]
+layout_mode = 3
+anchors_preset = 0
+script = ExtResource("1_l6ss2")
+_realmLb = NodePath("PanelContainer/VBoxContainer/RealmLb")
+_hpLb = NodePath("PanelContainer/VBoxContainer/HBoxContainer/HpLb")
+_qiLb = NodePath("PanelContainer/VBoxContainer/HBoxContainer2/QiLb")
+_expLb = NodePath("PanelContainer/VBoxContainer/HBoxContainer3/ExpLb")
+
+[node name="PanelContainer" type="PanelContainer" parent="." unique_id=1127258501]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer" unique_id=462881946]
+layout_mode = 2
+
+[node name="RealmLb" type="Label" parent="PanelContainer/VBoxContainer" unique_id=679557593]
+layout_mode = 2
+text = "境界 : 筑基期"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer/VBoxContainer" unique_id=2111753095]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="PanelContainer/VBoxContainer/HBoxContainer" unique_id=935591127]
+layout_mode = 2
+text = "血"
+
+[node name="HpLb" type="Label" parent="PanelContainer/VBoxContainer/HBoxContainer" unique_id=1727185815]
+layout_mode = 2
+text = "1234/1234"
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="PanelContainer/VBoxContainer" unique_id=852404610]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="PanelContainer/VBoxContainer/HBoxContainer2" unique_id=573296336]
+layout_mode = 2
+text = "气"
+
+[node name="QiLb" type="Label" parent="PanelContainer/VBoxContainer/HBoxContainer2" unique_id=1622056358]
+layout_mode = 2
+text = "1234/1234"
+
+[node name="HBoxContainer3" type="HBoxContainer" parent="PanelContainer/VBoxContainer" unique_id=876154809]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="PanelContainer/VBoxContainer/HBoxContainer3" unique_id=1876173188]
+layout_mode = 2
+text = "修"
+
+[node name="ExpLb" type="Label" parent="PanelContainer/VBoxContainer/HBoxContainer3" unique_id=1271008920]
+layout_mode = 2
+text = "1234/1234"

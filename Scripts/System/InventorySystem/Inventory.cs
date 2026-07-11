@@ -18,7 +18,7 @@ namespace Solo.Scripts.System.InventorySystem
         public int AddItem(ItemInstance instance)
         {
             int remainCount = instance.Count;//记录当前剩余数量
-            if (ItemDataManager.Instance.GetItemData(instance.Type).MaxCount != 1)//能堆叠, instance是可合并的
+            if (ItemDataManager.Instance.GetData(instance.Type).MaxCount != 1)//能堆叠, instance是可合并的
             {
                 for (int i = 0; i < SlotList.Count; i++)//先遍历一次, 尝试合并
                 {
@@ -26,9 +26,9 @@ namespace Solo.Scripts.System.InventorySystem
                     if (curExistInstance == null || curExistInstance.Type != instance.Type)
                         continue;
 
-                    if (curExistInstance.Count < ItemDataManager.Instance.GetItemData(instance.Type).MaxCount)//未满
+                    if (curExistInstance.Count < ItemDataManager.Instance.GetData(instance.Type).MaxCount)//未满
                     {
-                        int canAddCount = ItemDataManager.Instance.GetItemData(instance.Type).MaxCount - curExistInstance.Count;//能加的
+                        int canAddCount = ItemDataManager.Instance.GetData(instance.Type).MaxCount - curExistInstance.Count;//能加的
                         int addCount = remainCount > canAddCount ? canAddCount : remainCount;//实际加的
                         remainCount -= addCount;
                         curExistInstance.Count += addCount;

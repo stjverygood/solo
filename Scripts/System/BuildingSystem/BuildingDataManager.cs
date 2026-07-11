@@ -122,7 +122,7 @@ namespace Solo.Scripts.System.BuildingSystem
             });
         }
 
-        public BuildingData GetBuildingData(BuildingType type)
+        public BuildingData GetData(BuildingType type)
         {
             return _buildingDataMap[type];
         }

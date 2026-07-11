@@ -20,7 +20,7 @@ namespace Solo.Scripts.System.CraftSystem
         {
             Type = type;
             Index = index;
-            _iconTr.Texture = GD.Load<Texture2D>(ItemDataManager.Instance.GetItemData(Type).IconPath);
+            _iconTr.Texture = GD.Load<Texture2D>(ItemDataManager.Instance.GetData(Type).IconPath);
             _toggleBtn.ButtonGroup = btnGroup;
             _toggleBtn.Toggled += _toggleBtn_Toggled;
         }

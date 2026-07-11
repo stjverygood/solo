@@ -1,5 +1,6 @@
 ﻿using Solo.Scripts.Global;
 using Solo.Scripts.System.InventorySystem;
+using Solo.Scripts.System.RealmSystem;
 using System.Collections.Generic;
 
 namespace Solo.Scripts.System.SaveSystem
@@ -10,10 +11,16 @@ namespace Solo.Scripts.System.SaveSystem
         public float StartPosY { get; set; } = 0;
         public float PosX { get; set; } = 0;//玩家上次位置
         public float PosY { get; set; } = 0;
-        public float MaxHp { get; set; } = 100;//血量
-        public float CurHp { get; set; } = 100;
-        public float MaxMp { get; set; } = 100;//饥饿值
-        public float CurMp { get; set; } = 100;
+        //public float MaxHp { get; set; } = 100;//血量
+
+        //public float MaxMp { get; set; } = 100;//饥饿值
+        //public float CurMp { get; set; } = 100;
+
+        public RealmType CurRealmType { get; set; }
+        public float CurHp { get; set; }
+        public float CurQi { get; set; }
+        public float CurExp { get; set; }
+
         public int FastBarIndex { get; set; }
 
         public List<InventorySlot> FastBarInventorySlotList { get; set; }
@@ -22,6 +29,11 @@ namespace Solo.Scripts.System.SaveSystem
 
         public PlayerSaveData()
         {
+            CurRealmType = RealmType.LianQi1;
+            CurHp = RealmDataManager.Instance.GetData(CurRealmType).MaxHp;
+            CurQi = RealmDataManager.Instance.GetData(CurRealmType).MaxQi;
+            CurExp = 0;
+
             FastBarIndex = 0;
 
             FastBarInventorySlotList = new List<InventorySlot>(4);

@@ -1,10 +1,12 @@
 using Godot;
 using Solo.Scripts.Entities.Players.Solo.Scripts.Entities.Players;
+using Solo.Scripts.Entities.Players.UI;
 using Solo.Scripts.Global;
 using Solo.Scripts.Global.Interfaces;
 using Solo.Scripts.System.BuildingSystem.Buildings;
 using Solo.Scripts.System.CraftSystem;
 using Solo.Scripts.System.ItemSystem;
+using Solo.Scripts.System.RealmSystem;
 using Solo.Scripts.System.SaveSystem;
 
 namespace Solo.Scripts.Entities.Players
@@ -55,43 +57,47 @@ namespace Solo.Scripts.Entities.Players
 
 
 
-        //[Export] public PackedScene DropItemPs;
 
-        //private ShaderMaterial _shaderMaterial;
-        //private float _atkLongPressDuration = 0.3f;//长按判断阈值
-        //private float _atkLongPressTimer = 0f;
-        //private bool _isAtkLongPressTimerValid = true;
 
         //人物属性
         public Vector2 StartPoint = new Vector2(0, 0);//出生点
         private float _moveSpeed = 100;
-        private float _atk = 10;
-        private float _def = 10;
-        private float _maxHp = 100;
-        private float _maxMp = 100;
-        private float _curHp;
-        private float _curMp; //灵气机制 : 1. 只要活着, 就会不断扣灵气; 2. >= 80%, 自动回血; 3. 
-        private float _mpConsume = 0.01f;
-        private float _curExp = 0;
-
-
-        private float _meleeAtkRange = 30;
-        private float _rangeAtkRange = 50;
-        private float _curAtkRange;//根据itemType动态切换攻击距离
-        private float _curAtkRangeSq;
-
-        private float _interactRange = 30;
-        private float _interactRangeSq;
-
+        private AttributeManager _attributeManager;
         private float _curTargetRange = 100;//手长, 攻击和交互都统一用这个距离, 远程itemtype能加这个范围, todo : 改用基础值, 使用时获取手持物+距离
         private float _curTargetRangeSq;
 
-        public int ResCapacity = 1000;//资源存储上限
+
+        //private RealmType _curRealmType;
+        //private float _curHp;
+        //private float _curQi;
+        //private float _curExp = 0;
+
+
+
+        //private float _atk = 10;
+        //private float _def = 10;
+        //private float _maxHp = 100;
+        //private float _maxMp = 100;
+        //private float _curMp; //灵气机制 : 1. 只要活着, 就会不断扣灵气; 2. >= 80%, 自动回血; 3. 
+        //private float _mpConsume = 0.01f;
+
+
+
+
+        //private float _meleeAtkRange = 30;
+        //private float _rangeAtkRange = 50;
+        //private float _curAtkRange;//根据itemType动态切换攻击距离
+        //private float _curAtkRangeSq;
+
+        //private float _interactRange = 30;
+        //private float _interactRangeSq;
+
+
+
+        //public int ResCapacity = 1000;//资源存储上限
         private Tween _animTween; // 用于管理当前动画
 
-        //public Inventory BagInventory;//背包
-        //public Inventory ArmorInventory;//装备栏
-        //public Inventory FastBarInventory;//快捷栏
+        //UI
         private int _curFastBarIndex;
         public InventoryManager InventoryManager = new InventoryManager();
 
@@ -99,6 +105,8 @@ namespace Solo.Scripts.Entities.Players
         [Export] private CharacterView _characterView;
         [Export] private InventoryManagerView _inventoryManagerView;
         [Export] private FastBarView _fastBarView;
+        [Export] private FastAttributeView _fastAttributeView;
+
 
         [Export] private PackedScene _craftViewPs;
 
@@ -119,21 +127,32 @@ namespace Solo.Scripts.Entities.Players
         public override void _Ready()
         {
             GD.Print("Player Ready~~~");
+
             GameManager.Instance.Player = this;
             PlayerSaveData playerSaveData = SaveManager.Instance.CurSaveData.PlayerSaveData; //从存档里加载属性
+            _attributeManager = new AttributeManager();
+            _fastAttributeView.Init(_attributeManager, InventoryManager);
+            _characterView.Init(_attributeManager, InventoryManager);
+            _attributeManager.CurRealmType = playerSaveData.CurRealmType;
+            _attributeManager.CurHp = playerSaveData.CurHp;
+            _attributeManager.CurQi = playerSaveData.CurQi;
+            _attributeManager.CurExp = playerSaveData.CurExp;
+
             StartPoint = new Vector2(playerSaveData.StartPosX, playerSaveData.StartPosY);
             GlobalPosition = new Vector2(playerSaveData.PosX, playerSaveData.PosY);
-            _maxHp = playerSaveData.MaxHp;
-            SetCurHp(playerSaveData.CurHp);
-            _maxMp = playerSaveData.MaxMp;
-            SetCurMp(playerSaveData.CurMp);
+
+
+            //_maxHp = playerSaveData.MaxHp;
+            //SetCurHp(playerSaveData.CurHp);
+            //_maxMp = playerSaveData.MaxMp;
+            //SetCurMp(playerSaveData.CurMp);
 
             _bgAnimSprite.Play("default");
             //FastBarInventory = new Inventory(SaveManager.Instance.CurSaveData.FastBarInventoryGuidStr, SaveManager.Instance.CurSaveData.FastBarInventoryList);
             //BagInventory = new Inventory(SaveManager.Instance.CurSaveData.BagInventoryGuidStr, SaveManager.Instance.CurSaveData.BagInventoryList);
             //ArmorInventory = new Inventory(SaveManager.Instance.CurSaveData.EquipmentInventoryGuidStr, SaveManager.Instance.CurSaveData.EquipmentInventoryList);
             //左
-            _characterView.Init();
+
             _characterView.Visible = false;
             //右
             //_itemView.Init(BagInventory, ArmorInventory);
@@ -149,14 +168,16 @@ namespace Solo.Scripts.Entities.Players
             };
             RefreshHandNode();
 
-            _curAtkRange = _meleeAtkRange;//todo : 根据itemdata的israngeitem来决定攻击范围
-            _curAtkRangeSq = _curAtkRange * _curAtkRange;
-            _interactRangeSq = _interactRange * _interactRange;
+
+
+            //_curAtkRange = _meleeAtkRange;//todo : 根据itemdata的israngeitem来决定攻击范围
+            //_curAtkRangeSq = _curAtkRange * _curAtkRange;
+            //_interactRangeSq = _interactRange * _interactRange;
 
             _curTargetRangeSq = _curTargetRange * _curTargetRange;
             _deathView.Visible = false;
 
-            if (_curHp == 0)//若血量是0, 进入重生逻辑
+            if (_attributeManager.CurHp == 0)//若血量是0, 进入重生逻辑
             {
                 Restart();
             }
@@ -191,19 +212,20 @@ namespace Solo.Scripts.Entities.Players
                 switch (keyEvent.Keycode)
                 {
                     case Key.Key1:
-                        GetHp(10);
+                        //GetHp(10);
                         GD.Print("快捷检测：按下了 1");
+                        Upgrade();
                         break;
                     case Key.Key2:
                         TakeDamage(this, 50, null);
                         GD.Print("快捷检测：按下了 2");
                         break;
                     case Key.Key3:
-                        GetMp(10);
+                        //GetMp(10);
                         GD.Print("快捷检测：按下了 3");
                         break;
                     case Key.Key4:
-                        TakeMp(10);
+                        //TakeMp(10);
                         GD.Print("快捷检测：按下了 4");
                         break;
                 }
@@ -360,7 +382,7 @@ namespace Solo.Scripts.Entities.Players
         }
         private void UpdateIdle(float delta)
         {
-            if (_curHp <= 0)
+            if (_attributeManager.CurHp <= 0)
             {
                 ChangeState(PlayerState.Death);
                 return;
@@ -378,7 +400,7 @@ namespace Solo.Scripts.Entities.Players
                 return;
             }
 
-            ConsumeDuration(delta, _mpConsume * 1);
+            //ConsumeDuration(delta, _mpConsume * 1);
             HpRecover(delta);
             if (Input.IsActionJustPressed("Pre"))
                 ChangeCurFastBarIndex(false);
@@ -390,7 +412,7 @@ namespace Solo.Scripts.Entities.Players
                 ItemType? itemType = InventoryManager.GetCurItemType(_curFastBarIndex);
                 if (itemType == null)
                     return;
-                ItemData itemData = ItemDataManager.Instance.GetItemData((ItemType)itemType);
+                ItemData itemData = ItemDataManager.Instance.GetData((ItemType)itemType);
                 if (itemData.CanAim)
                 {
                     ChangeState(PlayerState.Aim);
@@ -434,7 +456,7 @@ namespace Solo.Scripts.Entities.Players
         }
         private void UpdateWalk(float delta)
         {
-            if (_curHp <= 0)
+            if (_attributeManager.CurHp <= 0)
             {
                 ChangeState(PlayerState.Death);
                 return;
@@ -457,7 +479,7 @@ namespace Solo.Scripts.Entities.Players
                 ItemType? itemType = InventoryManager.GetCurItemType(_curFastBarIndex);
                 if (itemType == null)
                     return;
-                ItemData itemData = ItemDataManager.Instance.GetItemData((ItemType)itemType);
+                ItemData itemData = ItemDataManager.Instance.GetData((ItemType)itemType);
                 if (itemData.CanAim)
                 {
                     ChangeState(PlayerState.Aim);
@@ -476,7 +498,7 @@ namespace Solo.Scripts.Entities.Players
                 return;
             }
 
-            ConsumeDuration(delta, _mpConsume * 1.2f);
+            //ConsumeDuration(delta, _mpConsume * 1.2f);
             HpRecover(delta);
             if (Input.IsActionJustPressed("Pre"))
                 ChangeCurFastBarIndex(false);
@@ -524,7 +546,7 @@ namespace Solo.Scripts.Entities.Players
         }
         private void UpdateRun(float delta)
         {
-            if (_curHp <= 0)
+            if (_attributeManager.CurHp <= 0)
             {
                 ChangeState(PlayerState.Death);
                 return;
@@ -535,7 +557,7 @@ namespace Solo.Scripts.Entities.Players
                 ItemType? itemType = InventoryManager.GetCurItemType(_curFastBarIndex);
                 if (itemType == null)
                     return;
-                ItemData itemData = ItemDataManager.Instance.GetItemData((ItemType)itemType);
+                ItemData itemData = ItemDataManager.Instance.GetData((ItemType)itemType);
                 if (itemData.CanAim)
                 {
                     ChangeState(PlayerState.Aim);
@@ -554,7 +576,7 @@ namespace Solo.Scripts.Entities.Players
                 return;
             }
 
-            ConsumeDuration(delta, _mpConsume * 2);
+            //ConsumeDuration(delta, _mpConsume * 2);
             if (Input.IsActionJustPressed("Pre"))
                 ChangeCurFastBarIndex(false);
             if (Input.IsActionJustPressed("Next"))
@@ -593,11 +615,11 @@ namespace Solo.Scripts.Entities.Players
             _animTween.TweenProperty(_animRootNode, "skew", 0.1f, 0.3f);// 走动效果：左右晃动或轻微拉伸
             _animTween.TweenProperty(_animRootNode, "skew", -0.1f, 0.3f);
             _dashTimer = 0;
-            TakeMp(1);
+            //TakeMp(1);
         }
         private void UpdateDash(float delta)
         {
-            if (_curHp <= 0)
+            if (_attributeManager.CurHp <= 0)
             {
                 ChangeState(PlayerState.Death);
                 return;
@@ -722,7 +744,7 @@ namespace Solo.Scripts.Entities.Players
         }
         private void UpdateAtk(float delta)
         {
-            if (_curHp <= 0)
+            if (_attributeManager.CurHp <= 0)
             {
                 ChangeState(PlayerState.Death);
                 return;
@@ -753,7 +775,7 @@ namespace Solo.Scripts.Entities.Players
         }
         private void UpdateInteract(float delta)
         {
-            if (_curHp <= 0)
+            if (_attributeManager.CurHp <= 0)
             {
                 ChangeState(PlayerState.Death);
                 return;
@@ -865,7 +887,7 @@ namespace Solo.Scripts.Entities.Players
         }
         private void UpdateBuild(float delta)
         {
-            if (_curHp <= 0)
+            if (_attributeManager.CurHp <= 0)
             {
                 foreach (IQiRangeable qiRangeable in GameManager.Instance.IQiRangeableList)
                 {
@@ -931,7 +953,7 @@ namespace Solo.Scripts.Entities.Players
         }
         private void UpdateComsume(float delta)
         {
-            if (_curHp <= 0)
+            if (_attributeManager.CurHp <= 0)
             {
                 ChangeState(PlayerState.Death);
                 return;
@@ -971,7 +993,7 @@ namespace Solo.Scripts.Entities.Players
         }
         private void UpdateAim(float delta)
         {
-            if (_curHp <= 0)
+            if (_attributeManager.CurHp <= 0)
             {
                 ChangeState(PlayerState.Death);
                 return;
@@ -1091,7 +1113,7 @@ namespace Solo.Scripts.Entities.Players
         }
         private void UpdateFishing(float delta)
         {
-            if (_curHp <= 0)
+            if (_attributeManager.CurHp <= 0)
             {
                 fishingFloat.QueueFree();
                 ChangeState(PlayerState.Death);
@@ -1167,7 +1189,7 @@ namespace Solo.Scripts.Entities.Players
         }
         private void UpdateDeath(float delta)
         {
-            if (_curHp > 0)
+            if (_attributeManager.CurHp > 0)
             {
 
                 ChangeState(PlayerState.Idle);
@@ -1381,7 +1403,7 @@ namespace Solo.Scripts.Entities.Players
             if (itemType == null)
                 return;
 
-            ItemData itemData = ItemDataManager.Instance.GetItemData((ItemType)itemType);
+            ItemData itemData = ItemDataManager.Instance.GetData((ItemType)itemType);
 
             _handSprite.Texture = GD.Load<Texture2D>(itemData.IconPath);
             if (itemData.CanBuild)
@@ -1472,24 +1494,25 @@ namespace Solo.Scripts.Entities.Players
 
         private void SetCurHp(float curHp)
         {
-            _curHp = curHp;
-            _hpTpb.MaxValue = _maxHp;
-            _hpTpb.Value = _curHp;
-            _hpLb.Text = $"{_curHp:f0}/{_maxHp:f0}";
+            //_curHp = curHp;
+            //_hpTpb.MaxValue = _maxHp;
+            //_hpTpb.Value = _curHp;
+            //_hpLb.Text = $"{_curHp:f0}/{_maxHp:f0}";
         }
         private void SetCurMp(float curHg)
         {
-            _curMp = curHg;
-            _mpTpb.MaxValue = _maxMp;
-            _mpTpb.Value = _curMp;
-            _mpLb.Text = $"{_curMp:f0}/{_maxHp:f0}";
+            //_curMp = curHg;
+            //_mpTpb.MaxValue = _maxMp;
+            //_mpTpb.Value = _curMp;
+            //_mpLb.Text = $"{_curMp:f0}/{_maxHp:f0}";
         }
 
         public void Restart()
         {
             GlobalPosition = StartPoint;
-            SetCurHp(_maxHp);
-            SetCurMp(_maxMp);
+            _attributeManager.CurHp = RealmDataManager.Instance.GetData(_attributeManager.CurRealmType).MaxHp;
+            _attributeManager.CurQi = RealmDataManager.Instance.GetData(_attributeManager.CurRealmType).MaxQi;
+            _attributeManager.CurExp = 0;
             CollisionLayer = 1;
             CollisionMask = 1;
         }
@@ -1502,10 +1525,12 @@ namespace Solo.Scripts.Entities.Players
                 StartPosY = StartPoint.Y,
                 PosX = GlobalPosition.X,
                 PosY = GlobalPosition.Y,
-                MaxHp = _maxHp,
-                CurHp = _curHp,
-                MaxMp = _maxMp,
-                CurMp = _curMp,
+
+                CurRealmType = _attributeManager.CurRealmType,
+                CurHp = _attributeManager.CurHp,
+                CurQi = _attributeManager.CurQi,
+                CurExp = _attributeManager.CurExp,
+
                 FastBarIndex = _curFastBarIndex,
 
                 FastBarInventorySlotList = InventoryManager.FastBarInventory.SlotList,
@@ -1520,7 +1545,7 @@ namespace Solo.Scripts.Entities.Players
         }
         public void TakeDamage(Node2D atker, float damage, ItemType? itemType)
         {
-            float finalDamage = Mathf.Max(0, damage - InventoryManager.GetEquipmentDef());
+            float finalDamage = Mathf.Max(0, damage - InventoryManager.GetDefBonus());
 
             Tween animTween = CreateTween().SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out);
             animTween.TweenProperty(_bodyRootNode, "scale", new Vector2(0.8f, 0.8f), 0.1f);
@@ -1531,7 +1556,7 @@ namespace Solo.Scripts.Entities.Players
             FloatTextLb floatTextLb = GameManager.Instance.FloatTextLbPs.Instantiate<FloatTextLb>();
             GetTree().CurrentScene.AddChild(floatTextLb);
             floatTextLb.Init($"-{finalDamage}", GlobalPosition, new Color(162 / 256f, 38 / 256f, 51 / 256f));//162, 38, 51
-            SetCurHp(_curHp - finalDamage);
+            _attributeManager.CurHp = (_attributeManager.CurHp - finalDamage);
         }
 
         public bool CanInteract()
@@ -1586,68 +1611,68 @@ namespace Solo.Scripts.Entities.Players
         private float _mpConsumeTimer = 0;
         private void ConsumeDuration(float delta, float consumeValue)
         {
-            _mpConsumeTimer += delta;
-            if (_mpConsumeTimer < _mpConsumeDuration)
-                return;
-            if (_curMp - consumeValue > 0)
-            {
-                SetCurMp(_curMp - consumeValue);
-            }
-            else
-            {
-                SetCurMp(0);
-            }
-            _mpConsumeTimer = 0;
+            //_mpConsumeTimer += delta;
+            //if (_mpConsumeTimer < _mpConsumeDuration)
+            //    return;
+            //if (_curMp - consumeValue > 0)
+            //{
+            //    SetCurMp(_curMp - consumeValue);
+            //}
+            //else
+            //{
+            //    SetCurMp(0);
+            //}
+            //_mpConsumeTimer = 0;
         }
 
         private float _hpRecoverDuration = 1f;
         private float _hpRecoverTimer = 0f;
         private void HpRecover(float delta)
         {
-            if (_curMp / _maxMp < 0.8)
-            {
-                _hpRecoverTimer = 0;
-                return;
-            }
-            _hpRecoverTimer += delta;
-            if (_hpRecoverTimer < _hpRecoverDuration)
-                return;
-            if (_curHp < _maxMp)
-                GetHp(10);
-            _hpRecoverTimer = 0;
+            //if (_curMp / _maxMp < 0.8)
+            //{
+            //    _hpRecoverTimer = 0;
+            //    return;
+            //}
+            //_hpRecoverTimer += delta;
+            //if (_hpRecoverTimer < _hpRecoverDuration)
+            //    return;
+            //if (_curHp < _maxMp)
+            //    GetHp(10);
+            //_hpRecoverTimer = 0;
         }
 
-        private void GetHp(float hp)
-        {
-            FloatTextLb floatTextLb = GameManager.Instance.FloatTextLbPs.Instantiate<FloatTextLb>();
-            GetTree().CurrentScene.AddChild(floatTextLb);
-            floatTextLb.Init($"+{hp}", GlobalPosition, new Color(99 / 256f, 199 / 256f, 77 / 256f));//99, 199, 77 
-            if (_curHp + hp < _maxHp)
-                SetCurHp(_curHp + hp);
-            else
-                SetCurHp(_maxHp);
-        }
+        //private void GetHp(float hp)
+        //{
+        //    FloatTextLb floatTextLb = GameManager.Instance.FloatTextLbPs.Instantiate<FloatTextLb>();
+        //    GetTree().CurrentScene.AddChild(floatTextLb);
+        //    floatTextLb.Init($"+{hp}", GlobalPosition, new Color(99 / 256f, 199 / 256f, 77 / 256f));//99, 199, 77 
+        //    if (_curHp + hp < _maxHp)
+        //        SetCurHp(_curHp + hp);
+        //    else
+        //        SetCurHp(_maxHp);
+        //}
 
-        private void GetMp(float mp)
-        {
-            //FloatTextLb floatTextLb = GameManager.Instance.FloatTextLbPs.Instantiate<FloatTextLb>();
-            //GetTree().CurrentScene.AddChild(floatTextLb);
-            //floatTextLb.Init($"+{mp}", GlobalPosition, new Color(44 / 256f, 232 / 256f, 245 / 256f));//44, 232, 245
-            if (_curMp + mp < _maxMp)
-                SetCurMp(_curMp + mp);
-            else
-                SetCurMp(_maxHp);
-        }
-        private void TakeMp(float mp)
-        {
-            //FloatTextLb floatTextLb = GameManager.Instance.FloatTextLbPs.Instantiate<FloatTextLb>();
-            //GetTree().CurrentScene.AddChild(floatTextLb);
-            //floatTextLb.Init($"-{mp}", GlobalPosition, new Color(18 / 256f, 78 / 256f, 137 / 256f));//18, 78, 137
-            if (_curMp - mp > 0)
-                SetCurMp(_curMp - mp);
-            else
-                SetCurMp(0);
-        }
+        //private void GetMp(float mp)
+        //{
+        //    //FloatTextLb floatTextLb = GameManager.Instance.FloatTextLbPs.Instantiate<FloatTextLb>();
+        //    //GetTree().CurrentScene.AddChild(floatTextLb);
+        //    //floatTextLb.Init($"+{mp}", GlobalPosition, new Color(44 / 256f, 232 / 256f, 245 / 256f));//44, 232, 245
+        //    if (_curMp + mp < _maxMp)
+        //        SetCurMp(_curMp + mp);
+        //    else
+        //        SetCurMp(_maxHp);
+        //}
+        //private void TakeMp(float mp)
+        //{
+        //    //FloatTextLb floatTextLb = GameManager.Instance.FloatTextLbPs.Instantiate<FloatTextLb>();
+        //    //GetTree().CurrentScene.AddChild(floatTextLb);
+        //    //floatTextLb.Init($"-{mp}", GlobalPosition, new Color(18 / 256f, 78 / 256f, 137 / 256f));//18, 78, 137
+        //    if (_curMp - mp > 0)
+        //        SetCurMp(_curMp - mp);
+        //    else
+        //        SetCurMp(0);
+        //}
 
         private void ComsumeItem()
         {
@@ -1665,6 +1690,16 @@ namespace Solo.Scripts.Entities.Players
             //int remainCount = FastBarInventory.RemoveItemByIndex(CurFastBarIndex, 1);
             //if (remainCount == 0)
             //    RefreshHandNode();
+        }
+
+        private void Upgrade()
+        {
+            if (_attributeManager.CurRealmType == RealmType.HuaShen)
+                return;
+            _attributeManager.CurRealmType++;
+            _attributeManager.CurHp = RealmDataManager.Instance.GetData(_attributeManager.CurRealmType).MaxHp + InventoryManager.GetMaxHpBonus();
+            _attributeManager.CurQi = RealmDataManager.Instance.GetData(_attributeManager.CurRealmType).MaxQi + InventoryManager.GetMaxQiBonus();
+            _attributeManager.CurExp = 0;
         }
     }
 }

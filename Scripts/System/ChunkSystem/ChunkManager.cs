@@ -194,13 +194,13 @@ namespace Solo.Scripts.System.ChunkSystem
                         {
                             if (GD.Randf() < 0.4)
                             {
-                                Tree tree = GD.Load<PackedScene>(BuildingDataManager.Instance.GetBuildingData(BuildingType.Tree).TscnPath).Instantiate<Tree>();
+                                Tree tree = GD.Load<PackedScene>(BuildingDataManager.Instance.GetData(BuildingType.Tree).TscnPath).Instantiate<Tree>();
                                 GetTree().CurrentScene.AddChild(tree);
                                 tree.Init(BuildingType.Tree, snapPos);
                             }
                             else if (GD.Randf() < 0.8)
                             {
-                                Tree tree = GD.Load<PackedScene>(BuildingDataManager.Instance.GetBuildingData(BuildingType.SongShu).TscnPath).Instantiate<Tree>();
+                                Tree tree = GD.Load<PackedScene>(BuildingDataManager.Instance.GetData(BuildingType.SongShu).TscnPath).Instantiate<Tree>();
                                 GetTree().CurrentScene.AddChild(tree);
                                 tree.Init(BuildingType.SongShu, snapPos);
                             }
@@ -229,7 +229,7 @@ namespace Solo.Scripts.System.ChunkSystem
                         Vector2 snapPos = GameManager.Instance.BuildingManager.SnapToCell(BuildingType.Stone, tileWorldPos + offset);
                         if (GameManager.Instance.BuildingManager.CanPlaced(BuildingType.Stone, snapPos) && WorldToChunkPos(snapPos) == chunkPos)
                         {
-                            Stone stone = GD.Load<PackedScene>(BuildingDataManager.Instance.GetBuildingData(BuildingType.Stone).TscnPath).Instantiate<Stone>();
+                            Stone stone = GD.Load<PackedScene>(BuildingDataManager.Instance.GetData(BuildingType.Stone).TscnPath).Instantiate<Stone>();
                             GetTree().CurrentScene.AddChild(stone);
                             stone.Init(BuildingType.Stone, snapPos);
                         }
@@ -253,7 +253,7 @@ namespace Solo.Scripts.System.ChunkSystem
                     Vector2 snapPos = GameManager.Instance.BuildingManager.SnapToCell(buildingSaveData.Type, new Vector2(buildingSaveData.X, buildingSaveData.Y));
                     if (GameManager.Instance.BuildingManager.CanPlaced(buildingSaveData.Type, snapPos) && WorldToChunkPos(snapPos) == chunkPos)
                     {
-                        Building building = GD.Load<PackedScene>(BuildingDataManager.Instance.GetBuildingData(buildingSaveData.Type).TscnPath).Instantiate<Building>();
+                        Building building = GD.Load<PackedScene>(BuildingDataManager.Instance.GetData(buildingSaveData.Type).TscnPath).Instantiate<Building>();
                         GetTree().CurrentScene.AddChild(building);
                         building.Init(buildingSaveData.Type, snapPos);
                     }

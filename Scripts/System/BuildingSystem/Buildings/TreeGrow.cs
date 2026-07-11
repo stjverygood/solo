@@ -33,7 +33,7 @@ namespace Solo.Scripts.System.BuildingSystem.Buildings
                     GameManager.Instance.BuildingManager.Remove(Type, GlobalPosition);
                     GameManager.Instance.ChunkManager.RemoveItem(this, GlobalPosition);
                     QueueFree();
-                    PackedScene treePs = GD.Load<PackedScene>(BuildingDataManager.Instance.GetBuildingData(BuildingType.Tree).TscnPath);
+                    PackedScene treePs = GD.Load<PackedScene>(BuildingDataManager.Instance.GetData(BuildingType.Tree).TscnPath);
                     Tree tree = treePs.Instantiate<Tree>();
                     GetTree().CurrentScene.AddChild(tree);
                     tree.Init(BuildingType.Tree, GlobalPosition);

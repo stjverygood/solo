@@ -4,8 +4,10 @@ using Solo.Scripts.Entities.Units;
 using Solo.Scripts.Global.Interfaces;
 using Solo.Scripts.System.BuildingSystem;
 using Solo.Scripts.System.ChunkSystem;
+using Solo.Scripts.System.RealmSystem;
 using Solo.Scripts.System.SaveSystem;
 using Solo.Scripts.System.UiSystem;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -45,9 +47,51 @@ namespace Solo.Scripts.Global
             _curState = GameState.StartMenu;
 
             _pauseView.Visible = false;
-            //Player = _playerPs.Instantiate<Player>();
-            //GetTree().CurrentScene.AddChild(Player);
             ProcessMode = ProcessModeEnum.Always;
+
+            //
+            foreach (RealmType realm in Enum.GetValues<RealmType>())
+            {
+                RealmData realmData = RealmDataManager.Instance.GetData(realm);
+                GD.Print($"{realmData.Name} Atk : {realmData.Atk}");
+            }
+            GD.Print($" ");
+            foreach (RealmType realm in Enum.GetValues<RealmType>())
+            {
+                RealmData realmData = RealmDataManager.Instance.GetData(realm);
+                GD.Print($"{realmData.Name} Def : {realmData.Def}");
+            }
+            GD.Print($" ");
+            foreach (RealmType realm in Enum.GetValues<RealmType>())
+            {
+                RealmData realmData = RealmDataManager.Instance.GetData(realm);
+                GD.Print($"{realmData.Name} MaxHp : {realmData.MaxHp}");
+            }
+            GD.Print($" ");
+            foreach (RealmType realm in Enum.GetValues<RealmType>())
+            {
+                RealmData realmData = RealmDataManager.Instance.GetData(realm);
+                GD.Print($"{realmData.Name} MaxQi : {realmData.MaxQi}");
+            }
+            GD.Print($" ");
+            foreach (RealmType realm in Enum.GetValues<RealmType>())
+            {
+                RealmData realmData = RealmDataManager.Instance.GetData(realm);
+                GD.Print($"{realmData.Name} MaxExp : {realmData.MaxExp}");
+            }
+            //
+
+            foreach (RealmType realm in Enum.GetValues<RealmType>())
+            {
+                RealmData realmData = RealmDataManager.Instance.GetData(realm);
+                GD.Print($"{realmData.Name} : ");
+                GD.Print($"攻 : {realmData.Atk}");
+                GD.Print($"御 : {realmData.Def}");
+                GD.Print($"血 : {realmData.MaxHp}");
+                GD.Print($"气 : {realmData.MaxQi}");
+                GD.Print($"修 : {realmData.MaxExp}");
+                GD.Print($"");
+            }
         }
 
         public override void _PhysicsProcess(double delta)
@@ -167,6 +211,15 @@ namespace Solo.Scripts.Global
             if (_curTime >= DayDuration)
                 _curTime -= DayDuration;
             TimeRatio = _curTime / DayDuration;
+        }
+
+
+        //伤害公式
+        public float GetDamage(float atk, float def)
+        {
+            const float C = 100f;
+            float damage = atk * C / (C + def);
+            return Mathf.Max(1f, damage);//保底机制：哪怕防御再高，打中也应该至少有 1 点伤害
         }
     }
 

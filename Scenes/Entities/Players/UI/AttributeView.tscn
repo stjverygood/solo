@@ -1,0 +1,84 @@
+[gd_scene format=3 uid="uid://bbl4ldydpahmt"]
+
+[ext_resource type="Script" uid="uid://b7awkawduxlec" path="res://Scripts/Entities/Players/UI/AttributeView.cs" id="1_aqmy5"]
+
+[node name="AttributeView" type="PanelContainer" unique_id=553775093 node_paths=PackedStringArray("_realmLb", "_atkLb", "_defLb", "_hpLb", "_qiLb", "_expLb")]
+script = ExtResource("1_aqmy5")
+_realmLb = NodePath("VBoxContainer/RealmLb")
+_atkLb = NodePath("VBoxContainer/PanelContainer/GridContainer/AtkLb")
+_defLb = NodePath("VBoxContainer/PanelContainer/GridContainer/DefLb")
+_hpLb = NodePath("VBoxContainer/PanelContainer/GridContainer/HpLb")
+_qiLb = NodePath("VBoxContainer/PanelContainer/GridContainer/QiLb")
+_expLb = NodePath("VBoxContainer/PanelContainer/GridContainer/ExpLb")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=1919241380]
+layout_mode = 2
+theme_override_constants/separation = 7
+
+[node name="Label" type="Label" parent="VBoxContainer" unique_id=420942622]
+layout_mode = 2
+text = "属性面板"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="RealmLb" type="Label" parent="VBoxContainer" unique_id=53135629]
+layout_mode = 2
+text = "境界 : 元婴期初期"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="PanelContainer" type="PanelContainer" parent="VBoxContainer" unique_id=912489606]
+custom_minimum_size = Vector2(180, 160)
+layout_mode = 2
+
+[node name="GridContainer" type="GridContainer" parent="VBoxContainer/PanelContainer" unique_id=1507705920]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_constants/h_separation = 64
+theme_override_constants/v_separation = 4
+columns = 2
+
+[node name="Label" type="Label" parent="VBoxContainer/PanelContainer/GridContainer" unique_id=839417232]
+layout_mode = 2
+text = "攻 : "
+
+[node name="AtkLb" type="Label" parent="VBoxContainer/PanelContainer/GridContainer" unique_id=1635599041]
+layout_mode = 2
+text = "999"
+
+[node name="Label3" type="Label" parent="VBoxContainer/PanelContainer/GridContainer" unique_id=1153841006]
+layout_mode = 2
+text = "御 : "
+
+[node name="DefLb" type="Label" parent="VBoxContainer/PanelContainer/GridContainer" unique_id=582822183]
+layout_mode = 2
+text = "999"
+
+[node name="Label5" type="Label" parent="VBoxContainer/PanelContainer/GridContainer" unique_id=1814087748]
+layout_mode = 2
+text = "血 : "
+
+[node name="HpLb" type="Label" parent="VBoxContainer/PanelContainer/GridContainer" unique_id=1039511129]
+layout_mode = 2
+text = "999"
+
+[node name="Label7" type="Label" parent="VBoxContainer/PanelContainer/GridContainer" unique_id=1698721182]
+layout_mode = 2
+text = "气 : "
+
+[node name="QiLb" type="Label" parent="VBoxContainer/PanelContainer/GridContainer" unique_id=1824259178]
+layout_mode = 2
+text = "999"
+
+[node name="Label9" type="Label" parent="VBoxContainer/PanelContainer/GridContainer" unique_id=1068043705]
+layout_mode = 2
+text = "修 :"
+
+[node name="ExpLb" type="Label" parent="VBoxContainer/PanelContainer/GridContainer" unique_id=309922485]
+layout_mode = 2
+text = "999"
+
+[node name="Button" type="Button" parent="VBoxContainer" unique_id=768921766]
+layout_mode = 2
+text = "突破"

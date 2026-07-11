@@ -54,7 +54,7 @@ namespace Solo.Scripts.System.InventorySystem
             }
 
             _itemInstance = itemInstance;
-            ItemData itemData = ItemDataManager.Instance.GetItemData(_itemInstance.Type);
+            ItemData itemData = ItemDataManager.Instance.GetData(_itemInstance.Type);
             _iconTr.Texture = GD.Load<Texture2D>(itemData.IconPath);
             _countLb.Text = itemData.MaxCount == 1 ? "" : $"{_itemInstance.Count}";
             _nameLb.Text = $"{itemData.Name}";

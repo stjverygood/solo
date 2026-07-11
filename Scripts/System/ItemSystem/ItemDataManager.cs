@@ -192,7 +192,7 @@ namespace Solo.Scripts.System.ItemSystem
                 MaxCount = 99,
                 IconPath = "res://Assets/AtlasTextures/Banana.tres",
                 CanConsume = true,
-                MpBonus = 5,
+                MaxQiBonus = 5,
                 CraftRequiredItemList = new List<(ItemType, int)>()
                 {
 
@@ -382,7 +382,10 @@ namespace Solo.Scripts.System.ItemSystem
                 MaxDur = 100,
                 IsArmor = true,
                 ArmorSlot = ArmorSlotType.Helmet,
+                AtkBonus = 1,
                 DefBonus = 2,
+                MaxHpBonus = 3,
+                MaxQiBonus = 4,
                 CraftRequiredItemList = new List<(ItemType, int)>()
                 {
                     (ItemType.Wood, 4),
@@ -790,7 +793,7 @@ namespace Solo.Scripts.System.ItemSystem
             #endregion
         }
 
-        public ItemData GetItemData(ItemType type)
+        public ItemData GetData(ItemType type)
         {
             return _itemDataMap[type];
         }

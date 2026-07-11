@@ -15,7 +15,7 @@ namespace Solo.Scripts.System.BuildingSystem
 
         public Vector2 SnapToCell(BuildingType buildingType, Vector2 worldPos)
         {
-            BuildingData buildingData = BuildingDataManager.Instance.GetBuildingData(buildingType);
+            BuildingData buildingData = BuildingDataManager.Instance.GetData(buildingType);
             Vector2 snappedPos = Vector2.Zero;
             // X 轴吸附逻辑
             if (buildingData.Width % 2 == 1) // 奇数尺寸（1, 3, 5...）-> 吸附到格子中心
@@ -33,7 +33,7 @@ namespace Solo.Scripts.System.BuildingSystem
 
         public bool CanPlaced(BuildingType buildingType, Vector2 snapWorldPos)
         {
-            BuildingData buildingData = BuildingDataManager.Instance.GetBuildingData(buildingType);
+            BuildingData buildingData = BuildingDataManager.Instance.GetData(buildingType);
             List<Vector2I> placedCellPosList = GetPlacedCellPosList(buildingData, snapWorldPos);
             foreach (Vector2I cellPos in placedCellPosList)
             {
@@ -46,7 +46,7 @@ namespace Solo.Scripts.System.BuildingSystem
         public void Place(BuildingType buildingType, Vector2 snapWorldPos)
         {
             if (!CanPlaced(buildingType, snapWorldPos)) return;
-            BuildingData buildingData = BuildingDataManager.Instance.GetBuildingData(buildingType);
+            BuildingData buildingData = BuildingDataManager.Instance.GetData(buildingType);
             List<Vector2I> targetCellPosList = GetPlacedCellPosList(buildingData, snapWorldPos);
             foreach (Vector2I cell in targetCellPosList)
             {
@@ -58,7 +58,7 @@ namespace Solo.Scripts.System.BuildingSystem
 
         public void Remove(BuildingType buildingType, Vector2 snapWorldPos)
         {
-            BuildingData buildingData = BuildingDataManager.Instance.GetBuildingData(buildingType);
+            BuildingData buildingData = BuildingDataManager.Instance.GetData(buildingType);
             List<Vector2I> targetCellPosList = GetPlacedCellPosList(buildingData, snapWorldPos);// 1. 获取该建筑占用的所有格子坐标
             foreach (Vector2I cell in targetCellPosList)// 2. 从已占用集合中将这些格子释放
             {

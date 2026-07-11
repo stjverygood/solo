@@ -14,12 +14,11 @@
 [ext_resource type="PackedScene" uid="uid://cfu7wy1op48g5" path="res://Scenes/System/CraftSystem/CraftView.tscn" id="7_sod1g"]
 [ext_resource type="Texture2D" uid="uid://4l1ykgdsxh5w" path="res://Assets/AtlasTextures/WoodPot.tres" id="8_cbjid"]
 [ext_resource type="Texture2D" uid="uid://buuka3d1ksemr" path="res://Assets/Png/VfxAnimSheets/sprite-sheet.png" id="9_2hmx1"]
-[ext_resource type="Texture2D" uid="uid://8e254e6sobd0" path="res://Assets/Png/ui.png" id="10_wom6s"]
 [ext_resource type="PackedScene" uid="uid://d3ptuijhfhmm0" path="res://Scenes/UI/DeathView.tscn" id="11_oet8y"]
 [ext_resource type="PackedScene" uid="uid://b8so1e8mc7j47" path="res://Scenes/Entities/Players/CharacterView.tscn" id="15_sod1g"]
 [ext_resource type="PackedScene" uid="uid://bgqqv5e610s5p" path="res://Scenes/Entities/Players/InventoryManagerView.tscn" id="15_wom6s"]
-[ext_resource type="PackedScene" uid="uid://dvq4r1yjqbmte" path="res://Scenes/Entities/Players/StateView.tscn" id="16_wom6s"]
 [ext_resource type="PackedScene" uid="uid://cx380rlsg85x5" path="res://Scenes/Entities/Players/FastBarView.tscn" id="17_n0q0x"]
+[ext_resource type="PackedScene" uid="uid://lu2ulevw2hqn" path="res://Scenes/Entities/Players/UI/FastAttributeView.tscn" id="18_avkiy"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_avkiy"]
 atlas = ExtResource("9_2hmx1")
@@ -66,30 +65,6 @@ animations = [{
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_jw8fk"]
 radius = 5.0990195
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_08ldj"]
-atlas = ExtResource("10_wom6s")
-region = Rect2(51, 161, 10, 9)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_yxouj"]
-atlas = ExtResource("10_wom6s")
-region = Rect2(63, 162, 55, 6)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_wdnd1"]
-atlas = ExtResource("10_wom6s")
-region = Rect2(64, 172, 53, 4)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_rutet"]
-atlas = ExtResource("10_wom6s")
-region = Rect2(51, 176, 11, 11)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_wom6s"]
-atlas = ExtResource("10_wom6s")
-region = Rect2(63, 178, 55, 6)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_n0q0x"]
-atlas = ExtResource("10_wom6s")
-region = Rect2(64, 188, 53, 4)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_8ildv"]
 size = Vector2(800, 500)
@@ -153,7 +128,7 @@ scale_curve = SubResource("CurveTexture_sdrt1")
 color = Color(0.5716493, 0.5716493, 0.57164925, 1)
 color_ramp = SubResource("GradientTexture1D_ex883")
 
-[node name="Player" type="CharacterBody2D" unique_id=1144409017 node_paths=PackedStringArray("_camera", "_bodyRootNode", "_animRootNode", "_bodySprite", "_helmetSprite", "_ArmorSprite", "_bootSprite", "_handRootNode", "_handSprite", "_walkGrassParticles", "_walkWaterParticles", "_leftViewRootControl", "_characterView", "_inventoryManagerView", "_fastBarView", "_hpTpb", "_hpLb", "_mpTpb", "_mpLb", "_debugLb", "_deathView", "_bgAnimSprite")]
+[node name="Player" type="CharacterBody2D" unique_id=1144409017 node_paths=PackedStringArray("_camera", "_bodyRootNode", "_animRootNode", "_bodySprite", "_helmetSprite", "_ArmorSprite", "_bootSprite", "_handRootNode", "_handSprite", "_walkGrassParticles", "_walkWaterParticles", "_leftViewRootControl", "_characterView", "_inventoryManagerView", "_fastBarView", "_fastAttributeView", "_hpTpb", "_hpLb", "_mpTpb", "_mpLb", "_debugLb", "_deathView", "_bgAnimSprite")]
 y_sort_enabled = true
 script = ExtResource("1_lxeke")
 _camera = NodePath("Camera2D")
@@ -176,11 +151,12 @@ _leftViewRootControl = NodePath("CanvasLayer/LeftViewControl")
 _characterView = NodePath("CanvasLayer/CharacterView")
 _inventoryManagerView = NodePath("CanvasLayer/InventoryView")
 _fastBarView = NodePath("CanvasLayer/FastBarView")
+_fastAttributeView = NodePath("CanvasLayer/FastAttributeView")
 _craftViewPs = ExtResource("7_sod1g")
-_hpTpb = NodePath("CanvasLayer/State/HpTpb")
-_hpLb = NodePath("CanvasLayer/State/HpLb")
-_mpTpb = NodePath("CanvasLayer/State/MpTpb")
-_mpLb = NodePath("CanvasLayer/State/MpLb")
+_hpTpb = NodePath("")
+_hpLb = NodePath("")
+_mpTpb = NodePath("")
+_mpLb = NodePath("")
 _debugLb = NodePath("DebugLabel")
 _deathView = NodePath("CanvasLayer/DeathView")
 _aimIconTexture = ExtResource("2_oet8y")
@@ -230,102 +206,6 @@ radius = 11.11
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=374399419]
 
-[node name="State" type="Control" parent="CanvasLayer" unique_id=873120106]
-visible = false
-layout_mode = 3
-anchors_preset = 7
-anchor_left = 0.5
-anchor_top = 1.0
-anchor_right = 0.5
-anchor_bottom = 1.0
-offset_left = -422.0
-offset_top = -24.0
-offset_right = -382.0
-offset_bottom = 16.0
-grow_horizontal = 2
-grow_vertical = 0
-
-[node name="HpIcon" type="TextureRect" parent="CanvasLayer/State" unique_id=1830496681]
-layout_mode = 0
-offset_left = -361.0
-offset_top = -89.0
-offset_right = -321.0
-offset_bottom = -49.0
-texture = SubResource("AtlasTexture_08ldj")
-
-[node name="HpLb" type="Label" parent="CanvasLayer/State" unique_id=809045055]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = -337.0
-offset_top = -81.0
-offset_right = -207.0
-offset_bottom = -97.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_constants/outline_size = 16
-theme_override_fonts/font = ExtResource("5_rnj17")
-theme_override_font_sizes/font_size = 24
-text = "1000/1000"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="HpTpb" type="TextureProgressBar" parent="CanvasLayer/State" unique_id=1807173123]
-layout_mode = 1
-anchors_preset = -1
-anchor_right = 0.035
-anchor_bottom = 0.062000003
-offset_left = -356.0
-offset_top = -37.0
-offset_right = -302.4
-offset_bottom = -32.146626
-grow_horizontal = 2
-grow_vertical = 2
-scale = Vector2(3, 3)
-value = 14.0
-texture_under = SubResource("AtlasTexture_yxouj")
-texture_progress = SubResource("AtlasTexture_wdnd1")
-texture_progress_offset = Vector2(1, 1)
-
-[node name="MpIcon" type="TextureRect" parent="CanvasLayer/State" unique_id=754701527]
-layout_mode = 0
-offset_left = 261.0
-offset_top = -84.0
-offset_right = 301.0
-offset_bottom = -44.0
-texture = SubResource("AtlasTexture_rutet")
-
-[node name="MpLb" type="Label" parent="CanvasLayer/State" unique_id=1450420962]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 272.0
-offset_top = -76.0
-offset_right = 406.0
-offset_bottom = -92.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_constants/outline_size = 16
-theme_override_fonts/font = ExtResource("5_rnj17")
-theme_override_font_sizes/font_size = 24
-text = "100/100"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="MpTpb" type="TextureProgressBar" parent="CanvasLayer/State" unique_id=1264956069]
-layout_mode = 0
-offset_left = 261.00006
-offset_top = -34.0
-offset_right = 316.00006
-offset_bottom = -27.333313
-scale = Vector2(3, 3)
-value = 14.0
-texture_under = SubResource("AtlasTexture_wom6s")
-texture_progress = SubResource("AtlasTexture_n0q0x")
-texture_progress_offset = Vector2(1, 1)
-
 [node name="DeathView" parent="CanvasLayer" unique_id=1940583019 instance=ExtResource("11_oet8y")]
 visible = false
 
@@ -369,9 +249,9 @@ offset_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="StateView" parent="CanvasLayer" unique_id=1520820595 instance=ExtResource("16_wom6s")]
-
 [node name="FastBarView" parent="CanvasLayer" unique_id=1217924179 instance=ExtResource("17_n0q0x")]
+
+[node name="FastAttributeView" parent="CanvasLayer" unique_id=1308229637 instance=ExtResource("18_avkiy")]
 
 [node name="DebugLabel" type="Label" parent="." unique_id=1146679472]
 offset_left = -66.0

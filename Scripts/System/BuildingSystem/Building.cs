@@ -23,7 +23,7 @@ namespace Solo.Scripts.System.BuildingSystem
         {
             Type = type;
             GlobalPosition = snapPos;
-            BuildingData buildingData = BuildingDataManager.Instance.GetBuildingData(Type);
+            BuildingData buildingData = BuildingDataManager.Instance.GetData(Type);
             TargetType = buildingData.TargetType;
             SetMaxHp(buildingData.MaxHp);
             SetCurHp(_maxHp);

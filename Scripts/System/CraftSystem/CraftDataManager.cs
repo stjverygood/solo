@@ -97,7 +97,7 @@ namespace Solo.Scripts.System.CraftSystem
             });
         }
 
-        public CraftData GetCraftData(CraftType type)
+        public CraftData GetData(CraftType type)
         {
             return _craftDataMap[type];
         }

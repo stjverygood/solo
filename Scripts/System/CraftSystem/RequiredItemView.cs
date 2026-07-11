@@ -11,7 +11,7 @@ public partial class RequiredItemView : PanelContainer
 
     public void Init(ItemType type, int count)
     {
-        ItemData data = ItemDataManager.Instance.GetItemData(type);
+        ItemData data = ItemDataManager.Instance.GetData(type);
         _iconTr.Texture = GD.Load<Texture2D>(data.IconPath);
         _nameLb.Text = data.Name;
         _countLb.Text = $"*{count}";
