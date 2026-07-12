@@ -4,8 +4,8 @@ namespace Solo.Scripts.System.InventorySystem
 {
     public partial class InventoryView : Control
     {
-        [Export] public PackedScene SlotViewPs;
-        [Export] private GridContainer _gridContainer;
+        [Export] public PackedScene SlotViewPs = null!;
+        [Export] private GridContainer _gridContainer = null!;
         public Inventory Inventory;
         private List<InventorySlotView> _slotViewList = new List<InventorySlotView>();
 

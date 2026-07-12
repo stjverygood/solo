@@ -22,11 +22,11 @@ namespace Solo.Scripts.System.ChunkSystem
 
     public partial class ChunkManager : Node2D
     {
-        [Export] private TileMapLayer _waterTileMapLayer;
-        [Export] private TileMapLayer _grassTileMapLayer;
+        [Export] private TileMapLayer _waterTileMapLayer = null!;
+        [Export] private TileMapLayer _grassTileMapLayer = null!;
         //[Export] private PackedScene _buildingPs;
-        [Export] public PackedScene DropItemPs;
-        [Export] public PackedScene _unitPs;
+        [Export] public PackedScene DropItemPs = null!;
+        [Export] public PackedScene _unitPs = null!;
 
         //public BuildingManager BuildingManager;
         private FastNoiseLite _noise = new FastNoiseLite();

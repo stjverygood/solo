@@ -149,7 +149,7 @@ namespace Solo.Scripts.System.RealmSystem
             });
             _realmDataMap.Add(RealmType.YuanYin3, new RealmData()
             {
-                Name = "元婴期后满",
+                Name = "元婴期后期",
                 Atk = BaseAtk * MathF.Pow(MajorRate, 4) * MathF.Pow(MinorRate, 3),
                 Def = BaseDef * MathF.Pow(MajorRate, 4) * MathF.Pow(MinorRate, 3),
                 MaxHp = BaseMaxHp * MathF.Pow(MajorRate, 4) * MathF.Pow(MinorRate, 3),

@@ -5,11 +5,11 @@ namespace Solo.Scripts.Levels
 {
     public partial class StartMenu : Control
     {
-        [Export] private Button _startBtn;
-        [Export] private Button _settingBtn;
-        [Export] private Button _collectionBtn;
-        [Export] private Button _aboutBtn;
-        [Export] private Button _exitBtn;
+        [Export] private Button _startBtn = null!;
+        [Export] private Button _settingBtn = null!;
+        [Export] private Button _collectionBtn = null!;
+        [Export] private Button _aboutBtn = null!;
+        [Export] private Button _exitBtn = null!;
 
         public override void _Ready()
         {

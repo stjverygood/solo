@@ -9,8 +9,8 @@ namespace Solo.Scripts.System.ItemSystem
         //public ItemType Type;
         public ItemInstance ItemInstance;
         public int Count;
-        [Export] public Label TextLb;
-        [Export] public Sprite2D IconSprite;
+        [Export] public Label TextLb = null!;
+        [Export] public Sprite2D IconSprite = null!;
         private ShaderMaterial _shaderMaterial;
 
         public void Init(ItemInstance instance, Vector2 pos)

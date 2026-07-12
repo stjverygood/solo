@@ -4,9 +4,9 @@ using Solo.Scripts.System.ItemSystem;
 
 public partial class RequiredItemView : PanelContainer
 {
-    [Export] private TextureRect _iconTr;
-    [Export] private Label _nameLb;
-    [Export] private Label _countLb;
+    [Export] private TextureRect _iconTr = null!;
+    [Export] private Label _nameLb = null!;
+    [Export] private Label _countLb = null!;
 
 
     public void Init(ItemType type, int count)

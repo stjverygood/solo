@@ -21,13 +21,13 @@ namespace Solo.Scripts.Global
         private GameState _curState;
         public bool IsDebugMode = true;
 
-        [Export] public PackedScene DropItemPs;
-        [Export] public PackedScene FloatTextLbPs;
-        [Export] private PackedScene _startMenuPs;//todo : 这里等到后面有美术资源了, 开屏变慢了, 要优化成场景路径, 动态加载packedScene
-        [Export] private PackedScene _loadingViewPs;
-        [Export] private PackedScene _saveListMenuPs;
-        [Export] private PackedScene _mainLevelPs;
-        [Export] private PauseView _pauseView;
+        [Export] public PackedScene DropItemPs = null!;
+        [Export] public PackedScene FloatTextLbPs = null!;
+        [Export] private PackedScene _startMenuPs = null!;//todo : 这里等到后面有美术资源了, 开屏变慢了, 要优化成场景路径, 动态加载packedScene
+        [Export] private PackedScene _loadingViewPs = null!;
+        [Export] private PackedScene _saveListMenuPs = null!;
+        [Export] private PackedScene _mainLevelPs = null!;
+        [Export] private PauseView _pauseView = null!;
 
 
         public Player Player;
@@ -37,8 +37,8 @@ namespace Solo.Scripts.Global
         public BuildingManager BuildingManager;
 
         //vfx
-        [Export] public PackedScene ExplosionEffectPs;
-        [Export] public PackedScene SmogEffectPs;
+        [Export] public PackedScene ExplosionEffectPs = null!;
+        [Export] public PackedScene SmogEffectPs = null!;
 
         public override void _Ready()
         {

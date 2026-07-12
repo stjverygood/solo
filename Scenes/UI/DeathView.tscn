@@ -16,10 +16,10 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_r1xys")
-_exitBtn = NodePath("Panel/ExitBtn")
-_restartBtn = NodePath("Panel/RestartBtn")
+_exitBtn = NodePath("PanelContainer/VBoxContainer/HBoxContainer/ExitBtn")
+_restartBtn = NodePath("PanelContainer/VBoxContainer/HBoxContainer/RestartBtn")
 
-[node name="Panel" type="Panel" parent="." unique_id=1864654552]
+[node name="PanelContainer" type="PanelContainer" parent="." unique_id=229715949]
 z_index = 100
 layout_mode = 1
 anchors_preset = 15
@@ -29,38 +29,33 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_r1xys")
 
-[node name="Label" type="Label" parent="Panel" unique_id=488292909]
-layout_mode = 1
-anchors_preset = 5
-anchor_left = 0.5
-anchor_right = 0.5
-offset_left = -386.0
-offset_right = 386.0
-offset_bottom = 246.0
-grow_horizontal = 2
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer" unique_id=272150085]
+layout_mode = 2
+theme_override_constants/separation = 97
+alignment = 1
+
+[node name="Label" type="Label" parent="PanelContainer/VBoxContainer" unique_id=488292909]
+layout_mode = 2
 theme_override_constants/outline_size = 64
 theme_override_fonts/font = ExtResource("1_lxl8r")
-theme_override_font_sizes/font_size = 128
+theme_override_font_sizes/font_size = 82
 text = "身死道消"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="ExitBtn" type="Button" parent="Panel" unique_id=850660247]
-layout_mode = 0
-offset_left = 246.0
-offset_top = 430.0
-offset_right = 497.0
-offset_bottom = 513.0
+[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer/VBoxContainer" unique_id=1663265899]
+layout_mode = 2
+theme_override_constants/separation = 113
+alignment = 1
+
+[node name="ExitBtn" type="Button" parent="PanelContainer/VBoxContainer/HBoxContainer" unique_id=850660247]
+layout_mode = 2
 theme = SubResource("Theme_8ue6d")
 text = "返回主菜单"
 
-[node name="RestartBtn" type="Button" parent="Panel" unique_id=2076908316]
-layout_mode = 0
-offset_left = 692.0
-offset_top = 430.0
-offset_right = 917.0
-offset_bottom = 509.0
+[node name="RestartBtn" type="Button" parent="PanelContainer/VBoxContainer/HBoxContainer" unique_id=2076908316]
+layout_mode = 2
 theme_override_constants/outline_size = 32
 theme_override_fonts/font = ExtResource("1_lxl8r")
-theme_override_font_sizes/font_size = 40
+theme_override_font_sizes/font_size = 24
 text = "起死回生"

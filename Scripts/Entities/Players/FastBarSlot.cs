@@ -4,15 +4,15 @@ using Solo.Scripts.System.ItemSystem;
 
 public partial class FastBarSlot : PanelContainer
 {
-    [Export] private Label _indexLb;
-    [Export] private TextureRect _iconTr;
-    [Export] private Label _nameLb;
-    [Export] private Label _countLb;
-    [Export] private TextureProgressBar _durTpb;
-    [Export] private Button _bgBtn;
-    private ItemInstance _itemInstance;
+    [Export] private Label _indexLb = null!;
+    [Export] private TextureRect _iconTr = null!;
+    [Export] private Label _nameLb = null!;
+    [Export] private Label _countLb = null!;
+    [Export] private TextureProgressBar _durTpb = null!;
+    [Export] private Button _bgBtn = null!;
+    private ItemInstance? _itemInstance;
     public int Index;
-    public Inventory Inventory;
+    public Inventory? Inventory;
 
 
     //style : 
@@ -37,7 +37,7 @@ public partial class FastBarSlot : PanelContainer
 
     public void Refresh()
     {
-        var itemInstance = Inventory.SlotList[Index].ItemInstance;
+        var itemInstance = Inventory?.SlotList[Index].ItemInstance;
         if (itemInstance == null)
         {
             _iconTr.Texture = null;

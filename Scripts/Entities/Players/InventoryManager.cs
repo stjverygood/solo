@@ -110,7 +110,7 @@ namespace Solo.Scripts.Entities.Players
             {
                 if (EquipmentInventory.SlotList[i].ItemInstance == null)
                     continue;
-                maxQiBonus += ItemDataManager.Instance.GetData(EquipmentInventory.SlotList[i].ItemInstance.Type).MaxHpBonus;
+                maxQiBonus += ItemDataManager.Instance.GetData(EquipmentInventory.SlotList[i].ItemInstance.Type).MaxQiBonus;
             }
             return maxQiBonus;
         }

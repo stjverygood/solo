@@ -2,7 +2,7 @@ using Godot;
 
 public partial class SmogEffect : Node2D
 {
-    [Export] private GpuParticles2D _particles;
+    [Export] private GpuParticles2D _particles = null!;
 
     public void Init(Vector2 worldPos)
     {

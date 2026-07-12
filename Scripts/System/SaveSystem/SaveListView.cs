@@ -7,15 +7,15 @@ namespace Solo.Scripts.System.SaveSystem
 {
     public partial class SaveListView : Control
     {
-        [Export] private Button _backBtn;
-        [Export] private Button _delSaveBtn;
-        [Export] private Button _addSaveBtn;
-        [Export] private Button _goBtn;
-        [Export] private GridContainer _slotGc;
-        [Export] private PackedScene _saveSlotViewPs;
+        [Export] private Button _backBtn = null!;
+        [Export] private Button _delSaveBtn = null!;
+        [Export] private Button _addSaveBtn = null!;
+        [Export] private Button _goBtn = null!;
+        [Export] private GridContainer _slotGc = null!;
+        [Export] private PackedScene _saveSlotViewPs = null!;
 
         private List<SaveSlotView> _slotViewList = new List<SaveSlotView>();
-        private SaveInfo _curSelectedSaveInfo;
+        private SaveInfo? _curSelectedSaveInfo;
 
         public override void _Ready()
         {
@@ -25,7 +25,7 @@ namespace Solo.Scripts.System.SaveSystem
             };
             _delSaveBtn.Pressed += () =>
             {
-                SaveManager.Instance.RemoveSave(_curSelectedSaveInfo.Id);
+                SaveManager.Instance.RemoveSave(_curSelectedSaveInfo?.Id);
                 _curSelectedSaveInfo = null;
                 RefreshSaveSlotList();
             };
@@ -72,7 +72,7 @@ namespace Solo.Scripts.System.SaveSystem
             }
         }
 
-        public void ChangeSelectedSaveInfo(SaveInfo newInfo)
+        public void ChangeSelectedSaveInfo(SaveInfo? newInfo)
         {
             if (_curSelectedSaveInfo != null)
             {

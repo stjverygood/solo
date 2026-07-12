@@ -6,10 +6,10 @@ namespace Solo.Scripts.System.InventorySystem
 {
     public partial class InventorySlotView : PanelContainer
     {
-        [Export] private TextureRect _iconTr;
-        [Export] private Label _nameLb;
-        [Export] private Label _countLb;
-        [Export] private TextureProgressBar _durTpb;
+        [Export] private TextureRect _iconTr = null!;
+        [Export] private Label _nameLb = null!;
+        [Export] private Label _countLb = null!;
+        [Export] private TextureProgressBar _durTpb = null!;
         private ItemInstance _itemInstance;
         public int Index;
         public Inventory Inventory;
@@ -17,9 +17,9 @@ namespace Solo.Scripts.System.InventorySystem
         //style : 
         private bool _isSelected;
         private bool _isHover;
-        [Export] private StyleBoxTexture _normalStyle;
-        [Export] private StyleBoxTexture _hoverStyle;
-        [Export] private StyleBoxTexture _selectedStyle;
+        [Export] private StyleBoxTexture _normalStyle = null!;
+        [Export] private StyleBoxTexture _hoverStyle = null!;
+        [Export] private StyleBoxTexture _selectedStyle = null!;
 
         public void Init(Inventory inventory, int index)
         {

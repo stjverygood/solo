@@ -10,6 +10,15 @@
         Pause,//按exc暂停游戏
     }
 
+    public enum EntityType
+    {
+        Player,
+        Tree,
+        Stone,
+        MainBase,
+        Zombie,
+    }
+
     //境界类型
     public enum RealmType
     {

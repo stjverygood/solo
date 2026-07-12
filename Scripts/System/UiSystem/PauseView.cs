@@ -4,8 +4,8 @@ namespace Solo.Scripts.System.UiSystem
 {
     public partial class PauseView : Control
     {
-        [Export] private Button _continueBtn;
-        [Export] private Button _exitBtn;
+        [Export] private Button _continueBtn = null!;
+        [Export] private Button _exitBtn = null!;
 
         public override void _Ready()
         {

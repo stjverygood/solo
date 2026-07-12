@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 public partial class HammerWave : Area2D
 {
-    [Export] private AnimatedSprite2D _animSprite;
+    [Export] private AnimatedSprite2D _animSprite = null!;
     private int _damage = 10;
 
     private List<ITargetable> _targetList = new List<ITargetable>();

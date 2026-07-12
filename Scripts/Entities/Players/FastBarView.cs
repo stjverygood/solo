@@ -3,10 +3,10 @@ using Solo.Scripts.System.InventorySystem;
 
 public partial class FastBarView : Control
 {
-    private Inventory _fastBarInventory;
+    private Inventory? _fastBarInventory;
     private int _curIndex = 0;
-    [Export] GridContainer _slotGc;
-    [Export] PackedScene _fastBarSlotPs;
+    [Export] GridContainer _slotGc = null!;
+    [Export] PackedScene _fastBarSlotPs = null!;
 
     public void Init(Inventory fastBarInventory, int curIndex)
     {

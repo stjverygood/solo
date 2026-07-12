@@ -6,7 +6,7 @@ namespace Solo.Scripts.System.BuildingSystem.Buildings
 {
     public partial class MainBase : Building, IQiRangeable
     {
-        [Export] private ColorRect _QiRangeCr;
+        [Export] private ColorRect _QiRangeCr = null!;
         private float _qiRange = 200f;//灵气范围
 
 

@@ -47,14 +47,14 @@ namespace Solo.Scripts.Entities.Units
 
         private UnitState _curState;
         private Vector2 _curDir = Vector2.Right;
-        [Export] private NavigationAgent2D _naviAgent;
-        [Export] private Area2D _viewArea;
-        [Export] private CollisionShape2D _viewCollisionShape;
-        [Export] private Node2D _spriteRoot;
-        [Export] private Node2D _animRoot;
-        [Export] private Sprite2D _sprite;
-        [Export] public PackedScene DropItemPs;
-        [Export] private Label _debugLb;
+        [Export] private NavigationAgent2D _naviAgent = null!;
+        [Export] private Area2D _viewArea = null!;
+        [Export] private CollisionShape2D _viewCollisionShape = null!;
+        [Export] private Node2D _spriteRoot = null!;
+        [Export] private Node2D _animRoot = null!;
+        [Export] private Sprite2D _sprite = null!;
+        [Export] public PackedScene DropItemPs = null!;
+        [Export] private Label _debugLb = null!;
         private ShaderMaterial _shaderMaterial;
         private Tween _animTween;
 

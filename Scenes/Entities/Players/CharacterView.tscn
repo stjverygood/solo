@@ -18,14 +18,14 @@ texture_margin_bottom = 6.0
 
 [sub_resource type="ButtonGroup" id="ButtonGroup_8neig"]
 
-[node name="CharacterView" type="Control" unique_id=1785653158 node_paths=PackedStringArray("_attributeViewBtn", "_fastCraftViewBtn", "_attributeView", "_fastCraftView")]
+[node name="CharacterView" type="Control" unique_id=1785653158 node_paths=PackedStringArray("_attributeViewBtn", "_fastCraftViewBtn", "AttributeView", "FastCraftView")]
 layout_mode = 3
 anchors_preset = 0
 script = ExtResource("1_hfcn2")
 _attributeViewBtn = NodePath("PanelContainer/VBoxContainer/HBoxContainer/AttributeViewBtn")
 _fastCraftViewBtn = NodePath("PanelContainer/VBoxContainer/HBoxContainer/FastCraftViewBtn")
-_attributeView = NodePath("PanelContainer/VBoxContainer/PanelContainer/AttributeView")
-_fastCraftView = NodePath("PanelContainer/VBoxContainer/PanelContainer/FastCraftView")
+AttributeView = NodePath("PanelContainer/VBoxContainer/PanelContainer/AttributeView")
+FastCraftView = NodePath("PanelContainer/VBoxContainer/PanelContainer/FastCraftView")
 
 [node name="PanelContainer" type="PanelContainer" parent="." unique_id=31633694]
 layout_mode = 1

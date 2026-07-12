@@ -1,40 +1,33 @@
 using Godot;
+using Solo.Scripts.Global;
 using Solo.Scripts.System.RealmSystem;
 namespace Solo.Scripts.Entities.Players.UI
 {
     public partial class FastAttributeView : Control
     {
-        [Export] private Label _realmLb;
-        [Export] private Label _hpLb;
-        [Export] private Label _qiLb;
-        [Export] private Label _expLb;
+        [Export] private Label _realmLb = null!;
+        [Export] private Label _hpLb = null!;
+        [Export] private Label _qiLb = null!;
+        [Export] private Label _expLb = null!;
 
-        public void Init(AttributeManager attributeManager, InventoryManager inventoryManager)
+        public void RefreshRealm(RealmType value)
         {
-            //todo 绑定equipmentchanged
+            _realmLb.Text = $"当前境界 : {RealmDataManager.Instance.GetData(value).Name}";
+        }
 
-            inventoryManager.EquipmentInventory.SlotChanged += (index) =>
-            {
-                _hpLb.Text = $"{attributeManager.CurHp:f0} / {RealmDataManager.Instance.GetData(attributeManager.CurRealmType).MaxHp + inventoryManager.GetMaxHpBonus():f0}";
-                _qiLb.Text = $"{attributeManager.CurQi:f0} / {RealmDataManager.Instance.GetData(attributeManager.CurRealmType).MaxQi + inventoryManager.GetMaxQiBonus():f0}";
-            };
+        public void RefreshHp(float curValue, float maxValue)
+        {
+            _hpLb.Text = $"{curValue:f0} / {maxValue:f0}";
+        }
 
-            attributeManager.CurRealmChanged += () =>
-            {
-                _realmLb.Text = $"当前境界 : {RealmDataManager.Instance.GetData(attributeManager.CurRealmType).Name}";
-            };
-            attributeManager.CurHpChanged += () =>
-            {
-                _hpLb.Text = $"{attributeManager.CurHp:f0} / {RealmDataManager.Instance.GetData(attributeManager.CurRealmType).MaxHp + inventoryManager.GetMaxHpBonus():f0}";
-            };
-            attributeManager.CurQiChanged += () =>
-            {
-                _qiLb.Text = $"{attributeManager.CurQi:f0} / {RealmDataManager.Instance.GetData(attributeManager.CurRealmType).MaxQi + inventoryManager.GetMaxQiBonus():f0}";
-            };
-            attributeManager.CurExpChanged += () =>
-            {
-                _expLb.Text = $"{attributeManager.CurExp:f0} / {RealmDataManager.Instance.GetData(attributeManager.CurRealmType).MaxExp:f0}";
-            };
+        public void RefreshQi(float curValue, float maxValue)
+        {
+            _qiLb.Text = $"{curValue:f0} / {maxValue:f0}";
+        }
+
+        public void RefreshExp(float curValue, float maxValue)
+        {
+            _expLb.Text = $"{curValue:f0} / {maxValue:f0}";
         }
     }
 

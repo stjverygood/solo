@@ -9,7 +9,7 @@ namespace Solo.Scripts.System.ItemSystem
     {
         [Export] public float Speed = 200f; // 箭矢飞行速度
         [Export] public float LifeTime = 3f; // 3秒没撞到东西自动销毁，防止飞出地图
-        [Export] public Area2D _explosionArea; // 3秒没撞到东西自动销毁，防止飞出地图
+        [Export] public Area2D _explosionArea = null!; // 3秒没撞到东西自动销毁，防止飞出地图
         //[Export] public GpuParticles2D _particle; // 3秒没撞到东西自动销毁，防止飞出地图
         private SmogEffect _smogEffect;
 

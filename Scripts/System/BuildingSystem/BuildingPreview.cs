@@ -7,7 +7,7 @@ using Solo.Scripts.System.BuildingSystem.Buildings;
 public partial class BuildingPreview : Node2D
 {
     public BuildingType Type;
-    [Export] private Sprite2D _sprite;
+    [Export] private Sprite2D _sprite = null!;
     private Vector2 _curDir = Vector2.Down;
     private bool _canPlace = false;
 

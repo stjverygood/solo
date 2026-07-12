@@ -10,8 +10,8 @@ namespace Solo.Scripts.System.CraftSystem
         public ItemType Type;
         public int Index;
 
-        [Export] private Button _toggleBtn;
-        [Export] private TextureRect _iconTr;
+        [Export] private Button _toggleBtn = null!;
+        [Export] private TextureRect _iconTr = null!;
 
 
         public Action<CraftItemView> Toggled;

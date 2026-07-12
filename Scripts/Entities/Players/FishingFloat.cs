@@ -2,15 +2,15 @@ using Godot;
 
 public partial class FishingFloat : Node2D
 {
-    [Export] private Line2D _fishLine;
-    [Export] private Sprite2D _floatSprite;
+    [Export] private Line2D _fishLine = null!;
+    [Export] private Sprite2D _floatSprite = null!;
 
     [Export] private int _lineSegments = 8; // 鱼线细分的线段数量，越多越平滑
     [Export] private float _sagAmount = 30f; // 鱼线向下垂落的最大弧度（像素）
 
     private Vector2 _startPos;
     private Vector2 _endPos;
-    private Tween _floatTween;
+    private Tween? _floatTween;
 
     public void Init(Vector2 startPos, Vector2 endPos)
     {

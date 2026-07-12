@@ -4,9 +4,9 @@ namespace Solo.Scripts.System.BuildingSystem.Buildings
 {
     public partial class TreeGrow : Building
     {
-        [Export] Texture2D _earthTexture;
-        [Export] Texture2D _earthWetTexture;
-        [Export] Sprite2D _earthSprite;
+        [Export] Texture2D _earthTexture = null!;
+        [Export] Texture2D _earthWetTexture = null!;
+        [Export] Sprite2D _earthSprite = null!;
 
         //每10s有一定概率成长
         private float _growDuration = 3;

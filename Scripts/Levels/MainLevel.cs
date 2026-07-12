@@ -5,10 +5,10 @@ using Solo.Scripts.System.ChunkSystem;
 
 public partial class MainLevel : Node2D
 {
-    [Export] private PackedScene _playerPs;
-    [Export] private PackedScene _ChunkManagerPs;
-    [Export] private CanvasModulate _canvasModulate;
-    [Export] private Gradient _dayNightGradient;
+    [Export] private PackedScene _playerPs = null!;
+    [Export] private PackedScene _ChunkManagerPs = null!;
+    [Export] private CanvasModulate _canvasModulate = null!;
+    [Export] private Gradient _dayNightGradient = null!;
 
     public override void _Ready()
     {

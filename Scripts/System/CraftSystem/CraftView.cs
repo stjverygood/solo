@@ -10,18 +10,18 @@ namespace Solo.Scripts.System.CraftSystem
     {
         public CraftType Type;
 
-        [Export] private Label _craftNameLb;
-        [Export] private GridContainer _slotGc;
-        [Export] private ButtonGroup _btnGroup;
-        [Export] private PackedScene _craftItemViewPs;
+        [Export] private Label _craftNameLb = null!;
+        [Export] private GridContainer _slotGc = null!;
+        [Export] private ButtonGroup _btnGroup = null!;
+        [Export] private PackedScene _craftItemViewPs = null!;
 
-        [Export] private GridContainer _requiredItemGc;
-        [Export] private PackedScene _requiredItemViewPs;
+        [Export] private GridContainer _requiredItemGc = null!;
+        [Export] private PackedScene _requiredItemViewPs = null!;
 
-        [Export] private Label _curCraftItemNameLb;
-        [Export] private Label _curCraftItemCountLb;
-        [Export] private HSlider _countSlider;
-        [Export] private Button _craftBtn;
+        [Export] private Label _curCraftItemNameLb = null!;
+        [Export] private Label _curCraftItemCountLb = null!;
+        [Export] private HSlider _countSlider = null!;
+        [Export] private Button _craftBtn = null!;
 
         private ItemType _curCraftItemType;
         private int _curCraftCount;

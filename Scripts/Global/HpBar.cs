@@ -3,8 +3,8 @@ namespace Solo.Scripts.Global
 {
     public partial class HpBar : Control
     {
-        [Export] public TextureProgressBar _hpTpb;
-        [Export] public Label _hpLb;
+        [Export] public TextureProgressBar _hpTpb = null!;
+        [Export] public Label _hpLb = null!;
         public void Init()
         {
 

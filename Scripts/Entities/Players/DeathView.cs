@@ -4,8 +4,8 @@ namespace Solo.Scripts.Entities.Players
 {
     public partial class DeathView : Control
     {
-        [Export] private Button _exitBtn;
-        [Export] private Button _restartBtn;
+        [Export] private Button _exitBtn = null!;
+        [Export] private Button _restartBtn = null!;
         public override void _Ready()
         {
             _exitBtn.Pressed += () =>
@@ -19,7 +19,7 @@ namespace Solo.Scripts.Entities.Players
                 Visible = false;
                 GetTree().CreateTimer(1).Timeout += () =>
                 {
-                    GameManager.Instance.Player.Restart();
+                    GameManager.Instance.Player.Revive();
                 };
             };
         }

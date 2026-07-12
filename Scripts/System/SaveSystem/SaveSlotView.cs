@@ -14,17 +14,17 @@ namespace Solo.Scripts.System.SaveSystem
         private SaveListView _parent;
         public SaveInfo SaveInfo;
         private Tween _tween;
-        [Export] private PanelContainer _bgPc;
-        [Export] private Control _animRoot;
-        [Export] private Label _nameLb;
-        [Export] private Label _levelLb;
-        [Export] private Label _dateLb;
+        [Export] private PanelContainer _bgPc = null!;
+        [Export] private Control _animRoot = null!;
+        [Export] private Label _nameLb = null!;
+        [Export] private Label _levelLb = null!;
+        [Export] private Label _dateLb = null!;
 
         private SaveSlotViewState _curState;
 
-        private StyleBoxFlat _normalStyle;
-        private StyleBoxFlat _hoverStyle;
-        private StyleBoxFlat _selectedStyle;
+        private StyleBoxFlat? _normalStyle;
+        private StyleBoxFlat? _hoverStyle;
+        private StyleBoxFlat? _selectedStyle;
 
         public void Init(SaveListView parent, SaveInfo info)
         {

@@ -11,9 +11,9 @@ namespace Solo.Scripts.System.BuildingSystem
     {
         public BuildingType Type;
         public TargetType TargetType;
-        [Export] private Node2D _animRoot;
-        [Export] private Sprite2D _sprite;
-        [Export] private HpBar _hpBar;
+        [Export] private Node2D _animRoot = null!;
+        [Export] private Sprite2D _sprite = null!;
+        [Export] private HpBar _hpBar = null!;
         public float _maxHp = 100;
         protected float _curHp;
         private List<(ItemType, int, int)> _dropItemList;//掉落物类型, 最小掉落数量, 最大掉落数量

@@ -7,12 +7,12 @@ namespace Solo.Scripts.System.ItemSystem
     {
         private static ItemDataManager _instance;
         public static ItemDataManager Instance => _instance ??= new ItemDataManager();
-        private Dictionary<ItemType, ItemData> _itemDataMap = new Dictionary<ItemType, ItemData>();
+        private Dictionary<ItemType, ItemData> _dataMap = new Dictionary<ItemType, ItemData>();
 
         private ItemDataManager()
         {
             #region 材料
-            _itemDataMap.Add(ItemType.MainBaseStone, new ItemData
+            _dataMap.Add(ItemType.MainBaseStone, new ItemData
             {
                 Name = "太古源石",
                 MaxCount = 99,
@@ -22,7 +22,7 @@ namespace Solo.Scripts.System.ItemSystem
 
                 },
             });
-            _itemDataMap.Add(ItemType.Silk, new ItemData
+            _dataMap.Add(ItemType.Silk, new ItemData
             {
                 Name = "丝绸",
                 MaxCount = 99,
@@ -33,7 +33,7 @@ namespace Solo.Scripts.System.ItemSystem
 
                 },
             });
-            _itemDataMap.Add(ItemType.Leather, new ItemData
+            _dataMap.Add(ItemType.Leather, new ItemData
             {
                 Name = "皮",
                 MaxCount = 99,
@@ -43,7 +43,7 @@ namespace Solo.Scripts.System.ItemSystem
 
                 },
             });
-            _itemDataMap.Add(ItemType.Grass, new ItemData
+            _dataMap.Add(ItemType.Grass, new ItemData
             {
                 Name = "草",
                 MaxCount = 99,
@@ -53,7 +53,7 @@ namespace Solo.Scripts.System.ItemSystem
 
                 },
             });
-            _itemDataMap.Add(ItemType.Rope, new ItemData
+            _dataMap.Add(ItemType.Rope, new ItemData
             {
                 Name = "绳",
                 MaxCount = 99,
@@ -63,7 +63,7 @@ namespace Solo.Scripts.System.ItemSystem
                     (ItemType.Grass, 1),
                 },
             });
-            _itemDataMap.Add(ItemType.Stone, new ItemData
+            _dataMap.Add(ItemType.Stone, new ItemData
             {
                 Name = "石",
                 MaxCount = 99,
@@ -74,7 +74,7 @@ namespace Solo.Scripts.System.ItemSystem
                 },
             });
 
-            _itemDataMap.Add(ItemType.Wood, new ItemData
+            _dataMap.Add(ItemType.Wood, new ItemData
             {
                 Name = "木",
                 MaxCount = 99,
@@ -84,7 +84,7 @@ namespace Solo.Scripts.System.ItemSystem
 
                 },
             });
-            _itemDataMap.Add(ItemType.IronRaw, new ItemData
+            _dataMap.Add(ItemType.IronRaw, new ItemData
             {
                 Name = "粗铁",
                 MaxCount = 99,
@@ -94,7 +94,7 @@ namespace Solo.Scripts.System.ItemSystem
 
                 },
             });
-            _itemDataMap.Add(ItemType.Iron, new ItemData
+            _dataMap.Add(ItemType.Iron, new ItemData
             {
                 Name = "铁块",
                 MaxCount = 99,
@@ -104,7 +104,7 @@ namespace Solo.Scripts.System.ItemSystem
 
                 },
             });
-            _itemDataMap.Add(ItemType.CopperRaw, new ItemData
+            _dataMap.Add(ItemType.CopperRaw, new ItemData
             {
                 Name = "粗铜",
                 MaxCount = 99,
@@ -114,7 +114,7 @@ namespace Solo.Scripts.System.ItemSystem
 
                 },
             });
-            _itemDataMap.Add(ItemType.Copper, new ItemData
+            _dataMap.Add(ItemType.Copper, new ItemData
             {
                 Name = "铜块",
                 MaxCount = 99,
@@ -124,7 +124,7 @@ namespace Solo.Scripts.System.ItemSystem
 
                 },
             });
-            _itemDataMap.Add(ItemType.SilverRaw, new ItemData
+            _dataMap.Add(ItemType.SilverRaw, new ItemData
             {
                 Name = "粗银",
                 MaxCount = 99,
@@ -134,7 +134,7 @@ namespace Solo.Scripts.System.ItemSystem
 
                 },
             });
-            _itemDataMap.Add(ItemType.Silver, new ItemData
+            _dataMap.Add(ItemType.Silver, new ItemData
             {
                 Name = "银块",
                 MaxCount = 99,
@@ -144,7 +144,7 @@ namespace Solo.Scripts.System.ItemSystem
 
                 },
             });
-            _itemDataMap.Add(ItemType.Gold, new ItemData
+            _dataMap.Add(ItemType.Gold, new ItemData
             {
                 Name = "黄金",
                 MaxCount = 99,
@@ -155,7 +155,7 @@ namespace Solo.Scripts.System.ItemSystem
                 },
             });
 
-            _itemDataMap.Add(ItemType.Arrow, new ItemData
+            _dataMap.Add(ItemType.Arrow, new ItemData
             {
                 Name = "箭",
                 MaxCount = 99,
@@ -170,7 +170,7 @@ namespace Solo.Scripts.System.ItemSystem
             #endregion
 
             #region 法术, 发射物
-            _itemDataMap.Add(ItemType.Fireball, new ItemData
+            _dataMap.Add(ItemType.Fireball, new ItemData
             {
                 Name = "火球符箓",
                 MaxCount = 99,
@@ -186,7 +186,7 @@ namespace Solo.Scripts.System.ItemSystem
             #endregion
 
             #region 消耗品CanConsume
-            _itemDataMap.Add(ItemType.Banana, new ItemData
+            _dataMap.Add(ItemType.Banana, new ItemData
             {
                 Name = "蕉",
                 MaxCount = 99,
@@ -201,7 +201,7 @@ namespace Solo.Scripts.System.ItemSystem
             #endregion
 
             #region 武器
-            _itemDataMap.Add(ItemType.WoodSword, new ItemData
+            _dataMap.Add(ItemType.WoodSword, new ItemData
             {
                 Name = "木剑",
                 IconPath = "res://Assets/AtlasTextures/WoodSword.tres",
@@ -213,7 +213,7 @@ namespace Solo.Scripts.System.ItemSystem
                 },
                 CanAim = true,
             });
-            _itemDataMap.Add(ItemType.IronSword, new ItemData
+            _dataMap.Add(ItemType.IronSword, new ItemData
             {
                 Name = "铁剑",
                 IconPath = "res://Assets/AtlasTextures/IronSword.tres",
@@ -225,7 +225,7 @@ namespace Solo.Scripts.System.ItemSystem
                 },
                 CanAim = true,
             });
-            _itemDataMap.Add(ItemType.GoldSword, new ItemData
+            _dataMap.Add(ItemType.GoldSword, new ItemData
             {
                 Name = "金剑",
                 IconPath = "res://Assets/AtlasTextures/GoldSword.tres",
@@ -237,7 +237,7 @@ namespace Solo.Scripts.System.ItemSystem
                 },
                 CanAim = true,
             });
-            _itemDataMap.Add(ItemType.JadeSword, new ItemData
+            _dataMap.Add(ItemType.JadeSword, new ItemData
             {
                 Name = "玉剑",
                 IconPath = "res://Assets/AtlasTextures/JadeSword.tres",
@@ -251,7 +251,7 @@ namespace Solo.Scripts.System.ItemSystem
             });
 
 
-            _itemDataMap.Add(ItemType.WoodBow, new ItemData
+            _dataMap.Add(ItemType.WoodBow, new ItemData
             {
                 Name = "木弓",
                 IconPath = "res://Assets/AtlasTextures/WoodBow.tres",
@@ -263,7 +263,7 @@ namespace Solo.Scripts.System.ItemSystem
                     (ItemType.Rope, 5),
                 },
             });
-            _itemDataMap.Add(ItemType.IronBow, new ItemData
+            _dataMap.Add(ItemType.IronBow, new ItemData
             {
                 Name = "铁弓",
                 IconPath = "res://Assets/AtlasTextures/IronBow.tres",
@@ -275,7 +275,7 @@ namespace Solo.Scripts.System.ItemSystem
                     (ItemType.Rope, 3),
                 },
             });
-            _itemDataMap.Add(ItemType.GoldBow, new ItemData
+            _dataMap.Add(ItemType.GoldBow, new ItemData
             {
                 Name = "金弓",
                 IconPath = "res://Assets/AtlasTextures/GoldBow.tres",
@@ -287,7 +287,7 @@ namespace Solo.Scripts.System.ItemSystem
                     (ItemType.Rope, 3),
                 },
             });
-            _itemDataMap.Add(ItemType.JadeBow, new ItemData
+            _dataMap.Add(ItemType.JadeBow, new ItemData
             {
                 Name = "玉弓",
                 IconPath = "res://Assets/AtlasTextures/JadeBow.tres",
@@ -303,7 +303,7 @@ namespace Solo.Scripts.System.ItemSystem
             #endregion
 
             #region 工具
-            _itemDataMap.Add(ItemType.WoodPot, new ItemData
+            _dataMap.Add(ItemType.WoodPot, new ItemData
             {
                 Name = "木壶",
                 IconPath = "res://Assets/AtlasTextures/WoodPot.tres",
@@ -314,7 +314,7 @@ namespace Solo.Scripts.System.ItemSystem
                     (ItemType.Rope, 5),
                 },
             });
-            _itemDataMap.Add(ItemType.WoodRod, new ItemData
+            _dataMap.Add(ItemType.WoodRod, new ItemData
             {
                 Name = "木竿",
                 IconPath = "res://Assets/AtlasTextures/WoodRod.tres",
@@ -327,7 +327,7 @@ namespace Solo.Scripts.System.ItemSystem
                 },
             });
 
-            _itemDataMap.Add(ItemType.GoldPot, new ItemData
+            _dataMap.Add(ItemType.GoldPot, new ItemData
             {
                 Name = "金壶",
                 IconPath = "res://Assets/AtlasTextures/GoldPot.tres",
@@ -337,7 +337,7 @@ namespace Solo.Scripts.System.ItemSystem
                     (ItemType.Gold, 3),
                 },
             });
-            _itemDataMap.Add(ItemType.GoldRod, new ItemData
+            _dataMap.Add(ItemType.GoldRod, new ItemData
             {
                 Name = "金竿",
                 IconPath = "res://Assets/AtlasTextures/GoldRod.tres",
@@ -350,7 +350,7 @@ namespace Solo.Scripts.System.ItemSystem
                 },
             });
 
-            _itemDataMap.Add(ItemType.JadePot, new ItemData
+            _dataMap.Add(ItemType.JadePot, new ItemData
             {
                 Name = "玉壶",
                 IconPath = "res://Assets/AtlasTextures/JadePot.tres",
@@ -360,7 +360,7 @@ namespace Solo.Scripts.System.ItemSystem
                     (ItemType.Gold, 5),
                 },
             });
-            _itemDataMap.Add(ItemType.JadeRod, new ItemData
+            _dataMap.Add(ItemType.JadeRod, new ItemData
             {
                 Name = "玉竿",
                 IconPath = "res://Assets/AtlasTextures/JadeRod.tres",
@@ -375,7 +375,7 @@ namespace Solo.Scripts.System.ItemSystem
             #endregion
 
             #region 法宝
-            _itemDataMap.Add(ItemType.WoodHelmet, new ItemData
+            _dataMap.Add(ItemType.WoodHelmet, new ItemData
             {
                 Name = "木盔",
                 IconPath = "res://Assets/AtlasTextures/WoodHelmet.tres",
@@ -393,7 +393,7 @@ namespace Solo.Scripts.System.ItemSystem
                     (ItemType.Silk, 5),
                 },
             });
-            _itemDataMap.Add(ItemType.WoodArmor, new ItemData
+            _dataMap.Add(ItemType.WoodArmor, new ItemData
             {
                 Name = "木甲",
                 IconPath = "res://Assets/AtlasTextures/WoodArmor.tres",
@@ -408,7 +408,7 @@ namespace Solo.Scripts.System.ItemSystem
                     (ItemType.Silk, 5),
                 },
             });
-            _itemDataMap.Add(ItemType.WoodBoot, new ItemData
+            _dataMap.Add(ItemType.WoodBoot, new ItemData
             {
                 Name = "木鞋",
                 IconPath = "res://Assets/AtlasTextures/WoodBoot.tres",
@@ -425,7 +425,7 @@ namespace Solo.Scripts.System.ItemSystem
                 },
             });
 
-            _itemDataMap.Add(ItemType.IronHelmet, new ItemData
+            _dataMap.Add(ItemType.IronHelmet, new ItemData
             {
                 Name = "铁盔",
                 IconPath = "res://Assets/AtlasTextures/IronHelmet.tres",
@@ -439,7 +439,7 @@ namespace Solo.Scripts.System.ItemSystem
                     (ItemType.Silk, 3),
                 },
             });
-            _itemDataMap.Add(ItemType.IronArmor, new ItemData
+            _dataMap.Add(ItemType.IronArmor, new ItemData
             {
                 Name = "铁甲",
                 IconPath = "res://Assets/AtlasTextures/IronArmor.tres",
@@ -453,7 +453,7 @@ namespace Solo.Scripts.System.ItemSystem
                     (ItemType.Silk, 5),
                 },
             });
-            _itemDataMap.Add(ItemType.IronBoot, new ItemData
+            _dataMap.Add(ItemType.IronBoot, new ItemData
             {
                 Name = "铁鞋",
                 IconPath = "res://Assets/AtlasTextures/IronBoot.tres",
@@ -469,7 +469,7 @@ namespace Solo.Scripts.System.ItemSystem
                 },
             });
 
-            _itemDataMap.Add(ItemType.GoldHelmet, new ItemData
+            _dataMap.Add(ItemType.GoldHelmet, new ItemData
             {
                 Name = "金盔",
                 IconPath = "res://Assets/AtlasTextures/GoldHelmet.tres",
@@ -483,7 +483,7 @@ namespace Solo.Scripts.System.ItemSystem
                     (ItemType.Silk, 3),
                 },
             });
-            _itemDataMap.Add(ItemType.GoldArmor, new ItemData
+            _dataMap.Add(ItemType.GoldArmor, new ItemData
             {
                 Name = "金甲",
                 IconPath = "res://Assets/AtlasTextures/GoldArmor.tres",
@@ -497,7 +497,7 @@ namespace Solo.Scripts.System.ItemSystem
                     (ItemType.Silk, 5),
                 },
             });
-            _itemDataMap.Add(ItemType.GoldBoot, new ItemData
+            _dataMap.Add(ItemType.GoldBoot, new ItemData
             {
                 Name = "金鞋",
                 IconPath = "res://Assets/AtlasTextures/GoldBoot.tres",
@@ -513,7 +513,7 @@ namespace Solo.Scripts.System.ItemSystem
                 },
             });
 
-            _itemDataMap.Add(ItemType.JadeHelmet, new ItemData
+            _dataMap.Add(ItemType.JadeHelmet, new ItemData
             {
                 Name = "玉盔",
                 IconPath = "res://Assets/AtlasTextures/JadeHelmet.tres",
@@ -527,7 +527,7 @@ namespace Solo.Scripts.System.ItemSystem
                     (ItemType.Silk, 5),
                 },
             });
-            _itemDataMap.Add(ItemType.JadeArmor, new ItemData
+            _dataMap.Add(ItemType.JadeArmor, new ItemData
             {
                 Name = "玉甲",
                 IconPath = "res://Assets/AtlasTextures/JadeArmor.tres",
@@ -541,7 +541,7 @@ namespace Solo.Scripts.System.ItemSystem
                     (ItemType.Silk, 8),
                 },
             });
-            _itemDataMap.Add(ItemType.JadeBoot, new ItemData
+            _dataMap.Add(ItemType.JadeBoot, new ItemData
             {
                 Name = "玉鞋",
                 IconPath = "res://Assets/AtlasTextures/JadeBoot.tres",
@@ -560,7 +560,7 @@ namespace Solo.Scripts.System.ItemSystem
 
 
             //木制套装
-            _itemDataMap.Add(ItemType.WoodPickaxe, new ItemData
+            _dataMap.Add(ItemType.WoodPickaxe, new ItemData
             {
                 Name = "木镐",
                 IconPath = "res://Assets/AtlasTextures/WoodPickaxe.tres",
@@ -571,7 +571,7 @@ namespace Solo.Scripts.System.ItemSystem
                     (ItemType.Rope, 5),
                 },
             });
-            _itemDataMap.Add(ItemType.WoodAxe, new ItemData
+            _dataMap.Add(ItemType.WoodAxe, new ItemData
             {
                 Name = "木斧",
                 IconPath = "res://Assets/AtlasTextures/WoodAxe.tres",
@@ -584,7 +584,7 @@ namespace Solo.Scripts.System.ItemSystem
                 CanAim = true,
             });
 
-            _itemDataMap.Add(ItemType.IronPot, new ItemData
+            _dataMap.Add(ItemType.IronPot, new ItemData
             {
                 Name = "铁壶",
                 IconPath = "res://Assets/AtlasTextures/IronPot.tres",
@@ -594,7 +594,7 @@ namespace Solo.Scripts.System.ItemSystem
                     (ItemType.Iron, 3),
                 },
             });
-            _itemDataMap.Add(ItemType.IronRod, new ItemData
+            _dataMap.Add(ItemType.IronRod, new ItemData
             {
                 Name = "铁竿",
                 IconPath = "res://Assets/AtlasTextures/IronRod.tres",
@@ -609,7 +609,7 @@ namespace Solo.Scripts.System.ItemSystem
 
             //铁制套装
 
-            _itemDataMap.Add(ItemType.IronPickaxe, new ItemData
+            _dataMap.Add(ItemType.IronPickaxe, new ItemData
             {
                 Name = "铁镐",
                 IconPath = "res://Assets/AtlasTextures/IronPickaxe.tres",
@@ -620,7 +620,7 @@ namespace Solo.Scripts.System.ItemSystem
                     (ItemType.Wood, 3),
                 },
             });
-            _itemDataMap.Add(ItemType.IronAxe, new ItemData
+            _dataMap.Add(ItemType.IronAxe, new ItemData
             {
                 Name = "铁斧",
                 IconPath = "res://Assets/AtlasTextures/IronAxe.tres",
@@ -636,7 +636,7 @@ namespace Solo.Scripts.System.ItemSystem
 
             //金制装备
 
-            _itemDataMap.Add(ItemType.GoldPickaxe, new ItemData
+            _dataMap.Add(ItemType.GoldPickaxe, new ItemData
             {
                 Name = "金镐",
                 IconPath = "res://Assets/AtlasTextures/GoldPickaxe.tres",
@@ -647,7 +647,7 @@ namespace Solo.Scripts.System.ItemSystem
                     (ItemType.Wood, 3),
                 },
             });
-            _itemDataMap.Add(ItemType.GoldAxe, new ItemData
+            _dataMap.Add(ItemType.GoldAxe, new ItemData
             {
                 Name = "金斧",
                 IconPath = "res://Assets/AtlasTextures/GoldAxe.tres",
@@ -663,7 +663,7 @@ namespace Solo.Scripts.System.ItemSystem
 
             //玉制套装
 
-            _itemDataMap.Add(ItemType.JadePickaxe, new ItemData
+            _dataMap.Add(ItemType.JadePickaxe, new ItemData
             {
                 Name = "玉镐",
                 IconPath = "res://Assets/AtlasTextures/JadePickaxe.tres",
@@ -674,7 +674,7 @@ namespace Solo.Scripts.System.ItemSystem
                     (ItemType.Iron, 3),
                 },
             });
-            _itemDataMap.Add(ItemType.JadeAxe, new ItemData
+            _dataMap.Add(ItemType.JadeAxe, new ItemData
             {
                 Name = "玉斧",
                 IconPath = "res://Assets/AtlasTextures/JadeAxe.tres",
@@ -689,7 +689,7 @@ namespace Solo.Scripts.System.ItemSystem
 
 
             #region 建筑CanBuild
-            _itemDataMap.Add(ItemType.MainBase, new ItemData
+            _dataMap.Add(ItemType.MainBase, new ItemData
             {
                 Name = "聚灵之源",
                 MaxCount = 99,
@@ -702,7 +702,7 @@ namespace Solo.Scripts.System.ItemSystem
                     (ItemType.Stone, 10),
                 },
             });
-            _itemDataMap.Add(ItemType.Flag, new ItemData
+            _dataMap.Add(ItemType.Flag, new ItemData
             {
                 Name = "法旗",
                 MaxCount = 99,
@@ -714,7 +714,7 @@ namespace Solo.Scripts.System.ItemSystem
                     (ItemType.Silk, 5),
                 },
             });
-            _itemDataMap.Add(ItemType.BuildingCraft, new ItemData
+            _dataMap.Add(ItemType.BuildingCraft, new ItemData
             {
                 Name = "天工殿",
                 MaxCount = 99,
@@ -726,7 +726,7 @@ namespace Solo.Scripts.System.ItemSystem
                     (ItemType.Stone, 10),
                 },
             });
-            _itemDataMap.Add(ItemType.ToolCraft, new ItemData
+            _dataMap.Add(ItemType.ToolCraft, new ItemData
             {
                 Name = "锻器台",
                 MaxCount = 99,
@@ -739,7 +739,7 @@ namespace Solo.Scripts.System.ItemSystem
                     (ItemType.Stone, 5),
                 },
             });
-            _itemDataMap.Add(ItemType.ArmorCraft, new ItemData
+            _dataMap.Add(ItemType.ArmorCraft, new ItemData
             {
                 Name = "织锦阁",
                 MaxCount = 99,
@@ -751,7 +751,7 @@ namespace Solo.Scripts.System.ItemSystem
                     (ItemType.Wood, 8),
                 },
             });
-            _itemDataMap.Add(ItemType.MagicCraft, new ItemData
+            _dataMap.Add(ItemType.MagicCraft, new ItemData
             {
                 Name = "符箓台",
                 MaxCount = 99,
@@ -764,7 +764,7 @@ namespace Solo.Scripts.System.ItemSystem
                     (ItemType.Stone, 5),
                 },
             });
-            _itemDataMap.Add(ItemType.ItemBox, new ItemData
+            _dataMap.Add(ItemType.ItemBox, new ItemData
             {
                 Name = "乾坤箱",
                 MaxCount = 99,
@@ -777,7 +777,7 @@ namespace Solo.Scripts.System.ItemSystem
                     (ItemType.Iron, 2),
                 },
             });
-            _itemDataMap.Add(ItemType.TreeGrow, new ItemData
+            _dataMap.Add(ItemType.TreeGrow, new ItemData
             {
                 Name = "树苗",
                 MaxCount = 99,
@@ -795,7 +795,7 @@ namespace Solo.Scripts.System.ItemSystem
 
         public ItemData GetData(ItemType type)
         {
-            return _itemDataMap[type];
+            return _dataMap[type];
         }
     }
 }

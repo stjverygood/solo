@@ -5,7 +5,7 @@ using Solo.Scripts.System.BuildingSystem;
 
 public partial class Flag : Building, IQiRangeable
 {
-    [Export] private ColorRect _QiRangeCr;
+    [Export] private ColorRect _QiRangeCr = null!;
     private float _qiRange = 50f;//灵气范围
 
     public override void Init(BuildingType type, Vector2 snapPos)
