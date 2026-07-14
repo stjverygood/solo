@@ -16,13 +16,15 @@ namespace Solo.Scripts.System.SaveSystem
     public class SaveData
     {
         //纯数据类, 记录一个存档的全部信息
-        public string WorldSeedStr { get; set; }
+        public string ChunkElevationNoiseSeedStr { get; set; }
+        public string ChunkMoistureNoiseSeedStr { get; set; }
         public PlayerSaveData PlayerSaveData { get; set; }
         public List<ChunkSaveData> ChunkSaveDataList { get; set; }//所有加载过的区块列表, 加载存档时要转成Dictionary<Int2, ChunkSaveData>
 
         public SaveData()
         {
-            WorldSeedStr = "test_seed_3";
+            ChunkElevationNoiseSeedStr = "ChunkElevationNoiseSeedStr1";
+            ChunkMoistureNoiseSeedStr = "ChunkMoistureNoiseSeedStr1";
             ChunkSaveDataList = new List<ChunkSaveData>();
             PlayerSaveData = new PlayerSaveData();
         }

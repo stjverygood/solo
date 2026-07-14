@@ -1,9 +1,9 @@
 using Godot;
-using Solo.Scripts.Global;
+using System;
 
 namespace Solo.Scripts.Levels
 {
-    public partial class StartMenu : Control
+    public partial class StartMenuView : Control
     {
         [Export] private Button _startBtn = null!;
         [Export] private Button _settingBtn = null!;
@@ -11,11 +11,13 @@ namespace Solo.Scripts.Levels
         [Export] private Button _aboutBtn = null!;
         [Export] private Button _exitBtn = null!;
 
+        public event Action? OnStartBtnPressed;
+
         public override void _Ready()
         {
             _startBtn.Pressed += () =>
             {
-                GameManager.Instance.ChangeState(GameState.SaveListMenu);
+                OnStartBtnPressed?.Invoke();
             };
             _exitBtn.Pressed += () =>
             {

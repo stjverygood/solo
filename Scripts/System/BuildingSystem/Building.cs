@@ -34,8 +34,8 @@ namespace Solo.Scripts.System.BuildingSystem
                 _sprite.Material = _shaderMaterial;// 记得把复制后的独立材质重新赋给当前的 Sprite2D
             }
             ShowOutline(false);
-            GameManager.Instance.BuildingManager.Place(Type, snapPos);
-            GameManager.Instance.ChunkManager.AddItem(this, GlobalPosition);
+            //GameManager.Instance.BuildingManager.Place(Type, snapPos);
+            //GameManager.Instance.ChunkManager.AddItem(this, GlobalPosition);
         }
 
         public override void _Process(double delta)
@@ -115,8 +115,8 @@ namespace Solo.Scripts.System.BuildingSystem
                 dropItem.Init(new ItemInstance() { Type = tuple.Item1, Count = Random.Shared.Next(tuple.Item2, tuple.Item3 + 1) }, Position);
                 dropItem.ApplyForce();
             }
-            GameManager.Instance.BuildingManager.Remove(Type, GlobalPosition);
-            GameManager.Instance.ChunkManager.RemoveItem(this, GlobalPosition);
+            //GameManager.Instance.BuildingManager.Remove(Type, GlobalPosition);
+            //GameManager.Instance.ChunkManager.RemoveItem(this, GlobalPosition);
             QueueFree();
         }
 

@@ -30,7 +30,7 @@ namespace Solo.Scripts.System.ItemSystem
                 IconSprite.Material = _shaderMaterial;// 记得把复制后的独立材质重新赋给当前的 Sprite2D
             }
             ShowOutline(false);
-            GameManager.Instance.ChunkManager.AddItem(this, Position);
+            //GameManager.Instance.ChunkManager.AddItem(this, Position);
         }
 
         public void ApplyForce()
@@ -107,7 +107,7 @@ namespace Solo.Scripts.System.ItemSystem
             int remainCount = GameManager.Instance.Player.InventoryManager.AddItem(ItemInstance);
             if (remainCount == 0)
             {
-                GameManager.Instance.ChunkManager.RemoveItem(this, Position);
+                //GameManager.Instance.ChunkManager.RemoveItem(this, Position);
                 QueueFree();
             }
             else

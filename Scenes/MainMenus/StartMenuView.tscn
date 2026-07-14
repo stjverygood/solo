@@ -1,15 +1,15 @@
 [gd_scene format=3 uid="uid://b0h5soh7rcqn1"]
 
-[ext_resource type="Script" uid="uid://2tg34jhra5bk" path="res://Scripts/Levels/StartMenu.cs" id="1_aoyix"]
+[ext_resource type="Script" uid="uid://2tg34jhra5bk" path="res://Scripts/MainMenus/StartMenuView.cs" id="1_xde1s"]
 
-[node name="StartMenu" type="Control" unique_id=771200124 node_paths=PackedStringArray("_startBtn", "_settingBtn", "_collectionBtn", "_aboutBtn", "_exitBtn")]
+[node name="StartMenuView" type="Control" unique_id=771200124 node_paths=PackedStringArray("_startBtn", "_settingBtn", "_collectionBtn", "_aboutBtn", "_exitBtn")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("1_aoyix")
+script = ExtResource("1_xde1s")
 _startBtn = NodePath("ColorRect/VBoxContainer/StartBtn")
 _settingBtn = NodePath("ColorRect/VBoxContainer/SettingBtn")
 _collectionBtn = NodePath("ColorRect/VBoxContainer/CollectionBtn")

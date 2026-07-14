@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://7owk5lvrbddy"]
 
-[ext_resource type="Script" uid="uid://bcx8k5djj5py4" path="res://Scripts/System/SaveSystem/SaveSlotView.cs" id="1_uymm3"]
-[ext_resource type="Texture2D" uid="uid://d4igqp371y5" path="res://Assets/icon.svg" id="2_3xyg0"]
+[ext_resource type="Script" uid="uid://bcx8k5djj5py4" path="res://Scripts/MainMenus/SaveSlot.cs" id="1_gvqkk"]
+[ext_resource type="Texture2D" uid="uid://d4igqp371y5" path="res://Assets/icon.svg" id="2_i5bb2"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_l4jpc"]
 bg_color = Color(0.13319641, 0.13319641, 0.13319638, 1)
@@ -19,7 +19,7 @@ corner_radius_bottom_left = 16
 custom_minimum_size = Vector2(128, 128)
 offset_right = 16.0
 offset_bottom = 16.0
-script = ExtResource("1_uymm3")
+script = ExtResource("1_gvqkk")
 _bgPc = NodePath("PanelContainer")
 _animRoot = NodePath("PanelContainer/AnimNode")
 _nameLb = NodePath("PanelContainer/AnimNode/NameLb")
@@ -47,7 +47,7 @@ offset_bottom = -40.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-texture = ExtResource("2_3xyg0")
+texture = ExtResource("2_i5bb2")
 expand_mode = 1
 stretch_mode = 5
 

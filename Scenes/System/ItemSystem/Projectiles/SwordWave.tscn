@@ -113,6 +113,7 @@ animations = [{
 
 [node name="SwordWave" type="Area2D" unique_id=319752295 node_paths=PackedStringArray("_animSprite")]
 z_index = 1
+collision_mask = 7
 script = ExtResource("1_fnm7a")
 _animSprite = NodePath("AnimatedSprite2D")
 

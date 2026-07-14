@@ -1,0 +1,23 @@
+[gd_scene format=3 uid="uid://b58alptljoell"]
+
+[ext_resource type="Script" uid="uid://b4g37bof6xn5w" path="res://Scripts/MainMenus/MainMenuView.cs" id="1_so4uo"]
+[ext_resource type="PackedScene" uid="uid://b0h5soh7rcqn1" path="res://Scenes/MainMenus/StartMenuView.tscn" id="2_375p1"]
+[ext_resource type="PackedScene" uid="uid://bu5uihu26jmpm" path="res://Scenes/MainMenus/SaveListView.tscn" id="3_a8vqp"]
+
+[node name="MainMenuView" type="Control" unique_id=570311391 node_paths=PackedStringArray("_startMenuView", "_saveListView")]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_so4uo")
+_startMenuView = NodePath("StartMenuView")
+_saveListView = NodePath("SaveListView")
+
+[node name="StartMenuView" parent="." unique_id=771200124 instance=ExtResource("2_375p1")]
+layout_mode = 1
+
+[node name="SaveListView" parent="." unique_id=1572162832 instance=ExtResource("3_a8vqp")]
+visible = false
+layout_mode = 1

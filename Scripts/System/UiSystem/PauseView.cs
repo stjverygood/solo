@@ -1,5 +1,4 @@
 using Godot;
-using Solo.Scripts.Global;
 namespace Solo.Scripts.System.UiSystem
 {
     public partial class PauseView : Control
@@ -12,11 +11,11 @@ namespace Solo.Scripts.System.UiSystem
             ProcessMode = ProcessModeEnum.WhenPaused;
             _continueBtn.Pressed += () =>
             {
-                GameManager.Instance.ChangeState(GameState.Play);
+                //GameManager.Instance.ChangeState(GameState.Play);
             };
             _exitBtn.Pressed += () =>
             {
-                GameManager.Instance.ChangeState(GameState.StartMenu);
+                //GameManager.Instance.ChangeState(GameState.StartMenu);
             };
         }
     }

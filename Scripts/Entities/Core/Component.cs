@@ -1,15 +1,15 @@
 ﻿using Solo.Scripts.Global.Interfaces;
 
-namespace Solo.Scripts.Entities.Components
+namespace Solo.Scripts.Entities.Core
 {
     public class Component
     {
-        private IEntity? _owner;
+        protected IEntity _owner = null!;
         public void Init(IEntity owner)
         {
             _owner = owner;
         }
-        public IEntity? GetOwner()
+        public IEntity GetOwner()
         {
             return _owner;
         }

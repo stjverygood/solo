@@ -3,22 +3,23 @@
 [ext_resource type="Script" uid="uid://dpkxkwy3ger5n" path="res://Scripts/Entities/Players/Player.cs" id="1_lxeke"]
 [ext_resource type="Texture2D" uid="uid://c5cysx8uva6i2" path="res://Assets/AtlasTextures/UI/AimIcon.tres" id="2_oet8y"]
 [ext_resource type="PackedScene" uid="uid://5hfwgc7q0vcs" path="res://Scenes/Entities/Players/FishingFloat.tscn" id="2_sod1g"]
-[ext_resource type="PackedScene" uid="uid://bnq2kgnwy4iaa" path="res://Scenes/System/ItemSystem/Projectiles/Arrow.tscn" id="2_ynm40"]
 [ext_resource type="Texture2D" uid="uid://cmlghpyvrsitg" path="res://Assets/AtlasTextures/Player.tres" id="3_3gn43"]
-[ext_resource type="PackedScene" uid="uid://d24xyf4tuo8wn" path="res://Scenes/System/ItemSystem/Projectiles/Fireball.tscn" id="3_cbjid"]
-[ext_resource type="PackedScene" uid="uid://das8eij0ua5tt" path="res://Scenes/System/BuildingSystem/BuildingPreview.tscn" id="3_f0b02"]
-[ext_resource type="PackedScene" uid="uid://bqn8jrdyesh0w" path="res://Scenes/System/ItemSystem/Projectiles/SwordWave.tscn" id="5_avkiy"]
 [ext_resource type="FontFile" uid="uid://chelxpn5elvbb" path="res://Assets/zpix.ttf" id="5_rnj17"]
-[ext_resource type="PackedScene" uid="uid://1vvxok2xavwu" path="res://Scenes/System/ItemSystem/Projectiles/HammerWave.tscn" id="6_t82er"]
+[ext_resource type="PackedScene" uid="uid://dkxvgd7m5vqru" path="res://Scenes/System/BuildingSystem/Building.tscn" id="6_n0q0x"]
 [ext_resource type="Texture2D" uid="uid://bmhew47e5rlt7" path="res://Assets/AtlasTextures/UI/InteractIcon.tres" id="7_n0q0x"]
 [ext_resource type="PackedScene" uid="uid://cfu7wy1op48g5" path="res://Scenes/System/CraftSystem/CraftView.tscn" id="7_sod1g"]
 [ext_resource type="Texture2D" uid="uid://4l1ykgdsxh5w" path="res://Assets/AtlasTextures/WoodPot.tres" id="8_cbjid"]
 [ext_resource type="Texture2D" uid="uid://buuka3d1ksemr" path="res://Assets/Png/VfxAnimSheets/sprite-sheet.png" id="9_2hmx1"]
 [ext_resource type="PackedScene" uid="uid://d3ptuijhfhmm0" path="res://Scenes/UI/DeathView.tscn" id="11_oet8y"]
+[ext_resource type="Texture2D" uid="uid://bktw06wl0k8s0" path="res://Assets/Png/EntityAnimSheets/Player/Soldier_Idle.png" id="12_4vg5v"]
+[ext_resource type="Texture2D" uid="uid://bc3lqr2l6kbt1" path="res://Assets/Png/EntityAnimSheets/Player/Soldier_Walk.png" id="13_1uj7u"]
 [ext_resource type="PackedScene" uid="uid://b8so1e8mc7j47" path="res://Scenes/Entities/Players/CharacterView.tscn" id="15_sod1g"]
 [ext_resource type="PackedScene" uid="uid://bgqqv5e610s5p" path="res://Scenes/Entities/Players/InventoryManagerView.tscn" id="15_wom6s"]
 [ext_resource type="PackedScene" uid="uid://cx380rlsg85x5" path="res://Scenes/Entities/Players/FastBarView.tscn" id="17_n0q0x"]
 [ext_resource type="PackedScene" uid="uid://lu2ulevw2hqn" path="res://Scenes/Entities/Players/UI/FastAttributeView.tscn" id="18_avkiy"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_jw8fk"]
+radius = 3.0
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_avkiy"]
 atlas = ExtResource("9_2hmx1")
@@ -63,8 +64,163 @@ animations = [{
 "speed": 10.0
 }]
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_jw8fk"]
-radius = 5.0990195
+[sub_resource type="AtlasTexture" id="AtlasTexture_m6ngh"]
+atlas = ExtResource("12_4vg5v")
+region = Rect2(0, 0, 100, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_w1pmp"]
+atlas = ExtResource("12_4vg5v")
+region = Rect2(100, 0, 100, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1ad6h"]
+atlas = ExtResource("12_4vg5v")
+region = Rect2(200, 0, 100, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xoj63"]
+atlas = ExtResource("12_4vg5v")
+region = Rect2(300, 0, 100, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_uwhui"]
+atlas = ExtResource("12_4vg5v")
+region = Rect2(400, 0, 100, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_feocq"]
+atlas = ExtResource("12_4vg5v")
+region = Rect2(500, 0, 100, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_w53h4"]
+atlas = ExtResource("12_4vg5v")
+region = Rect2(0, 0, 100, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ulv25"]
+atlas = ExtResource("12_4vg5v")
+region = Rect2(100, 0, 100, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tq17s"]
+atlas = ExtResource("12_4vg5v")
+region = Rect2(200, 0, 100, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_foep3"]
+atlas = ExtResource("12_4vg5v")
+region = Rect2(300, 0, 100, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_87rjk"]
+atlas = ExtResource("12_4vg5v")
+region = Rect2(400, 0, 100, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vjk3l"]
+atlas = ExtResource("12_4vg5v")
+region = Rect2(500, 0, 100, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4mx8l"]
+atlas = ExtResource("13_1uj7u")
+region = Rect2(0, 0, 100, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fnvqb"]
+atlas = ExtResource("13_1uj7u")
+region = Rect2(100, 0, 100, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_sv5rg"]
+atlas = ExtResource("13_1uj7u")
+region = Rect2(200, 0, 100, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_shmpa"]
+atlas = ExtResource("13_1uj7u")
+region = Rect2(300, 0, 100, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tuswp"]
+atlas = ExtResource("13_1uj7u")
+region = Rect2(400, 0, 100, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_goyqf"]
+atlas = ExtResource("13_1uj7u")
+region = Rect2(500, 0, 100, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ihimv"]
+atlas = ExtResource("13_1uj7u")
+region = Rect2(600, 0, 100, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_f6wim"]
+atlas = ExtResource("13_1uj7u")
+region = Rect2(700, 0, 100, 100)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_wdnd1"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_m6ngh")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_w1pmp")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1ad6h")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_xoj63")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_uwhui")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_feocq")
+}],
+"loop": 0,
+"name": &"Action",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_w53h4")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ulv25")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_tq17s")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_foep3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_87rjk")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vjk3l")
+}],
+"loop": 1,
+"name": &"Idle",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4mx8l")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_fnvqb")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_sv5rg")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_shmpa")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_tuswp")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_goyqf")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ihimv")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_f6wim")
+}],
+"loop": 1,
+"name": &"Move",
+"speed": 5.0
+}]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_8ildv"]
 size = Vector2(800, 500)
@@ -128,54 +284,56 @@ scale_curve = SubResource("CurveTexture_sdrt1")
 color = Color(0.5716493, 0.5716493, 0.57164925, 1)
 color_ramp = SubResource("GradientTexture1D_ex883")
 
-[node name="Player" type="CharacterBody2D" unique_id=1144409017 node_paths=PackedStringArray("_camera", "_bodyRootNode", "_animRootNode", "_bodySprite", "_helmetSprite", "_ArmorSprite", "_bootSprite", "_handRootNode", "_handSprite", "_walkGrassParticles", "_walkWaterParticles", "_leftViewRootControl", "_characterView", "_inventoryManagerView", "_fastBarView", "_fastAttributeView", "_hpTpb", "_hpLb", "_mpTpb", "_mpLb", "_debugLb", "_deathView", "_bgAnimSprite")]
+[node name="Player" type="CharacterBody2D" unique_id=1144409017 node_paths=PackedStringArray("_camera", "_animSprite", "_handRootNode", "_handSprite", "_leftViewRootControl", "_characterView", "_inventoryManagerView", "_fastBarView", "_fastAttributeView", "_debugLb", "_deathView", "_bgAnimSprite")]
 y_sort_enabled = true
 script = ExtResource("1_lxeke")
 _camera = NodePath("Camera2D")
-_bodyRootNode = NodePath("BodyRootNode")
-_animRootNode = NodePath("BodyRootNode/AnimRootNode")
-_bodySprite = NodePath("BodyRootNode/AnimRootNode/BodySprite")
-_helmetSprite = NodePath("BodyRootNode/AnimRootNode/HelmetSprite")
-_ArmorSprite = NodePath("BodyRootNode/AnimRootNode/ArmorSprite")
-_bootSprite = NodePath("BodyRootNode/AnimRootNode/BootSprite")
-_handRootNode = NodePath("BodyRootNode/HandRootNode")
-_handSprite = NodePath("BodyRootNode/HandRootNode/HandSprite2D")
-_walkGrassParticles = NodePath("Particles/WalkGrassParticles")
-_walkWaterParticles = NodePath("Particles/WalkWaterParticles")
+_animSprite = NodePath("AnimatedSprite2D")
+_handRootNode = NodePath("AnimatedSprite2D/HandRootNode")
+_handSprite = NodePath("AnimatedSprite2D/HandRootNode/HandSprite2D")
 _fishingFloatPs = ExtResource("2_sod1g")
-_arrowPs = ExtResource("2_ynm40")
-_fireballPs = ExtResource("3_cbjid")
-_swordWavePs = ExtResource("5_avkiy")
-_hammerWavePs = ExtResource("6_t82er")
 _leftViewRootControl = NodePath("CanvasLayer/LeftViewControl")
 _characterView = NodePath("CanvasLayer/CharacterView")
 _inventoryManagerView = NodePath("CanvasLayer/InventoryView")
 _fastBarView = NodePath("CanvasLayer/FastBarView")
 _fastAttributeView = NodePath("CanvasLayer/FastAttributeView")
 _craftViewPs = ExtResource("7_sod1g")
-_hpTpb = NodePath("")
-_hpLb = NodePath("")
-_mpTpb = NodePath("")
-_mpLb = NodePath("")
 _debugLb = NodePath("DebugLabel")
 _deathView = NodePath("CanvasLayer/DeathView")
 _aimIconTexture = ExtResource("2_oet8y")
 _interactIconTexture = ExtResource("7_n0q0x")
-_bgAnimSprite = NodePath("AnimatedSprite2D")
-_buildingPreviewPs = ExtResource("3_f0b02")
+_bgAnimSprite = NodePath("BgAnimSprite")
+_buildingPreviewPs = ExtResource("6_n0q0x")
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1794381861]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1924437222]
+position = Vector2(0, -3)
+shape = SubResource("CircleShape2D_jw8fk")
+
+[node name="BgAnimSprite" type="AnimatedSprite2D" parent="." unique_id=1794381861]
 visible = false
 sprite_frames = SubResource("SpriteFrames_yxouj")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1924437222]
-position = Vector2(0, -4)
-shape = SubResource("CircleShape2D_jw8fk")
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=672779074]
+sprite_frames = SubResource("SpriteFrames_wdnd1")
+animation = &"Action"
+frame = 5
+frame_progress = 1.0
+offset = Vector2(0, -7.04)
+
+[node name="HandRootNode" type="Node2D" parent="AnimatedSprite2D" unique_id=129208459]
+position = Vector2(6, -4)
+
+[node name="HandSprite2D" type="Sprite2D" parent="AnimatedSprite2D/HandRootNode" unique_id=881647694]
+position = Vector2(0, -7)
+rotation = -0.017453292
+texture = ExtResource("8_cbjid")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=173865742]
+zoom = Vector2(0.165, 0.165)
 position_smoothing_enabled = true
 
 [node name="BodyRootNode" type="Node2D" parent="." unique_id=700917934]
+visible = false
 
 [node name="AnimRootNode" type="Node2D" parent="BodyRootNode" unique_id=727127429]
 
@@ -191,18 +349,6 @@ position = Vector2(0, -11)
 
 [node name="BootSprite" type="Sprite2D" parent="BodyRootNode/AnimRootNode" unique_id=1388988529]
 position = Vector2(0, -3)
-
-[node name="HandRootNode" type="Node2D" parent="BodyRootNode" unique_id=129208459]
-position = Vector2(6, -8)
-
-[node name="HandSprite2D" type="Sprite2D" parent="BodyRootNode/HandRootNode" unique_id=881647694]
-position = Vector2(0, -7)
-rotation = -0.017453292
-texture = ExtResource("8_cbjid")
-
-[node name="NavigationObstacle2D" type="NavigationObstacle2D" parent="." unique_id=1630283297]
-position = Vector2(0, -7)
-radius = 11.11
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=374399419]
 
@@ -254,10 +400,10 @@ grow_vertical = 2
 [node name="FastAttributeView" parent="CanvasLayer" unique_id=1308229637 instance=ExtResource("18_avkiy")]
 
 [node name="DebugLabel" type="Label" parent="." unique_id=1146679472]
-offset_left = -66.0
-offset_top = -15.0
-offset_right = -12.0
-offset_bottom = 9.0
+offset_left = -25.0
+offset_top = -48.0
+offset_right = 29.0
+offset_bottom = -24.0
 theme_override_constants/outline_size = 16
 theme_override_fonts/font = ExtResource("5_rnj17")
 theme_override_font_sizes/font_size = 24

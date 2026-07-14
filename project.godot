@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="Solo"
-run/main_scene="uid://b0h5soh7rcqn1"
+run/main_scene="uid://b58alptljoell"
 config/features=PackedStringArray("4.7", "C#", "GL Compatibility")
 config/icon="res://Assets/icon.svg"
 

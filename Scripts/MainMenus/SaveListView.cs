@@ -1,5 +1,6 @@
 using Godot;
 using Solo.Scripts.Global;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -14,14 +15,16 @@ namespace Solo.Scripts.System.SaveSystem
         [Export] private GridContainer _slotGc = null!;
         [Export] private PackedScene _saveSlotViewPs = null!;
 
-        private List<SaveSlotView> _slotViewList = new List<SaveSlotView>();
-        private SaveInfo? _curSelectedSaveInfo;
+        private List<SaveSlot> _slotViewList = new List<SaveSlot>();
+        private SaveInfo _curSelectedSaveInfo;
+
+        public event Action? BackBtnPressed;
 
         public override void _Ready()
         {
             _backBtn.Pressed += () =>
             {
-                GameManager.Instance.ChangeState(GameState.StartMenu);
+                BackBtnPressed?.Invoke();
             };
             _delSaveBtn.Pressed += () =>
             {
@@ -36,8 +39,10 @@ namespace Solo.Scripts.System.SaveSystem
             };
             _goBtn.Pressed += () =>
             {
+
                 SaveManager.Instance.CurSaveInfo = _curSelectedSaveInfo;
-                GameManager.Instance.ChangeState(GameState.Loading);
+                GameManager.Instance.EnterWorld();
+                //GameManager.Instance.ChangeState(GameState.Loading);
             };
             RefreshSaveSlotList();
         }
@@ -51,13 +56,13 @@ namespace Solo.Scripts.System.SaveSystem
             _slotViewList.Clear();
             for (int i = 0; i < SaveManager.Instance.SaveInfoList.Count; i++)
             {
-                SaveSlotView slotView = _saveSlotViewPs.Instantiate<SaveSlotView>();
+                SaveSlot slotView = _saveSlotViewPs.Instantiate<SaveSlot>();
                 slotView.Init(this, SaveManager.Instance.SaveInfoList[i]);
                 _slotGc.AddChild(slotView);
                 _slotViewList.Add(slotView);
                 if (_curSelectedSaveInfo != null && _curSelectedSaveInfo.Id == slotView.SaveInfo.Id)
                 {
-                    slotView.ChangeState(SaveSlotViewState.Selected);
+                    slotView.ChangeState(SaveSlotState.Selected);
                 }
             }
             if (_curSelectedSaveInfo == null)
@@ -76,8 +81,8 @@ namespace Solo.Scripts.System.SaveSystem
         {
             if (_curSelectedSaveInfo != null)
             {
-                SaveSlotView lastSlotView = _slotViewList.First(view => view.SaveInfo.Id == _curSelectedSaveInfo.Id);
-                lastSlotView.ChangeState(SaveSlotViewState.Normal);
+                SaveSlot lastSlotView = _slotViewList.First(view => view.SaveInfo.Id == _curSelectedSaveInfo.Id);
+                lastSlotView.ChangeState(SaveSlotState.Normal);
             }
             _curSelectedSaveInfo = newInfo;
             if (_curSelectedSaveInfo == null)

@@ -1,5 +1,5 @@
 using Godot;
-using Solo.Scripts.Entities.Players;
+using Solo.Scripts.Entities.Components;
 using Solo.Scripts.Global;
 using Solo.Scripts.Global.Interfaces;
 using System.Collections.Generic;
@@ -9,13 +9,16 @@ namespace Solo.Scripts.System.ItemSystem
     public partial class SwordWave : Area2D
     {
         [Export] private AnimatedSprite2D _animSprite = null!;
-        private int _damage = 10;
+        private IEntity _spawner = null!;
+        private float _atk = 0;//一开始就要记录
 
-        private List<ITargetable> _targetList = new List<ITargetable>();
+        private List<IEntity> _targetEntityList = new List<IEntity>();
 
-        public void Init(Vector2 worldPosition, Vector2 atkDir)
+        public void Init(IEntity spawner, Vector2 atkDir)
         {
-            GlobalPosition = worldPosition + atkDir * 10;
+            _spawner = spawner;
+            GlobalPosition = ((Node2D)_spawner).GlobalPosition + atkDir * 10;
+            _atk = _spawner.GetComponent<AtkComponent>().Value;
             Rotation = atkDir.Angle();
             _animSprite.Play(GD.Randf() < 0.5f ? "Wave1" : "Wave2");
             BodyEntered += SwordWave_BodyEntered;
@@ -28,32 +31,39 @@ namespace Solo.Scripts.System.ItemSystem
         {
             if (_animSprite.Frame == 1)
             {
-                GD.Print($"frame 1 : {_targetList.Count}");
+                GD.Print($"frame 1 : {_targetEntityList.Count}");
                 GameManager.Instance.Player.TriggerScreenShake(2);
-                foreach (ITargetable targetable in _targetList)
+                foreach (IEntity entity in _targetEntityList)
                 {
-                    if (targetable.IsVaild())
-                    {
-                        if (targetable is Player)
-                            continue;
-                        targetable.TakeDamage(this, _damage, null);
-                    }
+
+                    if (IsInstanceValid(((Node2D)entity)) == false)
+                        continue;
+                    if (entity == _spawner)
+                        continue;
+                    float damage = GameManager.Instance.CalculateDamage(_atk, entity.GetComponent<DefComponent>().Value);
+                    entity.GetComponent<HpComponent>().Consume(damage);
+                    //if (targetable.IsVaild())
+                    //{
+                    //    if (targetable is Player)
+                    //        continue;
+                    //    targetable.TakeDamage(this, _damage, null);
+                    //}
                 }
             }
         }
 
         private void SwordWave_BodyEntered(Node2D body)
         {
-            if (body is ITargetable target)
+            if (body is IEntity entity)
             {
-                _targetList.Add(target);
+                _targetEntityList.Add(entity);
             }
         }
         private void SwordWave_BodyExited(Node2D body)
         {
-            if (body is ITargetable target)
+            if (body is IEntity entity)
             {
-                _targetList.Remove(target);
+                _targetEntityList.Remove(entity);
             }
         }
 

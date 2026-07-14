@@ -10,7 +10,7 @@ namespace Solo.Scripts.Entities.Players
         {
             _exitBtn.Pressed += () =>
             {
-                GameManager.Instance.ChangeState(GameState.StartMenu);
+                //GameManager.Instance.ChangeState(GameState.StartMenu);
                 Visible = false;
             };
 

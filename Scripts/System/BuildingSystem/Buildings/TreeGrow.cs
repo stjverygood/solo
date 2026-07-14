@@ -31,7 +31,7 @@ namespace Solo.Scripts.System.BuildingSystem.Buildings
                 if (GD.Randf() < _curGrowChance)
                 {
                     GameManager.Instance.BuildingManager.Remove(Type, GlobalPosition);
-                    GameManager.Instance.ChunkManager.RemoveItem(this, GlobalPosition);
+                    //GameManager.Instance.ChunkManager.RemoveItem(this, GlobalPosition);
                     QueueFree();
                     PackedScene treePs = GD.Load<PackedScene>(BuildingDataManager.Instance.GetData(BuildingType.Tree).TscnPath);
                     Tree tree = treePs.Instantiate<Tree>();

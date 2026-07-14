@@ -1,14 +1,6 @@
 ﻿namespace Solo.Scripts.Global
 {
-    public enum GameState
-    {
-        StartMenu,//开始菜单
-        SaveListMenu,//世界列表
-        SettingMenu,
-        Loading,//加载界面 : 加载世界, 退出并保存世界
-        Play,//游戏中
-        Pause,//按exc暂停游戏
-    }
+
 
     public enum EntityType
     {
@@ -48,25 +40,29 @@
     {
         Grass,
         Water,
+        Forest,
+        Desert,
+        Stone,
+        FireLand,
 
-        GrassWaterLeft,
-        GrassWaterRight,
-        GrassWaterUp,
-        GrassWaterDown,
+        //GrassWaterLeft,
+        //GrassWaterRight,
+        //GrassWaterUp,
+        //GrassWaterDown,
 
-        GrassWaterLeftUp,
-        GrassWaterLeftRight,
-        GrassWaterLeftDown,
-        GrassWaterRightUp,
-        GrassWaterUpDown,
-        GrassWaterRightDown,
+        //GrassWaterLeftUp,
+        //GrassWaterLeftRight,
+        //GrassWaterLeftDown,
+        //GrassWaterRightUp,
+        //GrassWaterUpDown,
+        //GrassWaterRightDown,
 
-        GrassWaterNoLeft,
-        GrassWaterNoRight,
-        GrassWaterNoUp,
-        GrassWaterNoDown,
+        //GrassWaterNoLeft,
+        //GrassWaterNoRight,
+        //GrassWaterNoUp,
+        //GrassWaterNoDown,
 
-        GrassWaterAll,
+        //GrassWaterAll,
     }
 
     //单位类型
@@ -233,10 +229,4 @@
         ItemBox,//储物箱
         TreeGrow,//树苗
     }
-
-    //public enum ProjectileType
-    //{
-    //    Arrow,
-    //    Fireball,
-    //}
 }

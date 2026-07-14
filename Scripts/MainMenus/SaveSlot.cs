@@ -2,14 +2,14 @@ using Godot;
 
 namespace Solo.Scripts.System.SaveSystem
 {
-    public enum SaveSlotViewState
+    public enum SaveSlotState
     {
         Normal,
         Hover,
         Selected,
     }
 
-    public partial class SaveSlotView : Control
+    public partial class SaveSlot : Control
     {
         private SaveListView _parent;
         public SaveInfo SaveInfo;
@@ -20,7 +20,7 @@ namespace Solo.Scripts.System.SaveSystem
         [Export] private Label _levelLb = null!;
         [Export] private Label _dateLb = null!;
 
-        private SaveSlotViewState _curState;
+        private SaveSlotState _curState;
 
         private StyleBoxFlat? _normalStyle;
         private StyleBoxFlat? _hoverStyle;
@@ -52,7 +52,7 @@ namespace Solo.Scripts.System.SaveSystem
             }
 
             // 初始状态为 Normal
-            ChangeState(SaveSlotViewState.Normal);
+            ChangeState(SaveSlotState.Normal);
         }
 
         //public override void _Ready()
@@ -63,14 +63,14 @@ namespace Solo.Scripts.System.SaveSystem
         {
             if (@event is InputEventMouseButton mouseEvent && mouseEvent.Pressed && mouseEvent.ButtonIndex == MouseButton.Left)
             {
-                if (_curState == SaveSlotViewState.Selected)
+                if (_curState == SaveSlotState.Selected)
                 {
-                    ChangeState(SaveSlotViewState.Hover);
+                    ChangeState(SaveSlotState.Hover);
                     _parent.ChangeSelectedSaveInfo(null);
                 }
                 else
                 {
-                    ChangeState(SaveSlotViewState.Selected);
+                    ChangeState(SaveSlotState.Selected);
                     _parent.ChangeSelectedSaveInfo(SaveInfo);
                 }
             }
@@ -78,27 +78,27 @@ namespace Solo.Scripts.System.SaveSystem
 
         private void WorldSlotView_MouseEntered()
         {
-            if (_curState == SaveSlotViewState.Normal)
-                ChangeState(SaveSlotViewState.Hover);
+            if (_curState == SaveSlotState.Normal)
+                ChangeState(SaveSlotState.Hover);
         }
 
         private void WorldSlotView_MouseExited()
         {
-            if (_curState == SaveSlotViewState.Hover)
-                ChangeState(SaveSlotViewState.Normal);
+            if (_curState == SaveSlotState.Hover)
+                ChangeState(SaveSlotState.Normal);
         }
 
-        public void ChangeState(SaveSlotViewState newState)
+        public void ChangeState(SaveSlotState newState)
         {
             switch (newState)
             {
-                case SaveSlotViewState.Normal:
+                case SaveSlotState.Normal:
                     _bgPc.AddThemeStyleboxOverride("panel", _normalStyle);
                     break;
-                case SaveSlotViewState.Hover:
+                case SaveSlotState.Hover:
                     _bgPc.AddThemeStyleboxOverride("panel", _hoverStyle);
                     break;
-                case SaveSlotViewState.Selected:
+                case SaveSlotState.Selected:
 
                     _bgPc.AddThemeStyleboxOverride("panel", _selectedStyle);
                     break;

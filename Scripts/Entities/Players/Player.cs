@@ -1,5 +1,6 @@
 using Godot;
 using Solo.Scripts.Entities.Components;
+using Solo.Scripts.Entities.Core;
 using Solo.Scripts.Entities.Players.Solo.Scripts.Entities.Players;
 using Solo.Scripts.Entities.Players.UI;
 using Solo.Scripts.Global;
@@ -28,33 +29,32 @@ namespace Solo.Scripts.Entities.Players
         BagUI,
     }
 
-    public partial class Player : CharacterBody2D, ITargetable
+    public partial class Player : CharacterBody2D, ITargetable, IEntity
     {
         public PlayerState CurState;
         private Vector2 _curMoveDir = Vector2.Right;//移动朝向, 记录最后一次移动输入方向
         //private Vector2 _curFaceDir = Vector2.Right;//脸部方向, 记录鼠标方向
         [Export] private Camera2D _camera = null!;
 
-        [Export] private Node2D _bodyRootNode = null!;//身体根节点
-        [Export] private Node2D _animRootNode = null!;//身体动画跟节点
-        [Export] private Sprite2D _bodySprite = null!;//身体sprite, 用于材质
-        [Export] private Sprite2D _helmetSprite = null!;
-        [Export] private Sprite2D _ArmorSprite = null!;
-        [Export] private Sprite2D _bootSprite = null!;
+        [Export] private AnimatedSprite2D _animSprite = null!;
+        //[Export] private Node2D _bodyRootNode = null!;//身体根节点
+        //[Export] private Node2D _animRootNode = null!;//身体动画跟节点
+        //[Export] private Sprite2D _bodySprite = null!;//身体sprite, 用于材质
+        //[Export] private Sprite2D _helmetSprite = null!;
+        //[Export] private Sprite2D _ArmorSprite = null!;
+        //[Export] private Sprite2D _bootSprite = null!;
 
         [Export] private Node2D _handRootNode = null!;//手部根节点
         [Export] private Sprite2D _handSprite = null!;//手持物sprite
 
-        [Export] private GpuParticles2D _walkGrassParticles = null!;//走在草上的粒子系统
-        [Export] private GpuParticles2D _walkWaterParticles = null!;
 
         [Export] private PackedScene _fishingFloatPs = null!;
 
         //发射物ps
-        [Export] private PackedScene _arrowPs = null!;
-        [Export] private PackedScene _fireballPs = null!;
-        [Export] private PackedScene _swordWavePs = null!;
-        [Export] private PackedScene _hammerWavePs = null!;
+        //[Export] private PackedScene _arrowPs = null!;
+        //[Export] private PackedScene _fireballPs = null!;
+        //[Export] private PackedScene _swordWavePs = null!;
+        //[Export] private PackedScene _hammerWavePs = null!;
 
 
 
@@ -64,17 +64,17 @@ namespace Solo.Scripts.Entities.Players
         public Vector2 StartPoint = new Vector2(0, 0);//出生点
         private float _moveSpeed = 100;
         //private AttributeManager _attributeManager = new AttributeManager();
-        private RealmComponent _realmComponent = new RealmComponent();
-        private HpComponent _hpComponent = new HpComponent();
-        private QiComponent _qiComponent = new QiComponent();
-        private ExpComponent _expComponent = new ExpComponent();
-        private AtkComponent _atkComponent = new AtkComponent();
-        private DefComponent _defComponent = new DefComponent();
+        //private RealmComponent GetComponent<RealmComponent>() = new RealmComponent();
+        //private HpComponent GetComponent<HpComponent>() = new HpComponent();
+        //private QiComponent GetComponent<QiComponent>() = new QiComponent();
+        //private ExpComponent GetComponent<ExpComponent>() = new ExpComponent();
+        //private AtkComponent GetComponent<AtkComponent>() = new AtkComponent();
+        //private DefComponent GetComponent<DefComponent>() = new DefComponent();
         private float _curTargetRange = 100;//手长, 攻击和交互都统一用这个距离, 远程itemtype能加这个范围, todo : 改用基础值, 使用时获取手持物+距离
         private float _curTargetRangeSq;
         private int _curFastBarIndex;
 
-        private Tween _animTween = null!; // 用于管理当前动画
+        //private Tween _animTween = null!; // 用于管理当前动画
         public InventoryManager InventoryManager = new InventoryManager();
 
         //UI
@@ -90,10 +90,10 @@ namespace Solo.Scripts.Entities.Players
 
         //[Export] private SelfView _selfView;
         //[Export] private InventoryView _fastBarInventoryView;
-        [Export] private TextureProgressBar _hpTpb = null!;
-        [Export] private Label _hpLb = null!;
-        [Export] private TextureProgressBar _mpTpb = null!;
-        [Export] private Label _mpLb = null!;
+        //[Export] private TextureProgressBar _hpTpb = null!;
+        //[Export] private Label _hpLb = null!;
+        //[Export] private TextureProgressBar _mpTpb = null!;
+        //[Export] private Label _mpLb = null!;
         [Export] private Label _debugLb = null!;
         [Export] private DeathView _deathView = null!;
         [Export] public Texture2D _aimIconTexture = null!;
@@ -101,47 +101,76 @@ namespace Solo.Scripts.Entities.Players
 
         [Export] AnimatedSprite2D _bgAnimSprite = null!;
 
-        public override void _Ready()
+        private ComponentHost _componentHost = null!;
+        public T GetComponent<T>() where T : Component
         {
-            GD.Print("Player Ready~~~");
+            return _componentHost.Get<T>();
+        }
+        public bool TryGetComponent<T>(out T component) where T : Component
+        {
+            return _componentHost.TryGet<T>(out component);
+        }
 
+        public void Init()
+        {
+            GD.Print("Player Init~~~");
             GameManager.Instance.Player = this;
+
+            _componentHost = new ComponentHost(this);
+
             PlayerSaveData playerSaveData = SaveManager.Instance.CurSaveData.PlayerSaveData; //从存档里加载属性
             _characterView.Init();
 
             //先绑定, 后初始化值
-            _realmComponent.OnValueChanged += _fastAttributeView.RefreshRealm;
-            _realmComponent.OnValueChanged += _characterView.AttributeView.RefreshRealm;
-            _hpComponent.OnValueChanged += _fastAttributeView.RefreshHp;
-            _hpComponent.OnValueChanged += _characterView.AttributeView.RefreshHp;
-            _qiComponent.OnValueChanged += _fastAttributeView.RefreshQi;
-            _qiComponent.OnValueChanged += _characterView.AttributeView.RefreshQi;
-            _expComponent.OnValueChanged += _fastAttributeView.RefreshExp;
-            _expComponent.OnValueChanged += _characterView.AttributeView.RefreshExp;
-            _atkComponent.OnValueChanged += _characterView.AttributeView.RefreshAtk;
-            _defComponent.OnValueChanged += _characterView.AttributeView.RefreshDef;
+            RealmComponent realmComponent = new RealmComponent();
+            realmComponent.OnValueChanged += _fastAttributeView.RefreshRealm;
+            realmComponent.OnValueChanged += _characterView.AttributeView.RefreshRealm;
+            _componentHost.Add(realmComponent);
 
-            InventoryManager.EquipmentInventory.SlotChanged += (index) => _hpComponent.Refresh(_hpComponent.CurValue, RealmDataManager.Instance.GetData(_realmComponent.Value).MaxHp + InventoryManager.GetMaxHpBonus());
-            InventoryManager.EquipmentInventory.SlotChanged += (index) => _qiComponent.Refresh(_qiComponent.CurValue, RealmDataManager.Instance.GetData(_realmComponent.Value).MaxQi + InventoryManager.GetMaxQiBonus());
-            InventoryManager.EquipmentInventory.SlotChanged += (index) => _atkComponent.Refresh(RealmDataManager.Instance.GetData(_realmComponent.Value).Atk + InventoryManager.GetAtkBonus());
-            InventoryManager.EquipmentInventory.SlotChanged += (index) => _defComponent.Refresh(RealmDataManager.Instance.GetData(_realmComponent.Value).Def + InventoryManager.GetDefBonus());
+            HpComponent hpComponent = new HpComponent();
+            hpComponent.OnValueChanged += _fastAttributeView.RefreshHp;
+            hpComponent.OnValueChanged += _characterView.AttributeView.RefreshHp;
+            _componentHost.Add(hpComponent);
+
+            QiComponent qiComponent = new QiComponent();
+            qiComponent.OnValueChanged += _fastAttributeView.RefreshQi;
+            qiComponent.OnValueChanged += _characterView.AttributeView.RefreshQi;
+            _componentHost.Add(qiComponent);
+
+            ExpComponent expComponent = new ExpComponent();
+            expComponent.OnValueChanged += _fastAttributeView.RefreshExp;
+            expComponent.OnValueChanged += _characterView.AttributeView.RefreshExp;
+            _componentHost.Add(expComponent);
+
+            AtkComponent atkComponent = new AtkComponent();
+            atkComponent.OnValueChanged += _characterView.AttributeView.RefreshAtk;
+            _componentHost.Add(atkComponent);
+
+            DefComponent defComponent = new DefComponent();
+            defComponent.OnValueChanged += _characterView.AttributeView.RefreshDef;
+            _componentHost.Add(defComponent);
+
+            InventoryManager.EquipmentInventory.SlotChanged += (index) => GetComponent<HpComponent>().Refresh(GetComponent<HpComponent>().CurValue, RealmDataManager.Instance.GetData(GetComponent<RealmComponent>().Value).MaxHp + InventoryManager.GetMaxHpBonus());
+            InventoryManager.EquipmentInventory.SlotChanged += (index) => GetComponent<QiComponent>().Refresh(GetComponent<QiComponent>().CurValue, RealmDataManager.Instance.GetData(GetComponent<RealmComponent>().Value).MaxQi + InventoryManager.GetMaxQiBonus());
+            InventoryManager.EquipmentInventory.SlotChanged += (index) => GetComponent<AtkComponent>().Refresh(RealmDataManager.Instance.GetData(GetComponent<RealmComponent>().Value).Atk + InventoryManager.GetAtkBonus());
+            InventoryManager.EquipmentInventory.SlotChanged += (index) => GetComponent<DefComponent>().Refresh(RealmDataManager.Instance.GetData(GetComponent<RealmComponent>().Value).Def + InventoryManager.GetDefBonus());
 
 
-            _realmComponent.Refresh(playerSaveData.CurRealmType);
-            _hpComponent.Refresh(playerSaveData.CurHp, RealmDataManager.Instance.GetData(_realmComponent.Value).MaxHp + InventoryManager.GetMaxHpBonus());
-            _qiComponent.Refresh(playerSaveData.CurQi, RealmDataManager.Instance.GetData(_realmComponent.Value).MaxQi + InventoryManager.GetMaxQiBonus());
-            _expComponent.Refresh(playerSaveData.CurExp, RealmDataManager.Instance.GetData(_realmComponent.Value).MaxExp);
-            _atkComponent.Refresh(RealmDataManager.Instance.GetData(_realmComponent.Value).Atk + InventoryManager.GetAtkBonus());
-            _defComponent.Refresh(RealmDataManager.Instance.GetData(_realmComponent.Value).Def + InventoryManager.GetDefBonus());
+            GetComponent<RealmComponent>().Refresh(playerSaveData.CurRealmType);
+            GetComponent<HpComponent>().Refresh(playerSaveData.CurHp, RealmDataManager.Instance.GetData(GetComponent<RealmComponent>().Value).MaxHp + InventoryManager.GetMaxHpBonus());
+            GetComponent<QiComponent>().Refresh(playerSaveData.CurQi, RealmDataManager.Instance.GetData(GetComponent<RealmComponent>().Value).MaxQi + InventoryManager.GetMaxQiBonus());
+            GetComponent<ExpComponent>().Refresh(playerSaveData.CurExp, RealmDataManager.Instance.GetData(GetComponent<RealmComponent>().Value).MaxExp);
+            GetComponent<AtkComponent>().Refresh(RealmDataManager.Instance.GetData(GetComponent<RealmComponent>().Value).Atk + InventoryManager.GetAtkBonus());
+            GetComponent<DefComponent>().Refresh(RealmDataManager.Instance.GetData(GetComponent<RealmComponent>().Value).Def + InventoryManager.GetDefBonus());
 
             _characterView.AttributeView.OnUpgraded += () =>
             {
-                _realmComponent.Upgrade();
-                _hpComponent.Refresh(RealmDataManager.Instance.GetData(_realmComponent.Value).MaxHp + InventoryManager.GetMaxHpBonus(), RealmDataManager.Instance.GetData(_realmComponent.Value).MaxHp + InventoryManager.GetMaxHpBonus());
-                _qiComponent.Refresh(RealmDataManager.Instance.GetData(_realmComponent.Value).MaxQi + InventoryManager.GetMaxQiBonus(), RealmDataManager.Instance.GetData(_realmComponent.Value).MaxQi + InventoryManager.GetMaxQiBonus());
-                _expComponent.Refresh(0, RealmDataManager.Instance.GetData(_realmComponent.Value).MaxExp);
-                _atkComponent.Refresh(RealmDataManager.Instance.GetData(_realmComponent.Value).Atk + InventoryManager.GetAtkBonus());
-                _defComponent.Refresh(RealmDataManager.Instance.GetData(_realmComponent.Value).Def + InventoryManager.GetDefBonus());
+                GetComponent<RealmComponent>().Upgrade();
+                GetComponent<HpComponent>().Refresh(RealmDataManager.Instance.GetData(GetComponent<RealmComponent>().Value).MaxHp + InventoryManager.GetMaxHpBonus(), RealmDataManager.Instance.GetData(GetComponent<RealmComponent>().Value).MaxHp + InventoryManager.GetMaxHpBonus());
+                GetComponent<QiComponent>().Refresh(RealmDataManager.Instance.GetData(GetComponent<RealmComponent>().Value).MaxQi + InventoryManager.GetMaxQiBonus(), RealmDataManager.Instance.GetData(GetComponent<RealmComponent>().Value).MaxQi + InventoryManager.GetMaxQiBonus());
+                GetComponent<ExpComponent>().Refresh(0, RealmDataManager.Instance.GetData(GetComponent<RealmComponent>().Value).MaxExp);
+                GetComponent<AtkComponent>().Refresh(RealmDataManager.Instance.GetData(GetComponent<RealmComponent>().Value).Atk + InventoryManager.GetAtkBonus());
+                GetComponent<DefComponent>().Refresh(RealmDataManager.Instance.GetData(GetComponent<RealmComponent>().Value).Def + InventoryManager.GetDefBonus());
             };
 
 
@@ -169,12 +198,17 @@ namespace Solo.Scripts.Entities.Players
             _curTargetRangeSq = _curTargetRange * _curTargetRange;
             _deathView.Visible = false;
 
-            if (_hpComponent.CurValue == 0)//若血量是0, 进入重生逻辑
+            if (GetComponent<HpComponent>().CurValue == 0)//若血量是0, 进入重生逻辑
             {
                 Revive();
             }
             ChangeState(PlayerState.Idle);
+
+
+
         }
+
+
 
         public override void _PhysicsProcess(double delta)
         {
@@ -193,14 +227,14 @@ namespace Solo.Scripts.Entities.Players
                     case Key.Key1:
                         //GetHp(10);
                         GD.Print("快捷检测：按下了 1");
-                        _expComponent.Gain(100);
+                        GetComponent<ExpComponent>().Gain(100);
                         break;
                     case Key.Key2:
-                        _hpComponent.Gain(100);
+                        GetComponent<HpComponent>().Gain(100);
                         GD.Print("快捷检测：按下了 2");
                         break;
                     case Key.Key3:
-                        _hpComponent.Consume(100);
+                        GetComponent<HpComponent>().Consume(100);
                         GD.Print("快捷检测：按下了 3");
                         break;
                     case Key.Key4:
@@ -348,20 +382,18 @@ namespace Solo.Scripts.Entities.Players
         #region Idle
         private void EnterIdle()
         {
-            ResetAnim();
+            //ResetAnim();
 
-            _animTween = CreateTween().SetLoops();
-            _animTween.TweenProperty(_animRootNode, "scale", new Vector2(1.02f, 0.98f), 0.2)
-                .SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out);
-            _animTween.Chain().TweenProperty(_animRootNode, "scale", new Vector2(0.98f, 1.02f), 0.2)
-                .SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.In);
-
-            _walkGrassParticles.Emitting = false;
-            _walkWaterParticles.Emitting = false;
+            //_animTween = CreateTween().SetLoops();
+            //_animTween.TweenProperty(_animRootNode, "scale", new Vector2(1.02f, 0.98f), 0.2)
+            //    .SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out);
+            //_animTween.Chain().TweenProperty(_animRootNode, "scale", new Vector2(0.98f, 1.02f), 0.2)
+            //    .SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.In);
+            _animSprite.Play("Idle");
         }
         private void UpdateIdle(float delta)
         {
-            if (_hpComponent.CurValue <= 0)
+            if (GetComponent<HpComponent>().CurValue <= 0)
             {
                 ChangeState(PlayerState.Death);
                 return;
@@ -428,14 +460,16 @@ namespace Solo.Scripts.Entities.Players
         #region Walk
         private void EnterWalk()
         {
-            ResetAnim();
-            _animTween = CreateTween().SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out).SetLoops();
-            _animTween.TweenProperty(_animRootNode, "skew", 0.1f, 0.3f);// 走动效果：左右晃动或轻微拉伸
-            _animTween.TweenProperty(_animRootNode, "skew", -0.1f, 0.3f);
+            //ResetAnim();
+            //_animTween = CreateTween().SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out).SetLoops();
+            //_animTween.TweenProperty(_animRootNode, "skew", 0.1f, 0.3f);// 走动效果：左右晃动或轻微拉伸
+            //_animTween.TweenProperty(_animRootNode, "skew", -0.1f, 0.3f);
+
+            _animSprite.Play("Move");
         }
         private void UpdateWalk(float delta)
         {
-            if (_hpComponent.CurValue <= 0)
+            if (GetComponent<HpComponent>().CurValue <= 0)
             {
                 ChangeState(PlayerState.Death);
                 return;
@@ -494,38 +528,39 @@ namespace Solo.Scripts.Entities.Players
             RefreshFaceDir();
 
             _curMoveDir = moveInput;
-            if (GameManager.Instance.ChunkManager.GetTileType(GlobalPosition) == TileType.Water)
-            {
-                Velocity = _curMoveDir * _moveSpeed / 4;
-                _walkGrassParticles.Emitting = false;
-                _walkWaterParticles.Emitting = true;
-            }
-            else
-            {
-                Velocity = _curMoveDir * _moveSpeed;
-                _walkGrassParticles.Emitting = true;
-                _walkWaterParticles.Emitting = false;
-            }
+            //if (GameManager.Instance.ChunkManager.GetTileType(GlobalPosition) == TileType.Water)
+            //{
+            //    Velocity = _curMoveDir * _moveSpeed / 4;
+            //    _walkGrassParticles.Emitting = false;
+            //    _walkWaterParticles.Emitting = true;
+            //}
+            //else
+            //{
+            //    Velocity = _curMoveDir * _moveSpeed;
+            //    _walkGrassParticles.Emitting = true;
+            //    _walkWaterParticles.Emitting = false;
+            //}
+            Velocity = _curMoveDir * _moveSpeed;
             MoveAndSlide();
         }
         private void ExitWalk()
         {
-            _walkGrassParticles.Emitting = false;
-            _walkWaterParticles.Emitting = false;
         }
         #endregion
 
         #region Run
         private void EnterRun()
         {
-            ResetAnim();
-            _animTween = CreateTween().SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out).SetLoops();
-            _animTween.TweenProperty(_animRootNode, "skew", 0.1f, 0.1f);// 走动效果：左右晃动或轻微拉伸
-            _animTween.TweenProperty(_animRootNode, "skew", -0.1f, 0.1f);
+            //ResetAnim();
+            //_animTween = CreateTween().SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out).SetLoops();
+            //_animTween.TweenProperty(_animRootNode, "skew", 0.1f, 0.1f);// 走动效果：左右晃动或轻微拉伸
+            //_animTween.TweenProperty(_animRootNode, "skew", -0.1f, 0.1f);
+
+            _animSprite.Play("Move");
         }
         private void UpdateRun(float delta)
         {
-            if (_hpComponent.CurValue <= 0)
+            if (GetComponent<HpComponent>().CurValue <= 0)
             {
                 ChangeState(PlayerState.Death);
                 return;
@@ -570,16 +605,14 @@ namespace Solo.Scripts.Entities.Players
                 return;
             }
             _curMoveDir = moveInput;
-            if (GameManager.Instance.ChunkManager.GetTileType(GlobalPosition) == TileType.Water)
-                Velocity = _curMoveDir * _moveSpeed / 2;
-            else
-                Velocity = _curMoveDir * _moveSpeed * 2;
+            //if (GameManager.Instance.ChunkManager.GetTileType(GlobalPosition) == TileType.Water)
+            //    Velocity = _curMoveDir * _moveSpeed / 2;
+            //else
+            Velocity = _curMoveDir * _moveSpeed * 2;
             MoveAndSlide();
         }
         private void ExitRun()
         {
-            _walkGrassParticles.Emitting = false;
-            _walkWaterParticles.Emitting = false;
         }
         #endregion
 
@@ -589,16 +622,18 @@ namespace Solo.Scripts.Entities.Players
         private float _dashSpeed = 200;
         private void EnterDash()
         {
-            ResetAnim();
-            _animTween = CreateTween().SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out).SetLoops();
-            _animTween.TweenProperty(_animRootNode, "skew", 0.1f, 0.3f);// 走动效果：左右晃动或轻微拉伸
-            _animTween.TweenProperty(_animRootNode, "skew", -0.1f, 0.3f);
-            _dashTimer = 0;
+            //ResetAnim();
+            //_animTween = CreateTween().SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out).SetLoops();
+            //_animTween.TweenProperty(_animRootNode, "skew", 0.1f, 0.3f);// 走动效果：左右晃动或轻微拉伸
+            //_animTween.TweenProperty(_animRootNode, "skew", -0.1f, 0.3f);
+            //_dashTimer = 0;
             //TakeMp(1);
+
+            _animSprite.Play("Action");
         }
         private void UpdateDash(float delta)
         {
-            if (_hpComponent.CurValue <= 0)
+            if (GetComponent<HpComponent>().CurValue <= 0)
             {
                 ChangeState(PlayerState.Death);
                 return;
@@ -639,54 +674,65 @@ namespace Solo.Scripts.Entities.Players
         #region Atk
         private void EnterAtk()
         {
-            ResetAnim();
+            //ResetAnim();
+            //_animSprite.Play("Action");
+
+            float startRotation = _handRootNode.Rotation;
+            float attackRotation = startRotation + 1.3f; // 增加1.3弧度
+            Tween _animTween = CreateTween().SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out);
+            _animTween.TweenProperty(_handRootNode, "rotation", attackRotation, 0.05f);
 
             Vector2 atkDir = (GetGlobalMousePosition() - GlobalPosition).Normalized();
 
             if (InventoryManager.GetCurItemType(_curFastBarIndex) is not ItemType curItemType)
                 return;
 
-
-            float startRotation = _handRootNode.Rotation;
-            float attackRotation = startRotation + 1.3f; // 增加1.3弧度
             switch (curItemType)
             {
                 case ItemType.WoodSword:
 
-                    _animTween = CreateTween().SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out);
-                    _animTween.TweenProperty(_handRootNode, "rotation", attackRotation, 0.05f);
-
-                    SwordWave swordWave = _swordWavePs.Instantiate<SwordWave>();
-                    GetTree().CurrentScene.AddChild(swordWave);
-                    swordWave.Init(GlobalPosition, atkDir);
 
 
-                    _animTween.Parallel().TweenProperty(_animRootNode, "scale", new Vector2(1f, 1f), 0.1f);
-                    _animTween.TweenProperty(_handRootNode, "rotation", startRotation, 0.1f);
-                    _animTween.Finished += () =>
-                    {
-                        ChangeState(PlayerState.Idle);
-                        return;
-                    };
+                    GameManager.Instance.SpawnSwordWave(this, atkDir);
+                    //SwordWave swordWave = _swordWavePs.Instantiate<SwordWave>();
+                    //GetTree().CurrentScene.AddChild(swordWave);
+                    //swordWave.Init(GlobalPosition, atkDir);
+
+
+                    //_animTween.Parallel().TweenProperty(_animRootNode, "scale", new Vector2(1f, 1f), 0.1f);
+                    //_animTween.TweenProperty(_handRootNode, "rotation", startRotation, 0.1f);
+                    //_animTween.Finished += () =>
+                    //{
+                    //    ChangeState(PlayerState.Idle);
+                    //    return;
+                    //};
                     break;
                 case ItemType.WoodAxe:
-                    _animTween = CreateTween().SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out);
-                    _animTween.TweenProperty(_handRootNode, "rotation", attackRotation, 0.05f);
+                    //_animTween = CreateTween().SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out);
+                    //_animTween.TweenProperty(_handRootNode, "rotation", attackRotation, 0.05f);
 
-                    HammerWave hammerWave = _hammerWavePs.Instantiate<HammerWave>();
-                    GetTree().CurrentScene.AddChild(hammerWave);
-                    hammerWave.Init(GlobalPosition, atkDir);
+                    //HammerWave hammerWave = _hammerWavePs.Instantiate<HammerWave>();
+                    //GetTree().CurrentScene.AddChild(hammerWave);
+                    //hammerWave.Init(GlobalPosition, atkDir);
 
 
-                    _animTween.Parallel().TweenProperty(_animRootNode, "scale", new Vector2(1f, 1f), 0.1f);
-                    _animTween.TweenProperty(_handRootNode, "rotation", startRotation, 0.1f);
-                    _animTween.Finished += () =>
-                    {
-                        ChangeState(PlayerState.Idle);
-                        return;
-                    };
+                    //_animTween.Parallel().TweenProperty(_animRootNode, "scale", new Vector2(1f, 1f), 0.1f);
+                    //_animTween.TweenProperty(_handRootNode, "rotation", startRotation, 0.1f);
+                    //_animTween.Finished += () =>
+                    //{
+                    //    ChangeState(PlayerState.Idle);
+                    //    return;
+                    //};
                     break;
             }
+
+
+            _animTween.TweenProperty(_handRootNode, "rotation", startRotation, 0.1f);
+            _animTween.Finished += () =>
+            {
+                ChangeState(PlayerState.Idle);
+                return;
+            };
             //_atkLongPressTimer = 0;
             //if (_curTarget == null || _curTarget.IsVaild() == false || _curTarget.CanAtk() == false)
             //{
@@ -725,19 +771,26 @@ namespace Solo.Scripts.Entities.Players
         }
         private void UpdateAtk(float delta)
         {
-            if (_hpComponent.CurValue <= 0)
+            if (GetComponent<HpComponent>().CurValue <= 0)
             {
                 ChangeState(PlayerState.Death);
                 return;
             }
 
+            //if (_animSprite.IsPlaying() == false)
+            //{
+            //    ChangeState(PlayerState.Idle);
+            //    return;
+            //}
+
             Vector2 input = Input.GetVector("MoveLeft", "MoveRight", "MoveForward", "MoveBack");
             if (input != Vector2.Zero)
             {
-                if (GameManager.Instance.ChunkManager.GetTileType(GlobalPosition) == TileType.Water)
-                    Velocity = input * _moveSpeed / 8;
-                else
-                    Velocity = input * _moveSpeed / 2;
+                //if (GameManager.Instance.ChunkManager.GetTileType(GlobalPosition) == TileType.Water)
+                //    Velocity = input * _moveSpeed / 8;
+                //else
+                //    Velocity = input * _moveSpeed / 2;
+                Velocity = input * _moveSpeed;
                 MoveAndSlide();
             }
         }
@@ -751,88 +804,102 @@ namespace Solo.Scripts.Entities.Players
         //private ITargetable? _curInteractingNode = null;
         private void EnterInteract()
         {
-            ResetAnim();
+            //ResetAnim();
             Input.SetCustomMouseCursor(_interactIconTexture, Input.CursorShape.Arrow, _aimIconTexture.GetSize() / 2);
         }
         private void UpdateInteract(float delta)
         {
-            if (_hpComponent.CurValue <= 0)
+            if (GetComponent<HpComponent>().CurValue <= 0)
             {
                 ChangeState(PlayerState.Death);
                 return;
             }
             if (Input.IsActionJustReleased("Atk"))
             {
-                ChangeState(PlayerState.Death);
+                ChangeState(PlayerState.Idle);
                 return;
+            }
+
+            if (_animSprite.Frame == 2)
+            {
+
             }
 
             RefreshFaceDir();
             CheckTarget();
             if (Input.IsActionJustReleased("Interact"))
             {
-                //后期或许可以改成, 先根据手持物+交互目标,再进入动画, 动画结束再执行交互逻辑 
-                _animTween = CreateTween().SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out);
-                _animTween.Parallel().TweenProperty(_animRootNode, "scale", new Vector2(0.8f, 0.8f), 0.05f);//出手动画
-                _animTween.TweenCallback(Callable.From(() =>
+                if (_curTarget == null || _curTarget.IsVaild())
                 {
-                    if (_curTarget != null && _curTarget.IsVaild())
-                    {
-                        TriggerScreenShake(1);//震屏       
-                        _curTarget.Interact();
-                    }
-
-                    //if (_curTarget is TreeGrow treeGrow && FastBarInventory.ItemInstanceList[CurFastBarIndex] != null)
-                    //{
-                    //    treeGrow.Watering(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type);
-                    //}
-                }));
-
-                _animTween.Parallel().TweenProperty(_animRootNode, "scale", new Vector2(1f, 1f), 0.1f);
-                _animTween.Finished += () =>
-                {
-                    //交互逻辑 : 由手持物+交互目标决定具体交互逻辑(如食物+小猫 = 投喂)
-
-                    if (_curTarget is BuildingCraft)
-                    {
-                        CraftView buildingCraftView = _craftViewPs.Instantiate<CraftView>();
-                        buildingCraftView.Init(CraftType.Building);
-                        _leftViewRootControl.AddChild(buildingCraftView);
-                        _curLeftView = buildingCraftView;
-                        ChangeState(PlayerState.BagUI);
-                        return;
-                    }
-                    else if (_curTarget is ToolCraft)
-                    {
-                        CraftView toolCraftView = _craftViewPs.Instantiate<CraftView>();
-                        toolCraftView.Init(CraftType.Tool);
-                        _leftViewRootControl.AddChild(toolCraftView);
-                        _curLeftView = toolCraftView;
-                        ChangeState(PlayerState.BagUI);
-                        return;
-                    }
-                    else if (_curTarget is ArmorCraft)
-                    {
-                        CraftView armorCraftView = _craftViewPs.Instantiate<CraftView>();
-                        armorCraftView.Init(CraftType.Armor);
-                        _leftViewRootControl.AddChild(armorCraftView);
-                        _curLeftView = armorCraftView;
-                        ChangeState(PlayerState.BagUI);
-                        return;
-                    }
-
                     ChangeState(PlayerState.Idle);
                     return;
-                };
+                }
+
+                TriggerScreenShake(1);//震屏       
+                if (_curTarget is BuildingCraft)
+                {
+                    CraftView buildingCraftView = _craftViewPs.Instantiate<CraftView>();
+                    buildingCraftView.Init(CraftType.Building);
+                    _leftViewRootControl.AddChild(buildingCraftView);
+                    _curLeftView = buildingCraftView;
+                    ChangeState(PlayerState.BagUI);
+                    return;
+                }
+                else if (_curTarget is ToolCraft)
+                {
+                    CraftView toolCraftView = _craftViewPs.Instantiate<CraftView>();
+                    toolCraftView.Init(CraftType.Tool);
+                    _leftViewRootControl.AddChild(toolCraftView);
+                    _curLeftView = toolCraftView;
+                    ChangeState(PlayerState.BagUI);
+                    return;
+                }
+                else if (_curTarget is ArmorCraft)
+                {
+                    CraftView armorCraftView = _craftViewPs.Instantiate<CraftView>();
+                    armorCraftView.Init(CraftType.Armor);
+                    _leftViewRootControl.AddChild(armorCraftView);
+                    _curLeftView = armorCraftView;
+                    ChangeState(PlayerState.BagUI);
+                    return;
+                }
+                else
+                {
+                    _curTarget.Interact();
+                }
+                ChangeState(PlayerState.Idle);
+                return;
+
+                //后期或许可以改成, 先根据手持物+交互目标,再进入动画, 动画结束再执行交互逻辑 
+                //_animTween = CreateTween().SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out);
+                //_animTween.Parallel().TweenProperty(_animRootNode, "scale", new Vector2(0.8f, 0.8f), 0.05f);//出手动画
+                //_animTween.TweenCallback(Callable.From(() =>
+                //{
+
+
+                //    //if (_curTarget is TreeGrow treeGrow && FastBarInventory.ItemInstanceList[CurFastBarIndex] != null)
+                //    //{
+                //    //    treeGrow.Watering(FastBarInventory.ItemInstanceList[CurFastBarIndex].Type);
+                //    //}
+                //}));
+
+                //_animTween.Parallel().TweenProperty(_animRootNode, "scale", new Vector2(1f, 1f), 0.1f);
+                //_animTween.Finished += () =>
+                //{
+                //    //交互逻辑 : 由手持物+交互目标决定具体交互逻辑(如食物+小猫 = 投喂)
+
+
+                //};
             }
 
             Vector2 input = Input.GetVector("MoveLeft", "MoveRight", "MoveForward", "MoveBack");
             if (input != Vector2.Zero)
             {
-                if (GameManager.Instance.ChunkManager.GetTileType(GlobalPosition) == TileType.Water)
-                    Velocity = input * _moveSpeed / 8;
-                else
-                    Velocity = input * _moveSpeed / 2;
+                //if (GameManager.Instance.ChunkManager.GetTileType(GlobalPosition) == TileType.Water)
+                //    Velocity = input * _moveSpeed / 8;
+                //else
+                //    Velocity = input * _moveSpeed / 2;
+                Velocity = input * _moveSpeed;
                 MoveAndSlide();
             }
         }
@@ -852,10 +919,11 @@ namespace Solo.Scripts.Entities.Players
         private BuildingPreview? _curBuildingPreview;
         private void EnterBuild()
         {
-            ResetAnim();
-            _animTween = CreateTween().SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out).SetLoops();
-            _animTween.TweenProperty(_animRootNode, "skew", 0.1f, 0.3f);// 走动效果：左右晃动或轻微拉伸
-            _animTween.TweenProperty(_animRootNode, "skew", -0.1f, 0.3f);
+            _animSprite.Play("Idle");
+            //ResetAnim();
+            //_animTween = CreateTween().SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out).SetLoops();
+            //_animTween.TweenProperty(_animRootNode, "skew", 0.1f, 0.3f);// 走动效果：左右晃动或轻微拉伸
+            //_animTween.TweenProperty(_animRootNode, "skew", -0.1f, 0.3f);
 
             _curBuildingPreview = _buildingPreviewPs.Instantiate<BuildingPreview>();
             GetTree().CurrentScene.AddChild(_curBuildingPreview);
@@ -870,7 +938,7 @@ namespace Solo.Scripts.Entities.Players
         }
         private void UpdateBuild(float delta)
         {
-            if (_hpComponent.CurValue <= 0)
+            if (GetComponent<HpComponent>().CurValue <= 0)
             {
                 foreach (IQiRangeable qiRangeable in GameManager.Instance.IQiRangeableList)
                 {
@@ -888,14 +956,14 @@ namespace Solo.Scripts.Entities.Players
 
             RefreshFaceDir();
 
-            Vector2 input = Input.GetVector("MoveLeft", "MoveRight", "MoveForward", "MoveBack");
-            if (input != Vector2.Zero)
-                _curMoveDir = input;
-            if (GameManager.Instance.ChunkManager.GetTileType(GlobalPosition) == TileType.Water)
-                Velocity = input * _moveSpeed / 4;
-            else
-                Velocity = input * _moveSpeed;
-            MoveAndSlide();
+            //Vector2 input = Input.GetVector("MoveLeft", "MoveRight", "MoveForward", "MoveBack");
+            //if (input != Vector2.Zero)
+            //    _curMoveDir = input;
+            //if (GameManager.Instance.ChunkManager.GetTileType(GlobalPosition) == TileType.Water)
+            //    Velocity = input * _moveSpeed / 4;
+            //else
+            //    Velocity = input * _moveSpeed;
+            //MoveAndSlide();
 
             Vector2 mousePos = GetGlobalMousePosition();
             _curBuildingPreview?.RefreshPosition(mousePos);
@@ -926,32 +994,28 @@ namespace Solo.Scripts.Entities.Players
         private float _comsumeTimer = 0;
         private void EnterComsume()
         {
-            ResetAnim();
-            _animTween = CreateTween().SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out).SetLoops();
-            _animTween.TweenProperty(_animRootNode, "scale", new Vector2(1.5f, 0.8f), 0.2f);
-            _animTween.TweenProperty(_animRootNode, "scale", new Vector2(1.0f, 1.0f), 0.2f);
-            _comsumeTimer = 0;
+            _animSprite.Play("Action");
+            //ResetAnim();
+            //_animTween = CreateTween().SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out).SetLoops();
+            //_animTween.TweenProperty(_animRootNode, "scale", new Vector2(1.5f, 0.8f), 0.2f);
+            //_animTween.TweenProperty(_animRootNode, "scale", new Vector2(1.0f, 1.0f), 0.2f);
+            //_comsumeTimer = 0;
             //_atkLongPressTimer = 0;
             //_isAtkLongPressTimerValid = false;
         }
         private void UpdateComsume(float delta)
         {
-            if (_hpComponent.CurValue <= 0)
+            if (GetComponent<HpComponent>().CurValue <= 0)
             {
                 ChangeState(PlayerState.Death);
                 return;
             }
-
-            _comsumeTimer += delta;
-
             if (Input.IsActionJustPressed("Interact"))
             {
-
                 ChangeState(PlayerState.Idle);
                 return;
             }
-
-            if (_comsumeTimer >= _comsumeDuration)
+            if (_animSprite.IsPlaying() == false)
             {
                 ComsumeItem();
                 ChangeState(PlayerState.Idle);
@@ -967,16 +1031,17 @@ namespace Solo.Scripts.Entities.Players
         #region Aim
         private void EnterAim()
         {
-            ResetAnim();
-            _animTween = CreateTween().SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out).SetLoops();
-            _animTween.TweenProperty(_animRootNode, "scale", new Vector2(1.5f, 0.8f), 0.2f);
-            _animTween.TweenProperty(_animRootNode, "scale", new Vector2(1.0f, 1.0f), 0.2f);
+            _animSprite.Play("Idle");
+            //ResetAnim();
+            //_animTween = CreateTween().SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out).SetLoops();
+            //_animTween.TweenProperty(_animRootNode, "scale", new Vector2(1.5f, 0.8f), 0.2f);
+            //_animTween.TweenProperty(_animRootNode, "scale", new Vector2(1.0f, 1.0f), 0.2f);
             Input.SetCustomMouseCursor(_aimIconTexture, Input.CursorShape.Arrow, _aimIconTexture.GetSize() / 2);
             //_isAtkLongPressTimerValid = false;
         }
         private void UpdateAim(float delta)
         {
-            if (_hpComponent.CurValue <= 0)
+            if (GetComponent<HpComponent>().CurValue <= 0)
             {
                 ChangeState(PlayerState.Death);
                 return;
@@ -1060,14 +1125,14 @@ namespace Solo.Scripts.Entities.Players
 
             RefreshFaceDir();
 
-            Vector2 input = Input.GetVector("MoveLeft", "MoveRight", "MoveForward", "MoveBack");
-            if (input != Vector2.Zero)
-                _curMoveDir = input;
-            if (GameManager.Instance.ChunkManager.GetTileType(GlobalPosition) == TileType.Water)
-                Velocity = input * _moveSpeed / 4;
-            else
-                Velocity = input * _moveSpeed;
-            MoveAndSlide();
+            //Vector2 input = Input.GetVector("MoveLeft", "MoveRight", "MoveForward", "MoveBack");
+            //if (input != Vector2.Zero)
+            //    _curMoveDir = input;
+            //if (GameManager.Instance.ChunkManager.GetTileType(GlobalPosition) == TileType.Water)
+            //    Velocity = input * _moveSpeed / 4;
+            //else
+            //    Velocity = input * _moveSpeed;
+            //MoveAndSlide();
         }
         private void ExitAim()
         {
@@ -1079,10 +1144,11 @@ namespace Solo.Scripts.Entities.Players
         private FishingFloat? fishingFloat;
         private void EnterFishing()
         {
-            ResetAnim();
-            _animTween = CreateTween().SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out).SetLoops();
-            _animTween.TweenProperty(_animRootNode, "scale", new Vector2(1.1f, 0.9f), 0.5f);
-            _animTween.TweenProperty(_animRootNode, "scale", new Vector2(1.0f, 1.0f), 0.5f);
+            _animSprite.Play("Idle");
+            //ResetAnim();
+            //_animTween = CreateTween().SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out).SetLoops();
+            //_animTween.TweenProperty(_animRootNode, "scale", new Vector2(1.1f, 0.9f), 0.5f);
+            //_animTween.TweenProperty(_animRootNode, "scale", new Vector2(1.0f, 1.0f), 0.5f);
 
             Vector2 mousePos = GetGlobalMousePosition();
             if (GameManager.Instance.ChunkManager.GetTileType(mousePos) != TileType.Water)
@@ -1097,7 +1163,7 @@ namespace Solo.Scripts.Entities.Players
         }
         private void UpdateFishing(float delta)
         {
-            if (_hpComponent.CurValue <= 0)
+            if (GetComponent<HpComponent>().CurValue <= 0)
             {
                 fishingFloat?.QueueFree();
                 ChangeState(PlayerState.Death);
@@ -1123,11 +1189,13 @@ namespace Solo.Scripts.Entities.Players
             SetCurHp(0);
             CollisionLayer = 0;
             CollisionMask = 0;
+
+
+            _animSprite.Play();
             //todo :
             //1. 播放死亡动画
-            ResetAnim();
-            _animTween = CreateTween().SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out);
-            _animTween.TweenProperty(_bodyRootNode, "scale", new Vector2(0.01f, 0.01f), 1f);
+            Tween _animTween = CreateTween().SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out);
+            _animTween.TweenProperty(_animSprite, "scale", new Vector2(0.01f, 0.01f), 1f);
             _animTween.Finished += () =>
             {
                 //2. 爆装备
@@ -1173,12 +1241,13 @@ namespace Solo.Scripts.Entities.Players
         }
         private void UpdateDeath(float delta)
         {
-            if (_hpComponent.CurValue > 0)
+            if (GetComponent<HpComponent>().CurValue > 0)
             {
-
                 ChangeState(PlayerState.Idle);
                 return;
             }
+
+
         }
         private void ExitDeath()
         {
@@ -1191,10 +1260,11 @@ namespace Solo.Scripts.Entities.Players
         private LeftViewType _curLeftViewType = LeftViewType.None;
         private void EnterBagUI()
         {
-            ResetAnim();
-            _animTween = CreateTween().SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out).SetLoops();
-            _animTween.TweenProperty(_animRootNode, "scale", new Vector2(1.1f, 0.9f), 0.5f);
-            _animTween.TweenProperty(_animRootNode, "scale", new Vector2(1.0f, 1.0f), 0.5f);
+            _animSprite.Play("Idle");
+            //ResetAnim();
+            //_animTween = CreateTween().SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out).SetLoops();
+            //_animTween.TweenProperty(_animRootNode, "scale", new Vector2(1.1f, 0.9f), 0.5f);
+            //_animTween.TweenProperty(_animRootNode, "scale", new Vector2(1.0f, 1.0f), 0.5f);
 
             Tween tween = CreateTween().SetParallel(true);
             tween.TweenProperty(_camera, "zoom", new Vector2(10, 10), 0.1f).SetTrans(Tween.TransitionType.Cubic).SetEase(Tween.EaseType.Out);
@@ -1301,17 +1371,17 @@ namespace Solo.Scripts.Entities.Players
 
 
 
-        private void ResetAnim()
-        {
-            if (_animTween != null && _animTween.IsRunning())
-                _animTween.Kill();
-            _animRootNode.Position = Vector2.Zero;
-            _animRootNode.Scale = Vector2.One;
-            _animRootNode.Skew = 0f;
-            _animRootNode.Modulate = Colors.White;
-            _animRootNode.Rotation = 0f;
-            _animRootNode.Modulate = Colors.White;
-        }
+        //private void ResetAnim()
+        //{
+        //    if (_animTween != null && _animTween.IsRunning())
+        //        _animTween.Kill();
+        //    _animRootNode.Position = Vector2.Zero;
+        //    _animRootNode.Scale = Vector2.One;
+        //    _animRootNode.Skew = 0f;
+        //    _animRootNode.Modulate = Colors.White;
+        //    _animRootNode.Rotation = 0f;
+        //    _animRootNode.Modulate = Colors.White;
+        //}
 
         // 用鼠标检测目标, 当前范围检测, 触发攻击/交互时再判断距离
         private ITargetable? _curTarget = null;
@@ -1417,9 +1487,9 @@ namespace Solo.Scripts.Entities.Players
 
             Vector2 curFaceDir = (GetGlobalMousePosition() - GlobalPosition).Normalized();
             if (curFaceDir.X < 0)
-                _bodyRootNode.Scale = new Vector2(-1, 1);
+                _animSprite.Scale = new Vector2(-1, 1);
             else if (curFaceDir.X > 0)
-                _bodyRootNode.Scale = new Vector2(1, 1);
+                _animSprite.Scale = new Vector2(1, 1);
         }
 
         private void RefreshArmorVisuals()
@@ -1495,12 +1565,12 @@ namespace Solo.Scripts.Entities.Players
         public void Revive()
         {
             GlobalPosition = StartPoint;
-            _realmComponent.Refresh(RealmType.LianQi1);
-            _hpComponent.Refresh(RealmDataManager.Instance.GetData(_realmComponent.Value).MaxHp + InventoryManager.GetMaxHpBonus(), RealmDataManager.Instance.GetData(_realmComponent.Value).MaxHp + InventoryManager.GetMaxHpBonus());
-            _qiComponent.Refresh(RealmDataManager.Instance.GetData(_realmComponent.Value).MaxQi + InventoryManager.GetMaxQiBonus(), RealmDataManager.Instance.GetData(_realmComponent.Value).MaxQi + InventoryManager.GetMaxQiBonus());
-            _expComponent.Refresh(0, RealmDataManager.Instance.GetData(_realmComponent.Value).MaxExp);
-            _atkComponent.Refresh(RealmDataManager.Instance.GetData(_realmComponent.Value).Atk + InventoryManager.GetAtkBonus());
-            _defComponent.Refresh(RealmDataManager.Instance.GetData(_realmComponent.Value).Def + InventoryManager.GetDefBonus());
+            GetComponent<RealmComponent>().Refresh(RealmType.LianQi1);
+            GetComponent<HpComponent>().Refresh(RealmDataManager.Instance.GetData(GetComponent<RealmComponent>().Value).MaxHp + InventoryManager.GetMaxHpBonus(), RealmDataManager.Instance.GetData(GetComponent<RealmComponent>().Value).MaxHp + InventoryManager.GetMaxHpBonus());
+            GetComponent<QiComponent>().Refresh(RealmDataManager.Instance.GetData(GetComponent<RealmComponent>().Value).MaxQi + InventoryManager.GetMaxQiBonus(), RealmDataManager.Instance.GetData(GetComponent<RealmComponent>().Value).MaxQi + InventoryManager.GetMaxQiBonus());
+            GetComponent<ExpComponent>().Refresh(0, RealmDataManager.Instance.GetData(GetComponent<RealmComponent>().Value).MaxExp);
+            GetComponent<AtkComponent>().Refresh(RealmDataManager.Instance.GetData(GetComponent<RealmComponent>().Value).Atk + InventoryManager.GetAtkBonus());
+            GetComponent<DefComponent>().Refresh(RealmDataManager.Instance.GetData(GetComponent<RealmComponent>().Value).Def + InventoryManager.GetDefBonus());
             CollisionLayer = 1;
             CollisionMask = 1;
         }
@@ -1514,10 +1584,10 @@ namespace Solo.Scripts.Entities.Players
                 PosX = GlobalPosition.X,
                 PosY = GlobalPosition.Y,
 
-                CurRealmType = _realmComponent.Value,
-                CurHp = _hpComponent.CurValue,
-                CurQi = _qiComponent.CurValue,
-                CurExp = _expComponent.CurValue,
+                CurRealmType = GetComponent<RealmComponent>().Value,
+                CurHp = GetComponent<HpComponent>().CurValue,
+                CurQi = GetComponent<QiComponent>().CurValue,
+                CurExp = GetComponent<ExpComponent>().CurValue,
 
                 FastBarIndex = _curFastBarIndex,
 
@@ -1536,15 +1606,15 @@ namespace Solo.Scripts.Entities.Players
             float finalDamage = Mathf.Max(0, damage - InventoryManager.GetDefBonus());
 
             Tween animTween = CreateTween().SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out);
-            animTween.TweenProperty(_bodyRootNode, "scale", new Vector2(0.8f, 0.8f), 0.1f);
+            animTween.TweenProperty(_animSprite, "scale", new Vector2(0.8f, 0.8f), 0.1f);
             //animTween.Parallel().TweenProperty(_bodySprite.Material, "shader_parameter/flash_modifier", 1.0f, 0.1f);
-            animTween.TweenProperty(_bodyRootNode, "scale", new Vector2(1.2f, 1.2f), 0.1f);
+            animTween.TweenProperty(_animSprite, "scale", new Vector2(1.2f, 1.2f), 0.1f);
             //animTween.Parallel().TweenProperty(_bodySprite.Material, "shader_parameter/flash_modifier", 0.0f, 0.1f);
-            animTween.TweenProperty(_bodyRootNode, "scale", new Vector2(1f, 1f), 0.1f);
+            animTween.TweenProperty(_animSprite, "scale", new Vector2(1f, 1f), 0.1f);
             FloatTextLb floatTextLb = GameManager.Instance.FloatTextLbPs.Instantiate<FloatTextLb>();
             GetTree().CurrentScene.AddChild(floatTextLb);
             floatTextLb.Init($"-{finalDamage}", GlobalPosition, new Color(162 / 256f, 38 / 256f, 51 / 256f));//162, 38, 51
-            _hpComponent.Consume(finalDamage);
+            GetComponent<HpComponent>().Consume(finalDamage);
         }
 
         public bool CanInteract()
@@ -1679,6 +1749,10 @@ namespace Solo.Scripts.Entities.Players
             //if (remainCount == 0)
             //    RefreshHandNode();
         }
+
+
+
+
 
         //private void Upgrade()
         //{

@@ -1,0 +1,37 @@
+[gd_scene format=3 uid="uid://c5etro6u3u1vl"]
+
+[ext_resource type="Script" uid="uid://bg2yewdyov431" path="res://Scripts/Levels/World.cs" id="1_vi80n"]
+[ext_resource type="Gradient" uid="uid://b3fgxmj7u6dou" path="res://Assets/Gradients/DayNightGradient.tres" id="3_f4gmh"]
+
+[sub_resource type="Environment" id="Environment_yxouj"]
+background_mode = 3
+glow_enabled = true
+glow_intensity = 6.51
+glow_strength = 1.32
+
+[sub_resource type="Gradient" id="Gradient_jxtak"]
+colors = PackedColorArray(0, 0, 0, 1, 1, 1, 1, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_xx3f3"]
+gradient = SubResource("Gradient_jxtak")
+width = 697
+height = 340
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(0.5, 0)
+
+[node name="World" type="Node2D" unique_id=1442456336 node_paths=PackedStringArray("_canvasModulate")]
+y_sort_enabled = true
+script = ExtResource("1_vi80n")
+_canvasModulate = NodePath("CanvasModulate")
+_dayNightGradient = ExtResource("3_f4gmh")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=988365677]
+environment = SubResource("Environment_yxouj")
+
+[node name="CanvasModulate" type="CanvasModulate" parent="." unique_id=1427442387]
+visible = false
+color = Color(0.8901961, 0.57254905, 0.4, 1)
+
+[node name="PointLight2D" type="PointLight2D" parent="." unique_id=1508454071]
+texture = SubResource("GradientTexture2D_xx3f3")
