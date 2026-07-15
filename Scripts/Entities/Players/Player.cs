@@ -214,6 +214,8 @@ namespace Solo.Scripts.Entities.Players
         {
             UpdateState((float)delta);
             _debugLb.Text = CurState.ToString();
+            //GD.Print($"GetTileType(GetGlobalMousePosition()) : {GameManager.Instance.ChunkManager.GetTileType(GetGlobalMousePosition())}");
+
             //GD.Print($"GlobalPosition : {GlobalPosition}");
         }
 
@@ -1151,11 +1153,11 @@ namespace Solo.Scripts.Entities.Players
             //_animTween.TweenProperty(_animRootNode, "scale", new Vector2(1.0f, 1.0f), 0.5f);
 
             Vector2 mousePos = GetGlobalMousePosition();
-            if (GameManager.Instance.ChunkManager.GetTileType(mousePos) != TileType.Water)
-            {
-                ChangeState(PlayerState.Idle);
-                return;
-            }
+            //if (GameManager.Instance.ChunkManager.GetTileType(mousePos) != TileType.Water)
+            //{
+            //    ChangeState(PlayerState.Idle);
+            //    return;
+            //}
 
             fishingFloat = _fishingFloatPs.Instantiate<FishingFloat>();
             GetTree().CurrentScene.AddChild(fishingFloat);

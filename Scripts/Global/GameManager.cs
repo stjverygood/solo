@@ -39,7 +39,7 @@ namespace Solo.Scripts.Global
 
         [Export] private PackedScene _mainMenuViewPs = null!;
         [Export] private PackedScene _worldPs = null!;
-        [Export] public PackedScene PlayerPs = null!;
+
         [Export] public PackedScene ChunkManagerPs = null!;
 
 
@@ -62,6 +62,13 @@ namespace Solo.Scripts.Global
 
         //dropitem
         [Export] private PackedScene _expBallPs = null!;
+
+        //entity
+        [Export] public PackedScene PlayerPs = null!;
+        [Export] public PackedScene TreePs = null!;
+        [Export] public PackedScene GrassPs = null!;
+        [Export] public PackedScene ZombiePs = null!;
+
 
         public override void _Ready()
         {

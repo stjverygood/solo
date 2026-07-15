@@ -15,6 +15,9 @@
 [ext_resource type="PackedScene" uid="uid://c364av0qjs5rx" path="res://Scenes/System/ChunkSystem/ChunkManager.tscn" id="10_fevtx"]
 [ext_resource type="PackedScene" uid="uid://bqn8jrdyesh0w" path="res://Scenes/System/ItemSystem/Projectiles/SwordWave.tscn" id="10_r1yu4"]
 [ext_resource type="PackedScene" uid="uid://ow5i482gxdko" path="res://Scenes/DropItem/ExpBall.tscn" id="11_1suta"]
+[ext_resource type="PackedScene" uid="uid://dq6c33qxp7sqb" path="res://Scenes/Entities/Trees/Tree.tscn" id="15_fuhgo"]
+[ext_resource type="PackedScene" uid="uid://cn7pil5cp6afb" path="res://Scenes/Entities/Grass/Grass.tscn" id="16_b088f"]
+[ext_resource type="PackedScene" uid="uid://bfckrtubfdcw1" path="res://Scenes/Entities/Zombies/Zombie.tscn" id="17_40wt5"]
 
 [node name="GameManager" type="Node" unique_id=1034362425 node_paths=PackedStringArray("_pauseView")]
 script = ExtResource("1_g4tje")
@@ -27,12 +30,15 @@ _mainLevelPs = ExtResource("5_rssbt")
 _pauseView = NodePath("CanvasLayer/PauseView")
 _mainMenuViewPs = ExtResource("8_1xmkn")
 _worldPs = ExtResource("5_rssbt")
-PlayerPs = ExtResource("9_n7fwv")
 ChunkManagerPs = ExtResource("10_fevtx")
 ExplosionEffectPs = ExtResource("9_q6kuj")
 SmogEffectPs = ExtResource("9_r1yu4")
 _swordWavePs = ExtResource("10_r1yu4")
 _expBallPs = ExtResource("11_1suta")
+PlayerPs = ExtResource("9_n7fwv")
+TreePs = ExtResource("15_fuhgo")
+GrassPs = ExtResource("16_b088f")
+ZombiePs = ExtResource("17_40wt5")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=606242839]
 layer = 3

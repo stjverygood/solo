@@ -31,7 +31,7 @@ namespace Solo.Scripts.System.ItemSystem
         {
             if (_animSprite.Frame == 1)
             {
-                GD.Print($"frame 1 : {_targetEntityList.Count}");
+                //GD.Print($"frame 1 : {_targetEntityList.Count}");
                 GameManager.Instance.Player.TriggerScreenShake(2);
                 foreach (IEntity entity in _targetEntityList)
                 {
@@ -40,14 +40,12 @@ namespace Solo.Scripts.System.ItemSystem
                         continue;
                     if (entity == _spawner)
                         continue;
-                    float damage = GameManager.Instance.CalculateDamage(_atk, entity.GetComponent<DefComponent>().Value);
-                    entity.GetComponent<HpComponent>().Consume(damage);
-                    //if (targetable.IsVaild())
-                    //{
-                    //    if (targetable is Player)
-                    //        continue;
-                    //    targetable.TakeDamage(this, _damage, null);
-                    //}
+                    if (entity.TryGetComponent(out DefComponent defComponent) == false)
+                        continue;
+                    if (entity.TryGetComponent(out HpComponent hpComponent) == false)
+                        continue;
+                    float damage = GameManager.Instance.CalculateDamage(_atk, defComponent.Value);
+                    hpComponent.Consume(damage);
                 }
             }
         }

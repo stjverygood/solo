@@ -110,41 +110,38 @@ namespace Solo.Scripts.System.ChunkSystem
 
         private void LoadChunk(Vector2I chunkPos)
         {
-
             _curChunkPosSet.Add(chunkPos);
             for (int x = 0; x < ChunkSize; x++)
             {
                 for (int y = 0; y < ChunkSize; y++)
                 {
-                    Vector2I globalPos = new Vector2I(chunkPos.X * ChunkSize + x, chunkPos.Y * ChunkSize + y);
+                    Vector2I tilePos = new Vector2I(chunkPos.X * ChunkSize + x, chunkPos.Y * ChunkSize + y);
+                    TileType tileType = GetTileType(tilePos * TileSize);
 
-                    float elevation = _elevationNoise.GetNoise2D(globalPos.X, globalPos.Y);
-                    float moisture = _moistureNoise.GetNoise2D(globalPos.X, globalPos.Y);
-
-                    if (elevation < -0f)
+                    switch (tileType)
                     {
-                        _waterTileMapLayer.SetCell(globalPos, 0, TileCoordsListMap[TileType.Water][0]);
-                        continue;
+                        case TileType.Grass:
+                            _landTileMapLayer.SetCell(tilePos, 0, TileCoordsListMap[TileType.Grass][0]);
+                            break;
+                        case TileType.Water:
+                            _waterTileMapLayer.SetCell(tilePos, 0, TileCoordsListMap[TileType.Water][0]);
+                            break;
+                        case TileType.Forest:
+                            _landTileMapLayer.SetCell(tilePos, 0, TileCoordsListMap[TileType.Forest][0]);
+                            break;
+                        case TileType.Desert:
+                            _landTileMapLayer.SetCell(tilePos, 0, TileCoordsListMap[TileType.Desert][0]);
+                            break;
+                        case TileType.FireLand:
+                            _landTileMapLayer.SetCell(tilePos, 0, TileCoordsListMap[TileType.FireLand][0]);
+                            break;
+                        case TileType.Stone:
+                            _landTileMapLayer.SetCell(tilePos, 0, TileCoordsListMap[TileType.Stone][0]);
+                            break;
                     }
-
-                    if (elevation > 0.5f)
-                    {
-                        // 高海拔地区,比如火山地形
-                        _landTileMapLayer.SetCell(globalPos, 0, TileCoordsListMap[TileType.FireLand][0]);
-                        continue;
-                    }
-
-                    // 陆地上,根据湿度决定具体 biome
-                    if (moisture < 0f)
-                        _landTileMapLayer.SetCell(globalPos, 0, TileCoordsListMap[TileType.Desert][0]);
-                    else if (moisture < 0.2f)
-                        _landTileMapLayer.SetCell(globalPos, 0, TileCoordsListMap[TileType.Grass][0]);
-                    else if (moisture < 0.5f)
-                        _landTileMapLayer.SetCell(globalPos, 0, TileCoordsListMap[TileType.Forest][0]);
-                    else
-                        _landTileMapLayer.SetCell(globalPos, 0, TileCoordsListMap[TileType.Stone][0]);
                 }
             }
+            OnChunkLoaded?.Invoke(chunkPos);
         }
         private void UnloadChunk(Vector2I chunkPos)
         {
@@ -158,17 +155,37 @@ namespace Solo.Scripts.System.ChunkSystem
                     _landTileMapLayer.SetCell(globalPos, -1);
                 }
             }
+            OnChunkUnloaded?.Invoke(chunkPos);
         }
+
+
+        //public Vector2I WorldToTilePos(Vector2 worldPos)
+        //{
+        //    return
+        //}
 
         public TileType GetTileType(Vector2 worldPos)
         {
-            Vector2I atlasCoords = _waterTileMapLayer.GetCellAtlasCoords(_waterTileMapLayer.LocalToMap(_waterTileMapLayer.ToLocal(worldPos)));
-            if (atlasCoords != new Vector2I(-1, -1) && TileTypeMap.TryGetValue(atlasCoords, out TileType tileType))
-                return tileType;
-            atlasCoords = _landTileMapLayer.GetCellAtlasCoords(_landTileMapLayer.LocalToMap(_landTileMapLayer.ToLocal(worldPos)));
-            if (TileTypeMap.TryGetValue(atlasCoords, out tileType))
-                return tileType;
-            return TileType.Grass;
+            Vector2I tilePos = _landTileMapLayer.LocalToMap(_landTileMapLayer.ToLocal(worldPos));
+            float elevation = _elevationNoise.GetNoise2D(tilePos.X, tilePos.Y);
+            float moisture = _moistureNoise.GetNoise2D(tilePos.X, tilePos.Y);
+
+            if (elevation < 0)
+                return TileType.Water;
+
+            if (elevation > 0.5f)
+                return TileType.FireLand;
+
+            if (moisture < 0)
+                return TileType.Desert;
+
+            if (moisture < 0.2f)
+                return TileType.Grass;
+
+            if (moisture < 0.5f)
+                return TileType.Forest;
+
+            return TileType.Stone;
         }
 
         public override void _ExitTree()

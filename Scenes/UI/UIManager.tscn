@@ -1,0 +1,10 @@
+[gd_scene format=3 uid="uid://c1v6ptm7ml55o"]
+
+[ext_resource type="Script" uid="uid://d1l1a7e6ewyh0" path="res://Scripts/UI/UiManager.cs" id="1_mkobf"]
+[ext_resource type="PackedScene" uid="uid://dx8thbx4w752g" path="res://Scenes/UI/PauseView.tscn" id="2_wedjs"]
+
+[node name="UiManager" type="CanvasLayer" unique_id=1714004788 node_paths=PackedStringArray("_pauseView")]
+script = ExtResource("1_mkobf")
+_pauseView = NodePath("PauseView")
+
+[node name="PauseView" parent="." unique_id=1950812368 instance=ExtResource("2_wedjs")]
