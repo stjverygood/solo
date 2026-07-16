@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Solo.Scripts.Entities.Core
+namespace Solo.Scripts.Entities
 {
     public class ComponentHost
     {

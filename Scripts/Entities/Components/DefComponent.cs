@@ -1,5 +1,4 @@
-﻿using Solo.Scripts.Entities.Core;
-using System;
+﻿using System;
 
 namespace Solo.Scripts.Entities.Components
 {

@@ -1,6 +1,4 @@
-﻿using Solo.Scripts.Entities.Core;
-
-namespace Solo.Scripts.Entities.Trees
+﻿namespace Solo.Scripts.Entities
 {
     public class TreeSaveData : EntitySaveData
     {

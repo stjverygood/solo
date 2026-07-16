@@ -1,4 +1,4 @@
-﻿using Solo.Scripts.Entities.Core;
+﻿using Solo.Scripts.Entities;
 
 namespace Solo.Scripts.Global.Interfaces
 {

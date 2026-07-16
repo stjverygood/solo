@@ -1,12 +1,11 @@
 using Godot;
-using Solo.Scripts.Entities.Core;
-using Solo.Scripts.Entities.Players;
-using Solo.Scripts.Entities.Trees;
+using Solo.Scripts.Entities;
 using Solo.Scripts.Global;
 using Solo.Scripts.Global.Interfaces;
 using Solo.Scripts.System.ChunkSystem;
 using Solo.Scripts.System.SaveSystem;
 using System.Collections.Generic;
+using Tree = Solo.Scripts.Entities.Tree;
 
 public partial class World : Node2D
 {
@@ -111,7 +110,7 @@ public partial class World : Node2D
                     {
                         Tree tree = GameManager.Instance.TreePs.Instantiate<Tree>();
                         GetTree().CurrentScene.AddChild(tree);
-                        tree.Init(tileCenterPos, 100, 100);
+                        tree.Init(EntityDataManager.Instance.GetData(EntityType.Tree), tileCenterPos);
                         _entityMap[chunkPos].Add(tree);
                     }
                     continue;
@@ -144,7 +143,7 @@ public partial class World : Node2D
                     TreeSaveData treeSaveData = (TreeSaveData)entitySaveData;
                     Tree tree = GameManager.Instance.TreePs.Instantiate<Tree>();
                     GetTree().CurrentScene.AddChild(tree);
-                    tree.Init(new Vector2(treeSaveData.WorldX, treeSaveData.WorldY), treeSaveData.CurHp, 100);
+                    tree.Load(EntityDataManager.Instance.GetData(EntityType.Tree), treeSaveData);
                     _entityMap[chunkPos].Add(tree);
                     break;
             }

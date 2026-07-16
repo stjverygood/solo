@@ -1,10 +1,9 @@
 ﻿using Godot;
 using Solo.Scripts.Entities.Components;
-using Solo.Scripts.Entities.Core;
-using Solo.Scripts.Entities.Players;
+using Solo.Scripts.Entities.Zombies;
 using Solo.Scripts.Global;
 using Solo.Scripts.Global.Interfaces;
-namespace Solo.Scripts.Entities.Zombies
+namespace Solo.Scripts.Entities
 {
     public enum ZombieState
     {
@@ -23,6 +22,7 @@ namespace Solo.Scripts.Entities.Zombies
         private ZombieState _curState;
         private Vector2 _curDir = Vector2.Right;
         private bool canMove = false;
+        private ZombieData _data = null!;
 
         private ComponentHost _componentHost = null!;
         public T GetComponent<T>() where T : Component
@@ -35,16 +35,16 @@ namespace Solo.Scripts.Entities.Zombies
         }
 
 
-        public void Init(Vector2 worldPosition)
+        public void Init(EntityData data, Vector2 worldPosition)
         {
+            _data = (ZombieData)data;
             GlobalPosition = worldPosition;
 
             _componentHost = new ComponentHost(this);
 
-            ZombieData zombieData = EntityDataManager.Instance.GetData<ZombieData>();
 
             HpComponent hpComponent = new HpComponent();
-            hpComponent.Refresh(zombieData.MaxHp, zombieData.MaxHp);
+            hpComponent.Refresh(_data.MaxHp, _data.MaxHp);
             hpComponent.OnValueChanged += (curValue, maxValue) =>
             {
                 GD.Print($"{curValue} / {maxValue}");
@@ -52,11 +52,11 @@ namespace Solo.Scripts.Entities.Zombies
             _componentHost.Add(hpComponent);
 
             AtkComponent atkComponent = new AtkComponent();
-            atkComponent.Refresh(zombieData.Atk);
+            atkComponent.Refresh(_data.Atk);
             _componentHost.Add(atkComponent);
 
             DefComponent defComponent = new DefComponent();
-            defComponent.Refresh(zombieData.Def);
+            defComponent.Refresh(_data.Def);
             _componentHost.Add(defComponent);
 
             _naviAgent.VelocityComputed += _naviAgent_VelocityComputed;
@@ -64,7 +64,32 @@ namespace Solo.Scripts.Entities.Zombies
             ChangeState(ZombieState.Idle);
         }
 
+        public void Load(EntityData data, ZombieSaveData saveData)
+        {
+            _data = (ZombieData)data;
+            GlobalPosition = new Vector2(saveData.WorldX, saveData.WorldY);
 
+            _componentHost = new ComponentHost(this);
+            HpComponent hpComponent = new HpComponent();
+            hpComponent.Refresh(saveData.CurHp, _data.MaxHp);
+            hpComponent.OnValueChanged += (curValue, maxValue) =>
+            {
+                GD.Print($"{curValue} / {maxValue}");
+            };
+            _componentHost.Add(hpComponent);
+
+            AtkComponent atkComponent = new AtkComponent();
+            atkComponent.Refresh(_data.Atk);
+            _componentHost.Add(atkComponent);
+
+            DefComponent defComponent = new DefComponent();
+            defComponent.Refresh(_data.Def);
+            _componentHost.Add(defComponent);
+
+            _naviAgent.VelocityComputed += _naviAgent_VelocityComputed;
+
+            ChangeState(ZombieState.Idle);
+        }
 
         public override void _PhysicsProcess(double delta)
         {
@@ -159,14 +184,14 @@ namespace Solo.Scripts.Entities.Zombies
 
 
             Player player = GameManager.Instance.Player;
-            if (player != null && GlobalPosition.DistanceSquaredTo(player.GlobalPosition) <= EntityDataManager.Instance.GetData<ZombieData>().ViewRangeSq)
+            if (player != null && GlobalPosition.DistanceSquaredTo(player.GlobalPosition) <= _data.ViewRangeSq)
             {
                 ChangeState(ZombieState.Chase);
                 return;
             }
 
             _idleTimer += delta;
-            if (_idleTimer >= EntityDataManager.Instance.GetData<ZombieData>().IdleDuration)
+            if (_idleTimer >= _data.IdleDuration)
             {
                 ChangeState(ZombieState.Patrol);
                 return;
@@ -184,12 +209,12 @@ namespace Solo.Scripts.Entities.Zombies
         {
             _animSprite.Play("Move");
             canMove = true;
-            _naviAgent.TargetPosition = GetRandomValidTarget(GlobalPosition, EntityDataManager.Instance.GetData<ZombieData>().PatrolRange); ;
+            _naviAgent.TargetPosition = GetRandomValidTarget(GlobalPosition, _data.PatrolRange); ;
         }
         private void UpdatePatrol(float delta)
         {
             Player player = GameManager.Instance.Player;
-            if (player != null && GlobalPosition.DistanceSquaredTo(player.GlobalPosition) <= EntityDataManager.Instance.GetData<ZombieData>().ViewRangeSq)
+            if (player != null && GlobalPosition.DistanceSquaredTo(player.GlobalPosition) <= _data.ViewRangeSq)
             {
                 ChangeState(ZombieState.Chase);
                 return;
@@ -206,7 +231,7 @@ namespace Solo.Scripts.Entities.Zombies
                 _animSprite.FlipH = false;
             else
                 _animSprite.FlipH = true;
-            _naviAgent.Velocity = _curDir * EntityDataManager.Instance.GetData<ZombieData>().MoveSpeed;
+            _naviAgent.Velocity = _curDir * _data.MoveSpeed;
         }
         private void ExitPatrol()
         {
@@ -229,13 +254,13 @@ namespace Solo.Scripts.Entities.Zombies
             }
 
             Player player = GameManager.Instance.Player;
-            if (player == null || GlobalPosition.DistanceSquaredTo(player.GlobalPosition) > EntityDataManager.Instance.GetData<ZombieData>().ViewRangeSq)
+            if (player == null || GlobalPosition.DistanceSquaredTo(player.GlobalPosition) > _data.ViewRangeSq)
             {
                 ChangeState(ZombieState.Idle);
                 return;
             }
 
-            if (GlobalPosition.DistanceSquaredTo(player.GlobalPosition) <= EntityDataManager.Instance.GetData<ZombieData>().AtkRangeSq)
+            if (GlobalPosition.DistanceSquaredTo(player.GlobalPosition) <= _data.AtkRangeSq)
             {
                 ChangeState(ZombieState.Atk);
                 return;
@@ -248,7 +273,7 @@ namespace Solo.Scripts.Entities.Zombies
                 _animSprite.FlipH = false;
             else
                 _animSprite.FlipH = true;
-            _naviAgent.Velocity = _curDir * EntityDataManager.Instance.GetData<ZombieData>().MoveSpeed;
+            _naviAgent.Velocity = _curDir * _data.MoveSpeed;
         }
         private void ExitChase()
         {

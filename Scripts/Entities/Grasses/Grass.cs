@@ -1,42 +1,44 @@
 using Godot;
 using Solo.Scripts.Entities.Components;
-using Solo.Scripts.Entities.Core;
 using Solo.Scripts.Global.Interfaces;
 
-public partial class Grass : StaticBody2D, IEntity
+namespace Solo.Scripts.Entities
 {
-    private ComponentHost _componentHost = null!;
-    public T GetComponent<T>() where T : Component => _componentHost.Get<T>();
-    public bool TryGetComponent<T>(out T component) where T : Component => _componentHost.TryGet<T>(out component);
-
-    public void Init(Vector2 worldPos)
+    public partial class Grass : StaticBody2D, IEntity
     {
-        _componentHost = new ComponentHost(this);
-        GlobalPosition = worldPos;
+        private ComponentHost _componentHost = null!;
+        public T GetComponent<T>() where T : Component => _componentHost.Get<T>();
+        public bool TryGetComponent<T>(out T component) where T : Component => _componentHost.TryGet<T>(out component);
 
-        HpComponent hpComponent = new HpComponent();
-        hpComponent.OnValueChanged += (curHp, maxHp) =>
+        public void Init(Vector2 worldPos)
         {
-            //_hpLabel.Text = $"{curHp:f0} / {maxHp:f0}";
-            if (curHp == 0)
+            _componentHost = new ComponentHost(this);
+            GlobalPosition = worldPos;
+
+            HpComponent hpComponent = new HpComponent();
+            hpComponent.OnValueChanged += (curHp, maxHp) =>
             {
-                QueueFree();
-            }
-        };
-        hpComponent.Refresh(10, 10);
-        _componentHost.Add(hpComponent);
+                //_hpLabel.Text = $"{curHp:f0} / {maxHp:f0}";
+                if (curHp == 0)
+                {
+                    QueueFree();
+                }
+            };
+            hpComponent.Refresh(10, 10);
+            _componentHost.Add(hpComponent);
 
-        DefComponent defComponent = new DefComponent();
-        defComponent.Refresh(100);
-        _componentHost.Add(defComponent);
+            DefComponent defComponent = new DefComponent();
+            defComponent.Refresh(100);
+            _componentHost.Add(defComponent);
+        }
+
+        public override void _Ready()
+        {
+        }
+
+        public override void _Process(double delta)
+        {
+        }
+
     }
-
-    public override void _Ready()
-    {
-    }
-
-    public override void _Process(double delta)
-    {
-    }
-
 }

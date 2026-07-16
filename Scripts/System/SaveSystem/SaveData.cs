@@ -1,4 +1,4 @@
-﻿using Solo.Scripts.Entities.Core;
+﻿using Solo.Scripts.Entities;
 using System.Collections.Generic;
 
 namespace Solo.Scripts.System.SaveSystem

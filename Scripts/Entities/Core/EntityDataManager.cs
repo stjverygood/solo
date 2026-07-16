@@ -1,17 +1,18 @@
-﻿using System;
+﻿using Solo.Scripts.Entities.Trees;
+using Solo.Scripts.Global;
 using System.Collections.Generic;
 
-namespace Solo.Scripts.Entities.Core
+namespace Solo.Scripts.Entities
 {
     public class EntityDataManager
     {
         private static EntityDataManager? _instance;
         public static EntityDataManager Instance => _instance ??= new EntityDataManager();
-        private Dictionary<Type, EntityData> _dataMap = new Dictionary<Type, EntityData>();
+        private Dictionary<EntityType, EntityData> _dataMap = new Dictionary<EntityType, EntityData>();
 
         private EntityDataManager()
         {
-            _dataMap[typeof(ZombieData)] = new ZombieData()
+            _dataMap[EntityType.Zombie] = new ZombieData()
             {
                 MaxHp = 100,
                 Atk = 40,
@@ -24,15 +25,16 @@ namespace Solo.Scripts.Entities.Core
                 IdleDuration = 1,
                 PatrolRange = 200,
             };
+
+            _dataMap[EntityType.Tree] = new TreeData()
+            {
+                MaxHp = 100,
+            };
         }
 
-        public T GetData<T>()
+        public EntityData GetData(EntityType type)
         {
-            if (_dataMap[typeof(T)] is not T data)
-            {
-                throw new Exception("entity data null");
-            }
-            return data;
+            return _dataMap[type];
         }
     }
 }
