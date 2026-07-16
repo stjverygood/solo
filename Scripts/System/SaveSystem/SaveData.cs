@@ -1,4 +1,4 @@
-﻿using Solo.Scripts.Levels;
+﻿using Solo.Scripts.Entities.Core;
 using System.Collections.Generic;
 
 namespace Solo.Scripts.System.SaveSystem
@@ -22,7 +22,7 @@ namespace Solo.Scripts.System.SaveSystem
         public PlayerSaveData PlayerSaveData { get; set; }
         public List<ChunkSaveData> ChunkSaveDataList { get; set; }//所有加载过的区块列表, 加载存档时要转成Dictionary<Int2, ChunkSaveData>
 
-        public List<ChunkEntitySaveData> ChunkEntitySaveDataList { get; set; }
+        public List<EntitySaveData> EntitySaveDataList { get; set; }
 
         //public List<(int, int)> 
 
@@ -32,7 +32,7 @@ namespace Solo.Scripts.System.SaveSystem
             ChunkMoistureNoiseSeedStr = "ChunkMoistureNoiseSeedStr1";
             ChunkSaveDataList = new List<ChunkSaveData>();
             PlayerSaveData = new PlayerSaveData();
-            ChunkEntitySaveDataList = new List<ChunkEntitySaveData>();
+            EntitySaveDataList = new List<EntitySaveData>();
         }
     }
 

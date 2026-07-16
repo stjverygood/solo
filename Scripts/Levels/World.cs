@@ -1,16 +1,15 @@
 using Godot;
 using Solo.Scripts.Entities.Core;
 using Solo.Scripts.Entities.Players;
+using Solo.Scripts.Entities.Trees;
 using Solo.Scripts.Global;
-using Solo.Scripts.Levels;
+using Solo.Scripts.Global.Interfaces;
 using Solo.Scripts.System.ChunkSystem;
 using Solo.Scripts.System.SaveSystem;
 using System.Collections.Generic;
 
 public partial class World : Node2D
 {
-    //[Export] private PackedScene _playerPs = null!;
-    //[Export] private PackedScene _ChunkManagerPs = null!;
     [Export] private CanvasModulate _canvasModulate = null!;
     [Export] private Gradient _dayNightGradient = null!;
 
@@ -18,8 +17,11 @@ public partial class World : Node2D
     private FastNoiseLite _noise = new FastNoiseLite();
     private string _seedString = "";
 
-    //private Dictionary<Vector2I, List<IEntity>> _entityMap = new Dictionary<Vector2I, List<IEntity>>();//动态数据
-    private Dictionary<Vector2I, List<EntitySaveData>> _entitySaveDataMap = new Dictionary<Vector2I, List<EntitySaveData>>();//存档数据, 用于恢复实体, 记录在这里说明加载过了, 来源 : 1. 存档初始化, 2. 区块卸载时
+    //管理当前激活区块的实体
+    private Dictionary<Vector2I, List<IEntity>> _entityMap = new();
+
+    //区块实体的缓存, 卸载区块时把数据写入这个缓存, 区块加载时用这个缓存恢复, 游戏关闭后全部区块都要卸载, 会先写入缓存, 最后缓存再进入存档, 下次打开游戏, 也是先从存档加载缓存
+    private Dictionary<Vector2I, List<EntitySaveData>> _entitySaveDataMap = new Dictionary<Vector2I, List<EntitySaveData>>();
 
     public void Init()
     {
@@ -32,21 +34,18 @@ public partial class World : Node2D
         chunkManager.OnChunkLoaded += ChunkManager_OnChunkLoaded;
         chunkManager.OnChunkUnloaded += ChunkManager_OnChunkUnloaded;
         chunkManager.Init();
-        foreach (ChunkEntitySaveData chunkEntitySaveData in SaveManager.Instance.CurSaveData.ChunkEntitySaveDataList)
+        foreach (EntitySaveData entitySaveData in SaveManager.Instance.CurSaveData.EntitySaveDataList)
         {
-            _entitySaveDataMap[new Vector2I(chunkEntitySaveData.ChunkPosX, chunkEntitySaveData.ChunkPosY)] = chunkEntitySaveData.EntitySaveDataList;
+            Vector2I chunkPos = GameManager.Instance.ChunkManager.WorldToChunkPos(new Vector2(entitySaveData.WorldX, entitySaveData.WorldY));
+            if (_entitySaveDataMap.ContainsKey(chunkPos) == false)
+                _entitySaveDataMap[chunkPos] = new List<EntitySaveData>();
+            _entitySaveDataMap[chunkPos].Add(entitySaveData);
         }
     }
 
     public override void _PhysicsProcess(double delta)
     {
-        //GD.Print("GameManager.Instance.TimeRatio : " + GameManager.Instance.TimeRatio);
         _canvasModulate.Color = _dayNightGradient.Sample(GameManager.Instance.TimeRatio);
-        //if (Input.IsActionJustPressed("Back"))
-        //{
-        //    GetTree().Paused = true;
-        //    _pauseView.Visible = true;
-        //}
     }
 
     private void ChunkManager_OnChunkLoaded(Vector2I chunkPos)
@@ -63,16 +62,28 @@ public partial class World : Node2D
 
     private void ChunkManager_OnChunkUnloaded(Vector2I chunkPos)
     {
-        //todo : 写入动态表里, 退出时写入存档
-        _entitySaveDataMap[chunkPos] = new List<EntitySaveData>();
+        if (_entitySaveDataMap.ContainsKey(chunkPos) == false)
+            _entitySaveDataMap[chunkPos] = new List<EntitySaveData>();
+        List<IEntity> entityList = _entityMap[chunkPos];
+        foreach (IEntity entity in entityList)
+        {
+            if (entity is ISaveable saveable)
+            {
+                _entitySaveDataMap[chunkPos].Add(saveable.GetSaveData());
+            }
+            ((Node2D)entity).QueueFree();
+        }
+        _entityMap.Remove(chunkPos);
     }
 
     private void InitEntity(Vector2I chunkPos)
     {
+        if (_entityMap.ContainsKey(chunkPos) == false)
+            _entityMap[chunkPos] = new List<IEntity>();
+
         for (int x = 0; x < GameManager.Instance.ChunkManager.ChunkSize; x++)
             for (int y = 0; y < GameManager.Instance.ChunkManager.ChunkSize; y++)
             {
-
                 Vector2I tilePos = new Vector2I(chunkPos.X * GameManager.Instance.ChunkManager.ChunkSize + x, chunkPos.Y * GameManager.Instance.ChunkManager.ChunkSize + y);
                 TileType tileType = GameManager.Instance.ChunkManager.GetTileType(tilePos * GameManager.Instance.ChunkManager.TileSize);
 
@@ -84,6 +95,7 @@ public partial class World : Node2D
                         Grass grass = GameManager.Instance.GrassPs.Instantiate<Grass>();
                         GetTree().CurrentScene.AddChild(grass);
                         grass.Init(tileCenterPos);
+                        _entityMap[chunkPos].Add(grass);
                     }
                     //if (GD.Randf() < 0.01)
                     //{
@@ -99,7 +111,8 @@ public partial class World : Node2D
                     {
                         Tree tree = GameManager.Instance.TreePs.Instantiate<Tree>();
                         GetTree().CurrentScene.AddChild(tree);
-                        tree.Init(tileCenterPos);
+                        tree.Init(tileCenterPos, 100, 100);
+                        _entityMap[chunkPos].Add(tree);
                     }
                     continue;
                 }
@@ -109,6 +122,33 @@ public partial class World : Node2D
     }
     private void RecoverEntity(Vector2I chunkPos)
     {
-
+        //if (_entitySaveDataMap.ContainsKey(chunkPos) == false)
+        //    _entitySaveDataMap[chunkPos] = new List<EntitySaveData>();
+        //List<IEntity> entityList = _entityMap[chunkPos];
+        //foreach (IEntity entity in entityList)
+        //{
+        //    if (entity is ISaveable saveable)
+        //    {
+        //        _entitySaveDataMap[chunkPos].Add(saveable.GetSaveData());
+        //    }
+        //    ((Node2D)entity).QueueFree();
+        //}
+        //_entityMap.Remove(chunkPos);
+        if (_entityMap.ContainsKey(chunkPos) == false)
+            _entityMap[chunkPos] = new List<IEntity>();
+        foreach (EntitySaveData entitySaveData in _entitySaveDataMap[chunkPos])
+        {
+            switch (entitySaveData.Type)
+            {
+                case EntityType.Tree:
+                    TreeSaveData treeSaveData = (TreeSaveData)entitySaveData;
+                    Tree tree = GameManager.Instance.TreePs.Instantiate<Tree>();
+                    GetTree().CurrentScene.AddChild(tree);
+                    tree.Init(new Vector2(treeSaveData.WorldX, treeSaveData.WorldY), treeSaveData.CurHp, 100);
+                    _entityMap[chunkPos].Add(tree);
+                    break;
+            }
+        }
+        _entitySaveDataMap.Remove(chunkPos);
     }
 }

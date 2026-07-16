@@ -21,7 +21,7 @@ namespace Solo.Scripts.System.ChunkSystem
         private FastNoiseLite _moistureNoise = new FastNoiseLite();  // 湿度,决定陆地上具体是草地/森林/沙漠
         public int ChunkSize = 16;       // 每个区块的瓦片数量
         public int TileSize = 16;        // 每个瓦片的像素大小
-        private int _renderDistance = 5;  // 区块渲染距离
+        private int _renderDistance = 3;  // 区块渲染距离
         public Dictionary<Vector2I, Chunk> CurActiveChunkMap = new Dictionary<Vector2I, Chunk>();
         public Dictionary<Vector2I, ChunkSaveData> ChunkSaveDataMap = new Dictionary<Vector2I, ChunkSaveData>();
 
@@ -88,7 +88,7 @@ namespace Solo.Scripts.System.ChunkSystem
 
             int unloadDistance = _renderDistance + 1;// 卸载距离比加载距离大 1-2，防止在边缘反复生成/卸载
             List<Vector2I> removeChunkPosList = new List<Vector2I>();
-            foreach (Vector2I chunkPos in CurActiveChunkMap.Keys)
+            foreach (Vector2I chunkPos in _curChunkPosSet)
             {
                 if (Mathf.Abs(chunkPos.X - playerChunkPos.X) > unloadDistance || Mathf.Abs(chunkPos.Y - playerChunkPos.Y) > unloadDistance)
                 {
@@ -110,6 +110,7 @@ namespace Solo.Scripts.System.ChunkSystem
 
         private void LoadChunk(Vector2I chunkPos)
         {
+            OnChunkLoaded?.Invoke(chunkPos);
             _curChunkPosSet.Add(chunkPos);
             for (int x = 0; x < ChunkSize; x++)
             {
@@ -141,10 +142,10 @@ namespace Solo.Scripts.System.ChunkSystem
                     }
                 }
             }
-            OnChunkLoaded?.Invoke(chunkPos);
         }
         private void UnloadChunk(Vector2I chunkPos)
         {
+            OnChunkUnloaded?.Invoke(chunkPos);
             _curChunkPosSet.Remove(chunkPos);
             for (int x = 0; x < ChunkSize; x++)
             {
@@ -155,7 +156,6 @@ namespace Solo.Scripts.System.ChunkSystem
                     _landTileMapLayer.SetCell(globalPos, -1);
                 }
             }
-            OnChunkUnloaded?.Invoke(chunkPos);
         }
 
 

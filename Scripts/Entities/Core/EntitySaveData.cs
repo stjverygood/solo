@@ -1,8 +1,11 @@
-﻿namespace Solo.Scripts.Entities.Core
+﻿using Solo.Scripts.Global;
+
+namespace Solo.Scripts.Entities.Core
 {
     public class EntitySaveData
     {
-        public int X { get; set; }
-        public int Y { get; set; }
+        public EntityType Type { get; set; }
+        public float WorldX { get; set; }
+        public float WorldY { get; set; }
     }
 }
