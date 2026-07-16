@@ -856,20 +856,20 @@ namespace Solo.Scripts.Entities.Units
         private bool _isDay = true;//占用白天单位名额
         private void RefreshChunkPos()
         {
-            if (GameManager.Instance.ChunkManager.CurActiveChunkMap.ContainsKey(_curChunkPos) == false)
-                return;
-            if (_isDay)
-            {
-                GameManager.Instance.ChunkManager.CurActiveChunkMap[_curChunkPos].DayUnitList.Remove(this);
-                _curChunkPos = GameManager.Instance.ChunkManager.WorldToChunkPos(GlobalPosition);
-                GameManager.Instance.ChunkManager.CurActiveChunkMap[_curChunkPos].DayUnitList.Add(this);
-            }
-            else
-            {
-                GameManager.Instance.ChunkManager.CurActiveChunkMap[_curChunkPos].NightUnitList.Remove(this);
-                _curChunkPos = GameManager.Instance.ChunkManager.WorldToChunkPos(GlobalPosition);
-                GameManager.Instance.ChunkManager.CurActiveChunkMap[_curChunkPos].NightUnitList.Add(this);
-            }
+            //if (GameManager.Instance.ChunkManager.CurActiveChunkMap.ContainsKey(_curChunkPos) == false)
+            //    return;
+            //if (_isDay)
+            //{
+            //    GameManager.Instance.ChunkManager.CurActiveChunkMap[_curChunkPos].DayUnitList.Remove(this);
+            //    _curChunkPos = GameManager.Instance.ChunkManager.WorldToChunkPos(GlobalPosition);
+            //    GameManager.Instance.ChunkManager.CurActiveChunkMap[_curChunkPos].DayUnitList.Add(this);
+            //}
+            //else
+            //{
+            //    GameManager.Instance.ChunkManager.CurActiveChunkMap[_curChunkPos].NightUnitList.Remove(this);
+            //    _curChunkPos = GameManager.Instance.ChunkManager.WorldToChunkPos(GlobalPosition);
+            //    GameManager.Instance.ChunkManager.CurActiveChunkMap[_curChunkPos].NightUnitList.Add(this);
+            //}
         }
     }
 

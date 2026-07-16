@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://dx8thbx4w752g"]
 
-[ext_resource type="Script" uid="uid://hfnt3vjubprb" path="res://Scripts/System/UiSystem/PauseView.cs" id="1_f5svr"]
+[ext_resource type="Script" uid="uid://hfnt3vjubprb" path="res://Scripts/UI/PauseView.cs" id="1_f5svr"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_2lff8"]
 bg_color = Color(0.15294118, 0.15294118, 0.15294118, 0.6509804)

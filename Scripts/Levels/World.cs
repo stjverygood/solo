@@ -24,15 +24,19 @@ public partial class World : Node2D
 
     public void Init()
     {
-
+        GameManager.Instance.World = this;
         Player player = GameManager.Instance.PlayerPs.Instantiate<Player>();
         AddChild(player);
         player.Init();
+
+
+
         ChunkManager chunkManager = GameManager.Instance.ChunkManagerPs.Instantiate<ChunkManager>();
         AddChild(chunkManager);
         chunkManager.OnChunkLoaded += ChunkManager_OnChunkLoaded;
         chunkManager.OnChunkUnloaded += ChunkManager_OnChunkUnloaded;
-        chunkManager.Init();
+        chunkManager.Init(player);
+
         foreach (EntitySaveData entitySaveData in SaveManager.Instance.CurSaveData.EntitySaveDataList)
         {
             Vector2I chunkPos = GameManager.Instance.ChunkManager.WorldToChunkPos(new Vector2(entitySaveData.WorldX, entitySaveData.WorldY));
@@ -40,6 +44,9 @@ public partial class World : Node2D
                 _entitySaveDataMap[chunkPos] = new List<EntitySaveData>();
             _entitySaveDataMap[chunkPos].Add(entitySaveData);
         }
+
+        chunkManager.Start();
+
     }
 
     public override void _PhysicsProcess(double delta)
@@ -66,6 +73,8 @@ public partial class World : Node2D
         List<IEntity> entityList = _entityMap[chunkPos];
         foreach (IEntity entity in entityList)
         {
+            if (IsInstanceValid((Node2D)entity) == false)
+                continue;
             if (entity is ISaveable saveable)
             {
                 _entitySaveDataMap[chunkPos].Add(saveable.GetSaveData());
@@ -150,4 +159,29 @@ public partial class World : Node2D
         }
         _entitySaveDataMap.Remove(chunkPos);
     }
+
+    public void EntitySaveDataCacheToSave()
+    {
+        List<EntitySaveData> entitySaveDataList = new List<EntitySaveData>();
+        foreach (List<EntitySaveData> curEntitySaveDataList in _entitySaveDataMap.Values)
+        {
+            foreach (EntitySaveData saveData in curEntitySaveDataList)
+                entitySaveDataList.Add(saveData);
+        }
+        SaveManager.Instance.CurSaveData.EntitySaveDataList = entitySaveDataList;
+        SaveManager.Instance.WriteCurSaveData();
+    }
+
+    //public override void _ExitTree()
+    //{
+    //    GD.Print("world _ExitTree");
+    //    List<EntitySaveData> entitySaveDataList = new List<EntitySaveData>();
+    //    foreach (List<EntitySaveData> curEntitySaveDataList in _entitySaveDataMap.Values)
+    //    {
+    //        foreach (EntitySaveData saveData in curEntitySaveDataList)
+    //            entitySaveDataList.Add(saveData);
+    //    }
+    //    SaveManager.Instance.CurSaveData.EntitySaveDataList = entitySaveDataList;
+    //    SaveManager.Instance.WriteCurSaveData();
+    //}
 }

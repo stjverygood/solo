@@ -1,8 +1,10 @@
 using Godot;
+using Solo.Scripts.Entities;
 using Solo.Scripts.Global;
 using Solo.Scripts.System.SaveSystem;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Solo.Scripts.System.ChunkSystem
 {
@@ -17,14 +19,13 @@ namespace Solo.Scripts.System.ChunkSystem
         [Export] public PackedScene _zombiePs = null!;
 
         //public BuildingManager BuildingManager;
+        private bool _enable = false;
+        private Player _player = null!;
         private FastNoiseLite _elevationNoise = new FastNoiseLite(); // 海拔/地形起伏,决定水/陆地
         private FastNoiseLite _moistureNoise = new FastNoiseLite();  // 湿度,决定陆地上具体是草地/森林/沙漠
         public int ChunkSize = 16;       // 每个区块的瓦片数量
         public int TileSize = 16;        // 每个瓦片的像素大小
         private int _renderDistance = 3;  // 区块渲染距离
-        public Dictionary<Vector2I, Chunk> CurActiveChunkMap = new Dictionary<Vector2I, Chunk>();
-        public Dictionary<Vector2I, ChunkSaveData> ChunkSaveDataMap = new Dictionary<Vector2I, ChunkSaveData>();
-
         private HashSet<Vector2I> _curChunkPosSet = new HashSet<Vector2I>();
         public event Action<Vector2I>? OnChunkLoaded;
         public event Action<Vector2I>? OnChunkUnloaded;
@@ -41,13 +42,11 @@ namespace Solo.Scripts.System.ChunkSystem
         };
         private Dictionary<Vector2I, TileType> TileTypeMap = new Dictionary<Vector2I, TileType>();//用于反查
 
-        public void Init()
+        public void Init(Player player)
         {
+
+            _player = player;
             GameManager.Instance.ChunkManager = this;
-            foreach (ChunkSaveData chunkSaveData in SaveManager.Instance.CurSaveData.ChunkSaveDataList)
-            {
-                ChunkSaveDataMap[new Vector2I(chunkSaveData.X, chunkSaveData.Y)] = chunkSaveData;
-            }
             _elevationNoise.Seed = GD.Hash(SaveManager.Instance.CurSaveData.ChunkElevationNoiseSeedStr);
             _elevationNoise.Frequency = 0.005f;
             _moistureNoise.Seed = GD.Hash(SaveManager.Instance.CurSaveData.ChunkMoistureNoiseSeedStr);
@@ -57,7 +56,11 @@ namespace Solo.Scripts.System.ChunkSystem
                 foreach (Vector2I tileCoords in kvp.Value)
                     TileTypeMap[tileCoords] = kvp.Key;
             }
+        }
 
+        public void Start()
+        {
+            _enable = true;
             RefreshChunk();
         }
 
@@ -65,6 +68,9 @@ namespace Solo.Scripts.System.ChunkSystem
         private float _refreshDuration = 1f; // 每秒检查一次卸载
         public override void _PhysicsProcess(double delta)
         {
+            if (_enable == false)
+                return;
+
             _refreshTimer += (float)delta;
             if (_refreshTimer < _refreshDuration)
                 return;
@@ -158,12 +164,6 @@ namespace Solo.Scripts.System.ChunkSystem
             }
         }
 
-
-        //public Vector2I WorldToTilePos(Vector2 worldPos)
-        //{
-        //    return
-        //}
-
         public TileType GetTileType(Vector2 worldPos)
         {
             Vector2I tilePos = _landTileMapLayer.LocalToMap(_landTileMapLayer.ToLocal(worldPos));
@@ -188,12 +188,22 @@ namespace Solo.Scripts.System.ChunkSystem
             return TileType.Stone;
         }
 
-        public override void _ExitTree()
+        public void Exit()
         {
-            foreach (Vector2I chunkPos in new List<Vector2I>(CurActiveChunkMap.Keys))
+            _enable = false;
+            foreach (Vector2I chunkPos in _curChunkPosSet.ToList())
             {
                 UnloadChunk(chunkPos);
             }
         }
+
+        //public override void _ExitTree()
+        //{
+        //    GD.Print("chunkmanager _ExitTree");
+        //    foreach (Vector2I chunkPos in _curChunkPosSet.ToList())
+        //    {
+        //        UnloadChunk(chunkPos);
+        //    }
+        //}
     }
 }

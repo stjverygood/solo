@@ -42,7 +42,7 @@ namespace Solo.Scripts.Global
 
         [Export] public PackedScene ChunkManagerPs = null!;
 
-
+        public World World;
         public Player Player;
         public List<Unit> UnitList = new List<Unit>();
         public List<IQiRangeable> IQiRangeableList = new List<IQiRangeable>();
@@ -106,6 +106,9 @@ namespace Solo.Scripts.Global
 
         public void ReturnMainMenu()
         {
+            //1.区块卸载 2. 缓存写入存档
+            ChunkManager.Exit();
+            World.EntitySaveDataCacheToSave();
             MainMenuView mainMenuView = _mainMenuViewPs.Instantiate<MainMenuView>();
             GetTree().Root.AddChild(mainMenuView);
             GetTree().CurrentScene.QueueFree();
