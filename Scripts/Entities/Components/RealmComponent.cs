@@ -1,5 +1,6 @@
 ﻿using Solo.Scripts.Entities.Core;
 using Solo.Scripts.Global;
+using Solo.Scripts.Global.Interfaces;
 using System;
 
 namespace Solo.Scripts.Entities.Components
@@ -9,6 +10,8 @@ namespace Solo.Scripts.Entities.Components
         public RealmType Value { get; private set; }
 
         public event Action<RealmType>? OnValueChanged;
+
+        public RealmComponent(IEntity owner) : base(owner) { }
 
         //初始化, 升级, 穿戴装备时都要刷新
         public void Refresh(RealmType value)

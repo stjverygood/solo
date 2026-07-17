@@ -4,8 +4,8 @@ namespace Solo.Scripts.Entities.Core
 {
     public class Component
     {
-        protected IEntity _owner = null!;
-        public void Init(IEntity owner)
+        protected IEntity _owner;
+        public Component(IEntity owner)
         {
             _owner = owner;
         }

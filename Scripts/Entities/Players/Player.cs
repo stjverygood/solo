@@ -102,76 +102,66 @@ namespace Solo.Scripts.Entities.Players
 
         [Export] AnimatedSprite2D _bgAnimSprite = null!;
 
-        private ComponentHost _componentHost = null!;
-        public T GetComponent<T>() where T : Component
-        {
-            return _componentHost.Get<T>();
-        }
-        public bool TryGetComponent<T>(out T component) where T : Component
-        {
-            return _componentHost.TryGet<T>(out component);
-        }
+        public EntityCore Core { get; private set; } = new();
 
         public void Init()
         {
             GD.Print("Player Init~~~");
             GameManager.Instance.Player = this;
 
-            _componentHost = new ComponentHost(this);
-
             PlayerSaveData playerSaveData = SaveManager.Instance.CurSaveData.PlayerSaveData; //从存档里加载属性
             _characterView.Init();
 
             //先绑定, 后初始化值
-            RealmComponent realmComponent = new RealmComponent();
+            RealmComponent realmComponent = new RealmComponent(this);
             realmComponent.OnValueChanged += _fastAttributeView.RefreshRealm;
             realmComponent.OnValueChanged += _characterView.AttributeView.RefreshRealm;
-            _componentHost.Add(realmComponent);
+            Core.AddComponent(realmComponent);
 
-            HpComponent hpComponent = new HpComponent();
+            HpComponent hpComponent = new HpComponent(this);
             hpComponent.OnValueChanged += _fastAttributeView.RefreshHp;
             hpComponent.OnValueChanged += _characterView.AttributeView.RefreshHp;
-            _componentHost.Add(hpComponent);
+            Core.AddComponent(hpComponent);
 
-            QiComponent qiComponent = new QiComponent();
+            QiComponent qiComponent = new QiComponent(this);
             qiComponent.OnValueChanged += _fastAttributeView.RefreshQi;
             qiComponent.OnValueChanged += _characterView.AttributeView.RefreshQi;
-            _componentHost.Add(qiComponent);
+            Core.AddComponent(qiComponent);
 
-            ExpComponent expComponent = new ExpComponent();
+            ExpComponent expComponent = new ExpComponent(this);
             expComponent.OnValueChanged += _fastAttributeView.RefreshExp;
             expComponent.OnValueChanged += _characterView.AttributeView.RefreshExp;
-            _componentHost.Add(expComponent);
+            Core.AddComponent(expComponent);
 
-            AtkComponent atkComponent = new AtkComponent();
+            AtkComponent atkComponent = new AtkComponent(this);
             atkComponent.OnValueChanged += _characterView.AttributeView.RefreshAtk;
-            _componentHost.Add(atkComponent);
+            Core.AddComponent(atkComponent);
 
-            DefComponent defComponent = new DefComponent();
+            DefComponent defComponent = new DefComponent(this);
             defComponent.OnValueChanged += _characterView.AttributeView.RefreshDef;
-            _componentHost.Add(defComponent);
+            Core.AddComponent(defComponent);
 
-            InventoryManager.EquipmentInventory.SlotChanged += (index) => GetComponent<HpComponent>().Refresh(GetComponent<HpComponent>().CurValue, RealmDataManager.Instance.GetData(GetComponent<RealmComponent>().Value).MaxHp + InventoryManager.GetMaxHpBonus());
-            InventoryManager.EquipmentInventory.SlotChanged += (index) => GetComponent<QiComponent>().Refresh(GetComponent<QiComponent>().CurValue, RealmDataManager.Instance.GetData(GetComponent<RealmComponent>().Value).MaxQi + InventoryManager.GetMaxQiBonus());
-            InventoryManager.EquipmentInventory.SlotChanged += (index) => GetComponent<AtkComponent>().Refresh(RealmDataManager.Instance.GetData(GetComponent<RealmComponent>().Value).Atk + InventoryManager.GetAtkBonus());
-            InventoryManager.EquipmentInventory.SlotChanged += (index) => GetComponent<DefComponent>().Refresh(RealmDataManager.Instance.GetData(GetComponent<RealmComponent>().Value).Def + InventoryManager.GetDefBonus());
+            InventoryManager.EquipmentInventory.SlotChanged += (index) => Core.GetComponent<HpComponent>().Refresh(Core.GetComponent<HpComponent>().CurValue, RealmDataManager.Instance.GetData(Core.GetComponent<RealmComponent>().Value).MaxHp + InventoryManager.GetMaxHpBonus());
+            InventoryManager.EquipmentInventory.SlotChanged += (index) => Core.GetComponent<QiComponent>().Refresh(Core.GetComponent<QiComponent>().CurValue, RealmDataManager.Instance.GetData(Core.GetComponent<RealmComponent>().Value).MaxQi + InventoryManager.GetMaxQiBonus());
+            InventoryManager.EquipmentInventory.SlotChanged += (index) => Core.GetComponent<AtkComponent>().Refresh(RealmDataManager.Instance.GetData(Core.GetComponent<RealmComponent>().Value).Atk + InventoryManager.GetAtkBonus());
+            InventoryManager.EquipmentInventory.SlotChanged += (index) => Core.GetComponent<DefComponent>().Refresh(RealmDataManager.Instance.GetData(Core.GetComponent<RealmComponent>().Value).Def + InventoryManager.GetDefBonus());
 
 
-            GetComponent<RealmComponent>().Refresh(playerSaveData.CurRealmType);
-            GetComponent<HpComponent>().Refresh(playerSaveData.CurHp, RealmDataManager.Instance.GetData(GetComponent<RealmComponent>().Value).MaxHp + InventoryManager.GetMaxHpBonus());
-            GetComponent<QiComponent>().Refresh(playerSaveData.CurQi, RealmDataManager.Instance.GetData(GetComponent<RealmComponent>().Value).MaxQi + InventoryManager.GetMaxQiBonus());
-            GetComponent<ExpComponent>().Refresh(playerSaveData.CurExp, RealmDataManager.Instance.GetData(GetComponent<RealmComponent>().Value).MaxExp);
-            GetComponent<AtkComponent>().Refresh(RealmDataManager.Instance.GetData(GetComponent<RealmComponent>().Value).Atk + InventoryManager.GetAtkBonus());
-            GetComponent<DefComponent>().Refresh(RealmDataManager.Instance.GetData(GetComponent<RealmComponent>().Value).Def + InventoryManager.GetDefBonus());
+            Core.GetComponent<RealmComponent>().Refresh(playerSaveData.CurRealmType);
+            Core.GetComponent<HpComponent>().Refresh(playerSaveData.CurHp, RealmDataManager.Instance.GetData(Core.GetComponent<RealmComponent>().Value).MaxHp + InventoryManager.GetMaxHpBonus());
+            Core.GetComponent<QiComponent>().Refresh(playerSaveData.CurQi, RealmDataManager.Instance.GetData(Core.GetComponent<RealmComponent>().Value).MaxQi + InventoryManager.GetMaxQiBonus());
+            Core.GetComponent<ExpComponent>().Refresh(playerSaveData.CurExp, RealmDataManager.Instance.GetData(Core.GetComponent<RealmComponent>().Value).MaxExp);
+            Core.GetComponent<AtkComponent>().Refresh(RealmDataManager.Instance.GetData(Core.GetComponent<RealmComponent>().Value).Atk + InventoryManager.GetAtkBonus());
+            Core.GetComponent<DefComponent>().Refresh(RealmDataManager.Instance.GetData(Core.GetComponent<RealmComponent>().Value).Def + InventoryManager.GetDefBonus());
 
             _characterView.AttributeView.OnUpgraded += () =>
             {
-                GetComponent<RealmComponent>().Upgrade();
-                GetComponent<HpComponent>().Refresh(RealmDataManager.Instance.GetData(GetComponent<RealmComponent>().Value).MaxHp + InventoryManager.GetMaxHpBonus(), RealmDataManager.Instance.GetData(GetComponent<RealmComponent>().Value).MaxHp + InventoryManager.GetMaxHpBonus());
-                GetComponent<QiComponent>().Refresh(RealmDataManager.Instance.GetData(GetComponent<RealmComponent>().Value).MaxQi + InventoryManager.GetMaxQiBonus(), RealmDataManager.Instance.GetData(GetComponent<RealmComponent>().Value).MaxQi + InventoryManager.GetMaxQiBonus());
-                GetComponent<ExpComponent>().Refresh(0, RealmDataManager.Instance.GetData(GetComponent<RealmComponent>().Value).MaxExp);
-                GetComponent<AtkComponent>().Refresh(RealmDataManager.Instance.GetData(GetComponent<RealmComponent>().Value).Atk + InventoryManager.GetAtkBonus());
-                GetComponent<DefComponent>().Refresh(RealmDataManager.Instance.GetData(GetComponent<RealmComponent>().Value).Def + InventoryManager.GetDefBonus());
+                Core.GetComponent<RealmComponent>().Upgrade();
+                Core.GetComponent<HpComponent>().Refresh(RealmDataManager.Instance.GetData(Core.GetComponent<RealmComponent>().Value).MaxHp + InventoryManager.GetMaxHpBonus(), RealmDataManager.Instance.GetData(Core.GetComponent<RealmComponent>().Value).MaxHp + InventoryManager.GetMaxHpBonus());
+                Core.GetComponent<QiComponent>().Refresh(RealmDataManager.Instance.GetData(Core.GetComponent<RealmComponent>().Value).MaxQi + InventoryManager.GetMaxQiBonus(), RealmDataManager.Instance.GetData(Core.GetComponent<RealmComponent>().Value).MaxQi + InventoryManager.GetMaxQiBonus());
+                Core.GetComponent<ExpComponent>().Refresh(0, RealmDataManager.Instance.GetData(Core.GetComponent<RealmComponent>().Value).MaxExp);
+                Core.GetComponent<AtkComponent>().Refresh(RealmDataManager.Instance.GetData(Core.GetComponent<RealmComponent>().Value).Atk + InventoryManager.GetAtkBonus());
+                Core.GetComponent<DefComponent>().Refresh(RealmDataManager.Instance.GetData(Core.GetComponent<RealmComponent>().Value).Def + InventoryManager.GetDefBonus());
             };
 
 
@@ -199,7 +189,7 @@ namespace Solo.Scripts.Entities.Players
             _curTargetRangeSq = _curTargetRange * _curTargetRange;
             _deathView.Visible = false;
 
-            if (GetComponent<HpComponent>().CurValue == 0)//若血量是0, 进入重生逻辑
+            if (Core.GetComponent<HpComponent>().CurValue == 0)//若血量是0, 进入重生逻辑
             {
                 Revive();
             }
@@ -230,14 +220,14 @@ namespace Solo.Scripts.Entities.Players
                     case Key.Key1:
                         //GetHp(10);
                         GD.Print("快捷检测：按下了 1");
-                        GetComponent<ExpComponent>().Gain(100);
+                        Core.GetComponent<ExpComponent>().Gain(100);
                         break;
                     case Key.Key2:
-                        GetComponent<HpComponent>().Gain(100);
+                        Core.GetComponent<HpComponent>().Gain(100);
                         GD.Print("快捷检测：按下了 2");
                         break;
                     case Key.Key3:
-                        GetComponent<HpComponent>().Consume(100);
+                        Core.GetComponent<HpComponent>().Consume(100);
                         GD.Print("快捷检测：按下了 3");
                         break;
                     case Key.Key4:
@@ -396,7 +386,7 @@ namespace Solo.Scripts.Entities.Players
         }
         private void UpdateIdle(float delta)
         {
-            if (GetComponent<HpComponent>().CurValue <= 0)
+            if (Core.GetComponent<HpComponent>().CurValue <= 0)
             {
                 ChangeState(PlayerState.Death);
                 return;
@@ -472,7 +462,7 @@ namespace Solo.Scripts.Entities.Players
         }
         private void UpdateWalk(float delta)
         {
-            if (GetComponent<HpComponent>().CurValue <= 0)
+            if (Core.GetComponent<HpComponent>().CurValue <= 0)
             {
                 ChangeState(PlayerState.Death);
                 return;
@@ -563,7 +553,7 @@ namespace Solo.Scripts.Entities.Players
         }
         private void UpdateRun(float delta)
         {
-            if (GetComponent<HpComponent>().CurValue <= 0)
+            if (Core.GetComponent<HpComponent>().CurValue <= 0)
             {
                 ChangeState(PlayerState.Death);
                 return;
@@ -636,7 +626,7 @@ namespace Solo.Scripts.Entities.Players
         }
         private void UpdateDash(float delta)
         {
-            if (GetComponent<HpComponent>().CurValue <= 0)
+            if (Core.GetComponent<HpComponent>().CurValue <= 0)
             {
                 ChangeState(PlayerState.Death);
                 return;
@@ -774,7 +764,7 @@ namespace Solo.Scripts.Entities.Players
         }
         private void UpdateAtk(float delta)
         {
-            if (GetComponent<HpComponent>().CurValue <= 0)
+            if (Core.GetComponent<HpComponent>().CurValue <= 0)
             {
                 ChangeState(PlayerState.Death);
                 return;
@@ -812,7 +802,7 @@ namespace Solo.Scripts.Entities.Players
         }
         private void UpdateInteract(float delta)
         {
-            if (GetComponent<HpComponent>().CurValue <= 0)
+            if (Core.GetComponent<HpComponent>().CurValue <= 0)
             {
                 ChangeState(PlayerState.Death);
                 return;
@@ -941,7 +931,7 @@ namespace Solo.Scripts.Entities.Players
         }
         private void UpdateBuild(float delta)
         {
-            if (GetComponent<HpComponent>().CurValue <= 0)
+            if (Core.GetComponent<HpComponent>().CurValue <= 0)
             {
                 foreach (IQiRangeable qiRangeable in GameManager.Instance.IQiRangeableList)
                 {
@@ -1008,7 +998,7 @@ namespace Solo.Scripts.Entities.Players
         }
         private void UpdateComsume(float delta)
         {
-            if (GetComponent<HpComponent>().CurValue <= 0)
+            if (Core.GetComponent<HpComponent>().CurValue <= 0)
             {
                 ChangeState(PlayerState.Death);
                 return;
@@ -1044,7 +1034,7 @@ namespace Solo.Scripts.Entities.Players
         }
         private void UpdateAim(float delta)
         {
-            if (GetComponent<HpComponent>().CurValue <= 0)
+            if (Core.GetComponent<HpComponent>().CurValue <= 0)
             {
                 ChangeState(PlayerState.Death);
                 return;
@@ -1166,7 +1156,7 @@ namespace Solo.Scripts.Entities.Players
         }
         private void UpdateFishing(float delta)
         {
-            if (GetComponent<HpComponent>().CurValue <= 0)
+            if (Core.GetComponent<HpComponent>().CurValue <= 0)
             {
                 fishingFloat?.QueueFree();
                 ChangeState(PlayerState.Death);
@@ -1244,7 +1234,7 @@ namespace Solo.Scripts.Entities.Players
         }
         private void UpdateDeath(float delta)
         {
-            if (GetComponent<HpComponent>().CurValue > 0)
+            if (Core.GetComponent<HpComponent>().CurValue > 0)
             {
                 ChangeState(PlayerState.Idle);
                 return;
@@ -1568,12 +1558,12 @@ namespace Solo.Scripts.Entities.Players
         public void Revive()
         {
             GlobalPosition = StartPoint;
-            GetComponent<RealmComponent>().Refresh(RealmType.LianQi1);
-            GetComponent<HpComponent>().Refresh(RealmDataManager.Instance.GetData(GetComponent<RealmComponent>().Value).MaxHp + InventoryManager.GetMaxHpBonus(), RealmDataManager.Instance.GetData(GetComponent<RealmComponent>().Value).MaxHp + InventoryManager.GetMaxHpBonus());
-            GetComponent<QiComponent>().Refresh(RealmDataManager.Instance.GetData(GetComponent<RealmComponent>().Value).MaxQi + InventoryManager.GetMaxQiBonus(), RealmDataManager.Instance.GetData(GetComponent<RealmComponent>().Value).MaxQi + InventoryManager.GetMaxQiBonus());
-            GetComponent<ExpComponent>().Refresh(0, RealmDataManager.Instance.GetData(GetComponent<RealmComponent>().Value).MaxExp);
-            GetComponent<AtkComponent>().Refresh(RealmDataManager.Instance.GetData(GetComponent<RealmComponent>().Value).Atk + InventoryManager.GetAtkBonus());
-            GetComponent<DefComponent>().Refresh(RealmDataManager.Instance.GetData(GetComponent<RealmComponent>().Value).Def + InventoryManager.GetDefBonus());
+            Core.GetComponent<RealmComponent>().Refresh(RealmType.LianQi1);
+            Core.GetComponent<HpComponent>().Refresh(RealmDataManager.Instance.GetData(Core.GetComponent<RealmComponent>().Value).MaxHp + InventoryManager.GetMaxHpBonus(), RealmDataManager.Instance.GetData(Core.GetComponent<RealmComponent>().Value).MaxHp + InventoryManager.GetMaxHpBonus());
+            Core.GetComponent<QiComponent>().Refresh(RealmDataManager.Instance.GetData(Core.GetComponent<RealmComponent>().Value).MaxQi + InventoryManager.GetMaxQiBonus(), RealmDataManager.Instance.GetData(Core.GetComponent<RealmComponent>().Value).MaxQi + InventoryManager.GetMaxQiBonus());
+            Core.GetComponent<ExpComponent>().Refresh(0, RealmDataManager.Instance.GetData(Core.GetComponent<RealmComponent>().Value).MaxExp);
+            Core.GetComponent<AtkComponent>().Refresh(RealmDataManager.Instance.GetData(Core.GetComponent<RealmComponent>().Value).Atk + InventoryManager.GetAtkBonus());
+            Core.GetComponent<DefComponent>().Refresh(RealmDataManager.Instance.GetData(Core.GetComponent<RealmComponent>().Value).Def + InventoryManager.GetDefBonus());
             CollisionLayer = 1;
             CollisionMask = 1;
         }
@@ -1587,10 +1577,10 @@ namespace Solo.Scripts.Entities.Players
                 PosX = GlobalPosition.X,
                 PosY = GlobalPosition.Y,
 
-                CurRealmType = GetComponent<RealmComponent>().Value,
-                CurHp = GetComponent<HpComponent>().CurValue,
-                CurQi = GetComponent<QiComponent>().CurValue,
-                CurExp = GetComponent<ExpComponent>().CurValue,
+                CurRealmType = Core.GetComponent<RealmComponent>().Value,
+                CurHp = Core.GetComponent<HpComponent>().CurValue,
+                CurQi = Core.GetComponent<QiComponent>().CurValue,
+                CurExp = Core.GetComponent<ExpComponent>().CurValue,
 
                 FastBarIndex = _curFastBarIndex,
 
@@ -1617,7 +1607,7 @@ namespace Solo.Scripts.Entities.Players
             FloatTextLb floatTextLb = GameManager.Instance.FloatTextLbPs.Instantiate<FloatTextLb>();
             GetTree().CurrentScene.AddChild(floatTextLb);
             floatTextLb.Init($"-{finalDamage}", GlobalPosition, new Color(162 / 256f, 38 / 256f, 51 / 256f));//162, 38, 51
-            GetComponent<HpComponent>().Consume(finalDamage);
+            Core.GetComponent<HpComponent>().Consume(finalDamage);
         }
 
         public bool CanInteract()

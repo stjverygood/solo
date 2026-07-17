@@ -10,16 +10,14 @@ namespace Solo.Scripts.Entities.Trees
         [Export] private Label _hpLabel = null!;
         private TreeData _data = null!;
 
-        private ComponentHost _componentHost = null!;
-        public T GetComponent<T>() where T : Component => _componentHost.Get<T>();
-        public bool TryGetComponent<T>(out T component) where T : Component => _componentHost.TryGet<T>(out component);
+
+        public EntityCore Core { get; private set; } = new();
 
         public void Init(EntityData data, Vector2 worldPos)
         {
             _data = (TreeData)data;
             GlobalPosition = worldPos;
-            _componentHost = new ComponentHost(this);
-            HpComponent hpComponent = new HpComponent();
+            HpComponent hpComponent = new HpComponent(this);
             hpComponent.OnValueChanged += (curHp, maxHp) =>
             {
                 _hpLabel.Text = $"{curHp:f0} / {maxHp:f0}";
@@ -29,19 +27,18 @@ namespace Solo.Scripts.Entities.Trees
                 }
             };
             hpComponent.Refresh(_data.MaxHp, _data.MaxHp);
-            _componentHost.Add(hpComponent);
+            Core.AddComponent(hpComponent);
 
-            DefComponent defComponent = new DefComponent();
+            DefComponent defComponent = new DefComponent(this);
             defComponent.Refresh(100);
-            _componentHost.Add(defComponent);
+            Core.AddComponent(defComponent);
         }
 
         public void Load(EntityData data, TreeSaveData saveData)
         {
             _data = (TreeData)data;
             GlobalPosition = new Vector2(saveData.WorldX, saveData.WorldY);
-            _componentHost = new ComponentHost(this);
-            HpComponent hpComponent = new HpComponent();
+            HpComponent hpComponent = new HpComponent(this);
             hpComponent.OnValueChanged += (curHp, maxHp) =>
             {
                 _hpLabel.Text = $"{curHp:f0} / {maxHp:f0}";
@@ -51,11 +48,11 @@ namespace Solo.Scripts.Entities.Trees
                 }
             };
             hpComponent.Refresh(saveData.CurHp, _data.MaxHp);
-            _componentHost.Add(hpComponent);
+            Core.AddComponent(hpComponent);
 
-            DefComponent defComponent = new DefComponent();
+            DefComponent defComponent = new DefComponent(this);
             defComponent.Refresh(100);
-            _componentHost.Add(defComponent);
+            Core.AddComponent(defComponent);
         }
 
         public override void _Ready()
@@ -73,8 +70,10 @@ namespace Solo.Scripts.Entities.Trees
                 Type = EntityType.Tree,
                 WorldX = GlobalPosition.X,
                 WorldY = GlobalPosition.Y,
-                CurHp = GetComponent<HpComponent>().CurValue
+                CurHp = Core.GetComponent<HpComponent>().CurValue
             };
         }
+
+
     }
 }

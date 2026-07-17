@@ -18,7 +18,7 @@ namespace Solo.Scripts.System.ItemSystem
         {
             _spawner = spawner;
             GlobalPosition = ((Node2D)_spawner).GlobalPosition + atkDir * 10;
-            _atk = _spawner.GetComponent<AtkComponent>().Value;
+            _atk = _spawner.Core.GetComponent<AtkComponent>().Value;
             Rotation = atkDir.Angle();
             _animSprite.Play(GD.Randf() < 0.5f ? "Wave1" : "Wave2");
             BodyEntered += SwordWave_BodyEntered;
@@ -40,9 +40,9 @@ namespace Solo.Scripts.System.ItemSystem
                         continue;
                     if (entity == _spawner)
                         continue;
-                    if (entity.TryGetComponent(out DefComponent defComponent) == false)
+                    if (entity.Core.TryGetComponent(out DefComponent defComponent) == false)
                         continue;
-                    if (entity.TryGetComponent(out HpComponent hpComponent) == false)
+                    if (entity.Core.TryGetComponent(out HpComponent hpComponent) == false)
                         continue;
                     float damage = GameManager.Instance.CalculateDamage(_atk, defComponent.Value);
                     hpComponent.Consume(damage);

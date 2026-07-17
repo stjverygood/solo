@@ -25,7 +25,7 @@ public partial class ExpBall : Area2D
 
         if (GlobalPosition.DistanceSquaredTo(((Node2D)_curTargetEntity).GlobalPosition) < 5)
         {
-            _curTargetEntity.GetComponent<ExpComponent>().Gain(_exp);
+            _curTargetEntity.Core.GetComponent<ExpComponent>().Gain(_exp);
             QueueFree();
         }
 

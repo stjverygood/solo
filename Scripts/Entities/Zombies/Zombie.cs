@@ -25,15 +25,7 @@ namespace Solo.Scripts.Entities.Zombies
         private bool canMove = false;
         private ZombieData _data = null!;
 
-        private ComponentHost _componentHost = null!;
-        public T GetComponent<T>() where T : Component
-        {
-            return _componentHost.Get<T>();
-        }
-        public bool TryGetComponent<T>(out T component) where T : Component
-        {
-            return _componentHost.TryGet<T>(out component);
-        }
+        public EntityCore Core { get; private set; } = new();
 
 
         public void Init(EntityData data, Vector2 worldPosition)
@@ -41,24 +33,23 @@ namespace Solo.Scripts.Entities.Zombies
             _data = (ZombieData)data;
             GlobalPosition = worldPosition;
 
-            _componentHost = new ComponentHost(this);
 
 
-            HpComponent hpComponent = new HpComponent();
+            HpComponent hpComponent = new HpComponent(this);
             hpComponent.Refresh(_data.MaxHp, _data.MaxHp);
             hpComponent.OnValueChanged += (curValue, maxValue) =>
             {
                 GD.Print($"{curValue} / {maxValue}");
             };
-            _componentHost.Add(hpComponent);
+            Core.AddComponent(hpComponent);
 
-            AtkComponent atkComponent = new AtkComponent();
+            AtkComponent atkComponent = new AtkComponent(this);
             atkComponent.Refresh(_data.Atk);
-            _componentHost.Add(atkComponent);
+            Core.AddComponent(atkComponent);
 
-            DefComponent defComponent = new DefComponent();
+            DefComponent defComponent = new DefComponent(this);
             defComponent.Refresh(_data.Def);
-            _componentHost.Add(defComponent);
+            Core.AddComponent(defComponent);
 
             _naviAgent.VelocityComputed += _naviAgent_VelocityComputed;
 
@@ -70,22 +61,21 @@ namespace Solo.Scripts.Entities.Zombies
             _data = (ZombieData)data;
             GlobalPosition = new Vector2(saveData.WorldX, saveData.WorldY);
 
-            _componentHost = new ComponentHost(this);
-            HpComponent hpComponent = new HpComponent();
+            HpComponent hpComponent = new HpComponent(this);
             hpComponent.Refresh(saveData.CurHp, _data.MaxHp);
             hpComponent.OnValueChanged += (curValue, maxValue) =>
             {
                 GD.Print($"{curValue} / {maxValue}");
             };
-            _componentHost.Add(hpComponent);
+            Core.AddComponent(hpComponent);
 
-            AtkComponent atkComponent = new AtkComponent();
+            AtkComponent atkComponent = new AtkComponent(this);
             atkComponent.Refresh(_data.Atk);
-            _componentHost.Add(atkComponent);
+            Core.AddComponent(atkComponent);
 
-            DefComponent defComponent = new DefComponent();
+            DefComponent defComponent = new DefComponent(this);
             defComponent.Refresh(_data.Def);
-            _componentHost.Add(defComponent);
+            Core.AddComponent(defComponent);
 
             _naviAgent.VelocityComputed += _naviAgent_VelocityComputed;
 
@@ -177,7 +167,7 @@ namespace Solo.Scripts.Entities.Zombies
         }
         private void UpdateIdle(float delta)
         {
-            if (GetComponent<HpComponent>().CurValue <= 0)
+            if (Core.GetComponent<HpComponent>().CurValue <= 0)
             {
                 ChangeState(ZombieState.Death);
                 return;
@@ -248,7 +238,7 @@ namespace Solo.Scripts.Entities.Zombies
         }
         private void UpdateChase(float delta)
         {
-            if (GetComponent<HpComponent>().CurValue <= 0)
+            if (Core.GetComponent<HpComponent>().CurValue <= 0)
             {
                 ChangeState(ZombieState.Death);
                 return;

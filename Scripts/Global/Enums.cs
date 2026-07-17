@@ -6,6 +6,7 @@
     {
         Player,
         Tree,
+        Grass,
         Stone,
         MainBase,
         Zombie,

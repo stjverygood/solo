@@ -1,26 +1,20 @@
-﻿using Solo.Scripts.Global.Interfaces;
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace Solo.Scripts.Entities.Core
 {
-    public class ComponentHost
+    public class EntityCore
     {
-        private readonly IEntity _owner;
         private readonly Dictionary<Type, Component> _componentMap = new();
 
-        public ComponentHost(IEntity owner)
-        {
-            _owner = owner;
-        }
+        public EntityCore() { }
 
-        public void Add(Component component)
+        public void AddComponent(Component component)
         {
             _componentMap[component.GetType()] = component;
-            component.Init(_owner);
         }
 
-        public T Get<T>() where T : Component
+        public T GetComponent<T>() where T : Component
         {
             if (_componentMap.TryGetValue(typeof(T), out Component? component) == false)
             {
@@ -29,7 +23,7 @@ namespace Solo.Scripts.Entities.Core
             return (T)component;
         }
 
-        public bool TryGet<T>(out T component) where T : Component
+        public bool TryGetComponent<T>(out T component) where T : Component
         {
             if (_componentMap.TryGetValue(typeof(T), out Component? raw))
             {

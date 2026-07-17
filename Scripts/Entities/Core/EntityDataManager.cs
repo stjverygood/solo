@@ -1,4 +1,5 @@
-﻿using Solo.Scripts.Entities.Trees;
+﻿using Solo.Scripts.Entities.Grasses;
+using Solo.Scripts.Entities.Trees;
 using Solo.Scripts.Entities.Zombies;
 using Solo.Scripts.Global;
 using System.Collections.Generic;
@@ -28,6 +29,11 @@ namespace Solo.Scripts.Entities.Core
             };
 
             _dataMap[EntityType.Tree] = new TreeData()
+            {
+                MaxHp = 100,
+            };
+
+            _dataMap[EntityType.Grass] = new GrassData()
             {
                 MaxHp = 100,
             };

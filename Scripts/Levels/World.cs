@@ -121,7 +121,7 @@ public partial class World : Node2D
                     {
                         Grass grass = GameManager.Instance.GrassPs.Instantiate<Grass>();
                         GetTree().CurrentScene.AddChild(grass);
-                        grass.Init(tileCenterPos);
+                        grass.Init(EntityDataManager.Instance.GetData(EntityType.Grass), tileCenterPos);
                         _entityMap[chunkPos].Add(grass);
                         continue;
                     }
@@ -149,7 +149,7 @@ public partial class World : Node2D
                     {
                         Grass grass = GameManager.Instance.GrassPs.Instantiate<Grass>();
                         GetTree().CurrentScene.AddChild(grass);
-                        grass.Init(tileCenterPos);
+                        grass.Init(EntityDataManager.Instance.GetData(EntityType.Grass), tileCenterPos);
                         _entityMap[chunkPos].Add(grass);
                         continue;
                     }
@@ -186,6 +186,13 @@ public partial class World : Node2D
         {
             switch (entitySaveData.Type)
             {
+                case EntityType.Grass:
+                    GrassSaveData grassSaveData = (GrassSaveData)entitySaveData;
+                    Grass grass = GameManager.Instance.GrassPs.Instantiate<Grass>();
+                    GetTree().CurrentScene.AddChild(grass);
+                    grass.Load(EntityDataManager.Instance.GetData(EntityType.Grass), grassSaveData);
+                    _entityMap[chunkPos].Add(grass);
+                    break;
                 case EntityType.Tree:
                     TreeSaveData treeSaveData = (TreeSaveData)entitySaveData;
                     Tree tree = GameManager.Instance.TreePs.Instantiate<Tree>();
