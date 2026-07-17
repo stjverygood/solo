@@ -1,9 +1,9 @@
 using Godot;
 using Solo.Scripts.Entities.Components;
-using Solo.Scripts.Entities.Trees;
+using Solo.Scripts.Entities.Core;
 using Solo.Scripts.Global;
 using Solo.Scripts.Global.Interfaces;
-namespace Solo.Scripts.Entities
+namespace Solo.Scripts.Entities.Trees
 {
     public partial class Tree : StaticBody2D, IEntity, ISaveable
     {

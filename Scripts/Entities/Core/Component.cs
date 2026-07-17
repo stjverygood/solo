@@ -1,6 +1,6 @@
 ﻿using Solo.Scripts.Global.Interfaces;
 
-namespace Solo.Scripts.Entities
+namespace Solo.Scripts.Entities.Core
 {
     public class Component
     {

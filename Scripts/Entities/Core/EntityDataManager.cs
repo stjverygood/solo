@@ -1,8 +1,9 @@
 ﻿using Solo.Scripts.Entities.Trees;
+using Solo.Scripts.Entities.Zombies;
 using Solo.Scripts.Global;
 using System.Collections.Generic;
 
-namespace Solo.Scripts.Entities
+namespace Solo.Scripts.Entities.Core
 {
     public class EntityDataManager
     {

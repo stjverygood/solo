@@ -1,6 +1,6 @@
 using Godot;
-using Solo.Scripts.Entities;
 using Solo.Scripts.Entities.Components;
+using Solo.Scripts.Entities.Players;
 using Solo.Scripts.Global.Interfaces;
 
 public partial class ExpBall : Area2D

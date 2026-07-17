@@ -1,4 +1,4 @@
-﻿namespace Solo.Scripts.Entities
+﻿namespace Solo.Scripts.Entities.Core
 {
     public class EntityData
     {

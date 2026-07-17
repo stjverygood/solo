@@ -1,9 +1,10 @@
 ﻿using Godot;
 using Solo.Scripts.Entities.Components;
-using Solo.Scripts.Entities.Zombies;
+using Solo.Scripts.Entities.Core;
+using Solo.Scripts.Entities.Players;
 using Solo.Scripts.Global;
 using Solo.Scripts.Global.Interfaces;
-namespace Solo.Scripts.Entities
+namespace Solo.Scripts.Entities.Zombies
 {
     public enum ZombieState
     {

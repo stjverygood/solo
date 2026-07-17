@@ -1,5 +1,5 @@
 using Godot;
-using Solo.Scripts.Entities;
+using Solo.Scripts.Entities.Players;
 using Solo.Scripts.Global;
 using Solo.Scripts.Global.Interfaces;
 using System.Collections.Generic;

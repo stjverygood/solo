@@ -1,6 +1,6 @@
 using Godot;
 using Solo.Scripts.Entities.Components;
-using Solo.Scripts.Entities.Players;
+using Solo.Scripts.Entities.Core;
 using Solo.Scripts.Entities.Players.Solo.Scripts.Entities.Players;
 using Solo.Scripts.Entities.Players.UI;
 using Solo.Scripts.Global;
@@ -12,7 +12,7 @@ using Solo.Scripts.System.RealmSystem;
 using Solo.Scripts.System.SaveSystem;
 
 
-namespace Solo.Scripts.Entities
+namespace Solo.Scripts.Entities.Players
 {
     public enum PlayerState
     {

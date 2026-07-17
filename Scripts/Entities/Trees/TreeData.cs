@@ -1,4 +1,6 @@
-﻿namespace Solo.Scripts.Entities.Trees
+﻿using Solo.Scripts.Entities.Core;
+
+namespace Solo.Scripts.Entities.Trees
 {
     public class TreeData : EntityData
     {

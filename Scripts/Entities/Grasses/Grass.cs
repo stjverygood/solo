@@ -1,8 +1,9 @@
 using Godot;
 using Solo.Scripts.Entities.Components;
+using Solo.Scripts.Entities.Core;
 using Solo.Scripts.Global.Interfaces;
 
-namespace Solo.Scripts.Entities
+namespace Solo.Scripts.Entities.Grasses
 {
     public partial class Grass : StaticBody2D, IEntity
     {
