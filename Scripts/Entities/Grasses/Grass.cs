@@ -8,41 +8,23 @@ namespace Solo.Scripts.Entities.Grasses
 {
     public partial class Grass : StaticBody2D, IEntity, ISaveable
     {
+        public static EntityData DefaultData => new GrassData { MaxHp = 100 };
+
         private GrassData _data;
         public EntityCore Core { get; private set; } = new();
-        public void Init(EntityData data, Vector2 worldPos)
+        public void Init(Vector2 worldPos, EntitySaveData? saveData = null)
         {
-            _data = (GrassData)data;
-            GlobalPosition = worldPos;
-            HpComponent hpComponent = new HpComponent(this);
-            hpComponent.OnValueChanged += (curHp, maxHp) =>
-            {
-                if (curHp == 0)
-                {
-                    QueueFree();
-                }
-            };
-            hpComponent.Refresh(_data.MaxHp, _data.MaxHp);
-            Core.AddComponent(hpComponent);
+            _data = (GrassData)EntityDataManager.Instance.GetData(EntityType.Grass);
+            GlobalPosition = saveData != null ? new Vector2(saveData.WorldX, saveData.WorldY) : worldPos;
 
-            DefComponent defComponent = new DefComponent(this);
-            defComponent.Refresh(100);
-            Core.AddComponent(defComponent);
-        }
+            float hpValue = saveData is GrassSaveData gs ? gs.CurHp : _data.MaxHp;
 
-        public void Load(EntityData data, GrassSaveData saveData)
-        {
-            _data = (GrassData)data;
-            GlobalPosition = new Vector2(saveData.WorldX, saveData.WorldY);
             HpComponent hpComponent = new HpComponent(this);
-            hpComponent.OnValueChanged += (curHp, maxHp) =>
+            hpComponent.OnValueChanged += (cur, max) =>
             {
-                if (curHp == 0)
-                {
-                    QueueFree();
-                }
+                if (cur == 0) QueueFree();
             };
-            hpComponent.Refresh(saveData.CurHp, _data.MaxHp);
+            hpComponent.Refresh(hpValue, _data.MaxHp);
             Core.AddComponent(hpComponent);
 
             DefComponent defComponent = new DefComponent(this);

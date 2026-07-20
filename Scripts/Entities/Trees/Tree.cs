@@ -10,44 +10,22 @@ namespace Solo.Scripts.Entities.Trees
         [Export] private Label _hpLabel = null!;
         private TreeData _data = null!;
 
-
         public EntityCore Core { get; private set; } = new();
 
-        public void Init(EntityData data, Vector2 worldPos)
+        public void Init(Vector2 worldPos, EntitySaveData? saveData = null)
         {
-            _data = (TreeData)data;
-            GlobalPosition = worldPos;
-            HpComponent hpComponent = new HpComponent(this);
-            hpComponent.OnValueChanged += (curHp, maxHp) =>
-            {
-                _hpLabel.Text = $"{curHp:f0} / {maxHp:f0}";
-                if (curHp == 0)
-                {
-                    QueueFree();
-                }
-            };
-            hpComponent.Refresh(_data.MaxHp, _data.MaxHp);
-            Core.AddComponent(hpComponent);
+            _data = (TreeData)EntityDataManager.Instance.GetData(EntityType.Tree);
+            GlobalPosition = saveData != null ? new Vector2(saveData.WorldX, saveData.WorldY) : worldPos;
 
-            DefComponent defComponent = new DefComponent(this);
-            defComponent.Refresh(100);
-            Core.AddComponent(defComponent);
-        }
+            float hpValue = saveData is TreeSaveData treeSaveData ? treeSaveData.CurHp : _data.MaxHp;
 
-        public void Load(EntityData data, TreeSaveData saveData)
-        {
-            _data = (TreeData)data;
-            GlobalPosition = new Vector2(saveData.WorldX, saveData.WorldY);
             HpComponent hpComponent = new HpComponent(this);
-            hpComponent.OnValueChanged += (curHp, maxHp) =>
+            hpComponent.OnValueChanged += (cur, max) =>
             {
-                _hpLabel.Text = $"{curHp:f0} / {maxHp:f0}";
-                if (curHp == 0)
-                {
-                    QueueFree();
-                }
+                _hpLabel.Text = $"{cur:f0} / {max:f0}";
+                if (cur == 0) QueueFree();
             };
-            hpComponent.Refresh(saveData.CurHp, _data.MaxHp);
+            hpComponent.Refresh(hpValue, _data.MaxHp);
             Core.AddComponent(hpComponent);
 
             DefComponent defComponent = new DefComponent(this);

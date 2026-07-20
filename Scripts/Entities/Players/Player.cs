@@ -220,7 +220,7 @@ namespace Solo.Scripts.Entities.Players
                     case Key.Key1:
                         //GetHp(10);
                         GD.Print("快捷检测：按下了 1");
-                        Core.GetComponent<ExpComponent>().Gain(100);
+                        Core.GetComponent<ExpComponent>().Gain(10000);
                         break;
                     case Key.Key2:
                         Core.GetComponent<HpComponent>().Gain(100);

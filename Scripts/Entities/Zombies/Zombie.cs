@@ -17,6 +17,20 @@ namespace Solo.Scripts.Entities.Zombies
 
     public partial class Zombie : CharacterBody2D, IEntity
     {
+        public static EntityData DefaultData => new ZombieData
+        {
+            MaxHp = 100,
+            Atk = 40,
+            Def = 30,
+            MoveSpeed = 50,
+            ViewRange = 100,
+            ViewRangeSq = 100 * 100,
+            AtkRange = 20,
+            AtkRangeSq = 20 * 20,
+            IdleDuration = 1,
+            PatrolRange = 200,
+        };
+
         [Export] private AnimatedSprite2D _animSprite = null!;
         [Export] private NavigationAgent2D _naviAgent = null!;
         [Export] private Label _debugLb = null!;
@@ -28,41 +42,15 @@ namespace Solo.Scripts.Entities.Zombies
         public EntityCore Core { get; private set; } = new();
 
 
-        public void Init(EntityData data, Vector2 worldPosition)
+        public void Init(EntityData data, Vector2 worldPosition, EntitySaveData? saveData = null)
         {
-            _data = (ZombieData)data;
-            GlobalPosition = worldPosition;
+            _data = (ZombieData)EntityDataManager.Instance.GetData(EntityType.Zombie);
+            GlobalPosition = saveData != null ? new Vector2(saveData.WorldX, saveData.WorldY) : worldPosition;
 
-
+            float hpValue = saveData is ZombieSaveData zs ? zs.CurHp : _data.MaxHp;
 
             HpComponent hpComponent = new HpComponent(this);
-            hpComponent.Refresh(_data.MaxHp, _data.MaxHp);
-            hpComponent.OnValueChanged += (curValue, maxValue) =>
-            {
-                GD.Print($"{curValue} / {maxValue}");
-            };
-            Core.AddComponent(hpComponent);
-
-            AtkComponent atkComponent = new AtkComponent(this);
-            atkComponent.Refresh(_data.Atk);
-            Core.AddComponent(atkComponent);
-
-            DefComponent defComponent = new DefComponent(this);
-            defComponent.Refresh(_data.Def);
-            Core.AddComponent(defComponent);
-
-            _naviAgent.VelocityComputed += _naviAgent_VelocityComputed;
-
-            ChangeState(ZombieState.Idle);
-        }
-
-        public void Load(EntityData data, ZombieSaveData saveData)
-        {
-            _data = (ZombieData)data;
-            GlobalPosition = new Vector2(saveData.WorldX, saveData.WorldY);
-
-            HpComponent hpComponent = new HpComponent(this);
-            hpComponent.Refresh(saveData.CurHp, _data.MaxHp);
+            hpComponent.Refresh(hpValue, _data.MaxHp);
             hpComponent.OnValueChanged += (curValue, maxValue) =>
             {
                 GD.Print($"{curValue} / {maxValue}");

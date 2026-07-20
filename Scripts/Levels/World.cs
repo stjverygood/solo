@@ -2,7 +2,6 @@ using Godot;
 using Solo.Scripts.Entities.Core;
 using Solo.Scripts.Entities.Grasses;
 using Solo.Scripts.Entities.Players;
-using Solo.Scripts.Entities.Trees;
 using Solo.Scripts.Global;
 using Solo.Scripts.Global.Interfaces;
 using Solo.Scripts.Levels;
@@ -121,7 +120,7 @@ public partial class World : Node2D
                     {
                         Grass grass = GameManager.Instance.GrassPs.Instantiate<Grass>();
                         GetTree().CurrentScene.AddChild(grass);
-                        grass.Init(EntityDataManager.Instance.GetData(EntityType.Grass), tileCenterPos);
+                        grass.Init(tileCenterPos);
                         _entityMap[chunkPos].Add(grass);
                         continue;
                     }
@@ -129,7 +128,7 @@ public partial class World : Node2D
                     {
                         Tree tree = GameManager.Instance.TreePs.Instantiate<Tree>();
                         GetTree().CurrentScene.AddChild(tree);
-                        tree.Init(EntityDataManager.Instance.GetData(EntityType.Tree), tileCenterPos);
+                        tree.Init(tileCenterPos);
                         _entityMap[chunkPos].Add(tree);
                         continue;
                     }
@@ -149,7 +148,7 @@ public partial class World : Node2D
                     {
                         Grass grass = GameManager.Instance.GrassPs.Instantiate<Grass>();
                         GetTree().CurrentScene.AddChild(grass);
-                        grass.Init(EntityDataManager.Instance.GetData(EntityType.Grass), tileCenterPos);
+                        grass.Init(tileCenterPos);
                         _entityMap[chunkPos].Add(grass);
                         continue;
                     }
@@ -157,7 +156,7 @@ public partial class World : Node2D
                     {
                         Tree tree = GameManager.Instance.TreePs.Instantiate<Tree>();
                         GetTree().CurrentScene.AddChild(tree);
-                        tree.Init(EntityDataManager.Instance.GetData(EntityType.Tree), tileCenterPos);
+                        tree.Init(tileCenterPos);
                         _entityMap[chunkPos].Add(tree);
                     }
                     continue;
@@ -168,18 +167,6 @@ public partial class World : Node2D
     }
     private void RecoverEntity(Vector2I chunkPos)
     {
-        //if (_entitySaveDataMap.ContainsKey(chunkPos) == false)
-        //    _entitySaveDataMap[chunkPos] = new List<EntitySaveData>();
-        //List<IEntity> entityList = _entityMap[chunkPos];
-        //foreach (IEntity entity in entityList)
-        //{
-        //    if (entity is ISaveable saveable)
-        //    {
-        //        _entitySaveDataMap[chunkPos].Add(saveable.GetSaveData());
-        //    }
-        //    ((Node2D)entity).QueueFree();
-        //}
-        //_entityMap.Remove(chunkPos);
         if (_entityMap.ContainsKey(chunkPos) == false)
             _entityMap[chunkPos] = new List<IEntity>();
         foreach (EntitySaveData entitySaveData in _entitySaveDataMap[chunkPos])
@@ -187,17 +174,15 @@ public partial class World : Node2D
             switch (entitySaveData.Type)
             {
                 case EntityType.Grass:
-                    GrassSaveData grassSaveData = (GrassSaveData)entitySaveData;
                     Grass grass = GameManager.Instance.GrassPs.Instantiate<Grass>();
                     GetTree().CurrentScene.AddChild(grass);
-                    grass.Load(EntityDataManager.Instance.GetData(EntityType.Grass), grassSaveData);
+                    grass.Init(Vector2.Zero, entitySaveData);
                     _entityMap[chunkPos].Add(grass);
                     break;
                 case EntityType.Tree:
-                    TreeSaveData treeSaveData = (TreeSaveData)entitySaveData;
                     Tree tree = GameManager.Instance.TreePs.Instantiate<Tree>();
                     GetTree().CurrentScene.AddChild(tree);
-                    tree.Load(EntityDataManager.Instance.GetData(EntityType.Tree), treeSaveData);
+                    tree.Init(Vector2.Zero, entitySaveData);
                     _entityMap[chunkPos].Add(tree);
                     break;
             }
