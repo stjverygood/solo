@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://ch5mbcfvw4tu3"]
 
-[ext_resource type="Script" uid="uid://dlhsrj32dsxpn" path="res://Scripts/UI/BagViews/DiscardView.cs" id="1_f2ur0"]
+[ext_resource type="Script" uid="uid://dlhsrj32dsxpn" path="res://Scripts/UI/InventoryViews/DiscardView.cs" id="1_f2ur0"]
 
 [sub_resource type="CompressedTexture2D" id="CompressedTexture2D_emmfn"]
 load_path = "res://.godot/imported/ui.png-cbe33512c76dff232120e87ecbdf7441.ctex"

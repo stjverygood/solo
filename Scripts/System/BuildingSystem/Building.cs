@@ -13,7 +13,7 @@ namespace Solo.Scripts.System.BuildingSystem
         public TargetType TargetType;
         [Export] private Node2D _animRoot = null!;
         [Export] private Sprite2D _sprite = null!;
-        [Export] private HpBar _hpBar = null!;
+        //[Export] private HpBar _hpBar = null!;
         public float _maxHp = 100;
         protected float _curHp;
         private List<(ItemType, int, int)> _dropItemList;//掉落物类型, 最小掉落数量, 最大掉落数量
@@ -77,26 +77,26 @@ namespace Solo.Scripts.System.BuildingSystem
             //animTween.Parallel().TweenProperty(_sprite.Material, "shader_parameter/flash_modifier", 0.0f, 0.1f);
             //animTween.TweenProperty(_animRoot, "scale", new Vector2(1f, 1f), 0.1f);
 
-            Tween animTween = CreateTween().SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out);
-            // 1. 在 0.1 秒内闪白（修改器达到 1.0）
-            animTween.TweenProperty(_sprite.Material, "shader_parameter/flash_modifier", 1.0f, 0.1f);
-            // 2. 紧接着在 0.1 秒内恢复原状（修改器回到 0.0）
-            animTween.TweenProperty(_sprite.Material, "shader_parameter/flash_modifier", 0.0f, 0.1f);
+            //Tween animTween = CreateTween().SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out);
+            //// 1. 在 0.1 秒内闪白（修改器达到 1.0）
+            //animTween.TweenProperty(_sprite.Material, "shader_parameter/flash_modifier", 1.0f, 0.1f);
+            //// 2. 紧接着在 0.1 秒内恢复原状（修改器回到 0.0）
+            //animTween.TweenProperty(_sprite.Material, "shader_parameter/flash_modifier", 0.0f, 0.1f);
 
-            _damageCooldownTimer = 0f;
-            _healTimer = 0f;
+            //_damageCooldownTimer = 0f;
+            //_healTimer = 0f;
 
-            float finalDamage = HandleDamage(damage, itemType);//子类重写, 默认不处理
+            //float finalDamage = HandleDamage(damage, itemType);//子类重写, 默认不处理
 
-            FloatTextLb floatTextLb = GameManager.Instance.FloatTextLbPs.Instantiate<FloatTextLb>();
-            GetTree().CurrentScene.AddChild(floatTextLb);
-            floatTextLb.Init($"-{finalDamage}", GlobalPosition, new Color(162 / 256f, 38 / 256f, 51 / 256f));
+            ////FloatTextLb floatTextLb = GameManager.Instance.FloatTextLbPs.Instantiate<FloatTextLb>();
+            //GetTree().CurrentScene.AddChild(floatTextLb);
+            //floatTextLb.Init($"-{finalDamage}", GlobalPosition, new Color(162 / 256f, 38 / 256f, 51 / 256f));
 
-            SetCurHp(_curHp - finalDamage);
-            if (_curHp <= 0)
-            {
-                Die();//子类重写, 默认爆装备
-            }
+            //SetCurHp(_curHp - finalDamage);
+            //if (_curHp <= 0)
+            //{
+            //    Die();//子类重写, 默认爆装备
+            //}
         }
 
 
@@ -124,12 +124,12 @@ namespace Solo.Scripts.System.BuildingSystem
         protected void SetMaxHp(float maxHp)
         {
             _maxHp = maxHp;
-            _hpBar.Refresh(_curHp, _maxHp);
+            //_hpBar.Refresh(_curHp, _maxHp);
         }
         protected void SetCurHp(float curHp)
         {
             _curHp = curHp;
-            _hpBar.Refresh(_curHp, _maxHp);
+            //_hpBar.Refresh(_curHp, _maxHp);
         }
 
         public bool CanInteract()//todo : 根据配置项定

@@ -1,11 +1,10 @@
 using Godot;
 using Solo.Scripts.Global;
+using Solo.Scripts.System.CraftSystem;
 using Solo.Scripts.System.ItemSystem;
 
-namespace Solo.Scripts.System.CraftSystem
+namespace Solo.Scripts.UI.CraftViews
 {
-
-
     public partial class CraftView : Control
     {
         public CraftType Type;
@@ -67,15 +66,15 @@ namespace Solo.Scripts.System.CraftSystem
 
             _craftBtn.Pressed += () =>
             {
-                if (GameManager.Instance.IsDebugMode == false)//非调试模式要扣物品
-                {
-                    foreach ((ItemType, int) tuple in ItemDataManager.Instance.GetData(_curCraftItemType).CraftRequiredItemList)
-                        GameManager.Instance.Player.InventoryManager.RemoveItem(tuple.Item1, tuple.Item2 * _curCraftCount);
-                }
+                //if (GameManager.Instance.IsDebugMode == false)//非调试模式要扣物品
+                //{
+                //    foreach ((ItemType, int) tuple in ItemDataManager.Instance.GetData(_curCraftItemType).CraftRequiredItemList)
+                //        //GameManager.Instance.Player.InventoryManager.RemoveItem(tuple.Item1, tuple.Item2 * _curCraftCount);
+                //}
 
-                GameManager.Instance.Player.InventoryManager.AddItem(new ItemInstance() { Type = _curCraftItemType, Count = _curCraftCount, CurDur = ItemDataManager.Instance.GetData(_curCraftItemType).MaxDur });
-                RefreshCountSlider();
-                RefreshRequiredItemList();
+                ////GameManager.Instance.Player.InventoryManager.AddItem(new ItemInstance() { Type = _curCraftItemType, Count = _curCraftCount, CurDur = ItemDataManager.Instance.GetData(_curCraftItemType).MaxDur });
+                //RefreshCountSlider();
+                //RefreshRequiredItemList();
             };
         }
 
@@ -83,60 +82,60 @@ namespace Solo.Scripts.System.CraftSystem
         {
             //GD.Print(craftItemType + " RefreshCountSlider");
             //遍历每个材料, 看看背包能合成多少个, 如何取最少材料的那个
-            int minCount = int.MaxValue;
-            foreach ((ItemType, int) tuple in ItemDataManager.Instance.GetData(_curCraftItemType).CraftRequiredItemList)
-            {
-                int itemCount = GameManager.Instance.Player.InventoryManager.GetItemCount(tuple.Item1);
-                int canCraftCount = itemCount / tuple.Item2;
-                if (canCraftCount < minCount)
-                    minCount = canCraftCount;
-            }
-            _countSlider.MinValue = 1;
-            _countSlider.MaxValue = minCount;
-            _countSlider.Value = 1;
+            //int minCount = int.MaxValue;
+            //foreach ((ItemType, int) tuple in ItemDataManager.Instance.GetData(_curCraftItemType).CraftRequiredItemList)
+            //{
+            //    int itemCount = GameManager.Instance.Player.InventoryManager.GetItemCount(tuple.Item1);
+            //    int canCraftCount = itemCount / tuple.Item2;
+            //    if (canCraftCount < minCount)
+            //        minCount = canCraftCount;
+            //}
+            //_countSlider.MinValue = 1;
+            //_countSlider.MaxValue = minCount;
+            //_countSlider.Value = 1;
         }
 
         public void RefreshRequiredItemList()
         {
-            foreach (Node child in _requiredItemGc.GetChildren())// 先清空grid
-                child.QueueFree();
+            //foreach (Node child in _requiredItemGc.GetChildren())// 先清空grid
+            //    child.QueueFree();
 
-            bool canCraft = true;
+            //bool canCraft = true;
 
-            foreach ((ItemType, int) tuple in ItemDataManager.Instance.GetData(_curCraftItemType).CraftRequiredItemList)
-            {
-                RequiredItemView requiredItemView = _requiredItemViewPs.Instantiate<RequiredItemView>();
-                requiredItemView.Init(tuple.Item1, tuple.Item2 * _curCraftCount);
-                _requiredItemGc.AddChild(requiredItemView);
+            //foreach ((ItemType, int) tuple in ItemDataManager.Instance.GetData(_curCraftItemType).CraftRequiredItemList)
+            //{
+            //    RequiredItemView requiredItemView = _requiredItemViewPs.Instantiate<RequiredItemView>();
+            //    requiredItemView.Init(tuple.Item1, tuple.Item2 * _curCraftCount);
+            //    _requiredItemGc.AddChild(requiredItemView);
 
-                int itemCount = GameManager.Instance.Player.InventoryManager.GetItemCount(tuple.Item1);
-                if (itemCount < tuple.Item2 * _curCraftCount)
-                {
-                    canCraft = false;
-                    requiredItemView.SetIsEnough(false);
-                }
-                else
-                {
-                    requiredItemView.SetIsEnough(true);
-                }
-            }
+            //    int itemCount = GameManager.Instance.Player.InventoryManager.GetItemCount(tuple.Item1);
+            //    if (itemCount < tuple.Item2 * _curCraftCount)
+            //    {
+            //        canCraft = false;
+            //        requiredItemView.SetIsEnough(false);
+            //    }
+            //    else
+            //    {
+            //        requiredItemView.SetIsEnough(true);
+            //    }
+            //}
 
 
-            if (canCraft == true)
-            {
-                _craftBtn.Disabled = false;
-                _curCraftItemNameLb.Modulate = Color.Color8(62, 137, 72);
-                _curCraftItemCountLb.Modulate = Color.Color8(62, 137, 72);
-            }
-            else
-            {
-                if (GameManager.Instance.IsDebugMode)
-                    _craftBtn.Disabled = false;
-                else
-                    _craftBtn.Disabled = true;
-                _curCraftItemNameLb.Modulate = Color.Color8(228, 59, 68);
-                _curCraftItemCountLb.Modulate = Color.Color8(228, 59, 68);
-            }
+            //if (canCraft == true)
+            //{
+            //    _craftBtn.Disabled = false;
+            //    _curCraftItemNameLb.Modulate = Color.Color8(62, 137, 72);
+            //    _curCraftItemCountLb.Modulate = Color.Color8(62, 137, 72);
+            //}
+            //else
+            //{
+            //    if (GameManager.Instance.IsDebugMode)
+            //        _craftBtn.Disabled = false;
+            //    else
+            //        _craftBtn.Disabled = true;
+            //    _curCraftItemNameLb.Modulate = Color.Color8(228, 59, 68);
+            //    _curCraftItemCountLb.Modulate = Color.Color8(228, 59, 68);
+            //}
         }
     }
 }

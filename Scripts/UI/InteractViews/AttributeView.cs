@@ -2,7 +2,8 @@ using Godot;
 using Solo.Scripts.Global;
 using Solo.Scripts.System.RealmSystem;
 using System;
-namespace Solo.Scripts.Entities.Players.UI
+
+namespace Solo.Scripts.UI.InteractViews
 {
     public partial class AttributeView : PanelContainer
     {

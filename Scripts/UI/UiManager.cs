@@ -1,5 +1,5 @@
 using Godot;
-using Solo.Scripts.System.UiSystem;
+using Solo.Scripts.UI.ScreenViews;
 
 public partial class UiManager : CanvasLayer
 {

@@ -104,16 +104,16 @@ namespace Solo.Scripts.System.ItemSystem
 
         public void Interact()
         {
-            int remainCount = GameManager.Instance.Player.InventoryManager.AddItem(ItemInstance);
-            if (remainCount == 0)
-            {
-                //GameManager.Instance.ChunkManager.RemoveItem(this, Position);
-                QueueFree();
-            }
-            else
-            {
-                Count = remainCount;
-            }
+            //int remainCount = GameManager.Instance.Player.InventoryManager.AddItem(ItemInstance);
+            //if (remainCount == 0)
+            //{
+            //    //GameManager.Instance.ChunkManager.RemoveItem(this, Position);
+            //    QueueFree();
+            //}
+            //else
+            //{
+            //    Count = remainCount;
+            //}
         }
 
         public bool IsVaild()

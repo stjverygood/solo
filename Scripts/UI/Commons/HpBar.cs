@@ -1,5 +1,6 @@
 using Godot;
-namespace Solo.Scripts.Global
+
+namespace Solo.Scripts.UI.Commons
 {
     public partial class HpBar : Control
     {

@@ -3,7 +3,7 @@ using Solo.Scripts.Global;
 using Solo.Scripts.System.ItemSystem;
 using System;
 
-namespace Solo.Scripts.System.CraftSystem
+namespace Solo.Scripts.UI.CraftViews
 {
     public partial class CraftItemView : Control
     {

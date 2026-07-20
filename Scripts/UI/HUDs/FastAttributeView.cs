@@ -1,7 +1,8 @@
 using Godot;
 using Solo.Scripts.Global;
 using Solo.Scripts.System.RealmSystem;
-namespace Solo.Scripts.Entities.Players.UI
+
+namespace Solo.Scripts.UI.HUDs
 {
     public partial class FastAttributeView : Control
     {

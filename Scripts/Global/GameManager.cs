@@ -6,7 +6,6 @@ using Solo.Scripts.System.BuildingSystem;
 using Solo.Scripts.System.ChunkSystem;
 using Solo.Scripts.System.ItemSystem;
 using Solo.Scripts.System.SaveSystem;
-using Solo.Scripts.System.UiSystem;
 using System.Collections.Generic;
 
 namespace Solo.Scripts.Global
@@ -34,7 +33,7 @@ namespace Solo.Scripts.Global
         [Export] private PackedScene _loadingViewPs = null!;
         [Export] private PackedScene _saveListMenuPs = null!;
         [Export] private PackedScene _mainLevelPs = null!;
-        [Export] private PauseView _pauseView = null!;
+        //[Export] private PauseView _pauseView = null!;
 
 
         [Export] private PackedScene _mainMenuViewPs = null!;
@@ -76,7 +75,7 @@ namespace Solo.Scripts.Global
             GD.Print("GameManager _Ready!");
             _curState = GameState.StartMenu;
 
-            _pauseView.Visible = false;
+            //_pauseView.Visible = false;
             ProcessMode = ProcessModeEnum.Always;
         }
 

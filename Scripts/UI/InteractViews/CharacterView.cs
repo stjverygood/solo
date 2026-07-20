@@ -1,7 +1,8 @@
 using Godot;
 using Solo.Scripts.Global;
-using Solo.Scripts.System.CraftSystem;
-namespace Solo.Scripts.Entities.Players.UI
+using Solo.Scripts.UI.CraftViews;
+
+namespace Solo.Scripts.UI.InteractViews
 {
     public partial class CharacterView : Control
     {

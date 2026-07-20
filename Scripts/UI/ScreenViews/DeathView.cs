@@ -1,6 +1,7 @@
 using Godot;
 using Solo.Scripts.Global;
-namespace Solo.Scripts.Entities.Players
+
+namespace Solo.Scripts.UI.ScreenViews
 {
     public partial class DeathView : Control
     {

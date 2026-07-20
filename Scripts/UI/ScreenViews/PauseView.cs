@@ -1,6 +1,7 @@
 using Godot;
 using Solo.Scripts.Global;
-namespace Solo.Scripts.System.UiSystem
+
+namespace Solo.Scripts.UI.ScreenViews
 {
     public partial class PauseView : Control
     {

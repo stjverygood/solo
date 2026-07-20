@@ -785,9 +785,9 @@ namespace Solo.Scripts.Entities.Units
             animTween.Parallel().TweenProperty(_sprite.Material, "shader_parameter/flash_modifier", 0.0f, 0.1f);
             animTween.TweenProperty(_animRoot, "scale", new Vector2(1f, 1f), 0.1f);
 
-            FloatTextLb floatTextLb = GameManager.Instance.FloatTextLbPs.Instantiate<FloatTextLb>();
-            GetTree().CurrentScene.AddChild(floatTextLb);
-            floatTextLb.Init($"-{damage}", GlobalPosition, new Color(162 / 256f, 38 / 256f, 51 / 256f));
+            //FloatTextLb floatTextLb = GameManager.Instance.FloatTextLbPs.Instantiate<FloatTextLb>();
+            //GetTree().CurrentScene.AddChild(floatTextLb);
+            //floatTextLb.Init($"-{damage}", GlobalPosition, new Color(162 / 256f, 38 / 256f, 51 / 256f));
 
 
             _curHp -= damage;

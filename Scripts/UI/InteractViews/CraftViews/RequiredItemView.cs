@@ -2,32 +2,35 @@ using Godot;
 using Solo.Scripts.Global;
 using Solo.Scripts.System.ItemSystem;
 
-public partial class RequiredItemView : PanelContainer
+namespace Solo.Scripts.UI.CraftViews
 {
-    [Export] private TextureRect _iconTr = null!;
-    [Export] private Label _nameLb = null!;
-    [Export] private Label _countLb = null!;
-
-
-    public void Init(ItemType type, int count)
+    public partial class RequiredItemView : PanelContainer
     {
-        ItemData data = ItemDataManager.Instance.GetData(type);
-        _iconTr.Texture = GD.Load<Texture2D>(data.IconPath);
-        _nameLb.Text = data.Name;
-        _countLb.Text = $"*{count}";
-    }
+        [Export] private TextureRect _iconTr = null!;
+        [Export] private Label _nameLb = null!;
+        [Export] private Label _countLb = null!;
 
-    public void SetIsEnough(bool isEnough)
-    {
-        if (isEnough)
+
+        public void Init(ItemType type, int count)
         {
-            _nameLb.Modulate = Color.Color8(62, 137, 72);//99, 199, 77
-            _countLb.Modulate = Color.Color8(62, 137, 72);
+            ItemData data = ItemDataManager.Instance.GetData(type);
+            _iconTr.Texture = GD.Load<Texture2D>(data.IconPath);
+            _nameLb.Text = data.Name;
+            _countLb.Text = $"*{count}";
         }
-        else
+
+        public void SetIsEnough(bool isEnough)
         {
-            _nameLb.Modulate = Color.Color8(228, 59, 68);//162, 38, 51
-            _countLb.Modulate = Color.Color8(228, 59, 68);
+            if (isEnough)
+            {
+                _nameLb.Modulate = Color.Color8(62, 137, 72);//99, 199, 77
+                _countLb.Modulate = Color.Color8(62, 137, 72);
+            }
+            else
+            {
+                _nameLb.Modulate = Color.Color8(228, 59, 68);//162, 38, 51
+                _countLb.Modulate = Color.Color8(228, 59, 68);
+            }
         }
     }
 }
