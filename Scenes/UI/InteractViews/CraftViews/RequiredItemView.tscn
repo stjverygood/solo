@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://de7ohbctef38p"]
 
-[ext_resource type="Script" uid="uid://ct43tybvffbpn" path="res://Scripts/System/CraftSystem/RequiredItemView.cs" id="1_3ta7p"]
+[ext_resource type="Script" uid="uid://ct43tybvffbpn" path="res://Scripts/UI/InteractViews/CraftViews/RequiredItemView.cs" id="1_3ta7p"]
 [ext_resource type="Texture2D" uid="uid://d4igqp371y5" path="res://Assets/icon.svg" id="1_siqbs"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_cem6n"]

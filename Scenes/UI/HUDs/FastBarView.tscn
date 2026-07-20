@@ -1,8 +1,8 @@
 [gd_scene format=3 uid="uid://cx380rlsg85x5"]
 
-[ext_resource type="Script" uid="uid://mf5c2ds87e7q" path="res://Scripts/Entities/Players/FastBarView.cs" id="1_6d2iq"]
+[ext_resource type="Script" uid="uid://mf5c2ds87e7q" path="res://Scripts/UI/HUDs/FastBarView.cs" id="1_6d2iq"]
 [ext_resource type="Texture2D" uid="uid://8e254e6sobd0" path="res://Assets/Png/ui.png" id="1_qjfe1"]
-[ext_resource type="PackedScene" uid="uid://dxxlrj5i2nwjc" path="res://Scenes/Entities/Players/FastBarSlot.tscn" id="2_6d2iq"]
+[ext_resource type="PackedScene" uid="uid://dxxlrj5i2nwjc" path="res://Scenes/UI/HUDs/FastBarSlot.tscn" id="2_6d2iq"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_dfew3"]
 atlas = ExtResource("1_qjfe1")

@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://dxxlrj5i2nwjc"]
 
-[ext_resource type="Script" uid="uid://bdtiq6d5spf0b" path="res://Scripts/Entities/Players/FastBarSlot.cs" id="1_ih86w"]
+[ext_resource type="Script" uid="uid://bdtiq6d5spf0b" path="res://Scripts/UI/HUDs/FastBarSlot.cs" id="1_ih86w"]
 [ext_resource type="Texture2D" uid="uid://d4igqp371y5" path="res://Assets/icon.svg" id="2_p4pfp"]
 [ext_resource type="Texture2D" uid="uid://8e254e6sobd0" path="res://Assets/Png/ui.png" id="3_dfew3"]
 

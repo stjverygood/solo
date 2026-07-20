@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://d3ptuijhfhmm0"]
 
 [ext_resource type="FontFile" uid="uid://chelxpn5elvbb" path="res://Assets/zpix.ttf" id="1_lxl8r"]
-[ext_resource type="Script" uid="uid://hjsd63oafc54" path="res://Scripts/Entities/Players/DeathView.cs" id="1_r1xys"]
+[ext_resource type="Script" uid="uid://hjsd63oafc54" path="res://Scripts/UI/ScreenViews/DeathView.cs" id="1_r1xys"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_r1xys"]
 bg_color = Color(0.15294118, 0.15294118, 0.15294118, 0.6509804)

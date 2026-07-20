@@ -1,10 +1,22 @@
 [gd_scene format=3 uid="uid://c1v6ptm7ml55o"]
 
 [ext_resource type="Script" uid="uid://d1l1a7e6ewyh0" path="res://Scripts/UI/UiManager.cs" id="1_mkobf"]
-[ext_resource type="PackedScene" uid="uid://dx8thbx4w752g" path="res://Scenes/UI/PauseView.tscn" id="2_wedjs"]
+[ext_resource type="PackedScene" uid="uid://dx8thbx4w752g" path="res://Scenes/UI/ScreenViews/PauseView.tscn" id="2_wedjs"]
+[ext_resource type="PackedScene" uid="uid://d3ptuijhfhmm0" path="res://Scenes/UI/ScreenViews/DeathView.tscn" id="3_jv8xy"]
+[ext_resource type="PackedScene" uid="uid://74dd0d5dwyxc" path="res://Scenes/UI/ScreenViews/LoadingView.tscn" id="4_sr2kn"]
+[ext_resource type="PackedScene" uid="uid://ci5m8q0qwqas" path="res://Scenes/UI/HUDs/HUDView.tscn" id="5_sr2kn"]
 
 [node name="UiManager" type="CanvasLayer" unique_id=1714004788 node_paths=PackedStringArray("_pauseView")]
 script = ExtResource("1_mkobf")
 _pauseView = NodePath("PauseView")
 
 [node name="PauseView" parent="." unique_id=1950812368 instance=ExtResource("2_wedjs")]
+visible = false
+
+[node name="DeathView" parent="." unique_id=1940583019 instance=ExtResource("3_jv8xy")]
+visible = false
+
+[node name="LoadingView" parent="." unique_id=329101136 instance=ExtResource("4_sr2kn")]
+visible = false
+
+[node name="HudView" parent="." unique_id=1751336480 instance=ExtResource("5_sr2kn")]

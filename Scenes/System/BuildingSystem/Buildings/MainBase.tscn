@@ -4,7 +4,7 @@
 [ext_resource type="Script" uid="uid://u4sccffsggkn" path="res://Scripts/System/BuildingSystem/Buildings/MainBase.cs" id="1_oiup2"]
 [ext_resource type="Shader" uid="uid://1mycks5hhrfy" path="res://Assets/Shaders/Aura.gdshader" id="2_36k1t"]
 [ext_resource type="Texture2D" uid="uid://bgbc8y1xxyjde" path="res://Assets/AtlasTextures/MainBase.tres" id="2_oiup2"]
-[ext_resource type="PackedScene" uid="uid://dgrarrj2s36w8" path="res://Scenes/UI/HpBar.tscn" id="5_36k1t"]
+[ext_resource type="PackedScene" uid="uid://dgrarrj2s36w8" path="res://Scenes/UI/Commons/HpBar.tscn" id="5_36k1t"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_wl7sm"]
 shader = ExtResource("2_36k1t")

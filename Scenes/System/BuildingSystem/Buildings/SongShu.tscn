@@ -5,7 +5,7 @@
 [ext_resource type="Texture2D" uid="uid://cp6nwpoomj3hj" path="res://Assets/AtlasTextures/Shadow16px.tres" id="3_wcids"]
 [ext_resource type="Shader" uid="uid://i3lcvke3ll2n" path="res://Assets/Shaders/Outline.gdshader" id="4_y43y6"]
 [ext_resource type="Texture2D" uid="uid://bj41nxm3dy4wa" path="res://Assets/AtlasTextures/SongShu.tres" id="5_qiulo"]
-[ext_resource type="PackedScene" uid="uid://dgrarrj2s36w8" path="res://Scenes/UI/HpBar.tscn" id="6_qiulo"]
+[ext_resource type="PackedScene" uid="uid://dgrarrj2s36w8" path="res://Scenes/UI/Commons/HpBar.tscn" id="6_qiulo"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_6jykq"]
 shader = ExtResource("4_y43y6")

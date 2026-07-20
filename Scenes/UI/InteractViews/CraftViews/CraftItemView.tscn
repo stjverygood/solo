@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://btoyhdgviw66m"]
 
-[ext_resource type="Script" uid="uid://cs0qroorhr2md" path="res://Scripts/System/CraftSystem/CraftItemView.cs" id="1_up1tk"]
+[ext_resource type="Script" uid="uid://cs0qroorhr2md" path="res://Scripts/UI/InteractViews/CraftViews/CraftItemView.cs" id="1_up1tk"]
 [ext_resource type="Texture2D" uid="uid://d4igqp371y5" path="res://Assets/icon.svg" id="2_3327k"]
 
 [node name="CraftItemView" type="Control" unique_id=1976074717 node_paths=PackedStringArray("_toggleBtn", "_iconTr")]

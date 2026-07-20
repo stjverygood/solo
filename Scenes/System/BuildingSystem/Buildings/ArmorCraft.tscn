@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://ihjakefmgaj5" path="res://Scripts/System/BuildingSystem/Buildings/ArmorCraft.cs" id="1_1g31o"]
 [ext_resource type="Shader" uid="uid://i3lcvke3ll2n" path="res://Assets/Shaders/Outline.gdshader" id="2_id7hs"]
 [ext_resource type="Texture2D" uid="uid://d4b6p2x33d472" path="res://Assets/AtlasTextures/ArmorCraft.tres" id="3_ghiw6"]
-[ext_resource type="PackedScene" uid="uid://dgrarrj2s36w8" path="res://Scenes/UI/HpBar.tscn" id="4_1g31o"]
+[ext_resource type="PackedScene" uid="uid://dgrarrj2s36w8" path="res://Scenes/UI/Commons/HpBar.tscn" id="4_1g31o"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_s2gw0"]
 shader = ExtResource("2_id7hs")

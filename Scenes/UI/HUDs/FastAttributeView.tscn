@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://lu2ulevw2hqn"]
 
-[ext_resource type="Script" uid="uid://b6lv3kf71702r" path="res://Scripts/Entities/Players/UI/FastAttributeView.cs" id="1_l6ss2"]
+[ext_resource type="Script" uid="uid://b6lv3kf71702r" path="res://Scripts/UI/HUDs/FastAttributeView.cs" id="1_l6ss2"]
 
 [node name="FastAttributeView" type="Control" unique_id=1308229637 node_paths=PackedStringArray("_realmLb", "_hpLb", "_qiLb", "_expLb")]
 layout_mode = 3

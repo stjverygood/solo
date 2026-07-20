@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://bbl4ldydpahmt"]
 
-[ext_resource type="Script" uid="uid://b7awkawduxlec" path="res://Scripts/Entities/Players/UI/AttributeView.cs" id="1_aqmy5"]
+[ext_resource type="Script" uid="uid://b7awkawduxlec" path="res://Scripts/UI/InteractViews/AttributeView.cs" id="1_aqmy5"]
 
 [node name="AttributeView" type="PanelContainer" unique_id=553775093 node_paths=PackedStringArray("_realmLb", "_atkLb", "_defLb", "_hpLb", "_qiLb", "_expLb", "_upgradeBtn")]
 script = ExtResource("1_aqmy5")

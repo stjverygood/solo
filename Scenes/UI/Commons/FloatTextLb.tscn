@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://ddos2w52gxb06"]
 
 [ext_resource type="FontFile" uid="uid://chelxpn5elvbb" path="res://Assets/zpix.ttf" id="1_d3duy"]
-[ext_resource type="Script" uid="uid://bduq7owfuttwg" path="res://Scripts/Global/FloatTextLb.cs" id="2_w61fg"]
+[ext_resource type="Script" uid="uid://bduq7owfuttwg" path="res://Scripts/UI/Commons/FloatTextLb.cs" id="2_w61fg"]
 
 [node name="FloatTextLb" type="Label" unique_id=1780256027]
 z_index = 2504

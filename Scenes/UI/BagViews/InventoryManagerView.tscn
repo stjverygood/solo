@@ -1,9 +1,9 @@
 [gd_scene format=3 uid="uid://bgqqv5e610s5p"]
 
-[ext_resource type="Script" uid="uid://flyt3u3xcjcg" path="res://Scripts/Entities/Players/InventoryManagerView.cs" id="1_uar4n"]
+[ext_resource type="Script" uid="uid://flyt3u3xcjcg" path="res://Scripts/UI/BagViews/InventoryManagerView.cs" id="1_uar4n"]
 [ext_resource type="PackedScene" uid="uid://bji8v2soe8d4o" path="res://Scenes/System/InventorySystem/Inventorys/EquipmentInventoryView.tscn" id="2_5pyiq"]
 [ext_resource type="PackedScene" uid="uid://cegl0cmno78dg" path="res://Scenes/System/InventorySystem/Inventorys/BagInventoryView.tscn" id="3_3s44e"]
-[ext_resource type="PackedScene" uid="uid://ch5mbcfvw4tu3" path="res://Scenes/Entities/Players/DiscardView.tscn" id="4_xqfss"]
+[ext_resource type="PackedScene" uid="uid://ch5mbcfvw4tu3" path="res://Scenes/UI/BagViews/DiscardView.tscn" id="4_xqfss"]
 [ext_resource type="PackedScene" uid="uid://557c5e8cwx11" path="res://Scenes/System/InventorySystem/Inventorys/FastBarInventoryView.tscn" id="5_og80g"]
 
 [sub_resource type="CompressedTexture2D" id="CompressedTexture2D_tfrxa"]

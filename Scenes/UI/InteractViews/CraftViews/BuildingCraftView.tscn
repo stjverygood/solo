@@ -1,8 +1,8 @@
 [gd_scene format=3 uid="uid://qxvurh3gv0hg"]
 
-[ext_resource type="PackedScene" uid="uid://cfu7wy1op48g5" path="res://Scenes/System/CraftSystem/CraftView.tscn" id="1_02oki"]
+[ext_resource type="PackedScene" uid="uid://cfu7wy1op48g5" path="res://Scenes/UI/InteractViews/CraftViews/CraftView.tscn" id="1_02oki"]
 
-[sub_resource type="ButtonGroup" id="ButtonGroup_xjw8a"]
+[sub_resource type="ButtonGroup" id="ButtonGroup_02oki"]
 
 [node name="BuildingCraftView" type="Control" unique_id=1498262539]
 layout_mode = 3
@@ -27,4 +27,4 @@ vertical_alignment = 1
 
 [node name="CraftView" parent="PanelContainer/VBoxContainer" unique_id=1465566409 instance=ExtResource("1_02oki")]
 layout_mode = 2
-_btnGroup = SubResource("ButtonGroup_xjw8a")
+_btnGroup = SubResource("ButtonGroup_02oki")
