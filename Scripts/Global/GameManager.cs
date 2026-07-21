@@ -10,21 +10,21 @@ using System.Collections.Generic;
 
 namespace Solo.Scripts.Global
 {
-    public enum GameState
-    {
-        StartMenu,//开始菜单
-        SaveListMenu,//世界列表
-        SettingMenu,
-        Loading,//加载界面 : 加载世界, 退出并保存世界
-        Play,//游戏中
-        Pause,//按exc暂停游戏
-    }
+    //public enum GameState
+    //{
+    //    StartMenu,//开始菜单
+    //    SaveListMenu,//世界列表
+    //    SettingMenu,
+    //    Loading,//加载界面 : 加载世界, 退出并保存世界
+    //    Play,//游戏中
+    //    Pause,//按exc暂停游戏
+    //}
 
     public partial class GameManager : Node
     {
         static private GameManager _instance;
         static public GameManager Instance => _instance;
-        private GameState _curState;
+        //private GameState _curState;
         public bool IsDebugMode = true;
 
         [Export] public PackedScene DropItemPs = null!;
@@ -44,6 +44,7 @@ namespace Solo.Scripts.Global
 
         public World World;
         public Player Player;
+        public UIManager UIManager;
         public List<Unit> UnitList = new List<Unit>();
         public List<IQiRangeable> IQiRangeableList = new List<IQiRangeable>();
         public ChunkManager ChunkManager;
@@ -74,7 +75,7 @@ namespace Solo.Scripts.Global
         {
             _instance = this;
             GD.Print("GameManager _Ready!");
-            _curState = GameState.StartMenu;
+            //_curState = GameState.StartMenu;
 
             //_pauseView.Visible = false;
             ProcessMode = ProcessModeEnum.Always;

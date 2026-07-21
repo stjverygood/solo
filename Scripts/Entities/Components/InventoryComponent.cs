@@ -32,10 +32,15 @@ namespace Solo.Scripts.Entities.Components
             sourceInventory.ClearSlot(sourceIndex);
         }
 
-        public ItemType? GetCurItemType(int index)
+        public ItemType GetCurItemType(int index)
         {
             ItemInstance itemInstance = FastBarInventory.GetItem(index);
-            return itemInstance?.Type;
+            return itemInstance.Type;
+        }
+        public bool IsCurItemTypeExist(int index)
+        {
+            ItemInstance itemInstance = FastBarInventory.GetItem(index);
+            return itemInstance != null;
         }
 
         public int GetItemCount(ItemType itemType)

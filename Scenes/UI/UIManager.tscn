@@ -1,17 +1,26 @@
 [gd_scene format=3 uid="uid://c1v6ptm7ml55o"]
 
 [ext_resource type="Script" uid="uid://d1l1a7e6ewyh0" path="res://Scripts/UI/UIManager.cs" id="1_mkobf"]
+[ext_resource type="PackedScene" uid="uid://cx380rlsg85x5" path="res://Scenes/UI/HUDs/FastBarView.tscn" id="2_jt2b2"]
 [ext_resource type="PackedScene" uid="uid://dx8thbx4w752g" path="res://Scenes/UI/ScreenViews/PauseView.tscn" id="2_wedjs"]
+[ext_resource type="PackedScene" uid="uid://lu2ulevw2hqn" path="res://Scenes/UI/HUDs/FastAttributeView.tscn" id="3_gm72q"]
 [ext_resource type="PackedScene" uid="uid://d3ptuijhfhmm0" path="res://Scenes/UI/ScreenViews/DeathView.tscn" id="3_jv8xy"]
 [ext_resource type="PackedScene" uid="uid://74dd0d5dwyxc" path="res://Scenes/UI/ScreenViews/LoadingView.tscn" id="4_sr2kn"]
-[ext_resource type="PackedScene" uid="uid://ci5m8q0qwqas" path="res://Scenes/UI/HUDs/HUDView.tscn" id="5_sr2kn"]
+[ext_resource type="PackedScene" uid="uid://bgqqv5e610s5p" path="res://Scenes/UI/InventoryViews/InventoryManagerView.tscn" id="5_t5yan"]
+[ext_resource type="PackedScene" uid="uid://b8so1e8mc7j47" path="res://Scenes/UI/InteractViews/CharacterView.tscn" id="6_jt2b2"]
 
-[node name="UiManager" type="CanvasLayer" unique_id=1714004788 node_paths=PackedStringArray("_pauseView")]
+[node name="UiManager" type="CanvasLayer" unique_id=1714004788 node_paths=PackedStringArray("FastAttributeView", "FastBarView", "InventoryManagerView", "InteractControl", "CharacterView", "PauseView")]
 script = ExtResource("1_mkobf")
-_pauseView = NodePath("PauseView")
+FastAttributeView = NodePath("FastAttributeView")
+FastBarView = NodePath("FastBarView")
+InventoryManagerView = NodePath("InventoryManagerView")
+InteractControl = NodePath("InteractControl")
+CharacterView = NodePath("CharacterView")
+PauseView = NodePath("PauseView")
 
-[node name="PauseView" parent="." unique_id=1950812368 instance=ExtResource("2_wedjs")]
-visible = false
+[node name="FastAttributeView" parent="." unique_id=1308229637 instance=ExtResource("3_gm72q")]
+
+[node name="FastBarView" parent="." unique_id=1217924179 instance=ExtResource("2_jt2b2")]
 
 [node name="DeathView" parent="." unique_id=1940583019 instance=ExtResource("3_jv8xy")]
 visible = false
@@ -19,4 +28,26 @@ visible = false
 [node name="LoadingView" parent="." unique_id=329101136 instance=ExtResource("4_sr2kn")]
 visible = false
 
-[node name="HudView" parent="." unique_id=1751336480 instance=ExtResource("5_sr2kn")]
+[node name="InventoryManagerView" parent="." unique_id=989028457 instance=ExtResource("5_t5yan")]
+visible = false
+offset_left = 48.0
+offset_top = 51.0
+offset_right = 48.0
+offset_bottom = 51.0
+
+[node name="InteractControl" type="Control" parent="." unique_id=867770399]
+visible = false
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="CharacterView" parent="." unique_id=1785653158 instance=ExtResource("6_jt2b2")]
+visible = false
+offset_left = 461.0
+offset_top = 169.0
+offset_right = 461.0
+offset_bottom = 169.0
+
+[node name="PauseView" parent="." unique_id=1950812368 instance=ExtResource("2_wedjs")]
+visible = false

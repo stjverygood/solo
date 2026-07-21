@@ -1,4 +1,5 @@
 using Godot;
+using Solo.Scripts.Entities.Components;
 using Solo.Scripts.Global;
 using Solo.Scripts.Global.Interfaces;
 
@@ -104,16 +105,16 @@ namespace Solo.Scripts.System.ItemSystem
 
         public void Interact()
         {
-            //int remainCount = GameManager.Instance.Player.InventoryManager.AddItem(ItemInstance);
-            //if (remainCount == 0)
-            //{
-            //    //GameManager.Instance.ChunkManager.RemoveItem(this, Position);
-            //    QueueFree();
-            //}
-            //else
-            //{
-            //    Count = remainCount;
-            //}
+            int remainCount = GameManager.Instance.Player.Core.GetComponent<InventoryComponent>().AddItem(ItemInstance);
+            if (remainCount == 0)
+            {
+                //GameManager.Instance.ChunkManager.RemoveItem(this, Position);
+                QueueFree();
+            }
+            else
+            {
+                Count = remainCount;
+            }
         }
 
         public bool IsVaild()

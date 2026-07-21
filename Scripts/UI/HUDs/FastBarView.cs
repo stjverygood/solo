@@ -1,4 +1,5 @@
 using Godot;
+using Solo.Scripts.Global;
 using Solo.Scripts.System.InventorySystem;
 
 namespace Solo.Scripts.UI.HUDs
@@ -19,6 +20,8 @@ namespace Solo.Scripts.UI.HUDs
                 slot.Refresh();
             };
             _curIndex = curIndex;
+
+            GameManager.Instance.Player.OnCurFastBarIndexChanged += () => SetSelected(GameManager.Instance.Player.CurFastBarIndex);
 
             ButtonGroup btnGroup = new ButtonGroup();
 

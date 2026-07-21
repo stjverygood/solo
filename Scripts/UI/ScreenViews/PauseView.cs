@@ -23,9 +23,19 @@ namespace Solo.Scripts.UI.ScreenViews
             };
         }
 
-        public override void _PhysicsProcess(double delta)
+        public override void _UnhandledInput(InputEvent @event)
         {
-
+            if (@event is InputEventKey keyEvent && keyEvent.Pressed)
+            {
+                switch (keyEvent.Keycode)
+                {
+                    case Key.Escape:
+                        Visible = false;
+                        GetTree().Paused = false;
+                        GetViewport().SetInputAsHandled();
+                        break;
+                }
+            }
         }
     }
 }

@@ -1,4 +1,6 @@
 using Godot;
+using Solo.Scripts.Entities.Components;
+using Solo.Scripts.Global;
 using Solo.Scripts.System.ItemSystem;
 
 namespace Solo.Scripts.System.InventorySystem
@@ -99,7 +101,7 @@ namespace Solo.Scripts.System.InventorySystem
         public override void _DropData(Vector2 atPosition, Variant data)
         {
             InventorySlotView sourceSlotView = data.As<InventorySlotView>();
-            //GameManager.Instance.Player.InventoryManager.SwapItem(sourceSlotView.Inventory, sourceSlotView.Index, Inventory, Index);
+            GameManager.Instance.Player.Core.GetComponent<InventoryComponent>().SwapItem(sourceSlotView.Inventory, sourceSlotView.Index, Inventory, Index);
         }
 
         public void SetSelected(bool isSelected)

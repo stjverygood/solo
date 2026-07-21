@@ -20,7 +20,7 @@ texture_margin_top = 16.0
 texture_margin_right = 16.0
 texture_margin_bottom = 16.0
 
-[node name="InventoryView" type="Control" unique_id=989028457 node_paths=PackedStringArray("_fastInventoryView", "_bagInventoryView", "_equipmentInventoryView")]
+[node name="InventoryManagerView" type="Control" unique_id=989028457 node_paths=PackedStringArray("_fastInventoryView", "_bagInventoryView", "_equipmentInventoryView")]
 layout_mode = 3
 anchors_preset = 0
 script = ExtResource("1_uar4n")
@@ -30,17 +30,8 @@ _equipmentInventoryView = NodePath("PanelContainer/GridContainer/EquipmentInvent
 
 [node name="PanelContainer" type="PanelContainer" parent="." unique_id=1005022505]
 layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -118.0
-offset_top = -118.0
-offset_right = 118.0
-offset_bottom = 118.0
-grow_horizontal = 2
-grow_vertical = 2
+offset_right = 236.0
+offset_bottom = 236.0
 theme_override_styles/panel = SubResource("StyleBoxTexture_cetw5")
 
 [node name="GridContainer" type="GridContainer" parent="PanelContainer" unique_id=628756251]

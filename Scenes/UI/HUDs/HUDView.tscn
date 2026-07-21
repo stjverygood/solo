@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://ci5m8q0qwqas"]
 
 [ext_resource type="PackedScene" uid="uid://lu2ulevw2hqn" path="res://Scenes/UI/HUDs/FastAttributeView.tscn" id="1_2snu4"]
-[ext_resource type="Script" uid="uid://bads0upypmsid" path="res://Scripts/UI/HUDs/HudView.cs" id="1_i2xc1"]
+[ext_resource type="Script" path="res://Scripts/UI/HUDs/HudView.cs" id="1_i2xc1"]
 [ext_resource type="PackedScene" uid="uid://cx380rlsg85x5" path="res://Scenes/UI/HUDs/FastBarView.tscn" id="2_i2xc1"]
 
 [node name="HudView" type="Control" unique_id=1751336480]

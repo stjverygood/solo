@@ -38,37 +38,20 @@ public partial class World : Node2D
         else
             player.Init(new Vector2(0, 0), (PlayerData)EntityDataManager.Instance.GetData(EntityType.Player), SaveManager.Instance.CurSaveData.PlayerSaveData);
 
-
-
-
-
         ChunkManager chunkManager = GameManager.Instance.ChunkManagerPs.Instantiate<ChunkManager>();
         AddChild(chunkManager);
         chunkManager.OnChunkLoaded += ChunkManager_OnChunkLoaded;
         chunkManager.OnChunkUnloaded += ChunkManager_OnChunkUnloaded;
         chunkManager.Init(player);
-
         foreach (ChunkEntitySaveData saveData in SaveManager.Instance.CurSaveData.ChunkEntitySaveDataList)
         {
-            //if (_entitySaveDataMap.TryGetValue(new Vector2I(saveData.ChunkX, saveData.ChunkY), out List<EntitySaveData>? entitySaveDataList) == false)
-            //{
-            //    _entitySaveDataMap[new Vector2I(saveData.ChunkX, saveData.ChunkY)] = new List<EntitySaveData>();
-            //}
-            //if (_chunkEntitySaveDataMap.TryGetValue(new Vector2I(saveData.ChunkX, saveData.ChunkY), out var))
-            //    _chunkEntitySaveDataMap[].EntitySaveDataList = saveData.EntitySaveDataList;
             _entitySaveDataMap[new Vector2I(saveData.ChunkX, saveData.ChunkY)] = saveData.EntitySaveDataList;
         }
-
-        //foreach (EntitySaveData entitySaveData in SaveManager.Instance.CurSaveData.EntitySaveDataList)
-        //{
-        //    Vector2I chunkPos = GameManager.Instance.ChunkManager.WorldToChunkPos(new Vector2(entitySaveData.WorldX, entitySaveData.WorldY));
-        //    if (_entitySaveDataMap.ContainsKey(chunkPos) == false)
-        //        _entitySaveDataMap[chunkPos] = new List<EntitySaveData>();
-        //    _entitySaveDataMap[chunkPos].Add(entitySaveData);
-        //}
-
         chunkManager.Start();
 
+        UIManager UIManager = GameManager.Instance.UIManagerPs.Instantiate<UIManager>();
+        AddChild(UIManager);
+        UIManager.Init();
     }
 
     public override void _PhysicsProcess(double delta)
