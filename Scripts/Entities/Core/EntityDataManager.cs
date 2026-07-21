@@ -1,4 +1,5 @@
 ﻿using Solo.Scripts.Entities.Grasses;
+using Solo.Scripts.Entities.Players;
 using Solo.Scripts.Entities.Trees;
 using Solo.Scripts.Entities.Zombies;
 using Solo.Scripts.Global;
@@ -14,6 +15,9 @@ namespace Solo.Scripts.Entities.Core
 
         private EntityDataManager()
         {
+            _dataMap[EntityType.Player] = new PlayerData();
+
+
             _dataMap[EntityType.Zombie] = new ZombieData()
             {
                 MaxHp = 100,
@@ -37,6 +41,8 @@ namespace Solo.Scripts.Entities.Core
             {
                 MaxHp = 100,
             };
+
+
         }
 
         public EntityData GetData(EntityType type)

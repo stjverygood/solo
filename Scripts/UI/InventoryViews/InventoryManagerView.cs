@@ -1,5 +1,5 @@
 using Godot;
-using Solo.Scripts.Entities.Players;
+using Solo.Scripts.Entities.Components;
 using Solo.Scripts.System.InventorySystem;
 
 namespace Solo.Scripts.UI.InventoryViews
@@ -9,11 +9,11 @@ namespace Solo.Scripts.UI.InventoryViews
         [Export] private InventoryView _fastInventoryView = null!;
         [Export] private InventoryView _bagInventoryView = null!;
         [Export] private InventoryView _equipmentInventoryView = null!;
-        public void Init(InventoryManager inventoryManager)
+        public void Init(InventoryComponent inventoryComponent)
         {
-            _fastInventoryView.Init(inventoryManager.FastBarInventory);
-            _bagInventoryView.Init(inventoryManager.BagInventory);
-            _equipmentInventoryView.Init(inventoryManager.EquipmentInventory);
+            _fastInventoryView.Init(inventoryComponent.FastBarInventory);
+            _bagInventoryView.Init(inventoryComponent.BagInventory);
+            _equipmentInventoryView.Init(inventoryComponent.EquipmentInventory);
         }
     }
 }

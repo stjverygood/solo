@@ -7,11 +7,11 @@
 [ext_resource type="PackedScene" uid="uid://bu5uihu26jmpm" path="res://Scenes/MainMenus/SaveListView.tscn" id="3_enwxu"]
 [ext_resource type="PackedScene" uid="uid://74dd0d5dwyxc" path="res://Scenes/UI/ScreenViews/LoadingView.tscn" id="3_h7we0"]
 [ext_resource type="PackedScene" uid="uid://c5etro6u3u1vl" path="res://Scenes/Levels/World.tscn" id="5_rssbt"]
-[ext_resource type="PackedScene" uid="uid://dx8thbx4w752g" path="res://Scenes/UI/ScreenViews/PauseView.tscn" id="7_rssbt"]
 [ext_resource type="PackedScene" uid="uid://b58alptljoell" path="res://Scenes/MainMenus/MainMenuView.tscn" id="8_1xmkn"]
 [ext_resource type="PackedScene" uid="uid://bwctbm6eq64vu" path="res://Scenes/Entities/Players/Player.tscn" id="9_n7fwv"]
 [ext_resource type="PackedScene" uid="uid://bsffwmtiifund" path="res://Scenes/Global/Vfx/ExplosionEffect.tscn" id="9_q6kuj"]
 [ext_resource type="PackedScene" uid="uid://ctirqhkrgk72m" path="res://Scenes/Global/Vfx/SmogEffect.tscn" id="9_r1yu4"]
+[ext_resource type="PackedScene" uid="uid://c1v6ptm7ml55o" path="res://Scenes/UI/UIManager.tscn" id="10_40wt5"]
 [ext_resource type="PackedScene" uid="uid://c364av0qjs5rx" path="res://Scenes/System/ChunkSystem/ChunkManager.tscn" id="10_fevtx"]
 [ext_resource type="PackedScene" uid="uid://bqn8jrdyesh0w" path="res://Scenes/System/ItemSystem/Projectiles/SwordWave.tscn" id="10_r1yu4"]
 [ext_resource type="PackedScene" uid="uid://ow5i482gxdko" path="res://Scenes/DropItem/ExpBall.tscn" id="11_1suta"]
@@ -19,7 +19,7 @@
 [ext_resource type="PackedScene" uid="uid://cn7pil5cp6afb" path="res://Scenes/Entities/Grass/Grass.tscn" id="16_b088f"]
 [ext_resource type="PackedScene" uid="uid://bfckrtubfdcw1" path="res://Scenes/Entities/Zombies/Zombie.tscn" id="17_40wt5"]
 
-[node name="GameManager" type="Node" unique_id=1034362425 node_paths=PackedStringArray("_pauseView")]
+[node name="GameManager" type="Node" unique_id=1034362425]
 script = ExtResource("1_g4tje")
 DropItemPs = ExtResource("2_cxcem")
 FloatTextLbPs = ExtResource("2_xy3kr")
@@ -27,10 +27,10 @@ _startMenuPs = ExtResource("2_6j0h0")
 _loadingViewPs = ExtResource("3_h7we0")
 _saveListMenuPs = ExtResource("3_enwxu")
 _mainLevelPs = ExtResource("5_rssbt")
-_pauseView = NodePath("CanvasLayer/PauseView")
 _mainMenuViewPs = ExtResource("8_1xmkn")
 _worldPs = ExtResource("5_rssbt")
 ChunkManagerPs = ExtResource("10_fevtx")
+UIManagerPs = ExtResource("10_40wt5")
 ExplosionEffectPs = ExtResource("9_q6kuj")
 SmogEffectPs = ExtResource("9_r1yu4")
 _swordWavePs = ExtResource("10_r1yu4")
@@ -39,8 +39,3 @@ PlayerPs = ExtResource("9_n7fwv")
 TreePs = ExtResource("15_fuhgo")
 GrassPs = ExtResource("16_b088f")
 ZombiePs = ExtResource("17_40wt5")
-
-[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=606242839]
-layer = 3
-
-[node name="PauseView" parent="CanvasLayer" unique_id=1950812368 instance=ExtResource("7_rssbt")]

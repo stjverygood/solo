@@ -1,10 +1,12 @@
 using Godot;
+using Solo.Scripts.UI.InventoryViews;
 using Solo.Scripts.UI.ScreenViews;
 
-public partial class UiManager : CanvasLayer
+public partial class UIManager : CanvasLayer
 {
 
     [Export] private PauseView _pauseView = null!;
+    [Export] private InventoryManagerView _inventoryManagerView = null!;
     public override void _Ready()
     {
         _pauseView.Visible = false;
@@ -15,8 +17,8 @@ public partial class UiManager : CanvasLayer
     {
         if (Input.IsActionJustPressed("Back"))
         {
-            _pauseView.Visible = !_pauseView.Visible;
-            GetTree().Paused = !GetTree().Paused;
+            //_pauseView.Visible = !_pauseView.Visible;
+            //GetTree().Paused = !GetTree().Paused;
         }
     }
 }

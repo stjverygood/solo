@@ -1,7 +1,6 @@
 [gd_scene format=3 uid="uid://c5etro6u3u1vl"]
 
 [ext_resource type="Script" uid="uid://bg2yewdyov431" path="res://Scripts/Levels/World.cs" id="1_vi80n"]
-[ext_resource type="PackedScene" uid="uid://c1v6ptm7ml55o" path="res://Scenes/UI/UIManager.tscn" id="3_28y5c"]
 [ext_resource type="Gradient" uid="uid://b3fgxmj7u6dou" path="res://Assets/Gradients/DayNightGradient.tres" id="3_f4gmh"]
 
 [sub_resource type="Environment" id="Environment_yxouj"]
@@ -21,14 +20,11 @@ fill = 1
 fill_from = Vector2(0.5, 0.5)
 fill_to = Vector2(0.5, 0)
 
-[node name="World" type="Node2D" unique_id=1442456336 node_paths=PackedStringArray("_canvasModulate", "_pauseView")]
+[node name="World" type="Node2D" unique_id=1442456336 node_paths=PackedStringArray("_canvasModulate")]
 y_sort_enabled = true
 script = ExtResource("1_vi80n")
 _canvasModulate = NodePath("CanvasModulate")
 _dayNightGradient = ExtResource("3_f4gmh")
-_pauseView = NodePath("")
-
-[node name="UiManager" parent="." unique_id=1714004788 instance=ExtResource("3_28y5c")]
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=988365677]
 environment = SubResource("Environment_yxouj")

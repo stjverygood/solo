@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://c1v6ptm7ml55o"]
 
-[ext_resource type="Script" uid="uid://d1l1a7e6ewyh0" path="res://Scripts/UI/UiManager.cs" id="1_mkobf"]
+[ext_resource type="Script" uid="uid://d1l1a7e6ewyh0" path="res://Scripts/UI/UIManager.cs" id="1_mkobf"]
 [ext_resource type="PackedScene" uid="uid://dx8thbx4w752g" path="res://Scenes/UI/ScreenViews/PauseView.tscn" id="2_wedjs"]
 [ext_resource type="PackedScene" uid="uid://d3ptuijhfhmm0" path="res://Scenes/UI/ScreenViews/DeathView.tscn" id="3_jv8xy"]
 [ext_resource type="PackedScene" uid="uid://74dd0d5dwyxc" path="res://Scenes/UI/ScreenViews/LoadingView.tscn" id="4_sr2kn"]

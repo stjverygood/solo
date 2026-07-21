@@ -40,6 +40,7 @@ namespace Solo.Scripts.Global
         [Export] private PackedScene _worldPs = null!;
 
         [Export] public PackedScene ChunkManagerPs = null!;
+        [Export] public PackedScene UIManagerPs = null!;
 
         public World World;
         public Player Player;

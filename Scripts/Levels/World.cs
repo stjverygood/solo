@@ -33,7 +33,12 @@ public partial class World : Node2D
         GameManager.Instance.World = this;
         Player player = GameManager.Instance.PlayerPs.Instantiate<Player>();
         AddChild(player);
-        player.Init();
+        if (SaveManager.Instance.CurSaveData.PlayerSaveData == null)
+            player.Init(new Vector2(0, 0), (PlayerData)EntityDataManager.Instance.GetData(EntityType.Player), null);
+        else
+            player.Init(new Vector2(0, 0), (PlayerData)EntityDataManager.Instance.GetData(EntityType.Player), SaveManager.Instance.CurSaveData.PlayerSaveData);
+
+
 
 
 
@@ -192,10 +197,10 @@ public partial class World : Node2D
 
     public void EntitySaveDataCacheToSave()
     {
+        //区块实体
         SaveManager.Instance.CurSaveData.ChunkEntitySaveDataList.Clear();
         foreach (KeyValuePair<Vector2I, List<EntitySaveData>> pair in _entitySaveDataMap)
         {
-
             SaveManager.Instance.CurSaveData.ChunkEntitySaveDataList.Add(new ChunkEntitySaveData()
             {
                 ChunkX = pair.Key.X,
@@ -203,6 +208,10 @@ public partial class World : Node2D
                 EntitySaveDataList = pair.Value
             });
         }
+
+        //玩家
+        SaveManager.Instance.CurSaveData.PlayerSaveData = (PlayerSaveData)GameManager.Instance.Player.GetSaveData();
+
         SaveManager.Instance.WriteCurSaveData();
     }
 

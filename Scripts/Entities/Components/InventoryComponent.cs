@@ -1,24 +1,18 @@
-﻿using Solo.Scripts.Global;
+﻿using Solo.Scripts.Entities.Core;
+using Solo.Scripts.Global;
+using Solo.Scripts.Global.Interfaces;
 using Solo.Scripts.System.InventorySystem;
 using Solo.Scripts.System.ItemSystem;
-using Solo.Scripts.System.SaveSystem;
 
-namespace Solo.Scripts.Entities.Players
+namespace Solo.Scripts.Entities.Components
 {
-    public class InventoryManager
+    public class InventoryComponent : Component
     {
-        public Inventory FastBarInventory;//快捷栏
-        public Inventory BagInventory;//背包
-        public Inventory EquipmentInventory;//装备栏
+        public Inventory FastBarInventory = null!;//快捷栏
+        public Inventory BagInventory = null!;//背包
+        public Inventory EquipmentInventory = null!;//装备栏
 
-
-
-        public InventoryManager()
-        {
-            FastBarInventory = new Inventory(SaveManager.Instance.CurSaveData.PlayerSaveData.FastBarInventorySlotList);
-            BagInventory = new Inventory(SaveManager.Instance.CurSaveData.PlayerSaveData.BagInventorySlotList);
-            EquipmentInventory = new Inventory(SaveManager.Instance.CurSaveData.PlayerSaveData.EquipmentInventorySlotList);
-        }
+        public InventoryComponent(IEntity owner) : base(owner) { }
 
         public void SwapItem(Inventory sourceInventory, int sourceIndex, Inventory targetInventory, int targetIndex)
         {

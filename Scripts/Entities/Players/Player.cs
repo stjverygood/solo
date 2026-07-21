@@ -3,7 +3,8 @@ using Solo.Scripts.Entities.Components;
 using Solo.Scripts.Entities.Core;
 using Solo.Scripts.Global;
 using Solo.Scripts.Global.Interfaces;
-using Solo.Scripts.System.SaveSystem;
+using Solo.Scripts.System.InventorySystem;
+using Solo.Scripts.System.RealmSystem;
 
 
 namespace Solo.Scripts.Entities.Players
@@ -24,8 +25,9 @@ namespace Solo.Scripts.Entities.Players
         BagUI,
     }
 
-    public partial class Player : CharacterBody2D, ITargetable, IEntity
+    public partial class Player : CharacterBody2D, ITargetable, IEntity, ISaveable
     {
+        private bool _initialized = false;
         public PlayerState CurState;
         private Vector2 _curMoveDir = Vector2.Right;//移动朝向, 记录最后一次移动输入方向
         //private Vector2 _curFaceDir = Vector2.Right;//脸部方向, 记录鼠标方向
@@ -97,42 +99,105 @@ namespace Solo.Scripts.Entities.Players
 
         public EntityCore Core { get; private set; } = new();
 
-        public void Init()
+        private PlayerData _data = null!;
+
+        public void Init(Vector2 worldPos, PlayerData data, PlayerSaveData? saveData)
         {
             GD.Print("Player Init~~~");
+            _initialized = true;
+
             GameManager.Instance.Player = this;
 
-            PlayerSaveData playerSaveData = SaveManager.Instance.CurSaveData.PlayerSaveData; //从存档里加载属性
+            _data = data;
+            //出生点, 初始化出生点和初始位置由生成系统决定, 恢复读存档, 重生回出生点
+            if (saveData == null)
+            {
+                StartPoint = worldPos;
+                GlobalPosition = worldPos;
+            }
+            else
+            {
+                StartPoint = new Vector2(saveData.StartX, saveData.StartY);
+                GlobalPosition = new Vector2(saveData.WorldX, saveData.WorldY);
+            }
+            //GlobalPosition = saveData == null ? worldPos : new Vector2(saveData.WorldX, saveData.WorldY);
+            //PlayerSaveData playerSaveData = SaveManager.Instance.CurSaveData.PlayerSaveData; //从存档里加载属性
             //_characterView.Init();
+
+
+            //public InventoryManager()
+            //{
+            //    FastBarInventory = new Inventory(SaveManager.Instance.CurSaveData.PlayerSaveData.FastBarInventorySlotList);
+            //    BagInventory = new Inventory(SaveManager.Instance.CurSaveData.PlayerSaveData.BagInventorySlotList);
+            //    EquipmentInventory = new Inventory(SaveManager.Instance.CurSaveData.PlayerSaveData.EquipmentInventorySlotList);
+            //}
+            //todo , 把InventoryManager全部更新成InventoryComponent
+            InventoryComponent inventoryComponent = new InventoryComponent(this);
+            if (saveData == null)
+            {
+                inventoryComponent.FastBarInventory = new Inventory(_data.FastBarInventorySlotList);
+                inventoryComponent.BagInventory = new Inventory(_data.BagInventorySlotList);
+                inventoryComponent.EquipmentInventory = new Inventory(_data.EquipmentInventorySlotList);
+            }
+            else
+            {
+                inventoryComponent.FastBarInventory = new Inventory(saveData.FastBarInventorySlotList);
+                inventoryComponent.BagInventory = new Inventory(saveData.BagInventorySlotList);
+                inventoryComponent.EquipmentInventory = new Inventory(saveData.EquipmentInventorySlotList);
+            }
+            Core.AddComponent(inventoryComponent);
+
+
 
             //先绑定, 后初始化值
             RealmComponent realmComponent = new RealmComponent(this);
+            if (saveData == null)
+                realmComponent.Refresh(_data.RealmType);
+            else
+                realmComponent.Refresh(saveData.RealmType);
             //realmComponent.OnValueChanged += _fastAttributeView.RefreshRealm;
             //realmComponent.OnValueChanged += _characterView.AttributeView.RefreshRealm;
             Core.AddComponent(realmComponent);
 
+            RealmData realmData = RealmDataManager.Instance.GetData(Core.GetComponent<RealmComponent>().Value);
+
             HpComponent hpComponent = new HpComponent(this);
-            //hpComponent.OnValueChanged += _fastAttributeView.RefreshHp;
-            //hpComponent.OnValueChanged += _characterView.AttributeView.RefreshHp;
+            if (saveData == null)
+                hpComponent.Refresh(realmData.MaxHp, realmData.MaxHp);
+            else
+                hpComponent.Refresh(saveData.CurHp, realmData.MaxHp + inventoryComponent.GetMaxHpBonus());
             Core.AddComponent(hpComponent);
 
+            //hpComponent.OnValueChanged += _fastAttributeView.RefreshHp;
+            //hpComponent.OnValueChanged += _characterView.AttributeView.RefreshHp;
+
             QiComponent qiComponent = new QiComponent(this);
+            if (saveData == null)
+                qiComponent.Refresh(realmData.MaxQi, realmData.MaxQi);
+            else
+                qiComponent.Refresh(saveData.CurQi, realmData.MaxQi + inventoryComponent.GetMaxQiBonus());
+            Core.AddComponent(qiComponent);
             //qiComponent.OnValueChanged += _fastAttributeView.RefreshQi;
             //qiComponent.OnValueChanged += _characterView.AttributeView.RefreshQi;
-            Core.AddComponent(qiComponent);
 
             ExpComponent expComponent = new ExpComponent(this);
+            if (saveData == null)
+                expComponent.Refresh(0, realmData.MaxExp);
+            else
+                expComponent.Refresh(saveData.CurExp, realmData.MaxExp);
+            Core.AddComponent(expComponent);
             //expComponent.OnValueChanged += _fastAttributeView.RefreshExp;
             //expComponent.OnValueChanged += _characterView.AttributeView.RefreshExp;
-            Core.AddComponent(expComponent);
 
             AtkComponent atkComponent = new AtkComponent(this);
-            //atkComponent.OnValueChanged += _characterView.AttributeView.RefreshAtk;
+            atkComponent.Refresh(realmData.Atk + inventoryComponent.GetAtkBonus());
             Core.AddComponent(atkComponent);
+            //atkComponent.OnValueChanged += _characterView.AttributeView.RefreshAtk;
 
             DefComponent defComponent = new DefComponent(this);
-            //defComponent.OnValueChanged += _characterView.AttributeView.RefreshDef;
+            defComponent.Refresh(realmData.Def + inventoryComponent.GetDefBonus());
             Core.AddComponent(defComponent);
+            //defComponent.OnValueChanged += _characterView.AttributeView.RefreshDef;
 
             //InventoryManager.EquipmentInventory.SlotChanged += (index) => Core.GetComponent<HpComponent>().Refresh(Core.GetComponent<HpComponent>().CurValue, RealmDataManager.Instance.GetData(Core.GetComponent<RealmComponent>().Value).MaxHp + InventoryManager.GetMaxHpBonus());
             //InventoryManager.EquipmentInventory.SlotChanged += (index) => Core.GetComponent<QiComponent>().Refresh(Core.GetComponent<QiComponent>().CurValue, RealmDataManager.Instance.GetData(Core.GetComponent<RealmComponent>().Value).MaxQi + InventoryManager.GetMaxQiBonus());
@@ -159,13 +224,13 @@ namespace Solo.Scripts.Entities.Players
 
 
 
-            StartPoint = new Vector2(playerSaveData.StartPosX, playerSaveData.StartPosY);
-            GlobalPosition = new Vector2(playerSaveData.PosX, playerSaveData.PosY);
+            //StartPoint = new Vector2(playerSaveData.StartPosX, playerSaveData.StartPosY);
+            //GlobalPosition = new Vector2(playerSaveData.PosX, playerSaveData.PosY);
 
 
 
 
-            _bgAnimSprite.Play("default");
+            //_bgAnimSprite.Play("default");
 
 
             //_characterView.Visible = false;
@@ -187,15 +252,27 @@ namespace Solo.Scripts.Entities.Players
                 Revive();
             }
             ChangeState(PlayerState.Idle);
-
-
-
         }
 
-
+        public EntitySaveData GetSaveData()
+        {
+            return new PlayerSaveData()
+            {
+                Type = EntityType.Player,
+                WorldX = GlobalPosition.X,
+                WorldY = GlobalPosition.Y,
+                StartX = StartPoint.X,
+                StartY = StartPoint.Y,
+                RealmType = Core.GetComponent<RealmComponent>().Value,
+                CurHp = Core.GetComponent<HpComponent>().CurValue,
+                CurQi = Core.GetComponent<HpComponent>().CurValue,
+                CurExp = Core.GetComponent<HpComponent>().CurValue,
+            };
+        }
 
         public override void _PhysicsProcess(double delta)
         {
+            if (!_initialized) return;
             UpdateState((float)delta);
             _debugLb.Text = CurState.ToString();
             //GD.Print($"GetTileType(GetGlobalMousePosition()) : {GameManager.Instance.ChunkManager.GetTileType(GetGlobalMousePosition())}");
@@ -1556,27 +1633,27 @@ namespace Solo.Scripts.Entities.Players
             //CollisionMask = 1;
         }
 
-        public PlayerSaveData GetSaveData()
-        {
-            return new PlayerSaveData()
-            {
-                StartPosX = StartPoint.X,
-                StartPosY = StartPoint.Y,
-                PosX = GlobalPosition.X,
-                PosY = GlobalPosition.Y,
+        //public PlayerSaveData GetSaveData()
+        //{
+        //    return new PlayerSaveData()
+        //    {
+        //        StartPosX = StartPoint.X,
+        //        StartPosY = StartPoint.Y,
+        //        PosX = GlobalPosition.X,
+        //        PosY = GlobalPosition.Y,
 
-                CurRealmType = Core.GetComponent<RealmComponent>().Value,
-                CurHp = Core.GetComponent<HpComponent>().CurValue,
-                CurQi = Core.GetComponent<QiComponent>().CurValue,
-                CurExp = Core.GetComponent<ExpComponent>().CurValue,
+        //        CurRealmType = Core.GetComponent<RealmComponent>().Value,
+        //        CurHp = Core.GetComponent<HpComponent>().CurValue,
+        //        CurQi = Core.GetComponent<QiComponent>().CurValue,
+        //        CurExp = Core.GetComponent<ExpComponent>().CurValue,
 
-                FastBarIndex = _curFastBarIndex,
+        //        FastBarIndex = _curFastBarIndex,
 
-                //FastBarInventorySlotList = InventoryManager.FastBarInventory.SlotList,
-                //BagInventorySlotList = InventoryManager.BagInventory.SlotList,
-                //EquipmentInventorySlotList = InventoryManager.EquipmentInventory.SlotList,
-            };
-        }
+        //        //FastBarInventorySlotList = InventoryManager.FastBarInventory.SlotList,
+        //        //BagInventorySlotList = InventoryManager.BagInventory.SlotList,
+        //        //EquipmentInventorySlotList = InventoryManager.EquipmentInventory.SlotList,
+        //    };
+        //}
 
         public Vector2 GetWorldPosition()
         {
@@ -1730,6 +1807,8 @@ namespace Solo.Scripts.Entities.Players
             //if (remainCount == 0)
             //    RefreshHandNode();
         }
+
+
 
 
 
