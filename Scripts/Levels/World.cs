@@ -106,78 +106,101 @@ public partial class World : Node2D
                 {
                     float rd = GD.Randf();
                     if (rd < 0.05)
-                    {
                         SpawnResource(EntityType.Grass, chunkPos, tileCenterPos, null);
-                        continue;
-                    }
-                    if (rd < 0.07)
-                    {
+                    else if (rd < 0.07)
                         SpawnResource(EntityType.Tree, chunkPos, tileCenterPos, null);
-                        continue;
-                    }
-                    if (rd < 0.1)
-                    {
+                    else if (rd < 0.1)
                         SpawnResource(EntityType.Stone, chunkPos, tileCenterPos, null);
-                        continue;
-                    }
-                    if (rd < 0.12)
-                    {
+                    else if (rd < 0.12)
                         SpawnResource(EntityType.Ore, chunkPos, tileCenterPos, null);
-                        continue;
-                    }
-
-                    if (GD.Randf() < 0.01)
-                    {
+                    else if (rd < 0.01)
                         SpawnEnemy(EntityType.NormalMeleeEnemy, chunkPos, tileCenterPos, null);
-                        continue;
-                    }
-                    if (GD.Randf() < 0.01)
-                    {
+                    else if (rd < 0.01)
                         SpawnEnemy(EntityType.SpeedMeleeEnemy, chunkPos, tileCenterPos, null);
-                        continue;
-                    }
-                    if (GD.Randf() < 0.01)
-                    {
+                    else if (rd < 0.01)
                         SpawnEnemy(EntityType.StrongMeleeEnemy, chunkPos, tileCenterPos, null);
-                        continue;
-                    }
-                    if (GD.Randf() < 0.01)
-                    {
+                    else if (rd < 0.01)
                         SpawnEnemy(EntityType.NormalRangedEnemy, chunkPos, tileCenterPos, null);
-                        continue;
-                    }
-
-
                 }
-                if (tileType == TileType.Forest)
+                else if (tileType == TileType.Forest)
                 {
                     float rd = GD.Randf();
-                    //if (rd < 0.01)
-                    //{
-                    //    SpawnResource(EntityType.Grass, chunkPos, tileCenterPos, null);
-                    //    continue;
-                    //}
-                    //if (GD.Randf() < 0.05)
-                    //{
-                    //    SpawnResource(EntityType.Tree, chunkPos, tileCenterPos, null);
-                    //    continue;
-                    //}
-                    continue;
+                    if (rd < 0.05)
+                        SpawnResource(EntityType.Grass, chunkPos, tileCenterPos, null);
+                    else if (rd < 0.01)
+                        SpawnResource(EntityType.Tree, chunkPos, tileCenterPos, null);
+                    else if (rd < 0.05)
+                        SpawnResource(EntityType.Stone, chunkPos, tileCenterPos, null);
+                    else if (rd < 0.06)
+                        SpawnResource(EntityType.Ore, chunkPos, tileCenterPos, null);
+                    else if (rd < 0.061)
+                        SpawnEnemy(EntityType.NormalMeleeEnemy, chunkPos, tileCenterPos, null);
+                    else if (rd < 0.07)
+                        SpawnEnemy(EntityType.SpeedMeleeEnemy, chunkPos, tileCenterPos, null);
+                    else if (rd < 0)
+                        SpawnEnemy(EntityType.StrongMeleeEnemy, chunkPos, tileCenterPos, null);
+                    else if (rd < 0)
+                        SpawnEnemy(EntityType.NormalRangedEnemy, chunkPos, tileCenterPos, null);
                 }
-                if (tileType == TileType.Stone)
+                else if (tileType == TileType.Stone)
                 {
-
-                    continue;
+                    float rd = GD.Randf();
+                    if (rd < 0.0)
+                        SpawnResource(EntityType.Grass, chunkPos, tileCenterPos, null);
+                    else if (rd < 0)
+                        SpawnResource(EntityType.Tree, chunkPos, tileCenterPos, null);
+                    else if (rd < 0)
+                        SpawnResource(EntityType.Stone, chunkPos, tileCenterPos, null);
+                    else if (rd < 0.02)
+                        SpawnResource(EntityType.Ore, chunkPos, tileCenterPos, null);
+                    else if (rd < 0.05)
+                        SpawnEnemy(EntityType.NormalMeleeEnemy, chunkPos, tileCenterPos, null);
+                    else if (rd < 0.08)
+                        SpawnEnemy(EntityType.SpeedMeleeEnemy, chunkPos, tileCenterPos, null);
+                    else if (rd < 0.1)
+                        SpawnEnemy(EntityType.StrongMeleeEnemy, chunkPos, tileCenterPos, null);
+                    else if (rd < 0.11)
+                        SpawnEnemy(EntityType.NormalRangedEnemy, chunkPos, tileCenterPos, null);
                 }
-                if (tileType == TileType.Desert)
+                else if (tileType == TileType.Desert)
                 {
-
-                    continue;
+                    float rd = GD.Randf();
+                    if (rd < 0.05)
+                        SpawnResource(EntityType.Grass, chunkPos, tileCenterPos, null);
+                    else if (rd < 0.0)
+                        SpawnResource(EntityType.Tree, chunkPos, tileCenterPos, null);
+                    else if (rd < 0.0)
+                        SpawnResource(EntityType.Stone, chunkPos, tileCenterPos, null);
+                    else if (rd < 0.02)
+                        SpawnResource(EntityType.Ore, chunkPos, tileCenterPos, null);
+                    else if (rd < 0.03)
+                        SpawnEnemy(EntityType.NormalMeleeEnemy, chunkPos, tileCenterPos, null);
+                    else if (rd < 0.04)
+                        SpawnEnemy(EntityType.SpeedMeleeEnemy, chunkPos, tileCenterPos, null);
+                    else if (rd < 0.05)
+                        SpawnEnemy(EntityType.StrongMeleeEnemy, chunkPos, tileCenterPos, null);
+                    else if (rd < 0.06)
+                        SpawnEnemy(EntityType.NormalRangedEnemy, chunkPos, tileCenterPos, null);
                 }
-                if (tileType == TileType.FireLand)
+                else if (tileType == TileType.FireLand)
                 {
-
-                    continue;
+                    float rd = GD.Randf();
+                    if (rd < 0)
+                        SpawnResource(EntityType.Grass, chunkPos, tileCenterPos, null);
+                    else if (rd < 0)
+                        SpawnResource(EntityType.Tree, chunkPos, tileCenterPos, null);
+                    else if (rd < 0.1)
+                        SpawnResource(EntityType.Stone, chunkPos, tileCenterPos, null);
+                    else if (rd < 0.2)
+                        SpawnResource(EntityType.Ore, chunkPos, tileCenterPos, null);
+                    else if (rd < 0.21)
+                        SpawnEnemy(EntityType.NormalMeleeEnemy, chunkPos, tileCenterPos, null);
+                    else if (rd < 0.22)
+                        SpawnEnemy(EntityType.SpeedMeleeEnemy, chunkPos, tileCenterPos, null);
+                    else if (rd < 0.23)
+                        SpawnEnemy(EntityType.StrongMeleeEnemy, chunkPos, tileCenterPos, null);
+                    else if (rd < 0.24)
+                        SpawnEnemy(EntityType.NormalRangedEnemy, chunkPos, tileCenterPos, null);
                 }
 
             }
