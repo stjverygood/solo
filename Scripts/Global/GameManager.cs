@@ -2,9 +2,9 @@ using Godot;
 using Solo.Scripts.Entities.Players;
 using Solo.Scripts.Entities.Units;
 using Solo.Scripts.Global.Interfaces;
+using Solo.Scripts.Projectiles;
 using Solo.Scripts.System.BuildingSystem;
 using Solo.Scripts.System.ChunkSystem;
-using Solo.Scripts.System.ItemSystem;
 using Solo.Scripts.System.SaveSystem;
 using System.Collections.Generic;
 
@@ -64,13 +64,7 @@ namespace Solo.Scripts.Global
         //dropitem
         [Export] private PackedScene _expBallPs = null!;
 
-        //entity
-        [Export] public PackedScene PlayerPs = null!;
-        [Export] public PackedScene TreePs = null!;
-        [Export] public PackedScene GrassPs = null!;
-        [Export] public PackedScene NormalMeleeEnemyPs = null!;
-        [Export] public PackedScene SpeedMeleeEnemyPs = null!;
-        [Export] public PackedScene StrongMeleeEnemyPs = null!;
+
 
 
         public override void _Ready()
@@ -241,11 +235,68 @@ namespace Solo.Scripts.Global
         }
 
         //生成发射物
-        public void SpawnSwordWave(IEntity spawner, Vector2 atkDir)
+        public void SpawnProjectile(ProjectileType type, ProjectileContext context)
         {
-            SwordWave swordWave = _swordWavePs.Instantiate<SwordWave>();
-            GetTree().CurrentScene.AddChild(swordWave);
-            swordWave.Init(spawner, atkDir);
+            switch (type)
+            {
+                case ProjectileType.SwordWave:
+                    SwordWave swordWave = _swordWavePs.Instantiate<SwordWave>();
+                    GetTree().CurrentScene.AddChild(swordWave);
+                    swordWave.Init(context);
+                    break;
+                case ProjectileType.Arrow:
+                    Arrow arrow = _arrowPs.Instantiate<Arrow>();
+                    GetTree().CurrentScene.AddChild(arrow);
+                    arrow.Init(context);
+                    break;
+            }
+        }
+        //public void SpawnSwordWave(IEntity spawner, Vector2 atkDir)
+        //{
+        //    SwordWave swordWave = _swordWavePs.Instantiate<SwordWave>();
+        //    GetTree().CurrentScene.AddChild(swordWave);
+        //    swordWave.Init(spawner, atkDir);
+        //}
+
+        //生成实体//entity
+
+        [Export] public PackedScene PlayerPs = null!;
+        [Export] public PackedScene TreePs = null!;
+        [Export] public PackedScene GrassPs = null!;
+        [Export] public PackedScene StonePs = null!;
+        [Export] public PackedScene OrePs = null!;
+        [Export] public PackedScene NormalMeleeEnemyPs = null!;
+        [Export] public PackedScene SpeedMeleeEnemyPs = null!;
+        [Export] public PackedScene StrongMeleeEnemyPs = null!;
+        [Export] public PackedScene NormalRangedEnemyPs = null!;
+
+        [Export]
+        public Godot.Collections.Dictionary<EntityType, PackedScene> EntityPsMap = new();
+
+        public PackedScene GetEntityPs(EntityType type)
+        {
+            switch (type)
+            {
+                case EntityType.Player:
+                    return PlayerPs;
+                case EntityType.Tree:
+                    return TreePs;
+                case EntityType.Grass:
+                    return GrassPs;
+                case EntityType.Stone:
+                    return StonePs;
+                case EntityType.Ore:
+                    return OrePs;
+                case EntityType.NormalMeleeEnemy:
+                    return NormalMeleeEnemyPs;
+                case EntityType.SpeedMeleeEnemy:
+                    return SpeedMeleeEnemyPs;
+                case EntityType.StrongMeleeEnemy:
+                    return StrongMeleeEnemyPs;
+                case EntityType.NormalRangedEnemy:
+                    return NormalRangedEnemyPs;
+            }
+            return PlayerPs;
         }
 
         public void SpawnExpBall(Vector2 worldPos, float exp)
@@ -254,6 +305,8 @@ namespace Solo.Scripts.Global
             GetTree().CurrentScene.AddChild(expBall);
             expBall.Init(worldPos, exp);
         }
+
+
     }
 
 }

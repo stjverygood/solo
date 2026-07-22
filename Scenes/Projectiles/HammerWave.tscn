@@ -1,0 +1,77 @@
+[gd_scene format=3 uid="uid://1vvxok2xavwu"]
+
+[ext_resource type="Script" uid="uid://b8g3hnsoxbgfy" path="res://Scripts/Projectiles/HammerWave.cs" id="1_x5gx5"]
+[ext_resource type="Texture2D" uid="uid://divnn64rc82h7" path="res://Assets/Png/VfxAnimSheets/HammerWave.png" id="2_3ru1a"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_yxouj"]
+radius = 26.0
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_yinlw"]
+atlas = ExtResource("2_3ru1a")
+region = Rect2(0, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6bhry"]
+atlas = ExtResource("2_3ru1a")
+region = Rect2(64, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kfpd8"]
+atlas = ExtResource("2_3ru1a")
+region = Rect2(128, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_632xf"]
+atlas = ExtResource("2_3ru1a")
+region = Rect2(192, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gjwek"]
+atlas = ExtResource("2_3ru1a")
+region = Rect2(256, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_st55c"]
+atlas = ExtResource("2_3ru1a")
+region = Rect2(320, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xc1dl"]
+atlas = ExtResource("2_3ru1a")
+region = Rect2(384, 0, 64, 64)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_rjqjh"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_yinlw")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_6bhry")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_kfpd8")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_632xf")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_gjwek")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_st55c")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_xc1dl")
+}],
+"loop": 0,
+"name": &"Wave1",
+"speed": 16.0
+}]
+
+[node name="HammerWave" type="Area2D" unique_id=1551980705 node_paths=PackedStringArray("_animSprite")]
+script = ExtResource("1_x5gx5")
+_animSprite = NodePath("AnimatedSprite2D")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1363091513]
+shape = SubResource("CircleShape2D_yxouj")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1329746855]
+sprite_frames = SubResource("SpriteFrames_rjqjh")
+animation = &"Wave1"
+frame = 6
+frame_progress = 1.0

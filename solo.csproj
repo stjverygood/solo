@@ -6,6 +6,7 @@
     <EnableDynamicLoading>true</EnableDynamicLoading>
   </PropertyGroup>
   <ItemGroup>
-    <Folder Include="Scripts\Entities\RangedEnemies\" />
+    <Compile Remove="Scripts\Entities\RangedEnemies\**" />
+    <EmbeddedResource Remove="Scripts\Entities\RangedEnemies\**" />
   </ItemGroup>
 </Project>

@@ -1,0 +1,44 @@
+[gd_scene format=3 uid="uid://b88woqf3daola"]
+
+[ext_resource type="Script" uid="uid://byag51bat8vwh" path="res://Scripts/Entities/Resources/Resource.cs" id="1_a1frl"]
+[ext_resource type="Texture2D" uid="uid://bt0s8ja1k2w0g" path="res://Assets/Png/building.png" id="1_tfu7j"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tfu7j"]
+atlas = ExtResource("1_tfu7j")
+region = Rect2(0, 112, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qjabb"]
+atlas = ExtResource("1_tfu7j")
+region = Rect2(752, 48, 16, 16)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_s4g57"]
+radius = 4.0
+
+[node name="Stone" type="StaticBody2D" unique_id=654700533]
+script = ExtResource("1_a1frl")
+
+[node name="ShadowSprite2D" type="Sprite2D" parent="." unique_id=1340144259]
+position = Vector2(6.556511e-07, -1)
+scale = Vector2(1.3749999, 0.75)
+texture = SubResource("AtlasTexture_tfu7j")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=904785594]
+position = Vector2(-1, 8)
+texture = SubResource("AtlasTexture_qjabb")
+offset = Vector2(0.825, -14.33)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1197529678]
+position = Vector2(0, -2)
+shape = SubResource("CircleShape2D_s4g57")
+
+[node name="NavigationObstacle2D" type="NavigationObstacle2D" parent="." unique_id=1221698906]
+position = Vector2(0, -2)
+radius = 4.0
+
+[node name="Label" type="Label" parent="." unique_id=1584802073]
+offset_left = -20.0
+offset_top = -50.0
+offset_right = 20.0
+offset_bottom = -33.0
+text = "asdf"
+horizontal_alignment = 1

@@ -8,6 +8,7 @@
         Tree,
         Grass,
         Stone,
+        Ore,
         MainBase,
 
         NormalMeleeEnemy,//普通型
@@ -71,8 +72,14 @@
         //GrassWaterAll,
     }
 
+    public enum ProjectileType
+    {
+        SwordWave,
+        Arrow,
+    }
+
     //单位类型
-    public enum UnitType
+    public enum UnitType//弃用
     {
         Wolf,//风狼
         Fox,

@@ -6,48 +6,57 @@
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ihgw4"]
 atlas = ExtResource("2_ex883")
-region = Rect2(63, 162, 55, 6)
+region = Rect2(0, 192, 32, 16)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_ax0s7"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_wtro6"]
 atlas = ExtResource("2_ex883")
-region = Rect2(64, 172, 53, 4)
+region = Rect2(0, 208, 32, 16)
 
 [node name="HpBar" type="Control" unique_id=369810414 node_paths=PackedStringArray("_hpTpb", "_hpLb")]
 z_index = 277
 layout_mode = 3
 anchors_preset = 0
-offset_right = 549.99994
-offset_bottom = 59.999992
-scale = Vector2(0.1, 0.1)
+offset_right = 39.0
+offset_bottom = 12.0
 script = ExtResource("1_sdrt1")
 _hpTpb = NodePath("TextureProgressBar")
 _hpLb = NodePath("Label")
 
 [node name="TextureProgressBar" type="TextureProgressBar" parent="." unique_id=1286690781]
 layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -16.0
+offset_top = -8.0
+offset_right = 16.0
+offset_bottom = 8.0
 grow_horizontal = 2
 grow_vertical = 2
-scale = Vector2(10, 10)
-value = 24.0
+value = 49.0
 texture_under = SubResource("AtlasTexture_ihgw4")
-texture_progress = SubResource("AtlasTexture_ax0s7")
-texture_progress_offset = Vector2(1, 1)
+texture_progress = SubResource("AtlasTexture_wtro6")
 
 [node name="Label" type="Label" parent="." unique_id=1229150175]
 visible = false
 layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -17.0
+offset_top = -4.0
+offset_right = 17.0
+offset_bottom = 4.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_constants/outline_size = 21
+theme_override_constants/outline_size = 1
 theme_override_fonts/font = ExtResource("1_300bt")
-theme_override_font_sizes/font_size = 36
-text = "90/100"
+theme_override_font_sizes/font_size = 4
+text = "血 90/100"
 horizontal_alignment = 1
 vertical_alignment = 1

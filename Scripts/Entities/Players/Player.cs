@@ -3,6 +3,7 @@ using Solo.Scripts.Entities.Components;
 using Solo.Scripts.Entities.Core;
 using Solo.Scripts.Global;
 using Solo.Scripts.Global.Interfaces;
+using Solo.Scripts.Projectiles;
 using Solo.Scripts.System.InventorySystem;
 using Solo.Scripts.System.ItemSystem;
 using Solo.Scripts.System.RealmSystem;
@@ -658,14 +659,14 @@ namespace Solo.Scripts.Entities.Players
             Tween _animTween = CreateTween().SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out);
             _animTween.TweenProperty(_handRootNode, "rotation", attackRotation, 0.05f);
 
-            Vector2 atkDir = (GetGlobalMousePosition() - GlobalPosition).Normalized();
+            //Vector2 atkDir = (GetGlobalMousePosition() - GlobalPosition).Normalized();
 
-
+            var projectileContext = new ProjectileContext() { Projecter = this, StartPos = GlobalPosition, TargetPos = GetGlobalMousePosition() };
 
             switch (Core.GetComponent<InventoryComponent>().GetCurItemType(CurFastBarIndex))
             {
                 case ItemType.WoodSword:
-                    GameManager.Instance.SpawnSwordWave(this, atkDir);
+                    GameManager.Instance.SpawnProjectile(ProjectileType.SwordWave, projectileContext);
                     break;
                 case ItemType.WoodAxe:
                     //_animTween = CreateTween().SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out);

@@ -1,7 +1,6 @@
-﻿using Solo.Scripts.Entities.Grasses;
-using Solo.Scripts.Entities.MeleeEnemies;
+﻿using Solo.Scripts.Entities.Enemies;
 using Solo.Scripts.Entities.Players;
-using Solo.Scripts.Entities.Trees;
+using Solo.Scripts.Entities.Resources;
 using Solo.Scripts.Global;
 using System.Text.Json.Serialization;
 
@@ -9,9 +8,8 @@ namespace Solo.Scripts.Entities.Core
 {
     [JsonPolymorphic(TypeDiscriminatorPropertyName = "$type")]
     [JsonDerivedType(typeof(PlayerSaveData), nameof(PlayerSaveData))]
-    [JsonDerivedType(typeof(TreeSaveData), nameof(TreeSaveData))]
-    [JsonDerivedType(typeof(GrassSaveData), nameof(GrassSaveData))]
-    [JsonDerivedType(typeof(MeleeEnemySaveData), nameof(MeleeEnemySaveData))]
+    [JsonDerivedType(typeof(ResourceSaveData), nameof(ResourceSaveData))]
+    [JsonDerivedType(typeof(EnemySaveData), nameof(EnemySaveData))]
     public class EntitySaveData
     {
         public EntityType Type { get; set; }
