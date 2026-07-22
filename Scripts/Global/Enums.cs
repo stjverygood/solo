@@ -9,7 +9,12 @@
         Grass,
         Stone,
         MainBase,
-        Zombie,
+
+        NormalMeleeEnemy,//普通型
+        SpeedMeleeEnemy,//速度型
+        StrongMeleeEnemy,//力量型
+        NormalRangedEnemy,//普通, 射直线
+        ExplosiveRangedEnemy,//发射爆炸弹
     }
 
     //境界类型

@@ -68,7 +68,9 @@ namespace Solo.Scripts.Global
         [Export] public PackedScene PlayerPs = null!;
         [Export] public PackedScene TreePs = null!;
         [Export] public PackedScene GrassPs = null!;
-        [Export] public PackedScene ZombiePs = null!;
+        [Export] public PackedScene NormalMeleeEnemyPs = null!;
+        [Export] public PackedScene SpeedMeleeEnemyPs = null!;
+        [Export] public PackedScene StrongMeleeEnemyPs = null!;
 
 
         public override void _Ready()

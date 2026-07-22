@@ -17,7 +17,9 @@
 [ext_resource type="PackedScene" uid="uid://ow5i482gxdko" path="res://Scenes/DropItem/ExpBall.tscn" id="11_1suta"]
 [ext_resource type="PackedScene" uid="uid://dq6c33qxp7sqb" path="res://Scenes/Entities/Trees/Tree.tscn" id="15_fuhgo"]
 [ext_resource type="PackedScene" uid="uid://cn7pil5cp6afb" path="res://Scenes/Entities/Grass/Grass.tscn" id="16_b088f"]
-[ext_resource type="PackedScene" uid="uid://bfckrtubfdcw1" path="res://Scenes/Entities/Zombies/Zombie.tscn" id="17_40wt5"]
+[ext_resource type="PackedScene" uid="uid://bfckrtubfdcw1" path="res://Scenes/Entities/MeleeEnemies/NormalMeleeEnemy.tscn" id="17_40wt5"]
+[ext_resource type="PackedScene" uid="uid://cy00yjeluvypp" path="res://Scenes/Entities/MeleeEnemies/StrongMeleeEnemy.tscn" id="19_hl6mk"]
+[ext_resource type="PackedScene" uid="uid://bf3qrbvykatef" path="res://Scenes/Entities/MeleeEnemies/SpeedMeleeEnemy.tscn" id="19_pdb4w"]
 
 [node name="GameManager" type="Node" unique_id=1034362425]
 script = ExtResource("1_g4tje")
@@ -38,4 +40,6 @@ _expBallPs = ExtResource("11_1suta")
 PlayerPs = ExtResource("9_n7fwv")
 TreePs = ExtResource("15_fuhgo")
 GrassPs = ExtResource("16_b088f")
-ZombiePs = ExtResource("17_40wt5")
+NormalMeleeEnemyPs = ExtResource("17_40wt5")
+SpeedMeleeEnemyPs = ExtResource("19_pdb4w")
+StrongMeleeEnemyPs = ExtResource("19_hl6mk")

@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://scul4uk12av0" path="res://Scripts/System/ChunkSystem/ChunkManager.cs" id="1_c2qkc"]
 [ext_resource type="Shader" uid="uid://dbd5ejkrhyq6e" path="res://Assets/Shaders/WaterTile.gdshader" id="4_4bhlp"]
 [ext_resource type="PackedScene" uid="uid://fexciysj5hdb" path="res://Scenes/Entities/Units/Unit.tscn" id="4_cqtpm"]
-[ext_resource type="PackedScene" uid="uid://bfckrtubfdcw1" path="res://Scenes/Entities/Zombies/Zombie.tscn" id="4_evjqk"]
+[ext_resource type="PackedScene" uid="uid://bfckrtubfdcw1" path="res://Scenes/Entities/MeleeEnemies/NormalMeleeEnemy.tscn" id="4_evjqk"]
 [ext_resource type="TileSet" uid="uid://r1ghkbiqrc1b" path="res://Assets/Tileset/tileset.tres" id="4_hijxa"]
 [ext_resource type="PackedScene" uid="uid://qw0q5wipafhq" path="res://Scenes/System/ItemSystem/DropItem.tscn" id="4_qtd3p"]
 

@@ -1,9 +1,10 @@
 ﻿using Solo.Scripts.Entities.Core;
 
-namespace Solo.Scripts.Entities.Zombies
+namespace Solo.Scripts.Entities.MeleeEnemies
 {
-    public class ZombieData : EntityData
+    public class MeleeEnemyData : EntityData
     {
+        //普通近战敌人
         public float MaxHp;
         public float Atk;
         public float Def;

@@ -24,7 +24,7 @@ namespace Solo.Scripts.Entities.Grasses
             {
                 if (cur == 0) QueueFree();
             };
-            hpComponent.Refresh(hpValue, _data.MaxHp);
+            hpComponent.SetValue(hpValue, _data.MaxHp);
             Core.AddComponent(hpComponent);
 
             DefComponent defComponent = new DefComponent(this);

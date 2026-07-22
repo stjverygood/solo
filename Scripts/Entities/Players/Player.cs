@@ -111,9 +111,9 @@ namespace Solo.Scripts.Entities.Players
 
             HpComponent hpComponent = new HpComponent(this);
             if (saveData == null)
-                hpComponent.Refresh(realmData.MaxHp, realmData.MaxHp);
+                hpComponent.SetValue(realmData.MaxHp, realmData.MaxHp);
             else
-                hpComponent.Refresh(saveData.CurHp, realmData.MaxHp + inventoryComponent.GetMaxHpBonus());
+                hpComponent.SetValue(saveData.CurHp, realmData.MaxHp + inventoryComponent.GetMaxHpBonus());
             Core.AddComponent(hpComponent);
 
             QiComponent qiComponent = new QiComponent(this);
@@ -1391,7 +1391,7 @@ namespace Solo.Scripts.Entities.Players
             GlobalPosition = StartPoint;
             Core.GetComponent<RealmComponent>().Refresh(RealmType.LianQi1);
             var realmData = RealmDataManager.Instance.GetData(Core.GetComponent<RealmComponent>().Value);
-            Core.GetComponent<HpComponent>().Refresh(realmData.MaxHp + Core.GetComponent<InventoryComponent>().GetMaxHpBonus(), realmData.MaxHp + Core.GetComponent<InventoryComponent>().GetMaxHpBonus());
+            Core.GetComponent<HpComponent>().SetValue(realmData.MaxHp + Core.GetComponent<InventoryComponent>().GetMaxHpBonus(), realmData.MaxHp + Core.GetComponent<InventoryComponent>().GetMaxHpBonus());
             Core.GetComponent<QiComponent>().Refresh(realmData.MaxQi + Core.GetComponent<InventoryComponent>().GetMaxQiBonus(), realmData.MaxQi + Core.GetComponent<InventoryComponent>().GetMaxQiBonus());
             Core.GetComponent<ExpComponent>().Refresh(0, realmData.MaxExp);
             Core.GetComponent<AtkComponent>().Refresh(realmData.Atk + Core.GetComponent<InventoryComponent>().GetAtkBonus());

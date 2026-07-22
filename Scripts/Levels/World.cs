@@ -1,7 +1,9 @@
 using Godot;
 using Solo.Scripts.Entities.Core;
 using Solo.Scripts.Entities.Grasses;
+using Solo.Scripts.Entities.MeleeEnemies;
 using Solo.Scripts.Entities.Players;
+using Solo.Scripts.Entities.Trees;
 using Solo.Scripts.Global;
 using Solo.Scripts.Global.Interfaces;
 using Solo.Scripts.Levels;
@@ -116,17 +118,35 @@ public partial class World : Node2D
                     {
                         Tree tree = GameManager.Instance.TreePs.Instantiate<Tree>();
                         GetTree().CurrentScene.AddChild(tree);
-                        tree.Init(tileCenterPos);
+                        tree.Init(tileCenterPos, (TreeData)EntityDataManager.Instance.GetData(EntityType.Tree));
                         _entityMap[chunkPos].Add(tree);
                         continue;
                     }
 
-                    //if (GD.Randf() < 0.01)
-                    //{
-                    //    Zombie zombie = GameManager.Instance.ZombiePs.Instantiate<Zombie>();
-                    //    GetTree().CurrentScene.AddChild(zombie);
-                    //    zombie.Init(tileCenterPos);
-                    //}
+                    if (GD.Randf() < 0.01)
+                    {
+                        MeleeEnemy normalMeleeEnemy = GameManager.Instance.NormalMeleeEnemyPs.Instantiate<MeleeEnemy>();
+                        GetTree().CurrentScene.AddChild(normalMeleeEnemy);
+                        normalMeleeEnemy.Init(tileCenterPos, EntityType.NormalMeleeEnemy);
+                        _entityMap[chunkPos].Add(normalMeleeEnemy);
+                        continue;
+                    }
+                    if (GD.Randf() < 0.01)
+                    {
+                        MeleeEnemy speedMeleeEnemy = GameManager.Instance.SpeedMeleeEnemyPs.Instantiate<MeleeEnemy>();
+                        GetTree().CurrentScene.AddChild(speedMeleeEnemy);
+                        speedMeleeEnemy.Init(tileCenterPos, EntityType.SpeedMeleeEnemy);
+                        _entityMap[chunkPos].Add(speedMeleeEnemy);
+                        continue;
+                    }
+                    if (GD.Randf() < 0.01)
+                    {
+                        MeleeEnemy strongMeleeEnemy = GameManager.Instance.StrongMeleeEnemyPs.Instantiate<MeleeEnemy>();
+                        GetTree().CurrentScene.AddChild(strongMeleeEnemy);
+                        strongMeleeEnemy.Init(tileCenterPos, EntityType.StrongMeleeEnemy);
+                        _entityMap[chunkPos].Add(strongMeleeEnemy);
+                        continue;
+                    }
 
                 }
                 if (tileType == TileType.Forest)
@@ -144,7 +164,7 @@ public partial class World : Node2D
                     {
                         Tree tree = GameManager.Instance.TreePs.Instantiate<Tree>();
                         GetTree().CurrentScene.AddChild(tree);
-                        tree.Init(tileCenterPos);
+                        tree.Init(tileCenterPos, (TreeData)EntityDataManager.Instance.GetData(EntityType.Tree));
                         _entityMap[chunkPos].Add(tree);
                     }
                     continue;
@@ -170,8 +190,26 @@ public partial class World : Node2D
                 case EntityType.Tree:
                     Tree tree = GameManager.Instance.TreePs.Instantiate<Tree>();
                     GetTree().CurrentScene.AddChild(tree);
-                    tree.Init(Vector2.Zero, entitySaveData);
+                    tree.Init(Vector2.Zero, (TreeData)EntityDataManager.Instance.GetData(EntityType.Tree), entitySaveData);
                     _entityMap[chunkPos].Add(tree);
+                    break;
+                case EntityType.NormalMeleeEnemy:
+                    MeleeEnemy normalMeleeEnemy = GameManager.Instance.NormalMeleeEnemyPs.Instantiate<MeleeEnemy>();
+                    GetTree().CurrentScene.AddChild(normalMeleeEnemy);
+                    normalMeleeEnemy.Init(Vector2.Zero, EntityType.NormalMeleeEnemy, (MeleeEnemySaveData)entitySaveData);
+                    _entityMap[chunkPos].Add(normalMeleeEnemy);
+                    break;
+                case EntityType.SpeedMeleeEnemy:
+                    MeleeEnemy speedMeleeEnemy = GameManager.Instance.SpeedMeleeEnemyPs.Instantiate<MeleeEnemy>();
+                    GetTree().CurrentScene.AddChild(speedMeleeEnemy);
+                    speedMeleeEnemy.Init(Vector2.Zero, EntityType.SpeedMeleeEnemy, (MeleeEnemySaveData)entitySaveData);
+                    _entityMap[chunkPos].Add(speedMeleeEnemy);
+                    break;
+                case EntityType.StrongMeleeEnemy:
+                    MeleeEnemy strongMeleeEnemy = GameManager.Instance.StrongMeleeEnemyPs.Instantiate<MeleeEnemy>();
+                    GetTree().CurrentScene.AddChild(strongMeleeEnemy);
+                    strongMeleeEnemy.Init(Vector2.Zero, EntityType.StrongMeleeEnemy, (MeleeEnemySaveData)entitySaveData);
+                    _entityMap[chunkPos].Add(strongMeleeEnemy);
                     break;
             }
         }
@@ -197,17 +235,4 @@ public partial class World : Node2D
 
         SaveManager.Instance.WriteCurSaveData();
     }
-
-    //public override void _ExitTree()
-    //{
-    //    GD.Print("world _ExitTree");
-    //    List<EntitySaveData> entitySaveDataList = new List<EntitySaveData>();
-    //    foreach (List<EntitySaveData> curEntitySaveDataList in _entitySaveDataMap.Values)
-    //    {
-    //        foreach (EntitySaveData saveData in curEntitySaveDataList)
-    //            entitySaveDataList.Add(saveData);
-    //    }
-    //    SaveManager.Instance.CurSaveData.EntitySaveDataList = entitySaveDataList;
-    //    SaveManager.Instance.WriteCurSaveData();
-    //}
 }

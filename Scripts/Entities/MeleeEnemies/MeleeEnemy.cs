@@ -4,9 +4,9 @@ using Solo.Scripts.Entities.Core;
 using Solo.Scripts.Entities.Players;
 using Solo.Scripts.Global;
 using Solo.Scripts.Global.Interfaces;
-namespace Solo.Scripts.Entities.Zombies
+namespace Solo.Scripts.Entities.MeleeEnemies
 {
-    public enum ZombieState
+    public enum MeleeEnemyState
     {
         Idle,
         Patrol,
@@ -15,9 +15,9 @@ namespace Solo.Scripts.Entities.Zombies
         Death,
     }
 
-    public partial class Zombie : CharacterBody2D, IEntity
+    public partial class MeleeEnemy : CharacterBody2D, IEntity, ISaveable
     {
-        public static EntityData DefaultData => new ZombieData
+        public static EntityData DefaultData => new MeleeEnemyData
         {
             MaxHp = 100,
             Atk = 40,
@@ -34,23 +34,31 @@ namespace Solo.Scripts.Entities.Zombies
         [Export] private AnimatedSprite2D _animSprite = null!;
         [Export] private NavigationAgent2D _naviAgent = null!;
         [Export] private Label _debugLb = null!;
-        private ZombieState _curState;
+        private MeleeEnemyState _curState;
         private Vector2 _curDir = Vector2.Right;
         private bool canMove = false;
-        private ZombieData _data = null!;
+
+        public EntityType Type;
+        private MeleeEnemyData _data = null!;
 
         public EntityCore Core { get; private set; } = new();
 
 
-        public void Init(EntityData data, Vector2 worldPosition, EntitySaveData? saveData = null)
+        public void Init(Vector2 worldPosition, EntityType type, MeleeEnemySaveData? saveData = null)
         {
-            _data = (ZombieData)EntityDataManager.Instance.GetData(EntityType.Zombie);
-            GlobalPosition = saveData != null ? new Vector2(saveData.WorldX, saveData.WorldY) : worldPosition;
+            Type = type;
+            _data = (MeleeEnemyData)EntityDataManager.Instance.GetData(Type);
 
-            float hpValue = saveData is ZombieSaveData zs ? zs.CurHp : _data.MaxHp;
+            if (saveData == null)
+                GlobalPosition = worldPosition;
+            else
+                GlobalPosition = new Vector2(saveData.WorldX, saveData.WorldY);
 
             HpComponent hpComponent = new HpComponent(this);
-            hpComponent.Refresh(hpValue, _data.MaxHp);
+            if (saveData == null)
+                hpComponent.SetValue(_data.MaxHp, _data.MaxHp);
+            else
+                hpComponent.SetValue(saveData.CurHp, _data.MaxHp);
             hpComponent.OnValueChanged += (curValue, maxValue) =>
             {
                 GD.Print($"{curValue} / {maxValue}");
@@ -67,7 +75,18 @@ namespace Solo.Scripts.Entities.Zombies
 
             _naviAgent.VelocityComputed += _naviAgent_VelocityComputed;
 
-            ChangeState(ZombieState.Idle);
+            ChangeState(MeleeEnemyState.Idle);
+        }
+
+        public EntitySaveData GetSaveData()
+        {
+            return new MeleeEnemySaveData()
+            {
+                Type = Type,
+                WorldX = GlobalPosition.X,
+                WorldY = GlobalPosition.Y,
+                CurHp = Core.GetComponent<HpComponent>().CurValue
+            };
         }
 
         public override void _PhysicsProcess(double delta)
@@ -76,29 +95,29 @@ namespace Solo.Scripts.Entities.Zombies
             _debugLb.Text = _curState.ToString();
         }
 
-        private void ChangeState(ZombieState newState)
+        private void ChangeState(MeleeEnemyState newState)
         {
             ExitState(_curState);
             _curState = newState;
             EnterState(newState);
         }
-        private void EnterState(ZombieState state)
+        private void EnterState(MeleeEnemyState state)
         {
             switch (state)
             {
-                case ZombieState.Idle:
+                case MeleeEnemyState.Idle:
                     EnterIdle();
                     break;
-                case ZombieState.Patrol:
+                case MeleeEnemyState.Patrol:
                     EnterPatrol();
                     break;
-                case ZombieState.Chase:
+                case MeleeEnemyState.Chase:
                     EnterChase();
                     break;
-                case ZombieState.Atk:
+                case MeleeEnemyState.Atk:
                     EnterAtk();
                     break;
-                case ZombieState.Death:
+                case MeleeEnemyState.Death:
                     EnterDeath();
                     break;
             }
@@ -107,40 +126,40 @@ namespace Solo.Scripts.Entities.Zombies
         {
             switch (_curState)
             {
-                case ZombieState.Idle:
+                case MeleeEnemyState.Idle:
                     UpdateIdle(delta);
                     break;
-                case ZombieState.Patrol:
+                case MeleeEnemyState.Patrol:
                     UpdatePatrol(delta);
                     break;
-                case ZombieState.Chase:
+                case MeleeEnemyState.Chase:
                     UpdateChase(delta);
                     break;
-                case ZombieState.Atk:
+                case MeleeEnemyState.Atk:
                     UpdateAtk(delta);
                     break;
-                case ZombieState.Death:
+                case MeleeEnemyState.Death:
                     UpdateDeath(delta);
                     break;
             }
         }
-        private void ExitState(ZombieState state)
+        private void ExitState(MeleeEnemyState state)
         {
             switch (state)
             {
-                case ZombieState.Idle:
+                case MeleeEnemyState.Idle:
                     ExitIdle();
                     break;
-                case ZombieState.Patrol:
+                case MeleeEnemyState.Patrol:
                     ExitPatrol();
                     break;
-                case ZombieState.Chase:
+                case MeleeEnemyState.Chase:
                     ExitChase();
                     break;
-                case ZombieState.Atk:
+                case MeleeEnemyState.Atk:
                     ExitAtk();
                     break;
-                case ZombieState.Death:
+                case MeleeEnemyState.Death:
                     ExitDeath();
                     break;
             }
@@ -157,7 +176,7 @@ namespace Solo.Scripts.Entities.Zombies
         {
             if (Core.GetComponent<HpComponent>().CurValue <= 0)
             {
-                ChangeState(ZombieState.Death);
+                ChangeState(MeleeEnemyState.Death);
                 return;
             }
 
@@ -165,14 +184,14 @@ namespace Solo.Scripts.Entities.Zombies
             Player player = GameManager.Instance.Player;
             if (player != null && GlobalPosition.DistanceSquaredTo(player.GlobalPosition) <= _data.ViewRangeSq)
             {
-                ChangeState(ZombieState.Chase);
+                ChangeState(MeleeEnemyState.Chase);
                 return;
             }
 
             _idleTimer += delta;
             if (_idleTimer >= _data.IdleDuration)
             {
-                ChangeState(ZombieState.Patrol);
+                ChangeState(MeleeEnemyState.Patrol);
                 return;
             }
         }
@@ -195,13 +214,13 @@ namespace Solo.Scripts.Entities.Zombies
             Player player = GameManager.Instance.Player;
             if (player != null && GlobalPosition.DistanceSquaredTo(player.GlobalPosition) <= _data.ViewRangeSq)
             {
-                ChangeState(ZombieState.Chase);
+                ChangeState(MeleeEnemyState.Chase);
                 return;
             }
 
             if (_naviAgent.IsNavigationFinished())
             {
-                ChangeState(ZombieState.Idle);
+                ChangeState(MeleeEnemyState.Idle);
                 return;
             }
 
@@ -228,20 +247,20 @@ namespace Solo.Scripts.Entities.Zombies
         {
             if (Core.GetComponent<HpComponent>().CurValue <= 0)
             {
-                ChangeState(ZombieState.Death);
+                ChangeState(MeleeEnemyState.Death);
                 return;
             }
 
             Player player = GameManager.Instance.Player;
             if (player == null || GlobalPosition.DistanceSquaredTo(player.GlobalPosition) > _data.ViewRangeSq)
             {
-                ChangeState(ZombieState.Idle);
+                ChangeState(MeleeEnemyState.Idle);
                 return;
             }
 
             if (GlobalPosition.DistanceSquaredTo(player.GlobalPosition) <= _data.AtkRangeSq)
             {
-                ChangeState(ZombieState.Atk);
+                ChangeState(MeleeEnemyState.Atk);
                 return;
             }
 
@@ -276,7 +295,7 @@ namespace Solo.Scripts.Entities.Zombies
             }
             if (_animSprite.IsPlaying() == false)
             {
-                ChangeState(ZombieState.Idle);
+                ChangeState(MeleeEnemyState.Idle);
                 return;
             }
 
@@ -330,5 +349,7 @@ namespace Solo.Scripts.Entities.Zombies
             Velocity = safeVelocity;
             MoveAndSlide();
         }
+
+
     }
 }

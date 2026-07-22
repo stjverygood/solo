@@ -45,7 +45,7 @@ namespace Solo.Scripts.UI.InteractViews
                 if (playerCore.GetComponent<RealmComponent>().Value == RealmType.HuaShen)
                     _upgradeBtn.Disabled = true;
                 var realmData = RealmDataManager.Instance.GetData(playerCore.GetComponent<RealmComponent>().Value);
-                playerCore.GetComponent<HpComponent>().Refresh(realmData.MaxHp + playerCore.GetComponent<InventoryComponent>().GetMaxHpBonus(), realmData.MaxHp + playerCore.GetComponent<InventoryComponent>().GetMaxHpBonus());
+                playerCore.GetComponent<HpComponent>().SetValue(realmData.MaxHp + playerCore.GetComponent<InventoryComponent>().GetMaxHpBonus(), realmData.MaxHp + playerCore.GetComponent<InventoryComponent>().GetMaxHpBonus());
                 playerCore.GetComponent<QiComponent>().Refresh(realmData.MaxQi + playerCore.GetComponent<InventoryComponent>().GetMaxQiBonus(), realmData.MaxQi + playerCore.GetComponent<InventoryComponent>().GetMaxQiBonus());
                 playerCore.GetComponent<ExpComponent>().Refresh(0, realmData.MaxExp);
                 playerCore.GetComponent<AtkComponent>().Refresh(realmData.Atk + playerCore.GetComponent<InventoryComponent>().GetAtkBonus());
