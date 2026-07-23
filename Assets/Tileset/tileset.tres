@@ -2,7 +2,33 @@
 
 [ext_resource type="Texture2D" uid="uid://bpxfdransd3hg" path="res://Assets/Png/tileset.png" id="1_lu7m8"]
 
+[sub_resource type="NavigationPolygon" id="NavigationPolygon_01blk"]
+vertices = PackedVector2Array(8, 8, -8, 8, -8, -8, 8, -8)
+polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3)])
+outlines = Array[PackedVector2Array]([PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)])
+agent_radius = 0.0
+
+[sub_resource type="NavigationPolygon" id="NavigationPolygon_n0j6s"]
+vertices = PackedVector2Array(8, 8, -8, 8, -8, -8, 8, -8)
+polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3)])
+outlines = Array[PackedVector2Array]([PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)])
+agent_radius = 0.0
+
+[sub_resource type="NavigationPolygon" id="NavigationPolygon_1i8yy"]
+vertices = PackedVector2Array(8, 8, -8, 8, -8, -8, 8, -8)
+polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3)])
+outlines = Array[PackedVector2Array]([PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)])
+agent_radius = 0.0
+
 [sub_resource type="NavigationPolygon" id="NavigationPolygon_lu7m8"]
+vertices = PackedVector2Array(8, 8, -8, 8, -8, -8, 8, -8)
+polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3)])
+outlines = Array[PackedVector2Array]([PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)])
+agent_radius = 0.0
+
+[sub_resource type="NavigationPolygon" id="NavigationPolygon_t6wig"]
+
+[sub_resource type="NavigationPolygon" id="NavigationPolygon_qhmmk"]
 vertices = PackedVector2Array(8, 8, -8, 8, -8, -8, 8, -8)
 polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3)])
 outlines = Array[PackedVector2Array]([PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)])
@@ -67,10 +93,12 @@ texture = ExtResource("1_lu7m8")
 5:7/0 = 0
 12:7/0 = 0
 1:8/0 = 0
+1:8/0/navigation_layer_0/polygon = SubResource("NavigationPolygon_t6wig")
 5:8/0 = 0
 6:8/0 = 0
 7:8/0 = 0
 1:9/0 = 0
+1:9/0/navigation_layer_0/polygon = SubResource("NavigationPolygon_qhmmk")
 24:18/0 = 0
 25:18/0 = 0
 26:18/0 = 0
@@ -232,8 +260,11 @@ texture = ExtResource("1_lu7m8")
 1:28/0 = 0
 1:23/0 = 0
 1:10/0 = 0
+1:10/0/navigation_layer_0/polygon = SubResource("NavigationPolygon_01blk")
 1:11/0 = 0
+1:11/0/navigation_layer_0/polygon = SubResource("NavigationPolygon_n0j6s")
 1:12/0 = 0
+1:12/0/navigation_layer_0/polygon = SubResource("NavigationPolygon_1i8yy")
 
 [resource]
 physics_layer_0/collision_layer = 1

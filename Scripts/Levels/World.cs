@@ -6,6 +6,7 @@ using Solo.Scripts.Global.Interfaces;
 using Solo.Scripts.Levels;
 using Solo.Scripts.System.ChunkSystem;
 using Solo.Scripts.System.SaveSystem;
+using System;
 using System.Collections.Generic;
 
 public struct EntityWeight
@@ -25,26 +26,26 @@ public partial class World : Node2D
         TileType.Grass,
         new List<EntityWeight>()
         {
-            new EntityWeight(){ Type = null, Weight = 2000f },
+            new EntityWeight(){ Type = null, Weight = 500 },
             new EntityWeight(){ Type = EntityType.Grass, Weight = 20f },
-            new EntityWeight(){ Type = EntityType.Tree, Weight = 8f },
-            new EntityWeight(){ Type = EntityType.Stone, Weight = 5f },
-            new EntityWeight(){ Type = EntityType.Ore, Weight = 2f },
-            new EntityWeight(){ Type = EntityType.NormalMeleeEnemy, Weight = 8f },
-            new EntityWeight(){ Type = EntityType.SpeedMeleeEnemy, Weight = 4f },
+            new EntityWeight(){ Type = EntityType.Tree, Weight = 5f },
+            new EntityWeight(){ Type = EntityType.Stone, Weight = 1f },
+            new EntityWeight(){ Type = EntityType.Ore, Weight = 1f },
+            new EntityWeight(){ Type = EntityType.NormalMeleeEnemy, Weight = 1f },
+            new EntityWeight(){ Type = EntityType.SpeedMeleeEnemy, Weight = 1f },
             new EntityWeight(){ Type = EntityType.StrongMeleeEnemy, Weight = 1f },
-            new EntityWeight(){ Type = EntityType.NormalRangedEnemy, Weight = 2f },
+            new EntityWeight(){ Type = EntityType.NormalRangedEnemy, Weight = 1f },
         }
     },
     {
         TileType.Forest,
         new List<EntityWeight>()
         {
-            new EntityWeight(){ Type = null, Weight = 2000f },
-            new EntityWeight(){ Type = EntityType.Grass, Weight = 15f },
-            new EntityWeight(){ Type = EntityType.Tree, Weight = 35f },
-            new EntityWeight(){ Type = EntityType.Stone, Weight = 3f },
-            new EntityWeight(){ Type = EntityType.Ore, Weight = 2f },
+            new EntityWeight(){ Type = null, Weight = 500 },
+            new EntityWeight(){ Type = EntityType.Grass, Weight = 5f },
+            new EntityWeight(){ Type = EntityType.Tree, Weight = 20f },
+            new EntityWeight(){ Type = EntityType.Stone, Weight = 1f },
+            new EntityWeight(){ Type = EntityType.Ore, Weight = 1f },
             new EntityWeight(){ Type = EntityType.NormalMeleeEnemy, Weight = 5f },
             new EntityWeight(){ Type = EntityType.SpeedMeleeEnemy, Weight = 7f },
             new EntityWeight(){ Type = EntityType.StrongMeleeEnemy, Weight = 1f },
@@ -55,11 +56,11 @@ public partial class World : Node2D
         TileType.Stone,
         new List<EntityWeight>()
         {
-            new EntityWeight(){ Type = null, Weight = 2000f },
+            new EntityWeight(){ Type = null, Weight = 500 },
             new EntityWeight(){ Type = EntityType.Grass, Weight = 1f },
             new EntityWeight(){ Type = EntityType.Tree, Weight = 1f },
-            new EntityWeight(){ Type = EntityType.Stone, Weight = 25f },
-            new EntityWeight(){ Type = EntityType.Ore, Weight = 12f },
+            new EntityWeight(){ Type = EntityType.Stone, Weight = 20f },
+            new EntityWeight(){ Type = EntityType.Ore, Weight = 10f },
             new EntityWeight(){ Type = EntityType.NormalMeleeEnemy, Weight = 4f },
             new EntityWeight(){ Type = EntityType.SpeedMeleeEnemy, Weight = 2f },
             new EntityWeight(){ Type = EntityType.StrongMeleeEnemy, Weight = 8f },
@@ -70,7 +71,7 @@ public partial class World : Node2D
         TileType.Desert,
         new List<EntityWeight>()
         {
-            new EntityWeight(){ Type = null, Weight = 2000f },
+            new EntityWeight(){ Type = null, Weight = 500 },
             new EntityWeight(){ Type = EntityType.Grass, Weight = 1f },
             new EntityWeight(){ Type = EntityType.Tree, Weight = 0f },
             new EntityWeight(){ Type = EntityType.Stone, Weight = 8f },
@@ -85,11 +86,11 @@ public partial class World : Node2D
         TileType.FireLand,
         new List<EntityWeight>()
         {
-            new EntityWeight(){ Type = null, Weight = 2000f },
+            new EntityWeight(){ Type = null, Weight = 500 },
             new EntityWeight(){ Type = EntityType.Grass, Weight = 0f },
             new EntityWeight(){ Type = EntityType.Tree, Weight = 0f },
             new EntityWeight(){ Type = EntityType.Stone, Weight = 10f },
-            new EntityWeight(){ Type = EntityType.Ore, Weight = 18f },
+            new EntityWeight(){ Type = EntityType.Ore, Weight = 20f },
             new EntityWeight(){ Type = EntityType.NormalMeleeEnemy, Weight = 2f },
             new EntityWeight(){ Type = EntityType.SpeedMeleeEnemy, Weight = 8f },
             new EntityWeight(){ Type = EntityType.StrongMeleeEnemy, Weight = 12f },
@@ -99,7 +100,7 @@ public partial class World : Node2D
 };
 
     //管理当前激活区块的实体
-    private Dictionary<Vector2I, List<IEntity>> _entityMap = new();
+    public Dictionary<Vector2I, List<IEntity>> EntityMap = new();
 
     //区块实体的缓存, 卸载区块时把数据写入这个缓存, 区块加载时用这个缓存恢复, 游戏关闭后全部区块都要卸载, 会先写入缓存, 最后缓存再进入存档, 下次打开游戏, 也是先从存档加载缓存
     private Dictionary<Vector2I, List<EntitySaveData>> _entitySaveDataMap = new();
@@ -151,7 +152,7 @@ public partial class World : Node2D
     {
         if (_entitySaveDataMap.ContainsKey(chunkPos) == false)
             _entitySaveDataMap[chunkPos] = new List<EntitySaveData>();
-        List<IEntity> entityList = _entityMap[chunkPos];
+        List<IEntity> entityList = EntityMap[chunkPos];
         foreach (IEntity entity in entityList)
         {
             if (IsInstanceValid((Node2D)entity) == false)
@@ -162,13 +163,13 @@ public partial class World : Node2D
             }
             ((Node2D)entity).QueueFree();
         }
-        _entityMap.Remove(chunkPos);
+        EntityMap.Remove(chunkPos);
     }
 
     private void InitEntity(Vector2I chunkPos)
     {
-        if (!_entityMap.ContainsKey(chunkPos))
-            _entityMap[chunkPos] = new List<IEntity>();
+        if (!EntityMap.ContainsKey(chunkPos))
+            EntityMap[chunkPos] = new List<IEntity>();
 
         int chunkSize = GameManager.Instance.ChunkManager.ChunkSize;
         int tileSize = GameManager.Instance.ChunkManager.TileSize;
@@ -193,35 +194,56 @@ public partial class World : Node2D
 
         foreach (KeyValuePair<TileType, List<Vector2I>> pair in tilePosMap)
         {
-            // 检查当前瓦片类型是否有对应的生成权重配置
             if (!EntityWeigthListMap.TryGetValue(pair.Key, out List<EntityWeight>? entityWeightList) || entityWeightList == null)
                 continue;
+
             float totalWeight = 0;
             foreach (EntityWeight entityWeight in entityWeightList)
                 totalWeight += entityWeight.Weight;
-            if (totalWeight <= 0) continue;
-            Dictionary<EntityType, int> entityCountMap = new();
+
+            if (totalWeight <= 0)
+                continue;
+
+            // 关键改动1：先把该 tile 类型下的所有位置打乱一次，作为不放回抽样池
+            List<Vector2I> shuffledPositions = new List<Vector2I>(pair.Value);
+            ShuffleList(shuffledPositions);
+
+            int totalTiles = shuffledPositions.Count;
+            int cursor = 0; // 当前切片起始下标
+
             foreach (EntityWeight entityWeight in entityWeightList)
             {
-                if (entityWeight.Type == null)
+                // null 表示"空地"，不生成实体，但仍要占用对应数量的位置，
+                // 这样后面的实体类型才不会抢占这部分位置
+                int count = (int)(entityWeight.Weight / totalWeight * totalTiles);
+
+                if (count <= 0)
                     continue;
-                entityCountMap[(EntityType)entityWeight.Type] = (int)(entityWeight.Weight / totalWeight * pair.Value.Count);
-            }
-            foreach (KeyValuePair<EntityType, int> typeCountPair in entityCountMap)
-            {
-                if (typeCountPair.Value <= 0) continue;
-                List<int> randomIndexList = GetRandomIndexList(pair.Value.Count, typeCountPair.Value);
-                foreach (int index in randomIndexList)
+
+                // 防止越界（四舍五入误差导致 cursor+count 超过总数）
+                count = Mathf.Min(count, totalTiles - cursor);
+                if (count <= 0)
+                    break;
+
+                if (entityWeight.Type != null)
                 {
-                    SpawnEntity(typeCountPair.Key, chunkPos, pair.Value[index], null);
+                    // 关键改动2：直接从打乱后的位置池里切一段，不再单独随机，避免重复
+                    for (int i = cursor; i < cursor + count; i++)
+                    {
+                        SpawnEntity((EntityType)entityWeight.Type, chunkPos, shuffledPositions[i], null);
+                    }
                 }
+
+                cursor += count;
             }
         }
     }
+
+
     private void RecoverEntity(Vector2I chunkPos)
     {
-        if (_entityMap.ContainsKey(chunkPos) == false)
-            _entityMap[chunkPos] = new List<IEntity>();
+        if (EntityMap.ContainsKey(chunkPos) == false)
+            EntityMap[chunkPos] = new List<IEntity>();
         foreach (EntitySaveData entitySaveData in _entitySaveDataMap[chunkPos])
         {
             SpawnEntity(entitySaveData.Type, chunkPos, Vector2I.Zero, entitySaveData);
@@ -257,32 +279,18 @@ public partial class World : Node2D
         IEntity entity = entityPs.Instantiate<IEntity>();
         GetTree().CurrentScene.AddChild((Node2D)entity);
         entity.Init(type, tileCenterPos, saveData);
-        _entityMap[chunkPos].Add(entity);
+        EntityMap[chunkPos].Add(entity);
     }
 
 
-    /// <summary>
-    /// 从 [0, totalCount - 1] 范围内随机抽取 count 个不重复的索引
-    /// </summary>
-    public static List<int> GetRandomIndexList(int totalCount, int count)
+    // Fisher-Yates 洗牌，O(n)，比反复调用随机下标生成更高效也更安全
+    private void ShuffleList<T>(List<T> list)
     {
-        if (count >= totalCount)
+        var rng = new Random();
+        for (int i = list.Count - 1; i > 0; i--)
         {
-            List<int> allIndices = new(totalCount);
-            for (int i = 0; i < totalCount; i++) allIndices.Add(i);
-            return allIndices;
+            int j = rng.Next(i + 1);
+            (list[i], list[j]) = (list[j], list[i]);
         }
-        List<int> pool = new(totalCount);
-        for (int i = 0; i < totalCount; i++) pool.Add(i);
-        List<int> result = new(count);
-        for (int i = 0; i < count; i++)
-        {
-            int randomIndex = (int)(GD.Randi() % pool.Count);
-            result.Add(pool[randomIndex]);
-            pool[randomIndex] = pool[pool.Count - 1];
-            pool.RemoveAt(pool.Count - 1);
-        }
-
-        return result;
     }
 }

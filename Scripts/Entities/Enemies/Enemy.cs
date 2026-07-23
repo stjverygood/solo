@@ -30,7 +30,6 @@ namespace Solo.Scripts.Entities.Enemies
 
         public EntityCore Core { get; private set; } = new();
 
-
         public void Init(EntityType type, Vector2 worldPosition, EntitySaveData? entitySaveData = null)
         {
             Type = type;
@@ -61,6 +60,9 @@ namespace Solo.Scripts.Entities.Enemies
             defComponent.Refresh(_data.Def);
             Core.AddComponent(defComponent);
 
+            DynamicComponent dynamicComponent = new DynamicComponent(this);
+            Core.AddComponent(dynamicComponent);
+
             _naviAgent.VelocityComputed += _naviAgent_VelocityComputed;
 
             ChangeState(EnemyState.Idle);
@@ -81,6 +83,10 @@ namespace Solo.Scripts.Entities.Enemies
         {
             UpdateState((float)delta);
             _debugLb.Text = _curState.ToString();
+            if (Core.TryGetComponent<DynamicComponent>(out DynamicComponent dynamicComponent))
+            {
+                dynamicComponent.RefreshChunkPos(GlobalPosition);
+            }
         }
 
         private void ChangeState(EnemyState newState)
@@ -168,8 +174,12 @@ namespace Solo.Scripts.Entities.Enemies
                 return;
             }
 
-
             Player player = GameManager.Instance.Player;
+            if (player != null && GlobalPosition.DistanceSquaredTo(player.GlobalPosition) >= 500 * 500)
+            {
+                return;
+            }
+
             if (player != null && GlobalPosition.DistanceSquaredTo(player.GlobalPosition) <= _data.ViewRangeSq)
             {
                 ChangeState(EnemyState.Chase);
@@ -200,6 +210,11 @@ namespace Solo.Scripts.Entities.Enemies
         private void UpdatePatrol(float delta)
         {
             Player player = GameManager.Instance.Player;
+            if (player != null && GlobalPosition.DistanceSquaredTo(player.GlobalPosition) >= 500 * 500)
+            {
+                ChangeState(EnemyState.Idle);
+                return;
+            }
             if (player != null && GlobalPosition.DistanceSquaredTo(player.GlobalPosition) <= _data.ViewRangeSq)
             {
                 ChangeState(EnemyState.Chase);

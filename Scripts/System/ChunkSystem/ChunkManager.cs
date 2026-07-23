@@ -173,17 +173,17 @@ namespace Solo.Scripts.System.ChunkSystem
             if (elevation < 0)
                 return TileType.Water;
 
-            if (elevation > 0.5f)
+            if (elevation > 0.4f)
                 return TileType.FireLand;
 
-            if (moisture < 0)
+            if (moisture < -0.3)
                 return TileType.Desert;
 
-            if (moisture < 0.2f)
+            if (moisture < 0.1f)
                 return TileType.Grass;
 
-            if (moisture < 0.5f)
-                return TileType.Forest;
+            if (moisture < 0.4f)
+                return TileType.Stone;
 
             return TileType.Stone;
         }
@@ -196,14 +196,5 @@ namespace Solo.Scripts.System.ChunkSystem
                 UnloadChunk(chunkPos);
             }
         }
-
-        //public override void _ExitTree()
-        //{
-        //    GD.Print("chunkmanager _ExitTree");
-        //    foreach (Vector2I chunkPos in _curChunkPosSet.ToList())
-        //    {
-        //        UnloadChunk(chunkPos);
-        //    }
-        //}
     }
 }
