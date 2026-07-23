@@ -31,10 +31,11 @@ namespace Solo.Scripts.Entities.Enemies
         public EntityCore Core { get; private set; } = new();
 
 
-        public void Init(EntityType type, Vector2 worldPosition, EnemySaveData? saveData = null)
+        public void Init(EntityType type, Vector2 worldPosition, EntitySaveData? entitySaveData = null)
         {
             Type = type;
             _data = (EnemyData)EntityDataManager.Instance.GetData(Type);
+            EnemySaveData? saveData = (EnemySaveData?)entitySaveData;
 
             if (saveData == null)
                 GlobalPosition = worldPosition;

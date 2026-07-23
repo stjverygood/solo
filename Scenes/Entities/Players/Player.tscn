@@ -253,7 +253,6 @@ rotation = -0.017453292
 texture = ExtResource("8_cbjid")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=173865742]
-zoom = Vector2(0.125, 0.125)
 position_smoothing_enabled = true
 
 [node name="DebugLabel" type="Label" parent="." unique_id=1146679472]

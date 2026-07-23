@@ -1,32 +1,107 @@
 using Godot;
 using Solo.Scripts.Entities.Core;
-using Solo.Scripts.Entities.Enemies;
 using Solo.Scripts.Entities.Players;
-using Solo.Scripts.Entities.Resources;
 using Solo.Scripts.Global;
 using Solo.Scripts.Global.Interfaces;
 using Solo.Scripts.Levels;
 using Solo.Scripts.System.ChunkSystem;
 using Solo.Scripts.System.SaveSystem;
 using System.Collections.Generic;
-using Resource = Solo.Scripts.Entities.Resources.Resource;
+
+public struct EntityWeight
+{
+    public EntityType? Type;
+    public float Weight;
+}
 
 public partial class World : Node2D
 {
     [Export] private CanvasModulate _canvasModulate = null!;
     [Export] private Gradient _dayNightGradient = null!;
 
-
-    private FastNoiseLite _noise = new FastNoiseLite();
-    private string _seedString = "";
+    private Dictionary<TileType, List<EntityWeight>> EntityWeigthListMap = new Dictionary<TileType, List<EntityWeight>>()
+{
+    {
+        TileType.Grass,
+        new List<EntityWeight>()
+        {
+            new EntityWeight(){ Type = null, Weight = 2000f },
+            new EntityWeight(){ Type = EntityType.Grass, Weight = 20f },
+            new EntityWeight(){ Type = EntityType.Tree, Weight = 8f },
+            new EntityWeight(){ Type = EntityType.Stone, Weight = 5f },
+            new EntityWeight(){ Type = EntityType.Ore, Weight = 2f },
+            new EntityWeight(){ Type = EntityType.NormalMeleeEnemy, Weight = 8f },
+            new EntityWeight(){ Type = EntityType.SpeedMeleeEnemy, Weight = 4f },
+            new EntityWeight(){ Type = EntityType.StrongMeleeEnemy, Weight = 1f },
+            new EntityWeight(){ Type = EntityType.NormalRangedEnemy, Weight = 2f },
+        }
+    },
+    {
+        TileType.Forest,
+        new List<EntityWeight>()
+        {
+            new EntityWeight(){ Type = null, Weight = 2000f },
+            new EntityWeight(){ Type = EntityType.Grass, Weight = 15f },
+            new EntityWeight(){ Type = EntityType.Tree, Weight = 35f },
+            new EntityWeight(){ Type = EntityType.Stone, Weight = 3f },
+            new EntityWeight(){ Type = EntityType.Ore, Weight = 2f },
+            new EntityWeight(){ Type = EntityType.NormalMeleeEnemy, Weight = 5f },
+            new EntityWeight(){ Type = EntityType.SpeedMeleeEnemy, Weight = 7f },
+            new EntityWeight(){ Type = EntityType.StrongMeleeEnemy, Weight = 1f },
+            new EntityWeight(){ Type = EntityType.NormalRangedEnemy, Weight = 2f },
+        }
+    },
+    {
+        TileType.Stone,
+        new List<EntityWeight>()
+        {
+            new EntityWeight(){ Type = null, Weight = 2000f },
+            new EntityWeight(){ Type = EntityType.Grass, Weight = 1f },
+            new EntityWeight(){ Type = EntityType.Tree, Weight = 1f },
+            new EntityWeight(){ Type = EntityType.Stone, Weight = 25f },
+            new EntityWeight(){ Type = EntityType.Ore, Weight = 12f },
+            new EntityWeight(){ Type = EntityType.NormalMeleeEnemy, Weight = 4f },
+            new EntityWeight(){ Type = EntityType.SpeedMeleeEnemy, Weight = 2f },
+            new EntityWeight(){ Type = EntityType.StrongMeleeEnemy, Weight = 8f },
+            new EntityWeight(){ Type = EntityType.NormalRangedEnemy, Weight = 2f },
+        }
+    },
+    {
+        TileType.Desert,
+        new List<EntityWeight>()
+        {
+            new EntityWeight(){ Type = null, Weight = 2000f },
+            new EntityWeight(){ Type = EntityType.Grass, Weight = 1f },
+            new EntityWeight(){ Type = EntityType.Tree, Weight = 0f },
+            new EntityWeight(){ Type = EntityType.Stone, Weight = 8f },
+            new EntityWeight(){ Type = EntityType.Ore, Weight = 4f },
+            new EntityWeight(){ Type = EntityType.NormalMeleeEnemy, Weight = 2f },
+            new EntityWeight(){ Type = EntityType.SpeedMeleeEnemy, Weight = 10f },
+            new EntityWeight(){ Type = EntityType.StrongMeleeEnemy, Weight = 2f },
+            new EntityWeight(){ Type = EntityType.NormalRangedEnemy, Weight = 8f },
+        }
+    },
+    {
+        TileType.FireLand,
+        new List<EntityWeight>()
+        {
+            new EntityWeight(){ Type = null, Weight = 2000f },
+            new EntityWeight(){ Type = EntityType.Grass, Weight = 0f },
+            new EntityWeight(){ Type = EntityType.Tree, Weight = 0f },
+            new EntityWeight(){ Type = EntityType.Stone, Weight = 10f },
+            new EntityWeight(){ Type = EntityType.Ore, Weight = 18f },
+            new EntityWeight(){ Type = EntityType.NormalMeleeEnemy, Weight = 2f },
+            new EntityWeight(){ Type = EntityType.SpeedMeleeEnemy, Weight = 8f },
+            new EntityWeight(){ Type = EntityType.StrongMeleeEnemy, Weight = 12f },
+            new EntityWeight(){ Type = EntityType.NormalRangedEnemy, Weight = 10f },
+        }
+    },
+};
 
     //管理当前激活区块的实体
     private Dictionary<Vector2I, List<IEntity>> _entityMap = new();
 
-    //private HashSet<Vector2I> _initedChunkPosSet = new();
-
     //区块实体的缓存, 卸载区块时把数据写入这个缓存, 区块加载时用这个缓存恢复, 游戏关闭后全部区块都要卸载, 会先写入缓存, 最后缓存再进入存档, 下次打开游戏, 也是先从存档加载缓存
-    //private Dictionary<Vector2I, List<EntitySaveData>> _entitySaveDataMap = new Dictionary<Vector2I, List<EntitySaveData>>();
     private Dictionary<Vector2I, List<EntitySaveData>> _entitySaveDataMap = new();
 
     public void Init()
@@ -35,9 +110,9 @@ public partial class World : Node2D
         Player player = GameManager.Instance.PlayerPs.Instantiate<Player>();
         AddChild(player);
         if (SaveManager.Instance.CurSaveData.PlayerSaveData == null)
-            player.Init(new Vector2(0, 0), (PlayerData)EntityDataManager.Instance.GetData(EntityType.Player), null);
+            player.Init(EntityType.Player, new Vector2(0, 0), null);
         else
-            player.Init(new Vector2(0, 0), (PlayerData)EntityDataManager.Instance.GetData(EntityType.Player), SaveManager.Instance.CurSaveData.PlayerSaveData);
+            player.Init(EntityType.Player, new Vector2(0, 0), SaveManager.Instance.CurSaveData.PlayerSaveData);
 
         ChunkManager chunkManager = GameManager.Instance.ChunkManagerPs.Instantiate<ChunkManager>();
         AddChild(chunkManager);
@@ -92,119 +167,56 @@ public partial class World : Node2D
 
     private void InitEntity(Vector2I chunkPos)
     {
-        if (_entityMap.ContainsKey(chunkPos) == false)
+        if (!_entityMap.ContainsKey(chunkPos))
             _entityMap[chunkPos] = new List<IEntity>();
 
-        for (int x = 0; x < GameManager.Instance.ChunkManager.ChunkSize; x++)
-            for (int y = 0; y < GameManager.Instance.ChunkManager.ChunkSize; y++)
+        int chunkSize = GameManager.Instance.ChunkManager.ChunkSize;
+        int tileSize = GameManager.Instance.ChunkManager.TileSize;
+
+        Dictionary<TileType, List<Vector2I>> tilePosMap = new();
+
+        for (int x = 0; x < chunkSize; x++)
+        {
+            for (int y = 0; y < chunkSize; y++)
             {
-                Vector2I tilePos = new Vector2I(chunkPos.X * GameManager.Instance.ChunkManager.ChunkSize + x, chunkPos.Y * GameManager.Instance.ChunkManager.ChunkSize + y);
-                TileType tileType = GameManager.Instance.ChunkManager.GetTileType(tilePos * GameManager.Instance.ChunkManager.TileSize);
+                Vector2I tilePos = new Vector2I(chunkPos.X * chunkSize + x, chunkPos.Y * chunkSize + y);
+                TileType tileType = GameManager.Instance.ChunkManager.GetTileType(tilePos * tileSize);
 
-                Vector2 tileCenterPos = tilePos * GameManager.Instance.ChunkManager.TileSize + new Vector2(GameManager.Instance.ChunkManager.TileSize / 2f, GameManager.Instance.ChunkManager.TileSize / 2f);
-                if (tileType == TileType.Grass)
+                if (!tilePosMap.TryGetValue(tileType, out var posList))
                 {
-                    float rd = GD.Randf();
-                    if (rd < 0.05)
-                        SpawnResource(EntityType.Grass, chunkPos, tileCenterPos, null);
-                    else if (rd < 0.07)
-                        SpawnResource(EntityType.Tree, chunkPos, tileCenterPos, null);
-                    else if (rd < 0.1)
-                        SpawnResource(EntityType.Stone, chunkPos, tileCenterPos, null);
-                    else if (rd < 0.12)
-                        SpawnResource(EntityType.Ore, chunkPos, tileCenterPos, null);
-                    else if (rd < 0.01)
-                        SpawnEnemy(EntityType.NormalMeleeEnemy, chunkPos, tileCenterPos, null);
-                    else if (rd < 0.01)
-                        SpawnEnemy(EntityType.SpeedMeleeEnemy, chunkPos, tileCenterPos, null);
-                    else if (rd < 0.01)
-                        SpawnEnemy(EntityType.StrongMeleeEnemy, chunkPos, tileCenterPos, null);
-                    else if (rd < 0.01)
-                        SpawnEnemy(EntityType.NormalRangedEnemy, chunkPos, tileCenterPos, null);
+                    posList = new List<Vector2I>();
+                    tilePosMap[tileType] = posList;
                 }
-                else if (tileType == TileType.Forest)
-                {
-                    float rd = GD.Randf();
-                    if (rd < 0.05)
-                        SpawnResource(EntityType.Grass, chunkPos, tileCenterPos, null);
-                    else if (rd < 0.01)
-                        SpawnResource(EntityType.Tree, chunkPos, tileCenterPos, null);
-                    else if (rd < 0.05)
-                        SpawnResource(EntityType.Stone, chunkPos, tileCenterPos, null);
-                    else if (rd < 0.06)
-                        SpawnResource(EntityType.Ore, chunkPos, tileCenterPos, null);
-                    else if (rd < 0.061)
-                        SpawnEnemy(EntityType.NormalMeleeEnemy, chunkPos, tileCenterPos, null);
-                    else if (rd < 0.07)
-                        SpawnEnemy(EntityType.SpeedMeleeEnemy, chunkPos, tileCenterPos, null);
-                    else if (rd < 0)
-                        SpawnEnemy(EntityType.StrongMeleeEnemy, chunkPos, tileCenterPos, null);
-                    else if (rd < 0)
-                        SpawnEnemy(EntityType.NormalRangedEnemy, chunkPos, tileCenterPos, null);
-                }
-                else if (tileType == TileType.Stone)
-                {
-                    float rd = GD.Randf();
-                    if (rd < 0.0)
-                        SpawnResource(EntityType.Grass, chunkPos, tileCenterPos, null);
-                    else if (rd < 0)
-                        SpawnResource(EntityType.Tree, chunkPos, tileCenterPos, null);
-                    else if (rd < 0)
-                        SpawnResource(EntityType.Stone, chunkPos, tileCenterPos, null);
-                    else if (rd < 0.02)
-                        SpawnResource(EntityType.Ore, chunkPos, tileCenterPos, null);
-                    else if (rd < 0.05)
-                        SpawnEnemy(EntityType.NormalMeleeEnemy, chunkPos, tileCenterPos, null);
-                    else if (rd < 0.08)
-                        SpawnEnemy(EntityType.SpeedMeleeEnemy, chunkPos, tileCenterPos, null);
-                    else if (rd < 0.1)
-                        SpawnEnemy(EntityType.StrongMeleeEnemy, chunkPos, tileCenterPos, null);
-                    else if (rd < 0.11)
-                        SpawnEnemy(EntityType.NormalRangedEnemy, chunkPos, tileCenterPos, null);
-                }
-                else if (tileType == TileType.Desert)
-                {
-                    float rd = GD.Randf();
-                    if (rd < 0.05)
-                        SpawnResource(EntityType.Grass, chunkPos, tileCenterPos, null);
-                    else if (rd < 0.0)
-                        SpawnResource(EntityType.Tree, chunkPos, tileCenterPos, null);
-                    else if (rd < 0.0)
-                        SpawnResource(EntityType.Stone, chunkPos, tileCenterPos, null);
-                    else if (rd < 0.02)
-                        SpawnResource(EntityType.Ore, chunkPos, tileCenterPos, null);
-                    else if (rd < 0.03)
-                        SpawnEnemy(EntityType.NormalMeleeEnemy, chunkPos, tileCenterPos, null);
-                    else if (rd < 0.04)
-                        SpawnEnemy(EntityType.SpeedMeleeEnemy, chunkPos, tileCenterPos, null);
-                    else if (rd < 0.05)
-                        SpawnEnemy(EntityType.StrongMeleeEnemy, chunkPos, tileCenterPos, null);
-                    else if (rd < 0.06)
-                        SpawnEnemy(EntityType.NormalRangedEnemy, chunkPos, tileCenterPos, null);
-                }
-                else if (tileType == TileType.FireLand)
-                {
-                    float rd = GD.Randf();
-                    if (rd < 0)
-                        SpawnResource(EntityType.Grass, chunkPos, tileCenterPos, null);
-                    else if (rd < 0)
-                        SpawnResource(EntityType.Tree, chunkPos, tileCenterPos, null);
-                    else if (rd < 0.1)
-                        SpawnResource(EntityType.Stone, chunkPos, tileCenterPos, null);
-                    else if (rd < 0.2)
-                        SpawnResource(EntityType.Ore, chunkPos, tileCenterPos, null);
-                    else if (rd < 0.21)
-                        SpawnEnemy(EntityType.NormalMeleeEnemy, chunkPos, tileCenterPos, null);
-                    else if (rd < 0.22)
-                        SpawnEnemy(EntityType.SpeedMeleeEnemy, chunkPos, tileCenterPos, null);
-                    else if (rd < 0.23)
-                        SpawnEnemy(EntityType.StrongMeleeEnemy, chunkPos, tileCenterPos, null);
-                    else if (rd < 0.24)
-                        SpawnEnemy(EntityType.NormalRangedEnemy, chunkPos, tileCenterPos, null);
-                }
-
+                posList.Add(tilePos);
             }
+        }
 
+        foreach (KeyValuePair<TileType, List<Vector2I>> pair in tilePosMap)
+        {
+            // 检查当前瓦片类型是否有对应的生成权重配置
+            if (!EntityWeigthListMap.TryGetValue(pair.Key, out List<EntityWeight>? entityWeightList) || entityWeightList == null)
+                continue;
+            float totalWeight = 0;
+            foreach (EntityWeight entityWeight in entityWeightList)
+                totalWeight += entityWeight.Weight;
+            if (totalWeight <= 0) continue;
+            Dictionary<EntityType, int> entityCountMap = new();
+            foreach (EntityWeight entityWeight in entityWeightList)
+            {
+                if (entityWeight.Type == null)
+                    continue;
+                entityCountMap[(EntityType)entityWeight.Type] = (int)(entityWeight.Weight / totalWeight * pair.Value.Count);
+            }
+            foreach (KeyValuePair<EntityType, int> typeCountPair in entityCountMap)
+            {
+                if (typeCountPair.Value <= 0) continue;
+                List<int> randomIndexList = GetRandomIndexList(pair.Value.Count, typeCountPair.Value);
+                foreach (int index in randomIndexList)
+                {
+                    SpawnEntity(typeCountPair.Key, chunkPos, pair.Value[index], null);
+                }
+            }
+        }
     }
     private void RecoverEntity(Vector2I chunkPos)
     {
@@ -212,31 +224,7 @@ public partial class World : Node2D
             _entityMap[chunkPos] = new List<IEntity>();
         foreach (EntitySaveData entitySaveData in _entitySaveDataMap[chunkPos])
         {
-            switch (entitySaveData.Type)
-            {
-                case EntityType.Grass:
-                    SpawnResource(entitySaveData.Type, chunkPos, Vector2.Zero, (ResourceSaveData)entitySaveData);
-                    break;
-                case EntityType.Tree:
-                    SpawnResource(entitySaveData.Type, chunkPos, Vector2.Zero, (ResourceSaveData)entitySaveData);
-                    break;
-                case EntityType.Stone:
-                    SpawnResource(entitySaveData.Type, chunkPos, Vector2.Zero, (ResourceSaveData)entitySaveData);
-                    break;
-                case EntityType.Ore:
-                    SpawnResource(entitySaveData.Type, chunkPos, Vector2.Zero, (ResourceSaveData)entitySaveData);
-                    break;
-
-                case EntityType.NormalMeleeEnemy:
-                    SpawnEnemy(entitySaveData.Type, chunkPos, Vector2.Zero, (EnemySaveData)entitySaveData);
-                    break;
-                case EntityType.SpeedMeleeEnemy:
-                    SpawnEnemy(entitySaveData.Type, chunkPos, Vector2.Zero, (EnemySaveData)entitySaveData);
-                    break;
-                case EntityType.StrongMeleeEnemy:
-                    SpawnEnemy(entitySaveData.Type, chunkPos, Vector2.Zero, (EnemySaveData)entitySaveData);
-                    break;
-            }
+            SpawnEntity(entitySaveData.Type, chunkPos, Vector2I.Zero, entitySaveData);
         }
         _entitySaveDataMap.Remove(chunkPos);
     }
@@ -261,20 +249,40 @@ public partial class World : Node2D
         SaveManager.Instance.WriteCurSaveData();
     }
 
-    private void SpawnResource(EntityType type, Vector2I chunkPos, Vector2 worldPos, ResourceSaveData? saveData)
+
+    private void SpawnEntity(EntityType type, Vector2I chunkPos, Vector2I tilePos, EntitySaveData? saveData)
     {
         PackedScene entityPs = GameManager.Instance.EntityPsMap[type];
-        Resource resource = entityPs.Instantiate<Resource>();
-        GetTree().CurrentScene.AddChild(resource);
-        resource.Init(type, worldPos, saveData);
-        _entityMap[chunkPos].Add(resource);
+        Vector2 tileCenterPos = tilePos * GameManager.Instance.ChunkManager.TileSize + new Vector2(GameManager.Instance.ChunkManager.TileSize / 2f, GameManager.Instance.ChunkManager.TileSize / 2f);
+        IEntity entity = entityPs.Instantiate<IEntity>();
+        GetTree().CurrentScene.AddChild((Node2D)entity);
+        entity.Init(type, tileCenterPos, saveData);
+        _entityMap[chunkPos].Add(entity);
     }
-    private void SpawnEnemy(EntityType type, Vector2I chunkPos, Vector2 worldPos, EnemySaveData? saveData)
+
+
+    /// <summary>
+    /// 从 [0, totalCount - 1] 范围内随机抽取 count 个不重复的索引
+    /// </summary>
+    public static List<int> GetRandomIndexList(int totalCount, int count)
     {
-        PackedScene entityPs = GameManager.Instance.EntityPsMap[type];
-        Enemy enemy = entityPs.Instantiate<Enemy>();
-        GetTree().CurrentScene.AddChild(enemy);
-        enemy.Init(type, worldPos, saveData);
-        _entityMap[chunkPos].Add(enemy);
+        if (count >= totalCount)
+        {
+            List<int> allIndices = new(totalCount);
+            for (int i = 0; i < totalCount; i++) allIndices.Add(i);
+            return allIndices;
+        }
+        List<int> pool = new(totalCount);
+        for (int i = 0; i < totalCount; i++) pool.Add(i);
+        List<int> result = new(count);
+        for (int i = 0; i < count; i++)
+        {
+            int randomIndex = (int)(GD.Randi() % pool.Count);
+            result.Add(pool[randomIndex]);
+            pool[randomIndex] = pool[pool.Count - 1];
+            pool.RemoveAt(pool.Count - 1);
+        }
+
+        return result;
     }
 }

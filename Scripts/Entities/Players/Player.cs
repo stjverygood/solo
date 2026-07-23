@@ -61,16 +61,18 @@ namespace Solo.Scripts.Entities.Players
 
         public EntityCore Core { get; private set; } = new();
 
+        public EntityType Type;
         private PlayerData _data = null!;
 
-        public void Init(Vector2 worldPos, PlayerData data, PlayerSaveData? saveData)
+        public void Init(EntityType type, Vector2 worldPos, EntitySaveData? entitySaveData = null)
         {
             GD.Print("Player Init~~~");
             _initialized = true;
 
             GameManager.Instance.Player = this;
-
-            _data = data;
+            Type = type;
+            _data = (PlayerData)EntityDataManager.Instance.GetData(Type);
+            PlayerSaveData? saveData = (PlayerSaveData?)entitySaveData;
             //出生点, 初始化出生点和初始位置由生成系统决定, 恢复读存档, 重生回出生点
             if (saveData == null)
             {

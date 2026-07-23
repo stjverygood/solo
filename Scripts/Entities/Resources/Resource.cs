@@ -12,10 +12,11 @@ namespace Solo.Scripts.Entities.Resources
         private ResourceData _data = null!;
 
 
-        public void Init(EntityType type, Vector2 worldPos, ResourceSaveData? saveData = null)
+        public void Init(EntityType type, Vector2 worldPos, EntitySaveData? entitySaveData = null)
         {
             Type = type;
             _data = (ResourceData)EntityDataManager.Instance.GetData(type);
+            ResourceSaveData? saveData = (ResourceSaveData?)entitySaveData;
 
             if (saveData == null)
                 GlobalPosition = worldPos;
