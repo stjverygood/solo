@@ -5,4 +5,8 @@
     <TargetFramework Condition=" '$(GodotTargetPlatform)' == 'android' ">net9.0</TargetFramework>
     <EnableDynamicLoading>true</EnableDynamicLoading>
   </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="Scripts\Entities\RangedEnemies\**" />
+    <EmbeddedResource Remove="Scripts\Entities\RangedEnemies\**" />
+  </ItemGroup>
 </Project>
