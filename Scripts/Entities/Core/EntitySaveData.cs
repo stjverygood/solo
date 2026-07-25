@@ -1,4 +1,5 @@
-﻿using Solo.Scripts.Entities.Enemies;
+﻿using Solo.Scripts.Entities.DropItems;
+using Solo.Scripts.Entities.Enemies;
 using Solo.Scripts.Entities.Players;
 using Solo.Scripts.Entities.Resources;
 using Solo.Scripts.Global;
@@ -10,6 +11,7 @@ namespace Solo.Scripts.Entities.Core
     [JsonDerivedType(typeof(PlayerSaveData), nameof(PlayerSaveData))]
     [JsonDerivedType(typeof(ResourceSaveData), nameof(ResourceSaveData))]
     [JsonDerivedType(typeof(EnemySaveData), nameof(EnemySaveData))]
+    [JsonDerivedType(typeof(DropItemSaveData), nameof(DropItemSaveData))]
     public class EntitySaveData
     {
         public EntityType Type { get; set; }

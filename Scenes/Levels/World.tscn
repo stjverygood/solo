@@ -30,7 +30,6 @@ _dayNightGradient = ExtResource("3_f4gmh")
 environment = SubResource("Environment_yxouj")
 
 [node name="CanvasModulate" type="CanvasModulate" parent="." unique_id=1427442387]
-visible = false
 color = Color(0.8901961, 0.57254905, 0.4, 1)
 
 [node name="PointLight2D" type="PointLight2D" parent="." unique_id=1508454071]

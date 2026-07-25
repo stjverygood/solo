@@ -38,11 +38,15 @@ namespace Solo.Scripts.Projectiles
                         continue;
                     if (entity == _context.Projecter)
                         continue;
-                    if (entity.Core.TryGetComponent(out DefComponent defComponent) == false)
-                        continue;
                     if (entity.Core.TryGetComponent(out HpComponent hpComponent) == false)
                         continue;
-                    float damage = GameManager.Instance.CalculateDamage(_context.Projecter.Core.GetComponent<AtkComponent>().Value, defComponent.Value);
+
+                    float def = 0;
+                    if (entity.Core.TryGetComponent(out DefComponent defComponent))
+                    {
+                        def = defComponent.Value;
+                    }
+                    float damage = GameManager.Instance.CalculateDamage(_context.Projecter.Core.GetComponent<AtkComponent>().Value, def);
                     hpComponent.Consume(damage);
                 }
             }

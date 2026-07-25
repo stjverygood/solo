@@ -1,4 +1,5 @@
-﻿using Solo.Scripts.Entities.Enemies;
+﻿using Solo.Scripts.Entities.DropItems;
+using Solo.Scripts.Entities.Enemies;
 using Solo.Scripts.Entities.Players;
 using Solo.Scripts.Entities.Resources;
 using Solo.Scripts.Global;
@@ -77,19 +78,33 @@ namespace Solo.Scripts.Entities.Core
             _dataMap[EntityType.Tree] = new ResourceData()
             {
                 MaxHp = 500,
+                DropInfoList = new List<DropItems.DropInfo>()
+                {
+                    new DropInfo() { Type = ItemType.Wood, Times = 4, Chance = 0.7f},
+                    new DropInfo() { Type = ItemType.Stone, Times = 2, Chance = 0.6f}
+                }
             };
 
             _dataMap[EntityType.Grass] = new ResourceData()
             {
                 MaxHp = 30,
+                DropInfoList = new List<DropItems.DropInfo>()
+                {
+                }
             };
             _dataMap[EntityType.Stone] = new ResourceData()
             {
                 MaxHp = 1000,
+                DropInfoList = new List<DropItems.DropInfo>()
+                {
+                }
             };
             _dataMap[EntityType.Ore] = new ResourceData()
             {
                 MaxHp = 10000,
+                DropInfoList = new List<DropItems.DropInfo>()
+                {
+                }
             };
         }
 

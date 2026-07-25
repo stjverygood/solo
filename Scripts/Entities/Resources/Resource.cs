@@ -28,6 +28,15 @@ namespace Solo.Scripts.Entities.Resources
                 hpComponent.SetValue(_data.MaxHp, _data.MaxHp);
             else
                 hpComponent.SetValue(saveData.CurHp, _data.MaxHp);
+            hpComponent.OnValueChanged += (curValue, maxValue) =>
+            {
+                GD.Print($"{curValue}/{maxValue}");
+                if (hpComponent.CurValue <= 0)
+                {
+                    GameManager.Instance.World.SpawnDropItem(GlobalPosition, _data.DropInfoList);
+                    QueueFree();
+                }
+            };
             Core.AddComponent(hpComponent);
         }
 

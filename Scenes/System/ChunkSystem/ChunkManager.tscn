@@ -5,7 +5,7 @@
 [ext_resource type="PackedScene" uid="uid://fexciysj5hdb" path="res://Scenes/Entities/Units/Unit.tscn" id="4_cqtpm"]
 [ext_resource type="PackedScene" uid="uid://bfckrtubfdcw1" path="res://Scenes/Entities/Enemies/NormalMeleeEnemy.tscn" id="4_evjqk"]
 [ext_resource type="TileSet" uid="uid://r1ghkbiqrc1b" path="res://Assets/Tileset/tileset.tres" id="4_hijxa"]
-[ext_resource type="PackedScene" uid="uid://qw0q5wipafhq" path="res://Scenes/System/ItemSystem/DropItem.tscn" id="4_qtd3p"]
+[ext_resource type="PackedScene" uid="uid://qw0q5wipafhq" path="res://Scenes/Entities/DropItems/DropItem.tscn" id="4_qtd3p"]
 
 [sub_resource type="FastNoiseLite" id="FastNoiseLite_cqtpm"]
 noise_type = 3

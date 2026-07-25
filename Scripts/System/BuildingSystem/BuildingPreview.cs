@@ -1,122 +1,118 @@
 using Godot;
-using Solo.Scripts.Global;
-using Solo.Scripts.Global.Interfaces;
-using Solo.Scripts.System.BuildingSystem;
-using Solo.Scripts.System.BuildingSystem.Buildings;
 
 public partial class BuildingPreview : Node2D
 {
-    public BuildingType Type;
-    [Export] private Sprite2D _sprite = null!;
-    private Vector2 _curDir = Vector2.Down;
-    private bool _canPlace = false;
+    //public BuildingType Type;
+    //[Export] private Sprite2D _sprite = null!;
+    //private Vector2 _curDir = Vector2.Down;
+    //private bool _canPlace = false;
 
-    public void Init(ItemType itemType, Vector2 mousePos)
-    {
-        switch (itemType)
-        {
-            case ItemType.MainBase:
-                Type = BuildingType.MainBase;
-                break;
-            case ItemType.Flag:
-                Type = BuildingType.Flag;
-                break;
-            case ItemType.BuildingCraft:
-                Type = BuildingType.BuildingCraft;
-                break;
-            case ItemType.ToolCraft:
-                Type = BuildingType.ToolCraft;
-                break;
-            case ItemType.ArmorCraft:
-                Type = BuildingType.ArmorCraft;
-                break;
-            case ItemType.Crucible:
-                Type = BuildingType.Crucible;
-                break;
-            case ItemType.ItemBox:
-                Type = BuildingType.ItemBox;
-                break;
-            case ItemType.TreeGrow:
-                Type = BuildingType.TreeGrow;
-                break;
-        }
-        BuildingData buildingData = BuildingDataManager.Instance.GetData(Type);
-        _sprite.Texture = GD.Load<Texture2D>(buildingData.TexturePath);
-        RefreshPosition(mousePos);
-    }
+    //public void Init(ItemType itemType, Vector2 mousePos)
+    //{
+    //    switch (itemType)
+    //    {
+    //        case ItemType.MainBase:
+    //            Type = BuildingType.MainBase;
+    //            break;
+    //        case ItemType.Flag:
+    //            Type = BuildingType.Flag;
+    //            break;
+    //        case ItemType.BuildingCraft:
+    //            Type = BuildingType.BuildingCraft;
+    //            break;
+    //        case ItemType.ToolCraft:
+    //            Type = BuildingType.ToolCraft;
+    //            break;
+    //        case ItemType.ArmorCraft:
+    //            Type = BuildingType.ArmorCraft;
+    //            break;
+    //        case ItemType.Crucible:
+    //            Type = BuildingType.Crucible;
+    //            break;
+    //        case ItemType.ItemBox:
+    //            Type = BuildingType.ItemBox;
+    //            break;
+    //        case ItemType.TreeGrow:
+    //            Type = BuildingType.TreeGrow;
+    //            break;
+    //    }
+    //    BuildingData buildingData = BuildingDataManager.Instance.GetData(Type);
+    //    _sprite.Texture = GD.Load<Texture2D>(buildingData.TexturePath);
+    //    RefreshPosition(mousePos);
+    //}
 
-    public void RefreshPosition(Vector2 mousePos)
-    {
-        Vector2 snapPos = GameManager.Instance.BuildingManager.SnapToCell(Type, mousePos);
-        _canPlace = GameManager.Instance.BuildingManager.CanPlaced(Type, snapPos);
-        if (_canPlace && Type != BuildingType.MainBase)//非主基地要多进行一次灵气范围校验
-        {
-            bool isInQiRange = false;
-            foreach (IQiRangeable qiRangeable in GameManager.Instance.IQiRangeableList)
-            {
-                if (snapPos.DistanceTo(qiRangeable.GetWorldPos()) <= qiRangeable.GetQiRange())
-                {
-                    isInQiRange = true;
-                    break;
-                }
-            }
-            _canPlace = isInQiRange;
-        }
+    //public void RefreshPosition(Vector2 mousePos)
+    //{
+    //    Vector2 snapPos = GameManager.Instance.BuildingManager.SnapToCell(Type, mousePos);
+    //    _canPlace = GameManager.Instance.BuildingManager.CanPlaced(Type, snapPos);
+    //    if (_canPlace && Type != BuildingType.MainBase)//非主基地要多进行一次灵气范围校验
+    //    {
+    //        bool isInQiRange = false;
+    //        foreach (IQiRangeable qiRangeable in GameManager.Instance.IQiRangeableList)
+    //        {
+    //            if (snapPos.DistanceTo(qiRangeable.GetWorldPos()) <= qiRangeable.GetQiRange())
+    //            {
+    //                isInQiRange = true;
+    //                break;
+    //            }
+    //        }
+    //        _canPlace = isInQiRange;
+    //    }
 
-        GlobalPosition = snapPos;
-        _sprite.Modulate = _canPlace ? new Color(0, 1, 0, 0.4f) : new Color(1, 0, 0, 0.4f);
-    }
+    //    GlobalPosition = snapPos;
+    //    _sprite.Modulate = _canPlace ? new Color(0, 1, 0, 0.4f) : new Color(1, 0, 0, 0.4f);
+    //}
 
-    public bool Build(Vector2 mousePos)
-    {
-        if (!_canPlace)
-            return false;
+    //public bool Build(Vector2 mousePos)
+    //{
+    //    if (!_canPlace)
+    //        return false;
 
-        BuildingData buildingData = BuildingDataManager.Instance.GetData(Type);
+    //    BuildingData buildingData = BuildingDataManager.Instance.GetData(Type);
 
-        switch (Type)
-        {
-            case BuildingType.MainBase:
-                PackedScene mainBasePs = GD.Load<PackedScene>(buildingData.TscnPath);
-                MainBase mainBase = mainBasePs.Instantiate<MainBase>();
-                mainBase.Init(Type, GlobalPosition);
-                mainBase.ShowQiRange(true);
-                GetTree().CurrentScene.AddChild(mainBase);
-                break;
-            case BuildingType.BuildingCraft:
-                PackedScene buildingCraftPs = GD.Load<PackedScene>(buildingData.TscnPath);
-                BuildingCraft buildingCraft = buildingCraftPs.Instantiate<BuildingCraft>();
-                buildingCraft.Init(Type, GlobalPosition);
-                GetTree().CurrentScene.AddChild(buildingCraft);
-                break;
-            case BuildingType.Flag:
-                PackedScene flagPs = GD.Load<PackedScene>(buildingData.TscnPath);
-                Flag flag = flagPs.Instantiate<Flag>();
-                flag.Init(Type, GlobalPosition);
-                flag.ShowQiRange(true);
-                GetTree().CurrentScene.AddChild(flag);
-                break;
-            case BuildingType.ToolCraft:
-                PackedScene toolCraftPs = GD.Load<PackedScene>(buildingData.TscnPath);
-                ToolCraft toolCraft = toolCraftPs.Instantiate<ToolCraft>();
-                toolCraft.Init(Type, GlobalPosition);
-                GetTree().CurrentScene.AddChild(toolCraft);
-                break;
-            case BuildingType.ArmorCraft:
-                PackedScene armorCraftPs = GD.Load<PackedScene>(buildingData.TscnPath);
-                ArmorCraft armorCraft = armorCraftPs.Instantiate<ArmorCraft>();
-                armorCraft.Init(Type, GlobalPosition);
-                GetTree().CurrentScene.AddChild(armorCraft);
-                break;
-            case BuildingType.TreeGrow:
-                PackedScene treeGrowPs = GD.Load<PackedScene>(buildingData.TscnPath);
-                TreeGrow treeGrow = treeGrowPs.Instantiate<TreeGrow>();
-                treeGrow.Init(Type, GlobalPosition);
-                GetTree().CurrentScene.AddChild(treeGrow);
-                break;
-        }
-        return true;
-    }
+    //    switch (Type)
+    //    {
+    //        case BuildingType.MainBase:
+    //            PackedScene mainBasePs = GD.Load<PackedScene>(buildingData.TscnPath);
+    //            MainBase mainBase = mainBasePs.Instantiate<MainBase>();
+    //            mainBase.Init(Type, GlobalPosition);
+    //            mainBase.ShowQiRange(true);
+    //            GetTree().CurrentScene.AddChild(mainBase);
+    //            break;
+    //        case BuildingType.BuildingCraft:
+    //            PackedScene buildingCraftPs = GD.Load<PackedScene>(buildingData.TscnPath);
+    //            BuildingCraft buildingCraft = buildingCraftPs.Instantiate<BuildingCraft>();
+    //            buildingCraft.Init(Type, GlobalPosition);
+    //            GetTree().CurrentScene.AddChild(buildingCraft);
+    //            break;
+    //        case BuildingType.Flag:
+    //            PackedScene flagPs = GD.Load<PackedScene>(buildingData.TscnPath);
+    //            Flag flag = flagPs.Instantiate<Flag>();
+    //            flag.Init(Type, GlobalPosition);
+    //            flag.ShowQiRange(true);
+    //            GetTree().CurrentScene.AddChild(flag);
+    //            break;
+    //        case BuildingType.ToolCraft:
+    //            PackedScene toolCraftPs = GD.Load<PackedScene>(buildingData.TscnPath);
+    //            ToolCraft toolCraft = toolCraftPs.Instantiate<ToolCraft>();
+    //            toolCraft.Init(Type, GlobalPosition);
+    //            GetTree().CurrentScene.AddChild(toolCraft);
+    //            break;
+    //        case BuildingType.ArmorCraft:
+    //            PackedScene armorCraftPs = GD.Load<PackedScene>(buildingData.TscnPath);
+    //            ArmorCraft armorCraft = armorCraftPs.Instantiate<ArmorCraft>();
+    //            armorCraft.Init(Type, GlobalPosition);
+    //            GetTree().CurrentScene.AddChild(armorCraft);
+    //            break;
+    //        case BuildingType.TreeGrow:
+    //            PackedScene treeGrowPs = GD.Load<PackedScene>(buildingData.TscnPath);
+    //            TreeGrow treeGrow = treeGrowPs.Instantiate<TreeGrow>();
+    //            treeGrow.Init(Type, GlobalPosition);
+    //            GetTree().CurrentScene.AddChild(treeGrow);
+    //            break;
+    //    }
+    //    return true;
+    //}
 
     //private bool Check
 }

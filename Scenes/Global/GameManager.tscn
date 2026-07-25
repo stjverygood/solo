@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://dfdmitrwv0kqk" path="res://Scripts/Global/GameManager.cs" id="1_g4tje"]
 [ext_resource type="PackedScene" uid="uid://b0h5soh7rcqn1" path="res://Scenes/MainMenus/StartMenuView.tscn" id="2_6j0h0"]
-[ext_resource type="PackedScene" uid="uid://qw0q5wipafhq" path="res://Scenes/System/ItemSystem/DropItem.tscn" id="2_cxcem"]
+[ext_resource type="PackedScene" uid="uid://qw0q5wipafhq" path="res://Scenes/Entities/DropItems/DropItem.tscn" id="2_cxcem"]
 [ext_resource type="PackedScene" uid="uid://ddos2w52gxb06" path="res://Scenes/UI/Commons/FloatTextLb.tscn" id="2_xy3kr"]
 [ext_resource type="PackedScene" uid="uid://bu5uihu26jmpm" path="res://Scenes/MainMenus/SaveListView.tscn" id="3_enwxu"]
 [ext_resource type="PackedScene" uid="uid://74dd0d5dwyxc" path="res://Scenes/UI/ScreenViews/LoadingView.tscn" id="3_h7we0"]
@@ -42,15 +42,6 @@ SmogEffectPs = ExtResource("9_r1yu4")
 _arrowPs = ExtResource("13_caxyc")
 _swordWavePs = ExtResource("10_r1yu4")
 _expBallPs = ExtResource("11_1suta")
-PlayerPs = ExtResource("9_n7fwv")
-TreePs = ExtResource("15_fuhgo")
-GrassPs = ExtResource("16_b088f")
-StonePs = ExtResource("19_kajim")
-OrePs = ExtResource("20_8l0mv")
-NormalMeleeEnemyPs = ExtResource("17_40wt5")
-SpeedMeleeEnemyPs = ExtResource("19_pdb4w")
-StrongMeleeEnemyPs = ExtResource("19_hl6mk")
-NormalRangedEnemyPs = ExtResource("21_dc624")
 EntityPsMap = Dictionary[int, PackedScene]({
 0: ExtResource("9_n7fwv"),
 1: ExtResource("15_fuhgo"),
@@ -60,5 +51,6 @@ EntityPsMap = Dictionary[int, PackedScene]({
 6: ExtResource("17_40wt5"),
 7: ExtResource("19_pdb4w"),
 8: ExtResource("19_hl6mk"),
-9: ExtResource("21_dc624")
+9: ExtResource("21_dc624"),
+11: ExtResource("2_cxcem")
 })

@@ -1,4 +1,3 @@
-using Solo.Scripts.Global;
 namespace Solo.Scripts.System.BuildingSystem.Buildings
 {
     public partial class Stone : Building
@@ -12,32 +11,32 @@ namespace Solo.Scripts.System.BuildingSystem.Buildings
         //public override void _Process(double delta)
         //{
         //}
-        protected override float HandleDamage(float damage, ItemType? itemType)
-        {
-            switch (itemType)
-            {
-                case ItemType.WoodPickaxe:
-                    damage *= 1;
-                    break;
-                case ItemType.IronPickaxe:
-                    damage *= 2;
-                    break;
-                case ItemType.GoldPickaxe:
-                    damage *= 3;
-                    break;
-                case ItemType.JadePickaxe:
-                    damage *= 4;
-                    break;
-                default:
-                    damage *= 0.1f;
-                    break;
-            }
-            return damage;
-        }
+        //protected override float HandleDamage(float damage, ItemType? itemType)
+        //{
+        //    switch (itemType)
+        //    {
+        //        case ItemType.WoodPickaxe:
+        //            damage *= 1;
+        //            break;
+        //        case ItemType.IronPickaxe:
+        //            damage *= 2;
+        //            break;
+        //        case ItemType.GoldPickaxe:
+        //            damage *= 3;
+        //            break;
+        //        case ItemType.JadePickaxe:
+        //            damage *= 4;
+        //            break;
+        //        default:
+        //            damage *= 0.1f;
+        //            break;
+        //    }
+        //    return damage;
+        //}
 
-        protected override void Die()
-        {
-            base.Die();
-        }
+        //protected override void Die()
+        //{
+        //    base.Die();
+        //}
     }
 }

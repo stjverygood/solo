@@ -260,44 +260,44 @@ namespace Solo.Scripts.Global
 
         //生成实体//entity
 
-        [Export] public PackedScene PlayerPs = null!;
-        [Export] public PackedScene TreePs = null!;
-        [Export] public PackedScene GrassPs = null!;
-        [Export] public PackedScene StonePs = null!;
-        [Export] public PackedScene OrePs = null!;
-        [Export] public PackedScene NormalMeleeEnemyPs = null!;
-        [Export] public PackedScene SpeedMeleeEnemyPs = null!;
-        [Export] public PackedScene StrongMeleeEnemyPs = null!;
-        [Export] public PackedScene NormalRangedEnemyPs = null!;
+        //[Export] public PackedScene PlayerPs = null!;
+        //[Export] public PackedScene TreePs = null!;
+        //[Export] public PackedScene GrassPs = null!;
+        //[Export] public PackedScene StonePs = null!;
+        //[Export] public PackedScene OrePs = null!;
+        //[Export] public PackedScene NormalMeleeEnemyPs = null!;
+        //[Export] public PackedScene SpeedMeleeEnemyPs = null!;
+        //[Export] public PackedScene StrongMeleeEnemyPs = null!;
+        //[Export] public PackedScene NormalRangedEnemyPs = null!;
 
-        [Export]
-        public Godot.Collections.Dictionary<EntityType, PackedScene> EntityPsMap = new();
+        [Export] public Godot.Collections.Dictionary<EntityType, PackedScene> EntityPsMap = new();
 
-        public PackedScene GetEntityPs(EntityType type)
-        {
-            switch (type)
-            {
-                case EntityType.Player:
-                    return PlayerPs;
-                case EntityType.Tree:
-                    return TreePs;
-                case EntityType.Grass:
-                    return GrassPs;
-                case EntityType.Stone:
-                    return StonePs;
-                case EntityType.Ore:
-                    return OrePs;
-                case EntityType.NormalMeleeEnemy:
-                    return NormalMeleeEnemyPs;
-                case EntityType.SpeedMeleeEnemy:
-                    return SpeedMeleeEnemyPs;
-                case EntityType.StrongMeleeEnemy:
-                    return StrongMeleeEnemyPs;
-                case EntityType.NormalRangedEnemy:
-                    return NormalRangedEnemyPs;
-            }
-            return PlayerPs;
-        }
+
+        //public PackedScene GetEntityPs(EntityType type)
+        //{
+        //    switch (type)
+        //    {
+        //        case EntityType.Player:
+        //            return PlayerPs;
+        //        case EntityType.Tree:
+        //            return TreePs;
+        //        case EntityType.Grass:
+        //            return GrassPs;
+        //        case EntityType.Stone:
+        //            return StonePs;
+        //        case EntityType.Ore:
+        //            return OrePs;
+        //        case EntityType.NormalMeleeEnemy:
+        //            return NormalMeleeEnemyPs;
+        //        case EntityType.SpeedMeleeEnemy:
+        //            return SpeedMeleeEnemyPs;
+        //        case EntityType.StrongMeleeEnemy:
+        //            return StrongMeleeEnemyPs;
+        //        case EntityType.NormalRangedEnemy:
+        //            return NormalRangedEnemyPs;
+        //    }
+        //    return PlayerPs;
+        //}
 
         public void SpawnExpBall(Vector2 worldPos, float exp)
         {

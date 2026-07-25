@@ -878,18 +878,18 @@ namespace Solo.Scripts.Entities.Players
             //    Velocity = input * _moveSpeed;
             //MoveAndSlide();
 
-            Vector2 mousePos = GetGlobalMousePosition();
-            _curBuildingPreview?.RefreshPosition(mousePos);
+            //Vector2 mousePos = GetGlobalMousePosition();
+            //_curBuildingPreview?.RefreshPosition(mousePos);
 
-            if (Input.IsActionJustReleased("Atk"))
-            {
-                bool? isBuild = _curBuildingPreview?.Build(mousePos);                if (isBuild == true)
-                {
-                    //InventoryManager.FastBarInventory.RemoveItemByIndex(_curFastBarIndex, 1);
-                }
-                ChangeState(PlayerState.Idle);
-                return;
-            }
+            //if (Input.IsActionJustReleased("Atk"))
+            //{
+            //    bool? isBuild = _curBuildingPreview?.Build(mousePos);            //    if (isBuild == true)
+            //    {
+            //        //InventoryManager.FastBarInventory.RemoveItemByIndex(_curFastBarIndex, 1);
+            //    }
+            //    ChangeState(PlayerState.Idle);
+            //    return;
+            //}
 
         }
         private void ExitBuild()

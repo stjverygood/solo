@@ -1,10 +1,12 @@
 using Godot;
 using Solo.Scripts.Entities.Core;
+using Solo.Scripts.Entities.DropItems;
 using Solo.Scripts.Entities.Players;
 using Solo.Scripts.Global;
 using Solo.Scripts.Global.Interfaces;
 using Solo.Scripts.Levels;
 using Solo.Scripts.System.ChunkSystem;
+using Solo.Scripts.System.ItemSystem;
 using Solo.Scripts.System.SaveSystem;
 using System;
 using System.Collections.Generic;
@@ -108,7 +110,7 @@ public partial class World : Node2D
     public void Init()
     {
         GameManager.Instance.World = this;
-        Player player = GameManager.Instance.PlayerPs.Instantiate<Player>();
+        Player player = GameManager.Instance.EntityPsMap[EntityType.Player].Instantiate<Player>();
         AddChild(player);
         if (SaveManager.Instance.CurSaveData.PlayerSaveData == null)
             player.Init(EntityType.Player, new Vector2(0, 0), null);
@@ -230,7 +232,8 @@ public partial class World : Node2D
                     // 关键改动2：直接从打乱后的位置池里切一段，不再单独随机，避免重复
                     for (int i = cursor; i < cursor + count; i++)
                     {
-                        SpawnEntity((EntityType)entityWeight.Type, chunkPos, shuffledPositions[i], null);
+                        Vector2 worldPos = shuffledPositions[i] * GameManager.Instance.ChunkManager.TileSize + new Vector2(GameManager.Instance.ChunkManager.TileSize / 2f, GameManager.Instance.ChunkManager.TileSize / 2f);
+                        SpawnEntity((EntityType)entityWeight.Type, chunkPos, worldPos, null);
                     }
                 }
 
@@ -246,7 +249,7 @@ public partial class World : Node2D
             EntityMap[chunkPos] = new List<IEntity>();
         foreach (EntitySaveData entitySaveData in _entitySaveDataMap[chunkPos])
         {
-            SpawnEntity(entitySaveData.Type, chunkPos, Vector2I.Zero, entitySaveData);
+            SpawnEntity(entitySaveData.Type, chunkPos, Vector2.Zero, entitySaveData);
         }
         _entitySaveDataMap.Remove(chunkPos);
     }
@@ -272,13 +275,12 @@ public partial class World : Node2D
     }
 
 
-    private void SpawnEntity(EntityType type, Vector2I chunkPos, Vector2I tilePos, EntitySaveData? saveData)
+    public void SpawnEntity(EntityType type, Vector2I chunkPos, Vector2 worldPos, EntitySaveData? saveData)
     {
         PackedScene entityPs = GameManager.Instance.EntityPsMap[type];
-        Vector2 tileCenterPos = tilePos * GameManager.Instance.ChunkManager.TileSize + new Vector2(GameManager.Instance.ChunkManager.TileSize / 2f, GameManager.Instance.ChunkManager.TileSize / 2f);
         IEntity entity = entityPs.Instantiate<IEntity>();
         GetTree().CurrentScene.AddChild((Node2D)entity);
-        entity.Init(type, tileCenterPos, saveData);
+        entity.Init(type, worldPos, saveData);
         EntityMap[chunkPos].Add(entity);
     }
 
@@ -292,5 +294,33 @@ public partial class World : Node2D
             int j = rng.Next(i + 1);
             (list[i], list[j]) = (list[j], list[i]);
         }
+    }
+
+
+    public void SpawnDropItem(Vector2 worldPos, List<DropInfo> dropInfoList)
+    {
+        foreach (DropInfo info in dropInfoList)
+        {
+            for (int i = 0; i < info.Times; i++)
+            {
+                if (GD.Randf() > info.Chance)
+                    continue;
+                DropItem dropItem = GameManager.Instance.EntityPsMap[EntityType.DropItem].Instantiate<DropItem>();
+                GetTree().CurrentScene.AddChild(dropItem);
+                dropItem.Init(EntityType.DropItem, worldPos, null);
+                EntityMap[GameManager.Instance.ChunkManager.WorldToChunkPos(worldPos)].Add(dropItem);
+                dropItem.SetItemInstance(new ItemInstance() { Type = info.Type, Count = 1 });
+                dropItem.ApplyForce();
+            }
+        }
+    }
+    public void SpwawnDropItem(Vector2 worldPos, ItemInstance itemInstance)
+    {
+        DropItem dropItem = GameManager.Instance.EntityPsMap[EntityType.DropItem].Instantiate<DropItem>();
+        GetTree().CurrentScene.AddChild(dropItem);
+        dropItem.Init(EntityType.DropItem, worldPos, null);
+        EntityMap[GameManager.Instance.ChunkManager.WorldToChunkPos(worldPos)].Add(dropItem);
+        dropItem.SetItemInstance(itemInstance);
+        dropItem.ApplyForce();
     }
 }

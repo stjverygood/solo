@@ -16,6 +16,9 @@
         StrongMeleeEnemy,//力量型
         NormalRangedEnemy,//普通, 射直线
         ExplosiveRangedEnemy,//发射爆炸弹
+
+        DropItem,
+        Expball,
     }
 
     //境界类型
