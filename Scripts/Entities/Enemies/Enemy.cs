@@ -320,12 +320,12 @@ namespace Solo.Scripts.Entities.Enemies
         private void EnterDeath()
         {
             canMove = false;
-            GameManager.Instance.SpawnExpBall(GlobalPosition, 100);
+            GameManager.Instance.World.SpawnExpBall(GlobalPosition, _data.ExpBallDropInfo);
             Tween tween = CreateTween().SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out);
             tween.TweenProperty(_animSprite, "scale", new Vector2(0.01f, 0.01f), 1f);
             tween.Finished += () =>
             {
-
+                GameManager.Instance.World.SpawnDropItem(GlobalPosition, _data.DropItemDropInfoList);
                 QueueFree();
             };
         }

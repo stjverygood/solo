@@ -1,6 +1,7 @@
 using Godot;
 using Solo.Scripts.Entities.Core;
 using Solo.Scripts.Entities.DropItems;
+using Solo.Scripts.Entities.Expballs;
 using Solo.Scripts.Entities.Players;
 using Solo.Scripts.Global;
 using Solo.Scripts.Global.Interfaces;
@@ -297,9 +298,9 @@ public partial class World : Node2D
     }
 
 
-    public void SpawnDropItem(Vector2 worldPos, List<DropInfo> dropInfoList)
+    public void SpawnDropItem(Vector2 worldPos, List<DropItemDropInfo> dropInfoList)
     {
-        foreach (DropInfo info in dropInfoList)
+        foreach (DropItemDropInfo info in dropInfoList)
         {
             for (int i = 0; i < info.Times; i++)
             {
@@ -314,7 +315,7 @@ public partial class World : Node2D
             }
         }
     }
-    public void SpwawnDropItem(Vector2 worldPos, ItemInstance itemInstance)
+    public void SpawnDropItem(Vector2 worldPos, ItemInstance itemInstance)
     {
         DropItem dropItem = GameManager.Instance.EntityPsMap[EntityType.DropItem].Instantiate<DropItem>();
         GetTree().CurrentScene.AddChild(dropItem);
@@ -322,5 +323,19 @@ public partial class World : Node2D
         EntityMap[GameManager.Instance.ChunkManager.WorldToChunkPos(worldPos)].Add(dropItem);
         dropItem.SetItemInstance(itemInstance);
         dropItem.ApplyForce();
+    }
+
+    public void SpawnExpBall(Vector2 worldPos, ExpBallDropInfo info)
+    {
+        for (int i = 0; i < info.Times; i++)
+        {
+            if (GD.Randf() > info.Chance) continue;
+            float exp = (float)GD.RandRange(info.MinExp, info.MaxExp);
+            ExpBall expBall = GameManager.Instance.EntityPsMap[EntityType.ExpBall].Instantiate<ExpBall>();
+            GetTree().CurrentScene.AddChild(expBall);
+            expBall.Init(EntityType.ExpBall, worldPos, null);
+            EntityMap[GameManager.Instance.ChunkManager.WorldToChunkPos(worldPos)].Add(expBall);
+            expBall.SetExp(exp);
+        }
     }
 }

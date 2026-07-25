@@ -299,12 +299,12 @@ namespace Solo.Scripts.Global
         //    return PlayerPs;
         //}
 
-        public void SpawnExpBall(Vector2 worldPos, float exp)
-        {
-            ExpBall expBall = _expBallPs.Instantiate<ExpBall>();
-            GetTree().CurrentScene.AddChild(expBall);
-            expBall.Init(worldPos, exp);
-        }
+        //public void SpawnExpBall(Vector2 worldPos, float exp)
+        //{
+        //    ExpBall expBall = _expBallPs.Instantiate<ExpBall>();
+        //    GetTree().CurrentScene.AddChild(expBall);
+        //    expBall.Init(worldPos, exp);
+        //}
 
 
     }

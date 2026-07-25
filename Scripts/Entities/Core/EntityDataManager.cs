@@ -1,5 +1,6 @@
 ﻿using Solo.Scripts.Entities.DropItems;
 using Solo.Scripts.Entities.Enemies;
+using Solo.Scripts.Entities.Expballs;
 using Solo.Scripts.Entities.Players;
 using Solo.Scripts.Entities.Resources;
 using Solo.Scripts.Global;
@@ -31,6 +32,11 @@ namespace Solo.Scripts.Entities.Core
                 IdleDuration = 1,
                 PatrolRange = 200,
                 ProjectileType = ProjectileType.SwordWave,
+                DropItemDropInfoList = new List<DropItemDropInfo>()
+                {
+                    new DropItemDropInfo(){ Type = ItemType.Stone, Times = 1, Chance = 1f},
+                },
+                ExpBallDropInfo = new ExpBallDropInfo() { MinExp = 100, MaxExp = 300, Times = 5, Chance = 0.8f }
             };
             _dataMap[EntityType.SpeedMeleeEnemy] = new EnemyData()
             {
@@ -45,6 +51,10 @@ namespace Solo.Scripts.Entities.Core
                 IdleDuration = 0.1f,
                 PatrolRange = 200,
                 ProjectileType = ProjectileType.SwordWave,
+                DropItemDropInfoList = new List<DropItemDropInfo>()
+                {
+                },
+                ExpBallDropInfo = new ExpBallDropInfo() { MinExp = 100, MaxExp = 300, Times = 5, Chance = 0.8f }
             };
             _dataMap[EntityType.StrongMeleeEnemy] = new EnemyData()
             {
@@ -59,6 +69,10 @@ namespace Solo.Scripts.Entities.Core
                 IdleDuration = 3,
                 PatrolRange = 200,
                 ProjectileType = ProjectileType.SwordWave,
+                DropItemDropInfoList = new List<DropItemDropInfo>()
+                {
+                },
+                ExpBallDropInfo = new ExpBallDropInfo() { MinExp = 100, MaxExp = 300, Times = 5, Chance = 0.8f }
             };
             _dataMap[EntityType.NormalRangedEnemy] = new EnemyData()
             {
@@ -73,36 +87,40 @@ namespace Solo.Scripts.Entities.Core
                 IdleDuration = 1,
                 PatrolRange = 200,
                 ProjectileType = ProjectileType.Arrow,
+                DropItemDropInfoList = new List<DropItemDropInfo>()
+                {
+                },
+                ExpBallDropInfo = new ExpBallDropInfo() { MinExp = 100, MaxExp = 300, Times = 5, Chance = 0.8f }
             };
 
             _dataMap[EntityType.Tree] = new ResourceData()
             {
                 MaxHp = 500,
-                DropInfoList = new List<DropItems.DropInfo>()
+                DropInfoList = new List<DropItems.DropItemDropInfo>()
                 {
-                    new DropInfo() { Type = ItemType.Wood, Times = 4, Chance = 0.7f},
-                    new DropInfo() { Type = ItemType.Stone, Times = 2, Chance = 0.6f}
+                    new DropItemDropInfo() { Type = ItemType.Wood, Times = 4, Chance = 0.7f},
+                    new DropItemDropInfo() { Type = ItemType.Stone, Times = 2, Chance = 0.6f}
                 }
             };
 
             _dataMap[EntityType.Grass] = new ResourceData()
             {
                 MaxHp = 30,
-                DropInfoList = new List<DropItems.DropInfo>()
+                DropInfoList = new List<DropItems.DropItemDropInfo>()
                 {
                 }
             };
             _dataMap[EntityType.Stone] = new ResourceData()
             {
                 MaxHp = 1000,
-                DropInfoList = new List<DropItems.DropInfo>()
+                DropInfoList = new List<DropItems.DropItemDropInfo>()
                 {
                 }
             };
             _dataMap[EntityType.Ore] = new ResourceData()
             {
                 MaxHp = 10000,
-                DropInfoList = new List<DropItems.DropInfo>()
+                DropInfoList = new List<DropItems.DropItemDropInfo>()
                 {
                 }
             };

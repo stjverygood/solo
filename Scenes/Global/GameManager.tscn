@@ -14,7 +14,7 @@
 [ext_resource type="PackedScene" uid="uid://c1v6ptm7ml55o" path="res://Scenes/UI/UIManager.tscn" id="10_40wt5"]
 [ext_resource type="PackedScene" uid="uid://c364av0qjs5rx" path="res://Scenes/System/ChunkSystem/ChunkManager.tscn" id="10_fevtx"]
 [ext_resource type="PackedScene" uid="uid://bqn8jrdyesh0w" path="res://Scenes/Projectiles/SwordWave.tscn" id="10_r1yu4"]
-[ext_resource type="PackedScene" uid="uid://ow5i482gxdko" path="res://Scenes/DropItem/ExpBall.tscn" id="11_1suta"]
+[ext_resource type="PackedScene" uid="uid://ow5i482gxdko" path="res://Scenes/Entities/ExpBalls/ExpBall.tscn" id="11_1suta"]
 [ext_resource type="PackedScene" uid="uid://bnq2kgnwy4iaa" path="res://Scenes/Projectiles/Arrow.tscn" id="13_caxyc"]
 [ext_resource type="PackedScene" uid="uid://dq6c33qxp7sqb" path="res://Scenes/Entities/Resources/Tree.tscn" id="15_fuhgo"]
 [ext_resource type="PackedScene" uid="uid://cn7pil5cp6afb" path="res://Scenes/Entities/Resources/Grass.tscn" id="16_b088f"]
@@ -52,5 +52,6 @@ EntityPsMap = Dictionary[int, PackedScene]({
 7: ExtResource("19_pdb4w"),
 8: ExtResource("19_hl6mk"),
 9: ExtResource("21_dc624"),
-11: ExtResource("2_cxcem")
+11: ExtResource("2_cxcem"),
+12: ExtResource("11_1suta")
 })

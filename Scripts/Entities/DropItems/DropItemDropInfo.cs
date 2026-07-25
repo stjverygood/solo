@@ -2,7 +2,7 @@
 
 namespace Solo.Scripts.Entities.DropItems
 {
-    public class DropInfo
+    public class DropItemDropInfo
     {
         public ItemType Type;
         public int Times;

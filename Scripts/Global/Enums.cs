@@ -18,7 +18,7 @@
         ExplosiveRangedEnemy,//发射爆炸弹
 
         DropItem,
-        Expball,
+        ExpBall,
     }
 
     //境界类型
