@@ -1,17 +1,85 @@
-﻿using System;
+﻿using Solo.Scripts.Entities.Components.AtkComponents;
+using Solo.Scripts.Entities.Components.DefComponents;
+using Solo.Scripts.Entities.Components.ExpComponents;
+using Solo.Scripts.Entities.Components.HpComponents;
+using Solo.Scripts.Entities.Components.InventoryComponents;
+using Solo.Scripts.Entities.Components.PositionComponents;
+using Solo.Scripts.Entities.Components.QiComponents;
+using Solo.Scripts.Entities.Components.RealmComponents;
+using Solo.Scripts.Entities.Components.StartPositionComponent;
+using Solo.Scripts.Global;
+using Solo.Scripts.Global.Interfaces;
+using System;
 using System.Collections.Generic;
 
 namespace Solo.Scripts.Entities.Core
 {
     public class EntityCore
     {
+        public EntityType Type;
         private readonly Dictionary<Type, Component> _componentMap = new();
 
-        public EntityCore() { }
-
-        public void AddComponent(Component component)
+        public EntityCore(EntityType type)
         {
-            _componentMap[component.GetType()] = component;
+            Type = type;
+        }
+
+        public void InitComponent(IEntity entity, List<ComponentSaveData> componentSaveDataList)
+        {
+            EntityData entityData = EntityDataManager.Instance.GetData(Type);
+            foreach (KeyValuePair<Type, ComponentData?> pair in entityData.ComponentDataMap)
+            {
+                if (pair.Key == typeof(RealmComponent))
+                    _componentMap[typeof(RealmComponent)] = new RealmComponent(entity);
+                else if (pair.Key == typeof(HpComponent))
+                    _componentMap[typeof(HpComponent)] = new HpComponent(entity);
+                else if (pair.Key == typeof(QiComponent))
+                    _componentMap[typeof(QiComponent)] = new QiComponent(entity);
+                else if (pair.Key == typeof(ExpComponent))
+                    _componentMap[typeof(ExpComponent)] = new ExpComponent(entity);
+                else if (pair.Key == typeof(AtkComponent))
+                    _componentMap[typeof(AtkComponent)] = new AtkComponent(entity);
+                else if (pair.Key == typeof(DefComponent))
+                    _componentMap[typeof(DefComponent)] = new DefComponent(entity);
+                else if (pair.Key == typeof(InventoryComponent))
+                    _componentMap[typeof(InventoryComponent)] = new InventoryComponent(entity);
+                else if (pair.Key == typeof(PositionComponent))
+                    _componentMap[typeof(PositionComponent)] = new PositionComponent(entity);
+                else if (pair.Key == typeof(StartPositionComponent))
+                    _componentMap[typeof(StartPositionComponent)] = new StartPositionComponent(entity);
+
+
+            }
+            Dictionary<string, ComponentSaveData> compSaveDataMap = new Dictionary<string, ComponentSaveData>();
+            foreach (ComponentSaveData saveData in componentSaveDataList)
+            {
+                compSaveDataMap[saveData.TypeName] = saveData;
+            }
+            foreach (KeyValuePair<Type, Component> typeCompPair in _componentMap)
+            {
+                entityData.ComponentDataMap.TryGetValue(typeCompPair.Key, out ComponentData? compData);
+                compSaveDataMap.TryGetValue(typeCompPair.Value.GetType().Name, out ComponentSaveData? compSaveData);
+                typeCompPair.Value.Init(compData, compSaveData);
+            }
+        }
+        //public void AddComponent(Component component)
+        //{
+        //    _componentMap[component.GetType()] = component;
+        //}
+        public EntitySaveData GetEntitySaveData()
+        {
+            List<ComponentSaveData> compSaveDataList = new();
+            foreach (KeyValuePair<Type, Component> pair in _componentMap)
+            {
+                ComponentSaveData? compSaveData = pair.Value.GetSaveData();
+                if (compSaveData != null)
+                    compSaveDataList.Add(compSaveData);
+            }
+            return new EntitySaveData()
+            {
+                Type = Type,
+                ComponentSaveDataList = compSaveDataList,
+            };
         }
 
         public T GetComponent<T>() where T : Component
@@ -33,5 +101,8 @@ namespace Solo.Scripts.Entities.Core
             component = null!;
             return false;
         }
+
+
+
     }
 }

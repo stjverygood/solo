@@ -1,4 +1,6 @@
 using Godot;
+using Solo.Scripts.Entities.Components.PositionComponents;
+using Solo.Scripts.Entities.Components.StartPositionComponent;
 using Solo.Scripts.Entities.Core;
 using Solo.Scripts.Entities.DropItems;
 using Solo.Scripts.Entities.Expballs;
@@ -114,9 +116,14 @@ public partial class World : Node2D
         Player player = GameManager.Instance.EntityPsMap[EntityType.Player].Instantiate<Player>();
         AddChild(player);
         if (SaveManager.Instance.CurSaveData.PlayerSaveData == null)
-            player.Init(EntityType.Player, new Vector2(0, 0), null);
+        {
+            player.Init(EntityType.Player, new List<ComponentSaveData>());
+            player.Core.GetComponent<StartPositionComponent>().StartPositon = new Vector2(0, 0);
+            player.Core.GetComponent<PositionComponent>().SetWorldPosition(new Vector2(0, 0));
+        }
+
         else
-            player.Init(EntityType.Player, new Vector2(0, 0), SaveManager.Instance.CurSaveData.PlayerSaveData);
+            player.Init(EntityType.Player, SaveManager.Instance.CurSaveData.PlayerSaveData.ComponentSaveDataList);
 
         ChunkManager chunkManager = GameManager.Instance.ChunkManagerPs.Instantiate<ChunkManager>();
         AddChild(chunkManager);
@@ -207,37 +214,26 @@ public partial class World : Node2D
             if (totalWeight <= 0)
                 continue;
 
-            // 关键改动1：先把该 tile 类型下的所有位置打乱一次，作为不放回抽样池
             List<Vector2I> shuffledPositions = new List<Vector2I>(pair.Value);
             ShuffleList(shuffledPositions);
-
             int totalTiles = shuffledPositions.Count;
             int cursor = 0; // 当前切片起始下标
-
             foreach (EntityWeight entityWeight in entityWeightList)
             {
-                // null 表示"空地"，不生成实体，但仍要占用对应数量的位置，
-                // 这样后面的实体类型才不会抢占这部分位置
                 int count = (int)(entityWeight.Weight / totalWeight * totalTiles);
-
                 if (count <= 0)
                     continue;
-
-                // 防止越界（四舍五入误差导致 cursor+count 超过总数）
                 count = Mathf.Min(count, totalTiles - cursor);
                 if (count <= 0)
                     break;
-
                 if (entityWeight.Type != null)
                 {
-                    // 关键改动2：直接从打乱后的位置池里切一段，不再单独随机，避免重复
                     for (int i = cursor; i < cursor + count; i++)
                     {
                         Vector2 worldPos = shuffledPositions[i] * GameManager.Instance.ChunkManager.TileSize + new Vector2(GameManager.Instance.ChunkManager.TileSize / 2f, GameManager.Instance.ChunkManager.TileSize / 2f);
-                        SpawnEntity((EntityType)entityWeight.Type, chunkPos, worldPos, null);
+                        //SpawnEntity((EntityType)entityWeight.Type, chunkPos, worldPos, null);
                     }
                 }
-
                 cursor += count;
             }
         }
@@ -270,7 +266,7 @@ public partial class World : Node2D
         }
 
         //玩家
-        SaveManager.Instance.CurSaveData.PlayerSaveData = (PlayerSaveData)GameManager.Instance.Player.GetSaveData();
+        SaveManager.Instance.CurSaveData.PlayerSaveData = GameManager.Instance.Player.Core.GetEntitySaveData();
 
         SaveManager.Instance.WriteCurSaveData();
     }
@@ -281,7 +277,7 @@ public partial class World : Node2D
         PackedScene entityPs = GameManager.Instance.EntityPsMap[type];
         IEntity entity = entityPs.Instantiate<IEntity>();
         GetTree().CurrentScene.AddChild((Node2D)entity);
-        entity.Init(type, worldPos, saveData);
+        entity.Init(type, saveData.ComponentSaveDataList);
         EntityMap[chunkPos].Add(entity);
     }
 
@@ -308,7 +304,7 @@ public partial class World : Node2D
                     continue;
                 DropItem dropItem = GameManager.Instance.EntityPsMap[EntityType.DropItem].Instantiate<DropItem>();
                 GetTree().CurrentScene.AddChild(dropItem);
-                dropItem.Init(EntityType.DropItem, worldPos, null);
+                //dropItem.Init(EntityType.DropItem, worldPos, null);
                 EntityMap[GameManager.Instance.ChunkManager.WorldToChunkPos(worldPos)].Add(dropItem);
                 dropItem.SetItemInstance(new ItemInstance() { Type = info.Type, Count = 1 });
                 dropItem.ApplyForce();
@@ -319,7 +315,7 @@ public partial class World : Node2D
     {
         DropItem dropItem = GameManager.Instance.EntityPsMap[EntityType.DropItem].Instantiate<DropItem>();
         GetTree().CurrentScene.AddChild(dropItem);
-        dropItem.Init(EntityType.DropItem, worldPos, null);
+        //dropItem.Init(EntityType.DropItem, worldPos, null);
         EntityMap[GameManager.Instance.ChunkManager.WorldToChunkPos(worldPos)].Add(dropItem);
         dropItem.SetItemInstance(itemInstance);
         dropItem.ApplyForce();
@@ -333,7 +329,7 @@ public partial class World : Node2D
             float exp = (float)GD.RandRange(info.MinExp, info.MaxExp);
             ExpBall expBall = GameManager.Instance.EntityPsMap[EntityType.ExpBall].Instantiate<ExpBall>();
             GetTree().CurrentScene.AddChild(expBall);
-            expBall.Init(EntityType.ExpBall, worldPos, null);
+            //expBall.Init(EntityType.ExpBall, worldPos, null);
             EntityMap[GameManager.Instance.ChunkManager.WorldToChunkPos(worldPos)].Add(expBall);
             expBall.SetExp(exp);
         }

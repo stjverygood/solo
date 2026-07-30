@@ -1,5 +1,9 @@
 using Godot;
-using Solo.Scripts.Entities.Components;
+using Solo.Scripts.Entities.Components.ExpComponents;
+using Solo.Scripts.Entities.Components.HpComponents;
+using Solo.Scripts.Entities.Components.InventoryComponents;
+using Solo.Scripts.Entities.Components.QiComponents;
+using Solo.Scripts.Entities.Components.RealmComponents;
 using Solo.Scripts.Global;
 using Solo.Scripts.UI.HUDs;
 using Solo.Scripts.UI.InteractViews;

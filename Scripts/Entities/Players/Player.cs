@@ -1,13 +1,17 @@
 using Godot;
-using Solo.Scripts.Entities.Components;
+using Solo.Scripts.Entities.Components.ExpComponents;
+using Solo.Scripts.Entities.Components.HpComponents;
+using Solo.Scripts.Entities.Components.InventoryComponents;
+using Solo.Scripts.Entities.Components.QiComponents;
+using Solo.Scripts.Entities.Components.RealmComponents;
+using Solo.Scripts.Entities.Components.StartPositionComponent;
 using Solo.Scripts.Entities.Core;
 using Solo.Scripts.Global;
 using Solo.Scripts.Global.Interfaces;
 using Solo.Scripts.Projectiles;
-using Solo.Scripts.System.InventorySystem;
 using Solo.Scripts.System.ItemSystem;
-using Solo.Scripts.System.RealmSystem;
 using System;
+using System.Collections.Generic;
 
 
 namespace Solo.Scripts.Entities.Players
@@ -28,7 +32,7 @@ namespace Solo.Scripts.Entities.Players
         BagUI,
     }
 
-    public partial class Player : CharacterBody2D, IEntity, ISaveable
+    public partial class Player : CharacterBody2D, IEntity
     {
         private bool _initialized = false;
         public PlayerState CurState;
@@ -45,7 +49,7 @@ namespace Solo.Scripts.Entities.Players
         [Export] private PackedScene _fishingFloatPs = null!;
 
         //人物属性
-        public Vector2 StartPoint = new Vector2(0, 0);//出生点
+        //public Vector2 StartPoint = new Vector2(0, 0);//出生点
         private float _moveSpeed = 100;
         private float _curTargetRange = 100;//手长, 攻击和交互都统一用这个距离, 远程itemtype能加这个范围, todo : 改用基础值, 使用时获取手持物+距离
         private float _curTargetRangeSq;
@@ -59,92 +63,118 @@ namespace Solo.Scripts.Entities.Players
 
         [Export] AnimatedSprite2D _bgAnimSprite = null!;
 
-        public EntityCore Core { get; private set; } = new();
+        public EntityCore Core { get; private set; } = null!;
 
-        public EntityType Type;
         private PlayerData _data = null!;
 
-        public void Init(EntityType type, Vector2 worldPos, EntitySaveData? entitySaveData = null)
+        public void Init(EntityType type, List<ComponentSaveData> componentSaveDataList)
         {
             GD.Print("Player Init~~~");
-            _initialized = true;
+
 
             GameManager.Instance.Player = this;
-            Type = type;
-            _data = (PlayerData)EntityDataManager.Instance.GetData(Type);
-            PlayerSaveData? saveData = (PlayerSaveData?)entitySaveData;
-            //出生点, 初始化出生点和初始位置由生成系统决定, 恢复读存档, 重生回出生点
-            if (saveData == null)
-            {
-                StartPoint = worldPos;
-                GlobalPosition = worldPos;
-            }
-            else
-            {
-                StartPoint = new Vector2(saveData.StartX, saveData.StartY);
-                GlobalPosition = new Vector2(saveData.WorldX, saveData.WorldY);
-            }
+            Core = new EntityCore(type);
+            Core.InitComponent(this, componentSaveDataList);
+            _initialized = true;
+            //Type = type;
+            //Dictionary<Type, Component> compMap = new Dictionary<Type, Component>();
+            //Dictionary<string, ComponentSaveData> compSaveDataMap = new Dictionary<string, ComponentSaveData>();
+            //foreach (ComponentSaveData compSaveData in componentSaveDataList)
+            //{
+            //    compSaveDataMap[compSaveData.TypeName] = compSaveData;
+            //}
 
-            InventoryComponent inventoryComponent = new InventoryComponent(this);
-            if (saveData == null)
-            {
-                inventoryComponent.FastBarInventory = new Inventory(_data.FastBarInventorySlotList);
-                inventoryComponent.BagInventory = new Inventory(_data.BagInventorySlotList);
-                inventoryComponent.EquipmentInventory = new Inventory(_data.EquipmentInventorySlotList);
-            }
-            else
-            {
-                inventoryComponent.FastBarInventory = new Inventory(saveData.FastBarInventorySlotList);
-                inventoryComponent.BagInventory = new Inventory(saveData.BagInventorySlotList);
-                inventoryComponent.EquipmentInventory = new Inventory(saveData.EquipmentInventorySlotList);
-            }
-            Core.AddComponent(inventoryComponent);
+            //EntityData entityData = EntityDataManager.Instance.GetData(type);
+            //foreach (ComponentType compType in entityData.ComponentDataMap.Keys)
+            //{
+            //    compMap[compType] = ComponentFactory.CreateComponent(this, compType);
+            //    Core.AddComponent(compMap[compType]);
+            //}
+            //foreach (KeyValuePair<ComponentType, Component> pair in compMap)
+            //{
+            //    compSaveDataMap.TryGetValue(pair.Key, out ComponentSaveData? compSaveData);
+            //    pair.Value.Init(entityData.ComponentDataMap[pair.Key], compSaveData);
+            //}
+
+
+            //GlobalPosition = Core.GetComponent<PositionComponent>().WorldPosition();
+
+
+            //Type = type;
+            //_data = (PlayerData)EntityDataManager.Instance.GetData(Type);
+            //PlayerSaveData? saveData = (PlayerSaveData?)entitySaveData;
+            //出生点, 初始化出生点和初始位置由生成系统决定, 恢复读存档, 重生回出生点
+            //if (saveData == null)
+            //{
+            //    StartPoint = worldPos;
+            //    GlobalPosition = worldPos;
+            //}
+            //else
+            //{
+            //    StartPoint = new Vector2(saveData.StartX, saveData.StartY);
+            //    GlobalPosition = new Vector2(saveData.WorldX, saveData.WorldY);
+            //}
+
+            //InventoryComponent inventoryComponent = new InventoryComponent(this);
+            //if (saveData == null)
+            //{
+            //    inventoryComponent.FastBarInventory = new Inventory(_data.FastBarInventorySlotList);
+            //    inventoryComponent.BagInventory = new Inventory(_data.BagInventorySlotList);
+            //    inventoryComponent.EquipmentInventory = new Inventory(_data.EquipmentInventorySlotList);
+            //}
+            //else
+            //{
+            //    inventoryComponent.FastBarInventory = new Inventory(saveData.FastBarInventorySlotList);
+            //    inventoryComponent.BagInventory = new Inventory(saveData.BagInventorySlotList);
+            //    inventoryComponent.EquipmentInventory = new Inventory(saveData.EquipmentInventorySlotList);
+            //}
+            //Core.AddComponent(inventoryComponent);
 
 
 
             //先绑定, 后初始化值
-            RealmComponent realmComponent = new RealmComponent(this);
-            if (saveData == null)
-                realmComponent.Refresh(_data.RealmType);
-            else
-                realmComponent.Refresh(saveData.RealmType);
-            Core.AddComponent(realmComponent);
+            //RealmComponent realmComponent = new RealmComponent(this);
+            //if (saveData == null)
+            //    realmComponent.Refresh(_data.RealmType);
+            //else
+            //    realmComponent.Refresh(saveData.RealmType);
+            //Core.AddComponent(realmComponent);
 
-            RealmData realmData = RealmDataManager.Instance.GetData(Core.GetComponent<RealmComponent>().Value);
+            //RealmData realmData = RealmDataManager.Instance.GetData(Core.GetComponent<RealmComponent>().Value);
 
-            HpComponent hpComponent = new HpComponent(this);
-            if (saveData == null)
-                hpComponent.SetValue(realmData.MaxHp, realmData.MaxHp);
-            else
-                hpComponent.SetValue(saveData.CurHp, realmData.MaxHp + inventoryComponent.GetMaxHpBonus());
-            Core.AddComponent(hpComponent);
+            //HpComponent hpComponent = new HpComponent(this);
+            //if (saveData == null)
+            //    hpComponent.SetValue(realmData.MaxHp, realmData.MaxHp);
+            //else
+            //    hpComponent.SetValue(saveData.CurHp, realmData.MaxHp + inventoryComponent.GetMaxHpBonus());
+            //Core.AddComponent(hpComponent);
 
-            QiComponent qiComponent = new QiComponent(this);
-            if (saveData == null)
-                qiComponent.Refresh(realmData.MaxQi, realmData.MaxQi);
-            else
-                qiComponent.Refresh(saveData.CurQi, realmData.MaxQi + inventoryComponent.GetMaxQiBonus());
-            Core.AddComponent(qiComponent);
+            //QiComponent qiComponent = new QiComponent(this);
+            //if (saveData == null)
+            //    qiComponent.Refresh(realmData.MaxQi, realmData.MaxQi);
+            //else
+            //    qiComponent.Refresh(saveData.CurQi, realmData.MaxQi + inventoryComponent.GetMaxQiBonus());
+            //Core.AddComponent(qiComponent);
 
-            ExpComponent expComponent = new ExpComponent(this);
-            if (saveData == null)
-                expComponent.Refresh(0, realmData.MaxExp);
-            else
-                expComponent.Refresh(saveData.CurExp, realmData.MaxExp);
-            Core.AddComponent(expComponent);
+            //ExpComponent expComponent = new ExpComponent(this);
+            //if (saveData == null)
+            //    expComponent.Refresh(0, realmData.MaxExp);
+            //else
+            //    expComponent.Refresh(saveData.CurExp, realmData.MaxExp);
+            //Core.AddComponent(expComponent);
 
-            AtkComponent atkComponent = new AtkComponent(this);
-            atkComponent.Refresh(realmData.Atk + inventoryComponent.GetAtkBonus());
-            Core.AddComponent(atkComponent);
+            //AtkComponent atkComponent = new AtkComponent(this);
+            //atkComponent.Refresh(realmData.Atk + inventoryComponent.GetAtkBonus());
+            //Core.AddComponent(atkComponent);
 
-            DefComponent defComponent = new DefComponent(this);
-            defComponent.Refresh(realmData.Def + inventoryComponent.GetDefBonus());
-            Core.AddComponent(defComponent);
+            //DefComponent defComponent = new DefComponent(this);
+            //defComponent.Refresh(realmData.Def + inventoryComponent.GetDefBonus());
+            //Core.AddComponent(defComponent);
 
-            if (saveData == null)
-                CurFastBarIndex = _data.FastBarIndex;
-            else
-                CurFastBarIndex = saveData.FastBarIndex;
+            //if (saveData == null)
+            //    CurFastBarIndex = _data.FastBarIndex;
+            //else
+            //    CurFastBarIndex = saveData.FastBarIndex;
 
             Core.GetComponent<InventoryComponent>().FastBarInventory.SlotChanged += (i) =>
             {
@@ -153,29 +183,29 @@ namespace Solo.Scripts.Entities.Players
             RefreshHandNode();
 
             _curTargetRangeSq = _curTargetRange * _curTargetRange;
-            if (Core.GetComponent<HpComponent>().CurValue == 0)//若血量是0, 进入重生逻辑
+            if (Core.GetComponent<HpComponent>().CurHp == 0)//若血量是0, 进入重生逻辑
                 Revive();
             ChangeState(PlayerState.Idle);
         }
 
-        public EntitySaveData GetSaveData()
-        {
-            return new PlayerSaveData()
-            {
-                Type = EntityType.Player,
-                WorldX = GlobalPosition.X,
-                WorldY = GlobalPosition.Y,
-                StartX = StartPoint.X,
-                StartY = StartPoint.Y,
-                RealmType = Core.GetComponent<RealmComponent>().Value,
-                CurHp = Core.GetComponent<HpComponent>().CurValue,
-                CurQi = Core.GetComponent<HpComponent>().CurValue,
-                CurExp = Core.GetComponent<HpComponent>().CurValue,
-                FastBarInventorySlotList = Core.GetComponent<InventoryComponent>().FastBarInventory.SlotList,
-                BagInventorySlotList = Core.GetComponent<InventoryComponent>().BagInventory.SlotList,
-                EquipmentInventorySlotList = Core.GetComponent<InventoryComponent>().EquipmentInventory.SlotList,
-            };
-        }
+        //public EntitySaveData GetSaveData()
+        //{
+        //    return new PlayerSaveData()
+        //    {
+        //        Type = EntityType.Player,
+        //        WorldX = GlobalPosition.X,
+        //        WorldY = GlobalPosition.Y,
+        //        StartX = StartPoint.X,
+        //        StartY = StartPoint.Y,
+        //        RealmType = Core.GetComponent<RealmComponent>().Value,
+        //        CurHp = Core.GetComponent<HpComponent>().CurValue,
+        //        CurQi = Core.GetComponent<HpComponent>().CurValue,
+        //        CurExp = Core.GetComponent<HpComponent>().CurValue,
+        //        FastBarInventorySlotList = Core.GetComponent<InventoryComponent>().FastBarInventory.SlotList,
+        //        BagInventorySlotList = Core.GetComponent<InventoryComponent>().BagInventory.SlotList,
+        //        EquipmentInventorySlotList = Core.GetComponent<InventoryComponent>().EquipmentInventory.SlotList,
+        //    };
+        //}
 
         public override void _PhysicsProcess(double delta)
         {
@@ -377,7 +407,7 @@ namespace Solo.Scripts.Entities.Players
         }
         private void UpdateIdle(float delta)
         {
-            if (Core.GetComponent<HpComponent>().CurValue <= 0)
+            if (Core.GetComponent<HpComponent>().CurHp <= 0)
             {
                 ChangeState(PlayerState.Death);
                 return;
@@ -451,7 +481,7 @@ namespace Solo.Scripts.Entities.Players
         }
         private void UpdateWalk(float delta)
         {
-            if (Core.GetComponent<HpComponent>().CurValue <= 0)
+            if (Core.GetComponent<HpComponent>().CurHp <= 0)
             {
                 ChangeState(PlayerState.Death);
                 return;
@@ -540,7 +570,7 @@ namespace Solo.Scripts.Entities.Players
         }
         private void UpdateRun(float delta)
         {
-            if (Core.GetComponent<HpComponent>().CurValue <= 0)
+            if (Core.GetComponent<HpComponent>().CurHp <= 0)
             {
                 ChangeState(PlayerState.Death);
                 return;
@@ -612,7 +642,7 @@ namespace Solo.Scripts.Entities.Players
         }
         private void UpdateDash(float delta)
         {
-            if (Core.GetComponent<HpComponent>().CurValue <= 0)
+            if (Core.GetComponent<HpComponent>().CurHp <= 0)
             {
                 ChangeState(PlayerState.Death);
                 return;
@@ -699,7 +729,7 @@ namespace Solo.Scripts.Entities.Players
         }
         private void UpdateAtk(float delta)
         {
-            if (Core.GetComponent<HpComponent>().CurValue <= 0)
+            if (Core.GetComponent<HpComponent>().CurHp <= 0)
             {
                 ChangeState(PlayerState.Death);
                 return;
@@ -851,7 +881,7 @@ namespace Solo.Scripts.Entities.Players
         }
         private void UpdateBuild(float delta)
         {
-            if (Core.GetComponent<HpComponent>().CurValue <= 0)
+            if (Core.GetComponent<HpComponent>().CurHp <= 0)
             {
                 foreach (IQiRangeable qiRangeable in GameManager.Instance.IQiRangeableList)
                 {
@@ -918,7 +948,7 @@ namespace Solo.Scripts.Entities.Players
         }
         private void UpdateComsume(float delta)
         {
-            if (Core.GetComponent<HpComponent>().CurValue <= 0)
+            if (Core.GetComponent<HpComponent>().CurHp <= 0)
             {
                 ChangeState(PlayerState.Death);
                 return;
@@ -954,7 +984,7 @@ namespace Solo.Scripts.Entities.Players
         }
         private void UpdateAim(float delta)
         {
-            if (Core.GetComponent<HpComponent>().CurValue <= 0)
+            if (Core.GetComponent<HpComponent>().CurHp <= 0)
             {
                 ChangeState(PlayerState.Death);
                 return;
@@ -1079,7 +1109,7 @@ namespace Solo.Scripts.Entities.Players
         }
         private void UpdateFishing(float delta)
         {
-            if (Core.GetComponent<HpComponent>().CurValue <= 0)
+            if (Core.GetComponent<HpComponent>().CurHp <= 0)
             {
                 fishingFloat?.QueueFree();
                 ChangeState(PlayerState.Death);
@@ -1156,7 +1186,7 @@ namespace Solo.Scripts.Entities.Players
         }
         private void UpdateDeath(float delta)
         {
-            if (Core.GetComponent<HpComponent>().CurValue > 0)
+            if (Core.GetComponent<HpComponent>().CurHp > 0)
             {
                 ChangeState(PlayerState.Idle);
                 return;
@@ -1391,14 +1421,11 @@ namespace Solo.Scripts.Entities.Players
         //复活
         public void Revive()
         {
-            GlobalPosition = StartPoint;
-            Core.GetComponent<RealmComponent>().Refresh(RealmType.LianQi1);
-            var realmData = RealmDataManager.Instance.GetData(Core.GetComponent<RealmComponent>().Value);
-            Core.GetComponent<HpComponent>().SetValue(realmData.MaxHp + Core.GetComponent<InventoryComponent>().GetMaxHpBonus(), realmData.MaxHp + Core.GetComponent<InventoryComponent>().GetMaxHpBonus());
-            Core.GetComponent<QiComponent>().Refresh(realmData.MaxQi + Core.GetComponent<InventoryComponent>().GetMaxQiBonus(), realmData.MaxQi + Core.GetComponent<InventoryComponent>().GetMaxQiBonus());
-            Core.GetComponent<ExpComponent>().Refresh(0, realmData.MaxExp);
-            Core.GetComponent<AtkComponent>().Refresh(realmData.Atk + Core.GetComponent<InventoryComponent>().GetAtkBonus());
-            Core.GetComponent<DefComponent>().Refresh(realmData.Def + Core.GetComponent<InventoryComponent>().GetDefBonus());
+            GlobalPosition = Core.GetComponent<StartPositionComponent>().StartPositon;
+            Core.GetComponent<RealmComponent>().Reset();
+            Core.GetComponent<HpComponent>().Reset();
+            Core.GetComponent<QiComponent>().Reset();
+            Core.GetComponent<ExpComponent>().Reset();
             CollisionLayer = 1;
             CollisionMask = 1;
         }

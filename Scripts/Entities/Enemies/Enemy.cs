@@ -1,10 +1,12 @@
 ﻿using Godot;
-using Solo.Scripts.Entities.Components;
+using Solo.Scripts.Entities.Components.DynamicComponents;
+using Solo.Scripts.Entities.Components.HpComponents;
 using Solo.Scripts.Entities.Core;
 using Solo.Scripts.Entities.Players;
 using Solo.Scripts.Global;
 using Solo.Scripts.Global.Interfaces;
 using Solo.Scripts.Projectiles;
+using System.Collections.Generic;
 namespace Solo.Scripts.Entities.Enemies
 {
     public enum EnemyState
@@ -16,7 +18,7 @@ namespace Solo.Scripts.Entities.Enemies
         Death,
     }
 
-    public partial class Enemy : CharacterBody2D, IEntity, ISaveable
+    public partial class Enemy : CharacterBody2D, IEntity
     {
         [Export] private AnimatedSprite2D _animSprite = null!;
         [Export] private NavigationAgent2D _naviAgent = null!;
@@ -28,56 +30,66 @@ namespace Solo.Scripts.Entities.Enemies
         public EntityType Type;
         private EnemyData _data = null!;
 
-        public EntityCore Core { get; private set; } = new();
+        public EntityCore Core { get; private set; } = null!;
 
-        public void Init(EntityType type, Vector2 worldPosition, EntitySaveData? entitySaveData = null)
+        public void Init(EntityType type, List<ComponentSaveData> componentSaveDataList)
         {
-            Type = type;
-            _data = (EnemyData)EntityDataManager.Instance.GetData(Type);
-            EnemySaveData? saveData = (EnemySaveData?)entitySaveData;
-
-            if (saveData == null)
-                GlobalPosition = worldPosition;
-            else
-                GlobalPosition = new Vector2(saveData.WorldX, saveData.WorldY);
-
-            HpComponent hpComponent = new HpComponent(this);
-            if (saveData == null)
-                hpComponent.SetValue(_data.MaxHp, _data.MaxHp);
-            else
-                hpComponent.SetValue(saveData.CurHp, _data.MaxHp);
-            hpComponent.OnValueChanged += (curValue, maxValue) =>
-            {
-                GD.Print($"{curValue} / {maxValue}");
-            };
-            Core.AddComponent(hpComponent);
-
-            AtkComponent atkComponent = new AtkComponent(this);
-            atkComponent.Refresh(_data.Atk);
-            Core.AddComponent(atkComponent);
-
-            DefComponent defComponent = new DefComponent(this);
-            defComponent.Refresh(_data.Def);
-            Core.AddComponent(defComponent);
-
-            DynamicComponent dynamicComponent = new DynamicComponent(this);
-            Core.AddComponent(dynamicComponent);
+            Core = new EntityCore(type);
+            Core.InitComponent(this, componentSaveDataList);
 
             _naviAgent.VelocityComputed += _naviAgent_VelocityComputed;
-
             ChangeState(EnemyState.Idle);
         }
 
-        public EntitySaveData GetSaveData()
-        {
-            return new EnemySaveData()
-            {
-                Type = Type,
-                WorldX = GlobalPosition.X,
-                WorldY = GlobalPosition.Y,
-                CurHp = Core.GetComponent<HpComponent>().CurValue
-            };
-        }
+
+        //public void Init(EntityType type, Vector2 worldPosition, EntitySaveData? entitySaveData = null)
+        //{
+        //    Type = type;
+        //    _data = (EnemyData)EntityDataManager.Instance.GetData(Type);
+        //    EnemySaveData? saveData = (EnemySaveData?)entitySaveData;
+
+        //    if (saveData == null)
+        //        GlobalPosition = worldPosition;
+        //    else
+        //        GlobalPosition = new Vector2(saveData.WorldX, saveData.WorldY);
+
+        //    HpComponent hpComponent = new HpComponent(this);
+        //    if (saveData == null)
+        //        hpComponent.SetValue(_data.MaxHp, _data.MaxHp);
+        //    else
+        //        hpComponent.SetValue(saveData.CurHp, _data.MaxHp);
+        //    hpComponent.OnValueChanged += (curValue, maxValue) =>
+        //    {
+        //        GD.Print($"{curValue} / {maxValue}");
+        //    };
+        //    Core.AddComponent(hpComponent);
+
+        //    AtkComponent atkComponent = new AtkComponent(this);
+        //    atkComponent.Refresh(_data.Atk);
+        //    Core.AddComponent(atkComponent);
+
+        //    DefComponent defComponent = new DefComponent(this);
+        //    defComponent.Refresh(_data.Def);
+        //    Core.AddComponent(defComponent);
+
+        //    DynamicComponent dynamicComponent = new DynamicComponent(this);
+        //    Core.AddComponent(dynamicComponent);
+
+        //    _naviAgent.VelocityComputed += _naviAgent_VelocityComputed;
+
+        //    ChangeState(EnemyState.Idle);
+        //}
+
+        //public EntitySaveData GetSaveData()
+        //{
+        //    return new EnemySaveData()
+        //    {
+        //        Type = Type,
+        //        WorldX = GlobalPosition.X,
+        //        WorldY = GlobalPosition.Y,
+        //        CurHp = Core.GetComponent<HpComponent>().CurValue
+        //    };
+        //}
 
         public override void _PhysicsProcess(double delta)
         {
@@ -168,7 +180,7 @@ namespace Solo.Scripts.Entities.Enemies
         }
         private void UpdateIdle(float delta)
         {
-            if (Core.GetComponent<HpComponent>().CurValue <= 0)
+            if (Core.GetComponent<HpComponent>().CurHp <= 0)
             {
                 ChangeState(EnemyState.Death);
                 return;
@@ -248,7 +260,7 @@ namespace Solo.Scripts.Entities.Enemies
         }
         private void UpdateChase(float delta)
         {
-            if (Core.GetComponent<HpComponent>().CurValue <= 0)
+            if (Core.GetComponent<HpComponent>().CurHp <= 0)
             {
                 ChangeState(EnemyState.Death);
                 return;

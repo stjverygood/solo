@@ -3,16 +3,56 @@ using Solo.Scripts.Global;
 using Solo.Scripts.Global.Interfaces;
 using Solo.Scripts.System.InventorySystem;
 using Solo.Scripts.System.ItemSystem;
+using System;
 
-namespace Solo.Scripts.Entities.Components
+namespace Solo.Scripts.Entities.Components.InventoryComponents
 {
     public class InventoryComponent : Component
     {
-        public Inventory FastBarInventory = null!;//快捷栏
-        public Inventory BagInventory = null!;//背包
-        public Inventory EquipmentInventory = null!;//装备栏
+        public Inventory FastBarInventory = new Inventory();//快捷栏
+        public Inventory BagInventory = new Inventory();//背包
+        public Inventory EquipmentInventory = new Inventory();//装备栏
+        public int FastBarIndex;
+
+        private InventoryComponentData _data = null!;
 
         public InventoryComponent(IEntity owner) : base(owner) { }
+
+        public override void Init(ComponentData? componentData, ComponentSaveData? componentSaveData)
+        {
+            if (componentData == null)
+                throw new Exception("component null");
+            _data = (InventoryComponentData)componentData;
+            InventoryComponentSaveData? saveData = (InventoryComponentSaveData?)componentSaveData;
+
+            if (saveData == null)
+            {
+                FastBarInventory.SlotList = _data.FastBarInventorySlotList;
+                BagInventory.SlotList = _data.BagInventorySlotList;
+                EquipmentInventory.SlotList = _data.EquipmentInventorySlotList;
+                FastBarIndex = 0;
+            }
+            else
+            {
+                FastBarInventory.SlotList = saveData.FastBarInventorySlotList;
+                BagInventory.SlotList = saveData.BagInventorySlotList;
+                EquipmentInventory.SlotList = saveData.EquipmentInventorySlotList;
+                FastBarIndex = saveData.FastBarIndex;
+            }
+
+        }
+
+        public override ComponentSaveData? GetSaveData()
+        {
+            return new InventoryComponentSaveData()
+            {
+                TypeName = nameof(InventoryComponent),
+                FastBarInventorySlotList = FastBarInventory.SlotList,
+                BagInventorySlotList = BagInventory.SlotList,
+                EquipmentInventorySlotList = EquipmentInventory.SlotList,
+                FastBarIndex = FastBarIndex,
+            };
+        }
 
         public void SwapItem(Inventory sourceInventory, int sourceIndex, Inventory targetInventory, int targetIndex)
         {
@@ -113,5 +153,6 @@ namespace Solo.Scripts.Entities.Components
             }
             return maxQiBonus;
         }
+
     }
 }

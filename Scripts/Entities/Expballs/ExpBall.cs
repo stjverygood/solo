@@ -1,53 +1,63 @@
 using Godot;
-using Solo.Scripts.Entities.Components;
+using Solo.Scripts.Entities.Components.ExpComponents;
 using Solo.Scripts.Entities.Core;
 using Solo.Scripts.Entities.Players;
 using Solo.Scripts.Global;
 using Solo.Scripts.Global.Interfaces;
+using System.Collections.Generic;
 namespace Solo.Scripts.Entities.Expballs
 {
-    public partial class ExpBall : Area2D, IEntity, ISaveable
+    public partial class ExpBall : Area2D, IEntity
     {
         public EntityType Type;
         private IEntity? _curTargetEntity;
         private float _exp;
 
-        public EntityCore Core => throw new global::System.NotImplementedException();
+        public EntityCore Core { get; private set; } = null!;
 
-        public void Init(EntityType type, Vector2 worldPos, EntitySaveData? entitySaveData = null)
+        public void Init(EntityType type, List<ComponentSaveData> componentSaveDataList)
         {
-            Type = type;
-            ExpBallSaveData? saveData = (ExpBallSaveData?)entitySaveData;
-
-            if (saveData == null)
-                GlobalPosition = worldPos + new Vector2(GD.RandRange(-10, 10), GD.RandRange(-10, 10));
-            else
-                GlobalPosition = new Vector2(saveData.WorldX, saveData.WorldY);
-
-            if (saveData != null)
-            {
-                _exp = saveData.Exp;
-            }
+            Core = new EntityCore(type);
+            Core.InitComponent(this, componentSaveDataList);
 
             BodyEntered += ExpBall_BodyEntered;
             BodyExited += ExpBall_BodyExited;
         }
+
+        //public void Init(EntityType type, Vector2 worldPos, EntitySaveData? entitySaveData = null)
+        //{
+        //    Type = type;
+        //    ExpBallSaveData? saveData = (ExpBallSaveData?)entitySaveData;
+
+        //    if (saveData == null)
+        //        GlobalPosition = worldPos + new Vector2(GD.RandRange(-10, 10), GD.RandRange(-10, 10));
+        //    else
+        //        GlobalPosition = new Vector2(saveData.WorldX, saveData.WorldY);
+
+        //    if (saveData != null)
+        //    {
+        //        _exp = saveData.Exp;
+        //    }
+
+        //    BodyEntered += ExpBall_BodyEntered;
+        //    BodyExited += ExpBall_BodyExited;
+        //}
 
         public void SetExp(float exp)
         {
             _exp = exp;
         }
 
-        public EntitySaveData GetSaveData()
-        {
-            return new ExpBallSaveData()
-            {
-                Type = Type,
-                WorldX = GlobalPosition.X,
-                WorldY = GlobalPosition.Y,
-                Exp = _exp
-            };
-        }
+        //public EntitySaveData GetSaveData()
+        //{
+        //    return new ExpBallSaveData()
+        //    {
+        //        Type = Type,
+        //        WorldX = GlobalPosition.X,
+        //        WorldY = GlobalPosition.Y,
+        //        Exp = _exp
+        //    };
+        //}
 
         public override void _PhysicsProcess(double delta)
         {

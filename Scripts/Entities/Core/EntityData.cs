@@ -1,8 +1,11 @@
-﻿namespace Solo.Scripts.Entities.Core
+﻿using System;
+using System.Collections.Generic;
+
+namespace Solo.Scripts.Entities.Core
 {
     public class EntityData
     {
-        public string Name = "";
+        public required Dictionary<Type, ComponentData?> ComponentDataMap;
     }
 
 

@@ -1,13 +1,14 @@
 using Godot;
-using Solo.Scripts.Entities.Components;
+using Solo.Scripts.Entities.Components.InventoryComponents;
 using Solo.Scripts.Entities.Core;
 using Solo.Scripts.Global;
 using Solo.Scripts.Global.Interfaces;
 using Solo.Scripts.System.ItemSystem;
+using System.Collections.Generic;
 
 namespace Solo.Scripts.Entities.DropItems
 {
-    public partial class DropItem : StaticBody2D, IEntity, ISaveable
+    public partial class DropItem : StaticBody2D, IEntity
     {
         [Export] public Label TextLb = null!;
         [Export] public Sprite2D IconSprite = null!;
@@ -15,35 +16,41 @@ namespace Solo.Scripts.Entities.DropItems
 
         public EntityType Type;
         //private DropItemData _data = null!;
-        public EntityCore Core { get; private set; } = new();
+        public EntityCore Core { get; private set; } = null!;
 
-        public void Init(EntityType type, Vector2 worldPos, EntitySaveData? entitySaveData = null)
+        public void Init(EntityType type, List<ComponentSaveData> componentSaveDataList)
         {
-            Type = type;
-            //_data = (DropItemData)EntityDataManager.Instance.GetData(type);
-            DropItemSaveData? saveData = (DropItemSaveData?)entitySaveData;
-
-            if (saveData == null)
-                GlobalPosition = worldPos + new Vector2(GD.RandRange(-10, 10), GD.RandRange(-10, 10));
-            else
-                GlobalPosition = new Vector2(saveData.WorldX, saveData.WorldY);
-
-            if (saveData != null)
-            {
-                SetItemInstance(saveData.ItemInstance);
-            }
+            Core = new EntityCore(type);
+            Core.InitComponent(this, componentSaveDataList);
         }
 
-        public EntitySaveData GetSaveData()
-        {
-            return new DropItemSaveData()
-            {
-                Type = Type,
-                WorldX = GlobalPosition.X,
-                WorldY = GlobalPosition.Y,
-                ItemInstance = _itemInstance
-            };
-        }
+        //public void Init(EntityType type, Vector2 worldPos, EntitySaveData? entitySaveData = null)
+        //{
+        //    Type = type;
+        //    //_data = (DropItemData)EntityDataManager.Instance.GetData(type);
+        //    DropItemSaveData? saveData = (DropItemSaveData?)entitySaveData;
+
+        //    if (saveData == null)
+        //        GlobalPosition = worldPos + new Vector2(GD.RandRange(-10, 10), GD.RandRange(-10, 10));
+        //    else
+        //        GlobalPosition = new Vector2(saveData.WorldX, saveData.WorldY);
+
+        //    if (saveData != null)
+        //    {
+        //        SetItemInstance(saveData.ItemInstance);
+        //    }
+        //}
+
+        //public EntitySaveData GetSaveData()
+        //{
+        //    return new DropItemSaveData()
+        //    {
+        //        Type = Type,
+        //        WorldX = GlobalPosition.X,
+        //        WorldY = GlobalPosition.Y,
+        //        ItemInstance = _itemInstance
+        //    };
+        //}
 
         public void SetItemInstance(ItemInstance itemInstance)
         {
@@ -53,8 +60,6 @@ namespace Solo.Scripts.Entities.DropItems
             TextLb.Visible = false;
             IconSprite.Texture = GD.Load<Texture2D>(itemData.IconPath);
         }
-
-
 
         public void ApplyForce()
         {

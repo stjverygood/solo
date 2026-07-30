@@ -21,6 +21,21 @@
         ExpBall,
     }
 
+    //public enum ComponentType
+    //{
+    //    Atk,
+    //    Def,
+    //    Dynamic,
+    //    Exp,
+    //    Hp,
+    //    Inventory,
+    //    Qi,
+    //    Realm,
+    //    Save,
+    //    Position,
+    //    StartPosition,
+    //}
+
     //境界类型
     public enum RealmType
     {
@@ -34,9 +49,9 @@
         ZhuJi2,
         ZhuJi3,
 
-        JinDan1,
-        JinDan2,
-        JinDan3,
+        JieDan1,
+        JieDan2,
+        JieDan3,
 
         YuanYin1,
         YuanYin2,

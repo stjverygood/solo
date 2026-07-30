@@ -4,13 +4,24 @@ using Solo.Scripts.Global;
 using Solo.Scripts.Global.Interfaces;
 using System.Collections.Generic;
 
-namespace Solo.Scripts.Entities.Components
+namespace Solo.Scripts.Entities.Components.DynamicComponents
 {
     public class DynamicComponent : Component
     {
         private Vector2I _chunkPos;
 
         public DynamicComponent(IEntity owner) : base(owner) { }
+
+        public override void Init(ComponentData? componentData, ComponentSaveData? componentSaveData)
+        {
+
+        }
+        public override ComponentSaveData? GetSaveData()
+        {
+            return null;
+        }
+
+
 
         public void RefreshChunkPos(Vector2 worldPos)
         {

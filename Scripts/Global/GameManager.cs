@@ -1,6 +1,5 @@
 using Godot;
 using Solo.Scripts.Entities.Players;
-using Solo.Scripts.Entities.Units;
 using Solo.Scripts.Global.Interfaces;
 using Solo.Scripts.Projectiles;
 using Solo.Scripts.System.BuildingSystem;
@@ -45,7 +44,7 @@ namespace Solo.Scripts.Global
         public World World;
         public Player Player;
         public UIManager UIManager;
-        public List<Unit> UnitList = new List<Unit>();
+        //public List<Unit> UnitList = new List<Unit>();
         public List<IQiRangeable> IQiRangeableList = new List<IQiRangeable>();
         public ChunkManager ChunkManager;
         public BuildingManager BuildingManager;

@@ -1,5 +1,7 @@
 using Godot;
-using Solo.Scripts.Entities.Components;
+using Solo.Scripts.Entities.Components.AtkComponents;
+using Solo.Scripts.Entities.Components.DefComponents;
+using Solo.Scripts.Entities.Components.HpComponents;
 using Solo.Scripts.Global;
 using Solo.Scripts.Global.Interfaces;
 
@@ -39,7 +41,7 @@ namespace Solo.Scripts.Projectiles
                 return;
             if (entity.Core.TryGetComponent(out HpComponent hpComponent) == false)
                 return;
-            float damage = GameManager.Instance.CalculateDamage(_context.Projecter.Core.GetComponent<AtkComponent>().Value, defComponent.Value);
+            float damage = GameManager.Instance.CalculateDamage(_context.Projecter.Core.GetComponent<AtkComponent>().GetAtk(), defComponent.GetDef());
             hpComponent.Consume(damage);
             QueueFree();
         }

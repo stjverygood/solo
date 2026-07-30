@@ -1,14 +1,11 @@
-﻿using Godot;
-using Solo.Scripts.Entities.Core;
+﻿using Solo.Scripts.Entities.Core;
+using System.Collections.Generic;
 
 namespace Solo.Scripts.Global.Interfaces
 {
     public interface IEntity
     {
-        void Init(EntityType type, Vector2 worldPos, EntitySaveData? entitySaveData = null);
+        void Init(EntityType type, List<ComponentSaveData> componentSaveDataList);
         EntityCore Core { get; }
-        //public ComponentHost;
-        //T GetComponent<T>() where T : Component;
-        //bool TryGetComponent<T>(out T component) where T : Component;
     }
 }

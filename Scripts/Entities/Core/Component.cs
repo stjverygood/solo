@@ -2,7 +2,7 @@
 
 namespace Solo.Scripts.Entities.Core
 {
-    public class Component
+    public abstract class Component
     {
         protected IEntity _owner;
         public Component(IEntity owner)
@@ -13,5 +13,7 @@ namespace Solo.Scripts.Entities.Core
         {
             return _owner;
         }
+        public abstract void Init(ComponentData? componentData, ComponentSaveData? componentSaveData);
+        public abstract ComponentSaveData? GetSaveData();
     }
 }

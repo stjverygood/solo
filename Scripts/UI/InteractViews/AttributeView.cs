@@ -1,7 +1,11 @@
 using Godot;
-using Solo.Scripts.Entities.Components;
+using Solo.Scripts.Entities.Components.AtkComponents;
+using Solo.Scripts.Entities.Components.DefComponents;
+using Solo.Scripts.Entities.Components.ExpComponents;
+using Solo.Scripts.Entities.Components.HpComponents;
+using Solo.Scripts.Entities.Components.QiComponents;
+using Solo.Scripts.Entities.Components.RealmComponents;
 using Solo.Scripts.Global;
-using Solo.Scripts.System.RealmSystem;
 
 namespace Solo.Scripts.UI.InteractViews
 {
@@ -19,43 +23,54 @@ namespace Solo.Scripts.UI.InteractViews
 
         public void Init()
         {
-            var playerCore = GameManager.Instance.Player.Core;
+            RealmComponent realmComponent = GameManager.Instance.Player.Core.GetComponent<RealmComponent>();
+            HpComponent hpComponent = GameManager.Instance.Player.Core.GetComponent<HpComponent>();
+            QiComponent qiComponent = GameManager.Instance.Player.Core.GetComponent<QiComponent>();
+            ExpComponent expComponent = GameManager.Instance.Player.Core.GetComponent<ExpComponent>();
+            AtkComponent atkComponent = GameManager.Instance.Player.Core.GetComponent<AtkComponent>();
+            DefComponent defComponent = GameManager.Instance.Player.Core.GetComponent<DefComponent>();
 
-            RefreshRealm(playerCore.GetComponent<RealmComponent>().Value);
-            playerCore.GetComponent<RealmComponent>().OnValueChanged += RefreshRealm;
+            RefreshRealm(realmComponent.GetName());
+            realmComponent.OnCurRealmChanged += () => realmComponent.GetName();
 
-            RefreshHp(playerCore.GetComponent<HpComponent>().CurValue, playerCore.GetComponent<HpComponent>().MaxValue);
-            playerCore.GetComponent<HpComponent>().OnValueChanged += RefreshHp;
+            RefreshHp(hpComponent.CurHp, hpComponent.GetMaxHp());
+            hpComponent.OnCurHpChanged += () => RefreshHp(hpComponent.CurHp, hpComponent.GetMaxHp());
+            hpComponent.OnMaxHpChanged += () => RefreshHp(hpComponent.CurHp, hpComponent.GetMaxHp());
 
-            RefreshQi(playerCore.GetComponent<QiComponent>().CurValue, playerCore.GetComponent<QiComponent>().MaxValue);
-            playerCore.GetComponent<QiComponent>().OnValueChanged += RefreshQi;
+            RefreshQi(qiComponent.CurQi, qiComponent.GetMaxQi());
+            qiComponent.OnCurQiChanged += () => RefreshQi(qiComponent.CurQi, qiComponent.GetMaxQi());
+            qiComponent.OnMaxQiChanged += () => RefreshQi(qiComponent.CurQi, qiComponent.GetMaxQi());
 
-            RefreshExp(playerCore.GetComponent<ExpComponent>().CurValue, playerCore.GetComponent<ExpComponent>().MaxValue);
-            playerCore.GetComponent<ExpComponent>().OnValueChanged += RefreshExp;
+            RefreshExp(expComponent.CurExp, expComponent.GetMaxExp());
+            expComponent.OnCurExpChanged += () => RefreshExp(expComponent.CurExp, expComponent.GetMaxExp());
+            expComponent.OnMaxExpChanged += () => RefreshExp(expComponent.CurExp, expComponent.GetMaxExp());
 
-            RefreshAtk(playerCore.GetComponent<AtkComponent>().Value);
-            playerCore.GetComponent<AtkComponent>().OnValueChanged += RefreshAtk;
+            RefreshAtk(atkComponent.GetAtk());
+            atkComponent.OnAtkChanged += () => RefreshAtk(atkComponent.GetAtk());
 
-            RefreshDef(playerCore.GetComponent<DefComponent>().Value);
-            playerCore.GetComponent<DefComponent>().OnValueChanged += RefreshDef;
+            RefreshDef(defComponent.GetDef());
+            defComponent.OnDefChanged += () => RefreshDef(defComponent.GetDef());
 
             _upgradeBtn.Pressed += () =>
             {
-                playerCore.GetComponent<RealmComponent>().Upgrade();
-                if (playerCore.GetComponent<RealmComponent>().Value == RealmType.HuaShen)
+                realmComponent.Upgrade();
+                if (realmComponent.CurRealm == RealmType.HuaShen)
                     _upgradeBtn.Disabled = true;
-                var realmData = RealmDataManager.Instance.GetData(playerCore.GetComponent<RealmComponent>().Value);
-                playerCore.GetComponent<HpComponent>().SetValue(realmData.MaxHp + playerCore.GetComponent<InventoryComponent>().GetMaxHpBonus(), realmData.MaxHp + playerCore.GetComponent<InventoryComponent>().GetMaxHpBonus());
-                playerCore.GetComponent<QiComponent>().Refresh(realmData.MaxQi + playerCore.GetComponent<InventoryComponent>().GetMaxQiBonus(), realmData.MaxQi + playerCore.GetComponent<InventoryComponent>().GetMaxQiBonus());
-                playerCore.GetComponent<ExpComponent>().Refresh(0, realmData.MaxExp);
-                playerCore.GetComponent<AtkComponent>().Refresh(realmData.Atk + playerCore.GetComponent<InventoryComponent>().GetAtkBonus());
-                playerCore.GetComponent<DefComponent>().Refresh(realmData.Def + playerCore.GetComponent<InventoryComponent>().GetDefBonus());
+                hpComponent.Reset();
+                qiComponent.Reset();
+                expComponent.Reset();
+                //var realmData = RealmDataManager.Instance.GetData(playerCore.GetComponent<RealmComponent>().Value);
+                //playerCore.GetComponent<HpComponent>().SetValue(realmData.MaxHp + playerCore.GetComponent<InventoryComponent>().GetMaxHpBonus(), realmData.MaxHp + playerCore.GetComponent<InventoryComponent>().GetMaxHpBonus());
+                //playerCore.GetComponent<QiComponent>().Refresh(realmData.MaxQi + playerCore.GetComponent<InventoryComponent>().GetMaxQiBonus(), realmData.MaxQi + playerCore.GetComponent<InventoryComponent>().GetMaxQiBonus());
+                //playerCore.GetComponent<ExpComponent>().Refresh(0, realmData.MaxExp);
+                //playerCore.GetComponent<AtkComponent>().Refresh(realmData.Atk + playerCore.GetComponent<InventoryComponent>().GetAtkBonus());
+                //playerCore.GetComponent<DefComponent>().Refresh(realmData.Def + playerCore.GetComponent<InventoryComponent>().GetDefBonus());
             };
         }
 
-        private void RefreshRealm(RealmType value)
+        private void RefreshRealm(string realmName)
         {
-            _realmLb.Text = $"当前境界 : {RealmDataManager.Instance.GetData(value).Name}";
+            _realmLb.Text = $"当前境界 : {realmName}";
         }
 
         private void RefreshHp(float curValue, float maxValue)

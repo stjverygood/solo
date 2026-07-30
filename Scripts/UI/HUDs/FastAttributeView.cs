@@ -1,7 +1,8 @@
 using Godot;
-using Solo.Scripts.Entities.Components;
-using Solo.Scripts.Global;
-using Solo.Scripts.System.RealmSystem;
+using Solo.Scripts.Entities.Components.ExpComponents;
+using Solo.Scripts.Entities.Components.HpComponents;
+using Solo.Scripts.Entities.Components.QiComponents;
+using Solo.Scripts.Entities.Components.RealmComponents;
 
 namespace Solo.Scripts.UI.HUDs
 {
@@ -14,22 +15,25 @@ namespace Solo.Scripts.UI.HUDs
 
         public void Init(RealmComponent realmComponet, HpComponent hpComponent, QiComponent qiComponent, ExpComponent expComponent)
         {
-            RefreshRealm(realmComponet.Value);
-            realmComponet.OnValueChanged += RefreshRealm;
+            RefreshRealm(realmComponet.GetName());
+            realmComponet.OnCurRealmChanged += () => realmComponet.GetName();
 
-            RefreshHp(hpComponent.CurValue, hpComponent.MaxValue);
-            hpComponent.OnValueChanged += RefreshHp;
+            RefreshHp(hpComponent.CurHp, hpComponent.GetMaxHp());
+            hpComponent.OnCurHpChanged += () => RefreshHp(hpComponent.CurHp, hpComponent.GetMaxHp());
+            hpComponent.OnMaxHpChanged += () => RefreshHp(hpComponent.CurHp, hpComponent.GetMaxHp());
 
-            RefreshQi(qiComponent.CurValue, qiComponent.MaxValue);
-            qiComponent.OnValueChanged += RefreshQi;
+            RefreshQi(qiComponent.CurQi, qiComponent.GetMaxQi());
+            qiComponent.OnCurQiChanged += () => RefreshQi(qiComponent.CurQi, qiComponent.GetMaxQi());
+            qiComponent.OnMaxQiChanged += () => RefreshQi(qiComponent.CurQi, qiComponent.GetMaxQi());
 
-            RefreshExp(expComponent.CurValue, expComponent.MaxValue);
-            expComponent.OnValueChanged += RefreshExp;
+            RefreshExp(expComponent.CurExp, expComponent.GetMaxExp());
+            expComponent.OnCurExpChanged += () => RefreshExp(expComponent.CurExp, expComponent.GetMaxExp());
+            expComponent.OnMaxExpChanged += () => RefreshExp(expComponent.CurExp, expComponent.GetMaxExp());
         }
 
-        private void RefreshRealm(RealmType value)
+        private void RefreshRealm(string realmName)
         {
-            _realmLb.Text = $"当前境界 : {RealmDataManager.Instance.GetData(value).Name}";
+            _realmLb.Text = $"当前境界 : {realmName}";
         }
 
         private void RefreshHp(float curValue, float maxValue)

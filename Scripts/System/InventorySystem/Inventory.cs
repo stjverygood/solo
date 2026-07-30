@@ -10,10 +10,8 @@ namespace Solo.Scripts.System.InventorySystem
         public List<InventorySlot> SlotList = new List<InventorySlot>();
         public Action<int>? SlotChanged;//用于通知ui哪个格子变了, 修改ui格子数据
 
-        public Inventory(List<InventorySlot> itemSlotList)
-        {
-            SlotList = itemSlotList;
-        }
+        public Inventory() { }
+
 
         public int AddItem(ItemInstance instance)
         {
