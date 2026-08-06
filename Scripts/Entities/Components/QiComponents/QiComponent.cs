@@ -50,7 +50,7 @@ namespace Solo.Scripts.Entities.Components.QiComponents
         {
             return new QiComponentSaveData()
             {
-                TypeName = nameof(QiComponent),
+                ComponentName = nameof(QiComponent),
                 CurQi = CurQi
             };
         }

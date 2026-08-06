@@ -7,21 +7,24 @@ namespace Solo.Scripts.Entities.Components.PositionComponents
 {
     public class PositionComponent : Component
     {
-        public Vector2I CurChunkPos;
         public PositionComponent(IEntity owner) : base(owner) { }
 
         public override void Init(ComponentData? componentData, ComponentSaveData? componentSaveData)
         {
             PositionComponentSaveData? saveData = (PositionComponentSaveData?)componentSaveData;
             if (saveData != null)
-                SetWorldPosition(new Vector2(saveData.WorldX, saveData.WorldY));
+            {
+                InitWorldPosition(new Vector2(saveData.WorldX, saveData.WorldY));
+            }
+
         }
 
-        public void SetWorldPosition(Vector2 worldPos)
+        public void InitWorldPosition(Vector2 worldPos)
         {
             ((Node2D)_owner).GlobalPosition = worldPos;
-            GameManager.Instance.World.RefreshEntityChunk(_owner);
+            GameManager.Instance.World.InitChunkPos(GetWorldPosition(), _owner);
         }
+
         public Vector2 GetWorldPosition()
         {
             return ((Node2D)_owner).GlobalPosition;
@@ -31,7 +34,7 @@ namespace Solo.Scripts.Entities.Components.PositionComponents
         {
             return new PositionComponentSaveData()
             {
-                TypeName = nameof(PositionComponent),
+                ComponentName = nameof(PositionComponent),
                 WorldX = ((Node2D)_owner).GlobalPosition.X,
                 WorldY = ((Node2D)_owner).GlobalPosition.Y,
             };

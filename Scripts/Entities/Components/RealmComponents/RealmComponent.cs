@@ -30,7 +30,7 @@ namespace Solo.Scripts.Entities.Components.RealmComponents
         {
             return new RealmComponentSaveData()
             {
-                TypeName = nameof(RealmComponent),
+                ComponentName = nameof(RealmComponent),
                 CurRealm = CurRealm
             };
         }

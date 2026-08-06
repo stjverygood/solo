@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://c3s1i20lt5b3h" path="res://Scripts/Entities/DropItems/DropItem.cs" id="1_g50nv"]
 [ext_resource type="FontFile" uid="uid://chelxpn5elvbb" path="res://Assets/zpix.ttf" id="2_byhkn"]
 [ext_resource type="Texture2D" uid="uid://bt0s8ja1k2w0g" path="res://Assets/Png/building.png" id="2_vxgl1"]
+[ext_resource type="Shader" uid="uid://i3lcvke3ll2n" path="res://Assets/Shaders/Outline.gdshader" id="3_vxgl1"]
 [ext_resource type="Texture2D" uid="uid://b4b4tkbxuo1e5" path="res://Assets/Png/item.png" id="4_g50nv"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_yxouj"]
@@ -11,6 +12,13 @@ radius = 6.0
 [sub_resource type="AtlasTexture" id="AtlasTexture_yxouj"]
 atlas = ExtResource("2_vxgl1")
 region = Rect2(0, 128, 16, 16)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_8oblo"]
+shader = ExtResource("3_vxgl1")
+shader_parameter/outline_color = Color(0.96, 0.93, 0.73, 1)
+shader_parameter/outline_width = 1.0
+shader_parameter/flash_modifier = 0.0
+shader_parameter/flash_color = Color(1, 1, 1, 1)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_wdnd1"]
 atlas = ExtResource("4_g50nv")
@@ -33,6 +41,7 @@ position = Vector2(0, 1)
 texture = SubResource("AtlasTexture_yxouj")
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=1694164295]
+material = SubResource("ShaderMaterial_8oblo")
 position = Vector2(0, 4)
 scale = Vector2(0.5, 0.5)
 texture = SubResource("AtlasTexture_wdnd1")

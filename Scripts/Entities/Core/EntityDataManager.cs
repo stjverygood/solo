@@ -5,6 +5,8 @@ using Solo.Scripts.Entities.Components.EnemyComponents;
 using Solo.Scripts.Entities.Components.ExpComponents;
 using Solo.Scripts.Entities.Components.HpComponents;
 using Solo.Scripts.Entities.Components.InventoryComponents;
+using Solo.Scripts.Entities.Components.OutlineComponents;
+using Solo.Scripts.Entities.Components.PickableComponents;
 using Solo.Scripts.Entities.Components.PositionComponents;
 using Solo.Scripts.Entities.Components.QiComponents;
 using Solo.Scripts.Entities.Components.RealmComponents;
@@ -272,6 +274,8 @@ namespace Solo.Scripts.Entities.Core
                 ComponentDataMap = new Dictionary<Type, ComponentData?>()
                 {
                     { typeof(PositionComponent), null },
+                    { typeof(PickableComponent), null },
+                    { typeof(OutlineComponent), null },
                 }
             };
             //_dataMap[EntityType.Tree] = new ResourceData()

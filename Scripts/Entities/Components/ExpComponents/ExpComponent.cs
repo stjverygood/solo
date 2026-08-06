@@ -34,7 +34,7 @@ namespace Solo.Scripts.Entities.Components.ExpComponents
         {
             return new ExpComponentSaveData()
             {
-                TypeName = nameof(ExpComponent),
+                ComponentName = nameof(ExpComponent),
                 CurExp = CurExp,
             };
         }

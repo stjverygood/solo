@@ -37,56 +37,6 @@ namespace Solo.Scripts.Entities.Enemies
             ChangeState(EnemyState.Idle);
         }
 
-
-        //public void Init(EntityType type, Vector2 worldPosition, EntitySaveData? entitySaveData = null)
-        //{
-        //    Type = type;
-        //    _data = (EnemyData)EntityDataManager.Instance.GetData(Type);
-        //    EnemySaveData? saveData = (EnemySaveData?)entitySaveData;
-
-        //    if (saveData == null)
-        //        GlobalPosition = worldPosition;
-        //    else
-        //        GlobalPosition = new Vector2(saveData.WorldX, saveData.WorldY);
-
-        //    HpComponent hpComponent = new HpComponent(this);
-        //    if (saveData == null)
-        //        hpComponent.SetValue(_data.MaxHp, _data.MaxHp);
-        //    else
-        //        hpComponent.SetValue(saveData.CurHp, _data.MaxHp);
-        //    hpComponent.OnValueChanged += (curValue, maxValue) =>
-        //    {
-        //        GD.Print($"{curValue} / {maxValue}");
-        //    };
-        //    Core.AddComponent(hpComponent);
-
-        //    AtkComponent atkComponent = new AtkComponent(this);
-        //    atkComponent.Refresh(_data.Atk);
-        //    Core.AddComponent(atkComponent);
-
-        //    DefComponent defComponent = new DefComponent(this);
-        //    defComponent.Refresh(_data.Def);
-        //    Core.AddComponent(defComponent);
-
-        //    DynamicComponent dynamicComponent = new DynamicComponent(this);
-        //    Core.AddComponent(dynamicComponent);
-
-        //    _naviAgent.VelocityComputed += _naviAgent_VelocityComputed;
-
-        //    ChangeState(EnemyState.Idle);
-        //}
-
-        //public EntitySaveData GetSaveData()
-        //{
-        //    return new EnemySaveData()
-        //    {
-        //        Type = Type,
-        //        WorldX = GlobalPosition.X,
-        //        WorldY = GlobalPosition.Y,
-        //        CurHp = Core.GetComponent<HpComponent>().CurValue
-        //    };
-        //}
-
         public override void _PhysicsProcess(double delta)
         {
             UpdateState((float)delta);

@@ -43,7 +43,7 @@ namespace Solo.Scripts.Entities.Components.DropItemComponents
                         continue;
                     IEntity entity = GameManager.Instance.World.SpawnEntity(EntityType.DropItem);
                     entity.Init(EntityType.DropItem, null);
-                    entity.Core.GetComponent<PositionComponent>().SetWorldPosition(_owner.Core.GetComponent<PositionComponent>().GetWorldPosition() + new Vector2(GD.RandRange(-5, 5), GD.RandRange(-5, 5)));
+                    entity.Core.GetComponent<PositionComponent>().InitWorldPosition(_owner.Core.GetComponent<PositionComponent>().GetWorldPosition() + new Vector2(GD.RandRange(-5, 5), GD.RandRange(-5, 5)));
                     ((DropItem)entity).SetItemInstance(new ItemInstance() { Type = info.Type, Count = 1 });
                     ((DropItem)entity).ApplyForce();
                 }

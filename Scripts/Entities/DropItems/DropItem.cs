@@ -1,5 +1,6 @@
 using Godot;
-using Solo.Scripts.Entities.Components.InventoryComponents;
+using Solo.Scripts.Entities.Components.OutlineComponents;
+using Solo.Scripts.Entities.Components.PickableComponents;
 using Solo.Scripts.Entities.Core;
 using Solo.Scripts.Global;
 using Solo.Scripts.Global.Interfaces;
@@ -11,52 +12,21 @@ namespace Solo.Scripts.Entities.DropItems
     {
         [Export] public Label TextLb = null!;
         [Export] public Sprite2D IconSprite = null!;
-        private ItemInstance _itemInstance = null!;
 
-        public EntityType Type;
-        //private DropItemData _data = null!;
         public EntityCore Core { get; private set; } = null!;
 
         public void Init(EntityType type, EntitySaveData? entitySaveData)
         {
             Core = new EntityCore(type);
             Core.InitComponent(this, entitySaveData);
+            Core.GetComponent<OutlineComponent>().SetNodes(IconSprite, TextLb);
         }
-
-        //public void Init(EntityType type, Vector2 worldPos, EntitySaveData? entitySaveData = null)
-        //{
-        //    Type = type;
-        //    //_data = (DropItemData)EntityDataManager.Instance.GetData(type);
-        //    DropItemSaveData? saveData = (DropItemSaveData?)entitySaveData;
-
-        //    if (saveData == null)
-        //        GlobalPosition = worldPos + new Vector2(GD.RandRange(-10, 10), GD.RandRange(-10, 10));
-        //    else
-        //        GlobalPosition = new Vector2(saveData.WorldX, saveData.WorldY);
-
-        //    if (saveData != null)
-        //    {
-        //        SetItemInstance(saveData.ItemInstance);
-        //    }
-        //}
-
-        //public EntitySaveData GetSaveData()
-        //{
-        //    return new DropItemSaveData()
-        //    {
-        //        Type = Type,
-        //        WorldX = GlobalPosition.X,
-        //        WorldY = GlobalPosition.Y,
-        //        ItemInstance = _itemInstance
-        //    };
-        //}
 
         public void SetItemInstance(ItemInstance itemInstance)
         {
-            _itemInstance = itemInstance;
-            ItemData itemData = ItemDataManager.Instance.GetData(_itemInstance.Type);
-            TextLb.Text = $"{itemData.Name}*{_itemInstance.Count}";
-            TextLb.Visible = false;
+            Core.GetComponent<PickableComponent>().ItemInstance = itemInstance;
+            ItemData itemData = ItemDataManager.Instance.GetData(itemInstance.Type);
+            TextLb.Text = $"{itemData.Name}*{itemInstance.Count}";
             IconSprite.Texture = GD.Load<Texture2D>(itemData.IconPath);
         }
 
@@ -79,20 +49,20 @@ namespace Solo.Scripts.Entities.DropItems
             }));
         }
 
-        public void Pickup()
-        {
-            int remainCount = GameManager.Instance.Player.Core.GetComponent<InventoryComponent>().AddItem(_itemInstance);
-            if (remainCount == 0)
-            {
-                QueueFree();
-            }
-            else
-            {
-                _itemInstance.Count = remainCount;
-                ItemData itemData = ItemDataManager.Instance.GetData(_itemInstance.Type);
-                TextLb.Text = $"{itemData.Name}*{_itemInstance.Count}";
-            }
-        }
+        //public void Pickup()
+        //{
+        //    int remainCount = GameManager.Instance.Player.Core.GetComponent<InventoryComponent>().AddItem(_itemInstance);
+        //    if (remainCount == 0)
+        //    {
+        //        QueueFree();
+        //    }
+        //    else
+        //    {
+        //        _itemInstance.Count = remainCount;
+        //        ItemData itemData = ItemDataManager.Instance.GetData(_itemInstance.Type);
+        //        TextLb.Text = $"{itemData.Name}*{_itemInstance.Count}";
+        //    }
+        //}
 
 
     }

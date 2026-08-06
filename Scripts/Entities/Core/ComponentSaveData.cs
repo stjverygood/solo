@@ -1,6 +1,7 @@
 ﻿using Solo.Scripts.Entities.Components.ExpComponents;
 using Solo.Scripts.Entities.Components.HpComponents;
 using Solo.Scripts.Entities.Components.InventoryComponents;
+using Solo.Scripts.Entities.Components.PickableComponents;
 using Solo.Scripts.Entities.Components.PositionComponents;
 using Solo.Scripts.Entities.Components.QiComponents;
 using Solo.Scripts.Entities.Components.RealmComponents;
@@ -17,8 +18,9 @@ namespace Solo.Scripts.Entities.Core
     [JsonDerivedType(typeof(QiComponentSaveData), nameof(QiComponentSaveData))]
     [JsonDerivedType(typeof(RealmComponentSaveData), nameof(RealmComponentSaveData))]
     [JsonDerivedType(typeof(StartPositionComponentSaveData), nameof(StartPositionComponentSaveData))]
+    [JsonDerivedType(typeof(PickableComponentSaveData), nameof(PickableComponentSaveData))]
     public class ComponentSaveData
     {
-        public required string TypeName { get; set; }
+        public required string ComponentName { get; set; }
     }
 }

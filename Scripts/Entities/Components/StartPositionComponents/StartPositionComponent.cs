@@ -20,7 +20,7 @@ namespace Solo.Scripts.Entities.Components.StartPositionComponents
         {
             return new StartPositionComponentSaveData()
             {
-                TypeName = nameof(StartPositionComponent),
+                ComponentName = nameof(StartPositionComponent),
                 WorldX = StartPositon.X,
                 WorldY = StartPositon.Y,
             };

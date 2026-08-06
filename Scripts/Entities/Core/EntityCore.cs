@@ -1,15 +1,4 @@
-﻿using Solo.Scripts.Entities.Components.AtkComponents;
-using Solo.Scripts.Entities.Components.DefComponents;
-using Solo.Scripts.Entities.Components.DropItemComponents;
-using Solo.Scripts.Entities.Components.EnemyComponents;
-using Solo.Scripts.Entities.Components.ExpComponents;
-using Solo.Scripts.Entities.Components.HpComponents;
-using Solo.Scripts.Entities.Components.InventoryComponents;
-using Solo.Scripts.Entities.Components.PositionComponents;
-using Solo.Scripts.Entities.Components.QiComponents;
-using Solo.Scripts.Entities.Components.RealmComponents;
-using Solo.Scripts.Entities.Components.StartPositionComponents;
-using Solo.Scripts.Global;
+﻿using Solo.Scripts.Global;
 using Solo.Scripts.Global.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -29,31 +18,13 @@ namespace Solo.Scripts.Entities.Core
         public void InitComponent(IEntity entity, EntitySaveData? entitySaveData)
         {
             EntityData entityData = EntityDataManager.Instance.GetData(Type);
-            foreach (KeyValuePair<Type, ComponentData?> pair in entityData.ComponentDataMap)
+            // 所有Component构造函数签名统一为(IEntity), 用反射创建, 新增组件无需改这里
+            foreach (Type type in entityData.ComponentDataMap.Keys)
             {
-                if (pair.Key == typeof(RealmComponent))
-                    _componentMap[typeof(RealmComponent)] = new RealmComponent(entity);
-                else if (pair.Key == typeof(HpComponent))
-                    _componentMap[typeof(HpComponent)] = new HpComponent(entity);
-                else if (pair.Key == typeof(QiComponent))
-                    _componentMap[typeof(QiComponent)] = new QiComponent(entity);
-                else if (pair.Key == typeof(ExpComponent))
-                    _componentMap[typeof(ExpComponent)] = new ExpComponent(entity);
-                else if (pair.Key == typeof(AtkComponent))
-                    _componentMap[typeof(AtkComponent)] = new AtkComponent(entity);
-                else if (pair.Key == typeof(DefComponent))
-                    _componentMap[typeof(DefComponent)] = new DefComponent(entity);
-                else if (pair.Key == typeof(InventoryComponent))
-                    _componentMap[typeof(InventoryComponent)] = new InventoryComponent(entity);
-                else if (pair.Key == typeof(PositionComponent))
-                    _componentMap[typeof(PositionComponent)] = new PositionComponent(entity);
-                else if (pair.Key == typeof(StartPositionComponent))
-                    _componentMap[typeof(StartPositionComponent)] = new StartPositionComponent(entity);
-                else if (pair.Key == typeof(DropItemComponent))
-                    _componentMap[typeof(DropItemComponent)] = new DropItemComponent(entity);
-                else if (pair.Key == typeof(EnemyComponent))
-                    _componentMap[typeof(EnemyComponent)] = new EnemyComponent(entity);
-
+                object? instance = Activator.CreateInstance(type, entity);
+                if (instance == null)
+                    throw new Exception();
+                _componentMap[type] = (Component)instance;
             }
 
             if (entitySaveData == null)
@@ -69,7 +40,7 @@ namespace Solo.Scripts.Entities.Core
                 Dictionary<string, ComponentSaveData> compSaveDataMap = new Dictionary<string, ComponentSaveData>();
                 foreach (ComponentSaveData saveData in entitySaveData.ComponentSaveDataList)
                 {
-                    compSaveDataMap[saveData.TypeName] = saveData;
+                    compSaveDataMap[saveData.ComponentName] = saveData;
                 }
                 foreach (KeyValuePair<Type, Component> typeCompPair in _componentMap)
                 {

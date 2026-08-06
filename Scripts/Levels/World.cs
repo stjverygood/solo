@@ -1,16 +1,12 @@
 using Godot;
-using Solo.Scripts.Entities.Components.DropItemComponents;
 using Solo.Scripts.Entities.Components.PositionComponents;
 using Solo.Scripts.Entities.Components.StartPositionComponents;
 using Solo.Scripts.Entities.Core;
-using Solo.Scripts.Entities.DropItems;
-using Solo.Scripts.Entities.Expballs;
 using Solo.Scripts.Entities.Players;
 using Solo.Scripts.Global;
 using Solo.Scripts.Global.Interfaces;
 using Solo.Scripts.Levels;
 using Solo.Scripts.System.ChunkSystem;
-using Solo.Scripts.System.ItemSystem;
 using Solo.Scripts.System.SaveSystem;
 using System;
 using System.Collections.Generic;
@@ -121,7 +117,7 @@ public partial class World : Node2D
         {
             player.Init(EntityType.Player, null);
             player.Core.GetComponent<StartPositionComponent>().StartPositon = new Vector2(0, 0);
-            player.Core.GetComponent<PositionComponent>().SetWorldPosition(new Vector2(0, 0));
+            player.Core.GetComponent<PositionComponent>().InitWorldPosition(new Vector2(0, 0));
         }
         else
             player.Init(EntityType.Player, SaveManager.Instance.CurSaveData.PlayerSaveData);
@@ -142,41 +138,12 @@ public partial class World : Node2D
         UIManager.Init();
     }
 
-    private float _entityChunkRefreshTimer = 0;
-    private float _entityChunkRefreshDuration = 1f; // 与ChunkManager卸载检查同频
+
     public override void _PhysicsProcess(double delta)
     {
         _canvasModulate.Color = _dayNightGradient.Sample(GameManager.Instance.TimeRatio);
 
-        _entityChunkRefreshTimer += (float)delta;
-        if (_entityChunkRefreshTimer < _entityChunkRefreshDuration)
-            return;
-        _entityChunkRefreshTimer = 0;
-        RefreshEntityChunkMap();
-    }
-
-    // 实体移动(如敌人的MoveAndSlide)不会主动上报区块, 由World定期校准归属
-    // 卸载是玩家距离驱动(4区块), 实体跨区块后最多1秒即被修正, 窗口不可达
-    private void RefreshEntityChunkMap()
-    {
-        foreach (KeyValuePair<Vector2I, List<IEntity>> pair in _entityMap.ToList())
-        {
-            foreach (IEntity entity in pair.Value.ToList())
-            {
-                if (IsInstanceValid((Node2D)entity) == false)
-                {
-                    pair.Value.Remove(entity); // 已销毁实体从账本清理
-                    continue;
-                }
-                if (entity.Core == null) // 未初始化Core的实体(直加路径)不参与追踪
-                    continue;
-                PositionComponent posComp = entity.Core.GetComponent<PositionComponent>();
-                Vector2I newChunkPos = GameManager.Instance.ChunkManager.WorldToChunkPos(posComp.GetWorldPosition());
-                if (posComp.CurChunkPos == newChunkPos)
-                    continue; // 注册位置与当前位置一致
-                RefreshEntityChunk(entity);
-            }
-        }
+        RefreshEntityChunkMap((float)delta);
     }
 
     private void ChunkManager_OnChunkLoaded(Vector2I chunkPos)
@@ -202,11 +169,6 @@ public partial class World : Node2D
                 continue;
             _entitySaveDataMap[chunkPos].Add(entity.Core.GetEntitySaveData());
             ((Node2D)entity).QueueFree();
-
-            //if (entity is ISaveable saveable)
-            //{
-
-            //}
         }
         _entityMap.Remove(chunkPos);
     }
@@ -268,14 +230,14 @@ public partial class World : Node2D
                         Vector2 worldPos = shuffledPositions[i] * GameManager.Instance.ChunkManager.TileSize + new Vector2(GameManager.Instance.ChunkManager.TileSize / 2f, GameManager.Instance.ChunkManager.TileSize / 2f);
                         IEntity entity = SpawnEntity((EntityType)entityWeight.Type);
                         entity.Init((EntityType)entityWeight.Type, null);
-                        entity.Core.GetComponent<PositionComponent>().SetWorldPosition(worldPos);
+                        if (entity.Core.TryGetComponent<PositionComponent>(out PositionComponent posComp) == true)
+                            posComp.InitWorldPosition(worldPos);
                     }
                 }
                 cursor += count;
             }
         }
     }
-
 
     private void RecoverEntity(Vector2I chunkPos)
     {
@@ -308,41 +270,78 @@ public partial class World : Node2D
         SaveManager.Instance.WriteCurSaveData();
     }
 
+    // 实体移动(如敌人的MoveAndSlide)不会主动上报区块, 由World定期校准归属
+    // 卸载是玩家距离驱动(4区块), 实体跨区块后最多1秒即被修正, 窗口不可达
+    private float _entityChunkRefreshTimer = 0;
+    private float _entityChunkRefreshDuration = 1f; // 与ChunkManager卸载检查同频
+    private void RefreshEntityChunkMap(float delta)
+    {
+        _entityChunkRefreshTimer += delta;
+        if (_entityChunkRefreshTimer < _entityChunkRefreshDuration)
+            return;
+        _entityChunkRefreshTimer = 0;
+        foreach (KeyValuePair<Vector2I, List<IEntity>> pair in _entityMap.ToList())
+        {
+            foreach (IEntity entity in pair.Value.ToList())
+            {
+                if (entity.Core.Type == EntityType.Player)
+                    continue;
+                if (IsInstanceValid((Node2D)entity) == false)
+                {
+                    pair.Value.Remove(entity); // 已销毁实体从账本清理
+                    continue;
+                }
+                PositionComponent posComp = entity.Core.GetComponent<PositionComponent>();
+                Vector2I newChunkPos = GameManager.Instance.ChunkManager.WorldToChunkPos(posComp.GetWorldPosition());
+                if (newChunkPos != pair.Key)
+                {
+                    _entityMap[pair.Key].Remove(entity);
+                    if (_entityMap.TryGetValue(newChunkPos, out List<IEntity>? entityList) == false)
+                        entityList = new List<IEntity>();
+                    entityList.Add(entity);
+                    _entityMap[newChunkPos] = entityList;
+                }
+            }
+        }
+    }
+    public void InitChunkPos(Vector2 worldPos, IEntity entity)
+    {
+        if (entity.Core.Type == EntityType.Player)
+            return;
+        Vector2I chunkPos = GameManager.Instance.ChunkManager.WorldToChunkPos(worldPos);
+        if (_entityMap.ContainsKey(chunkPos) == false)
+            _entityMap[chunkPos] = new List<IEntity>();
+        _entityMap[chunkPos].Add(entity);
+    }
+    //public void RefreshEntityChunk(IEntity entity)
+    //{
+    //    if (entity.Core.Type == EntityType.Player)
+    //        return;
+    //    PositionComponent posComp = entity.Core.GetComponent<PositionComponent>();
+    //    Vector2I oldChunkPos = posComp.CurChunkPos;
+    //    Vector2I newChunkPos = GameManager.Instance.ChunkManager.WorldToChunkPos(posComp.GetWorldPosition());
+    //    if (_entityMap.TryGetValue(oldChunkPos, out List<IEntity>? oldList))
+    //        oldList.Remove(entity);
+    //    if (_entityMap.TryGetValue(newChunkPos, out List<IEntity>? newList))
+    //    {
+    //        // 直加路径(如SpawnDropItem)未设置CurChunkPos, 首次校正时会重复添加
+    //        if (newList.Contains(entity) == false)
+    //            newList.Add(entity);
+    //    }
+    //    else
+    //    {
+    //        _entityMap[newChunkPos] = new List<IEntity>() { entity };
+    //    }
+    //    posComp.CurChunkPos = newChunkPos;
+    //}
 
     public IEntity SpawnEntity(EntityType type)
     {
         PackedScene entityPs = GameManager.Instance.EntityPsMap[type];
         IEntity entity = entityPs.Instantiate<IEntity>();
         GetTree().CurrentScene.AddChild((Node2D)entity);
-        return entity;
-        //if (saveData == null)
-        //    entity.Init(type, new List<ComponentSaveData>());
-        //else
-        //    entity.Init(type, saveData.ComponentSaveDataList);
-        //if (saveData == null)
-        //    entity.Core.GetComponent<PositionComponent>().SetWorldPosition(worldPos);
-    }
 
-    public void RefreshEntityChunk(IEntity entity)
-    {
-        if (entity.Core.Type == EntityType.Player)
-            return;
-        PositionComponent posComp = entity.Core.GetComponent<PositionComponent>();
-        Vector2I oldChunkPos = posComp.CurChunkPos;
-        Vector2I newChunkPos = GameManager.Instance.ChunkManager.WorldToChunkPos(posComp.GetWorldPosition());
-        if (_entityMap.TryGetValue(oldChunkPos, out List<IEntity>? oldList))
-            oldList.Remove(entity);
-        if (_entityMap.TryGetValue(newChunkPos, out List<IEntity>? newList))
-        {
-            // 直加路径(如SpawnDropItem)未设置CurChunkPos, 首次校正时会重复添加
-            if (newList.Contains(entity) == false)
-                newList.Add(entity);
-        }
-        else
-        {
-            _entityMap[newChunkPos] = new List<IEntity>() { entity };
-        }
-        posComp.CurChunkPos = newChunkPos;
+        return entity;
     }
 
     // Fisher-Yates 洗牌，O(n)，比反复调用随机下标生成更高效也更安全
@@ -357,44 +356,44 @@ public partial class World : Node2D
     }
 
 
-    public void SpawnDropItem(Vector2 worldPos, List<DropItemDropInfo> dropInfoList)
-    {
-        foreach (DropItemDropInfo info in dropInfoList)
-        {
-            for (int i = 0; i < info.Times; i++)
-            {
-                if (GD.Randf() > info.Chance)
-                    continue;
-                DropItem dropItem = GameManager.Instance.EntityPsMap[EntityType.DropItem].Instantiate<DropItem>();
-                GetTree().CurrentScene.AddChild(dropItem);
-                //dropItem.Init(EntityType.DropItem, worldPos, null);
-                _entityMap[GameManager.Instance.ChunkManager.WorldToChunkPos(worldPos)].Add(dropItem);
-                dropItem.SetItemInstance(new ItemInstance() { Type = info.Type, Count = 1 });
-                dropItem.ApplyForce();
-            }
-        }
-    }
-    public void SpawnDropItem(Vector2 worldPos, ItemInstance itemInstance)
-    {
-        DropItem dropItem = GameManager.Instance.EntityPsMap[EntityType.DropItem].Instantiate<DropItem>();
-        GetTree().CurrentScene.AddChild(dropItem);
-        //dropItem.Init(EntityType.DropItem, worldPos, null);
-        _entityMap[GameManager.Instance.ChunkManager.WorldToChunkPos(worldPos)].Add(dropItem);
-        dropItem.SetItemInstance(itemInstance);
-        dropItem.ApplyForce();
-    }
+    //public void SpawnDropItem(Vector2 worldPos, List<DropItemDropInfo> dropInfoList)
+    //{
+    //    foreach (DropItemDropInfo info in dropInfoList)
+    //    {
+    //        for (int i = 0; i < info.Times; i++)
+    //        {
+    //            if (GD.Randf() > info.Chance)
+    //                continue;
+    //            DropItem dropItem = GameManager.Instance.EntityPsMap[EntityType.DropItem].Instantiate<DropItem>();
+    //            GetTree().CurrentScene.AddChild(dropItem);
+    //            //dropItem.Init(EntityType.DropItem, worldPos, null);
+    //            _entityMap[GameManager.Instance.ChunkManager.WorldToChunkPos(worldPos)].Add(dropItem);
+    //            dropItem.SetItemInstance(new ItemInstance() { Type = info.Type, Count = 1 });
+    //            dropItem.ApplyForce();
+    //        }
+    //    }
+    //}
+    //public void SpawnDropItem(Vector2 worldPos, ItemInstance itemInstance)
+    //{
+    //    DropItem dropItem = GameManager.Instance.EntityPsMap[EntityType.DropItem].Instantiate<DropItem>();
+    //    GetTree().CurrentScene.AddChild(dropItem);
+    //    //dropItem.Init(EntityType.DropItem, worldPos, null);
+    //    _entityMap[GameManager.Instance.ChunkManager.WorldToChunkPos(worldPos)].Add(dropItem);
+    //    dropItem.SetItemInstance(itemInstance);
+    //    dropItem.ApplyForce();
+    //}
 
-    public void SpawnExpBall(Vector2 worldPos, ExpBallDropInfo info)
-    {
-        for (int i = 0; i < info.Times; i++)
-        {
-            if (GD.Randf() > info.Chance) continue;
-            float exp = (float)GD.RandRange(info.MinExp, info.MaxExp);
-            ExpBall expBall = GameManager.Instance.EntityPsMap[EntityType.ExpBall].Instantiate<ExpBall>();
-            GetTree().CurrentScene.AddChild(expBall);
-            //expBall.Init(EntityType.ExpBall, worldPos, null);
-            _entityMap[GameManager.Instance.ChunkManager.WorldToChunkPos(worldPos)].Add(expBall);
-            expBall.SetExp(exp);
-        }
-    }
+    //public void SpawnExpBall(Vector2 worldPos, ExpBallDropInfo info)
+    //{
+    //    for (int i = 0; i < info.Times; i++)
+    //    {
+    //        if (GD.Randf() > info.Chance) continue;
+    //        float exp = (float)GD.RandRange(info.MinExp, info.MaxExp);
+    //        ExpBall expBall = GameManager.Instance.EntityPsMap[EntityType.ExpBall].Instantiate<ExpBall>();
+    //        GetTree().CurrentScene.AddChild(expBall);
+    //        //expBall.Init(EntityType.ExpBall, worldPos, null);
+    //        _entityMap[GameManager.Instance.ChunkManager.WorldToChunkPos(worldPos)].Add(expBall);
+    //        expBall.SetExp(exp);
+    //    }
+    //}
 }

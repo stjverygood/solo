@@ -2,6 +2,8 @@ using Godot;
 using Solo.Scripts.Entities.Components.ExpComponents;
 using Solo.Scripts.Entities.Components.HpComponents;
 using Solo.Scripts.Entities.Components.InventoryComponents;
+using Solo.Scripts.Entities.Components.OutlineComponents;
+using Solo.Scripts.Entities.Components.PickableComponents;
 using Solo.Scripts.Entities.Components.QiComponents;
 using Solo.Scripts.Entities.Components.RealmComponents;
 using Solo.Scripts.Entities.Components.StartPositionComponents;
@@ -22,6 +24,7 @@ namespace Solo.Scripts.Entities.Players
         Run,
         Dash,
         Atk,//攻击
+        PreInteract,
         Interact,//交互
         Build,//建造状态
         Comsume,//消耗物品
@@ -50,8 +53,7 @@ namespace Solo.Scripts.Entities.Players
         //人物属性
         //public Vector2 StartPoint = new Vector2(0, 0);//出生点
         private float _moveSpeed = 100;
-        private float _curTargetRange = 100;//手长, 攻击和交互都统一用这个距离, 远程itemtype能加这个范围, todo : 改用基础值, 使用时获取手持物+距离
-        private float _curTargetRangeSq;
+
         public int CurFastBarIndex;
         public event Action? OnCurFastBarIndexChanged;
 
@@ -80,7 +82,6 @@ namespace Solo.Scripts.Entities.Players
             };
             RefreshHandNode();
 
-            _curTargetRangeSq = _curTargetRange * _curTargetRange;
             if (Core.GetComponent<HpComponent>().CurHp == 0)//若血量是0, 进入重生逻辑
                 Revive();
             ChangeState(PlayerState.Idle);
@@ -164,6 +165,9 @@ namespace Solo.Scripts.Entities.Players
                 case PlayerState.Atk:
                     EnterAtk();
                     break;
+                case PlayerState.PreInteract:
+                    EnterPreInteract();
+                    break;
                 case PlayerState.Interact:
                     EnterInteract();
                     break;
@@ -206,6 +210,9 @@ namespace Solo.Scripts.Entities.Players
                 case PlayerState.Atk:
                     UpdateAtk(delta);
                     break;
+                case PlayerState.PreInteract:
+                    UpdatePreInteract(delta);
+                    break;
                 case PlayerState.Interact:
                     UpdateInteract(delta);
                     break;
@@ -247,6 +254,9 @@ namespace Solo.Scripts.Entities.Players
                     break;
                 case PlayerState.Atk:
                     ExitAtk();
+                    break;
+                case PlayerState.PreInteract:
+                    ExitPreInteract();
                     break;
                 case PlayerState.Interact:
                     ExitInteract();
@@ -329,7 +339,7 @@ namespace Solo.Scripts.Entities.Players
 
             if (Input.IsActionJustPressed("Interact"))
             {
-                ChangeState(PlayerState.Interact);
+                ChangeState(PlayerState.PreInteract);
                 return;
             }
 
@@ -397,7 +407,7 @@ namespace Solo.Scripts.Entities.Players
 
             if (Input.IsActionJustPressed("Interact"))
             {
-                ChangeState(PlayerState.Interact);
+                ChangeState(PlayerState.PreInteract);
                 return;
             }
 
@@ -474,7 +484,7 @@ namespace Solo.Scripts.Entities.Players
 
             if (Input.IsActionJustPressed("Interact"))
             {
-                ChangeState(PlayerState.Interact);
+                ChangeState(PlayerState.PreInteract);
                 return;
             }
 
@@ -627,15 +637,125 @@ namespace Solo.Scripts.Entities.Players
         }
         #endregion
 
+        #region PreInteract
+        private IEntity? _curTargetEntity = null;
+        private void EnterPreInteract()
+        {
+            //ResetAnim();
+            _animSprite.Play("Idle");
+            Input.SetCustomMouseCursor(_interactIconTexture, Input.CursorShape.Arrow, _aimIconTexture.GetSize() / 2);
+        }
+        private void UpdatePreInteract(float delta)
+        {
+            if (Input.IsActionJustReleased("Atk"))
+            {
+                ChangeState(PlayerState.Idle);
+                return;
+            }
+
+            if (Input.IsActionJustReleased("Interact"))
+            {
+                if (_curTargetEntity == null || !IsInstanceValid((Node2D)_curTargetEntity))
+                {
+                    ChangeState(PlayerState.Idle);
+                    return;
+                }
+                if (_curTargetEntity.Core.TryGetComponent<PickableComponent>(out var pickableComp) == true)//掉落物, 直接捡起来, 不用有状态
+                {
+                    if (Core.GetComponent<InventoryComponent>().AddItem(pickableComp.ItemInstance) == 0)
+                    {
+                        ((Node2D)_curTargetEntity).QueueFree();//捡完了
+                    }
+                    ChangeState(PlayerState.Idle);
+                    return;
+                }
+                //if ()
+                //    ChangeState(PlayerState.Interact);//建筑/npc之类的, 给个
+                return;
+            }
+
+            //每帧刷新_curTargetEntity, 把信息显示出来
+            RefreshCurTargetEntity();
+            RefreshFaceDir();
+            //Vector2 input = Input.GetVector("MoveLeft", "MoveRight", "MoveForward", "MoveBack");
+            //if (input != Vector2.Zero)
+            //    _curMoveDir = input;
+            //if (GameManager.Instance.ChunkManager.GetTileType(GlobalPosition) == TileType.Water)
+            //    Velocity = input * _moveSpeed / 4;
+            //else
+            //    Velocity = input * _moveSpeed;
+            //MoveAndSlide();
+        }
+        private void ExitPreInteract()
+        {
+            Input.SetCustomMouseCursor(null, Input.CursorShape.Arrow);
+        }
+        private float _curTargetRangeSq = 100 * 100;
+        private void RefreshCurTargetEntity()
+        {
+            if (_curTargetEntity != null && IsInstanceValid((Node2D)_curTargetEntity))
+            {
+                //todo 后面可以有什么组件就展示什么组件的信息 : 若有showHpComp, 就展示血条
+                if (_curTargetEntity.Core.TryGetComponent<OutlineComponent>(out var outlineComp))
+                {
+                    outlineComp.Show(false);
+                }
+                _curTargetEntity = null;
+            }
+
+            Vector2 mousePos = GetGlobalMousePosition();
+            if (GlobalPosition.DistanceSquaredTo(mousePos) > _curTargetRangeSq)
+                return;
+            var spaceState = GetWorld2D().DirectSpaceState;
+            var query = new PhysicsPointQueryParameters2D();
+            query.Position = mousePos;
+            query.CollideWithAreas = true;
+            query.CollideWithBodies = true;
+
+            var results = spaceState.IntersectPoint(query);
+
+            foreach (var result in results)
+            {
+                if (result["collider"].As<Node2D>() is IEntity entity && IsInstanceValid((Node2D)entity))
+                {
+                    _curTargetEntity = entity;
+                    if (_curTargetEntity.Core.TryGetComponent<OutlineComponent>(out var outlineComp))
+                    {
+                        outlineComp.Show(true);
+                    }
+                    return;
+                }
+            }
+
+        }
+        #endregion
+
         #region Interact
         //private ITargetable? _curInteractingNode = null;
         private void EnterInteract()
         {
+            _animSprite.Play("Action");
+
+            //Tween tween = CreateTween();
+            //tween.TweenInterval(2.0f);
+            //tween.TweenCallback(Callable.From(() =>
+            //{
+            //    ChangeState(PlayerState.Idle);
+            //    return;
+            //}));
             //ResetAnim();
-            Input.SetCustomMouseCursor(_interactIconTexture, Input.CursorShape.Arrow, _aimIconTexture.GetSize() / 2);
+            //Input.SetCustomMouseCursor(_interactIconTexture, Input.CursorShape.Arrow, _aimIconTexture.GetSize() / 2);
         }
         private void UpdateInteract(float delta)
         {
+            if (_animSprite.IsPlaying() == false)
+            {
+                //真正触发交互的地方
+
+                ChangeState(PlayerState.Idle);
+                return;
+            }
+
             //if (Core.GetComponent<HpComponent>().CurValue <= 0)
             //{
             //    ChangeState(PlayerState.Death);

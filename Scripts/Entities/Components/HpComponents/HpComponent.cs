@@ -56,7 +56,7 @@ namespace Solo.Scripts.Entities.Components.HpComponents
         {
             return new HpComponentSaveData()
             {
-                TypeName = nameof(HpComponent),
+                ComponentName = nameof(HpComponent),
                 CurHp = CurHp
             };
         }

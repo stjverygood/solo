@@ -46,7 +46,7 @@ namespace Solo.Scripts.Entities.Components.InventoryComponents
         {
             return new InventoryComponentSaveData()
             {
-                TypeName = nameof(InventoryComponent),
+                ComponentName = nameof(InventoryComponent),
                 FastBarInventorySlotList = FastBarInventory.SlotList,
                 BagInventorySlotList = BagInventory.SlotList,
                 EquipmentInventorySlotList = EquipmentInventory.SlotList,
