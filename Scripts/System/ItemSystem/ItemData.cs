@@ -6,9 +6,11 @@ namespace Solo.Scripts.System.ItemSystem
     public class ItemData
     {
         public string Name = "";
-        public byte MaxCount = 1;
         public string IconPath = "";
-        public int MaxDur = -1;
+
+
+        public byte MaxCount = 99;
+        public int MaxDur = -1;//默认-1, 没有耐久度
         public bool IsArmor = false;
         public ArmorSlotType ArmorSlot = ArmorSlotType.Helmet;
         public int AtkBonus = 0;
@@ -20,6 +22,6 @@ namespace Solo.Scripts.System.ItemSystem
         public bool CanAim = false;
         public bool CanConsume = false;
 
-        public List<(ItemType, int)> CraftRequiredItemList;//合成所需的材料
+        public List<(ItemType, int)> CraftRequiredItemList = new();//合成所需的材料
     }
 }

@@ -1,20 +1,28 @@
 using Godot;
+using Solo.Scripts.Entities.Components.HpComponents;
 using Solo.Scripts.Entities.Core;
 using Solo.Scripts.Global;
 using Solo.Scripts.Global.Interfaces;
-using System.Collections.Generic;
 namespace Solo.Scripts.Entities.Resources
 {
     public partial class Resource : StaticBody2D, IEntity
     {
         public EntityCore Core { get; private set; } = null!;
-        public EntityType Type;
-        private ResourceData _data = null!;
+        //public EntityType Type;
+        //private ResourceData _data = null!;
 
-        public void Init(EntityType type, List<ComponentSaveData> componentSaveDataList)
+        public void Init(EntityType type, EntitySaveData? entitySaveData)
         {
             Core = new EntityCore(type);
-            Core.InitComponent(this, componentSaveDataList);
+            Core.InitComponent(this, entitySaveData);
+
+            Core.GetComponent<HpComponent>().OnCurHpChanged += () =>
+            {
+                if (Core.GetComponent<HpComponent>().CurHp <= 0)
+                {
+                    QueueFree();
+                }
+            };
         }
 
         //public void Init(EntityType type, Vector2 worldPos, EntitySaveData? entitySaveData = null)

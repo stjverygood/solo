@@ -8,11 +8,11 @@ radius = 4.0
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_4vsd2"]
 atlas = ExtResource("1_518au")
-region = Rect2(0, 128, 16, 16)
+region = Rect2(16, 112, 16, 16)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_yxouj"]
 atlas = ExtResource("1_518au")
-region = Rect2(672, 16, 16, 16)
+region = Rect2(640, 80, 32, 32)
 
 [node name="Grass" type="StaticBody2D" unique_id=1858950558]
 script = ExtResource("1_gotok")
@@ -22,8 +22,8 @@ position = Vector2(0, -3)
 shape = SubResource("CircleShape2D_yxouj")
 
 [node name="ShadowSprite2D" type="Sprite2D" parent="." unique_id=292808940]
-position = Vector2(-8.4703295e-22, -1)
-scale = Vector2(1.0625, 0.75)
+position = Vector2(0.4999998, -2.8750002)
+scale = Vector2(1.3125, 1.109375)
 texture = SubResource("AtlasTexture_4vsd2")
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=1372661404]

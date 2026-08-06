@@ -12,7 +12,7 @@ region = Rect2(16, 112, 16, 16)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_yxouj"]
 atlas = ExtResource("2_sesn8")
-region = Rect2(592, 0, 32, 48)
+region = Rect2(208, 256, 64, 96)
 
 [node name="Tree" type="StaticBody2D" unique_id=1105218002]
 script = ExtResource("1_yga65")
@@ -22,14 +22,14 @@ position = Vector2(0, -4)
 shape = SubResource("CircleShape2D_yxouj")
 
 [node name="ShadowSprite2D" type="Sprite2D" parent="." unique_id=814513632]
-position = Vector2(0.5, -2)
-scale = Vector2(1.0625, 0.75)
+position = Vector2(0, -2)
+scale = Vector2(2.125, 1.0625)
 texture = SubResource("AtlasTexture_wdnd1")
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=1782143375]
 position = Vector2(0, -1)
 texture = SubResource("AtlasTexture_yxouj")
-offset = Vector2(0.825, -14.33)
+offset = Vector2(0.825, -42.88)
 
 [node name="NavigationObstacle2D" type="NavigationObstacle2D" parent="." unique_id=2083044445]
 position = Vector2(0, -4)

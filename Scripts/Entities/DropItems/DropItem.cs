@@ -4,7 +4,6 @@ using Solo.Scripts.Entities.Core;
 using Solo.Scripts.Global;
 using Solo.Scripts.Global.Interfaces;
 using Solo.Scripts.System.ItemSystem;
-using System.Collections.Generic;
 
 namespace Solo.Scripts.Entities.DropItems
 {
@@ -18,10 +17,10 @@ namespace Solo.Scripts.Entities.DropItems
         //private DropItemData _data = null!;
         public EntityCore Core { get; private set; } = null!;
 
-        public void Init(EntityType type, List<ComponentSaveData> componentSaveDataList)
+        public void Init(EntityType type, EntitySaveData? entitySaveData)
         {
             Core = new EntityCore(type);
-            Core.InitComponent(this, componentSaveDataList);
+            Core.InitComponent(this, entitySaveData);
         }
 
         //public void Init(EntityType type, Vector2 worldPos, EntitySaveData? entitySaveData = null)

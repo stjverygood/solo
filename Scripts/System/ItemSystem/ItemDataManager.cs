@@ -5,7 +5,7 @@ namespace Solo.Scripts.System.ItemSystem
 {
     public class ItemDataManager
     {
-        private static ItemDataManager _instance;
+        private static ItemDataManager? _instance;
         public static ItemDataManager Instance => _instance ??= new ItemDataManager();
         private Dictionary<ItemType, ItemData> _dataMap = new Dictionary<ItemType, ItemData>();
 
@@ -791,6 +791,177 @@ namespace Solo.Scripts.System.ItemSystem
                 },
             });
             #endregion
+
+
+            _dataMap[ItemType.Grass] = new ItemData()
+            {
+                Name = "草",
+                IconPath = "res://Assets/AtlasTextures/Items/Grass.tres",
+            };
+            _dataMap[ItemType.Stone] = new ItemData()
+            {
+                Name = "石",
+                IconPath = "res://Assets/AtlasTextures/Items/Stone.tres",
+            };
+
+            _dataMap[ItemType.MonsterCore1] = new ItemData()
+            {
+                Name = "一阶妖丹",
+                IconPath = "res://Assets/AtlasTextures/Items/MonsterCore1.tres",
+            };
+            _dataMap[ItemType.MonsterCore2] = new ItemData()
+            {
+                Name = "二阶妖丹",
+                IconPath = "res://Assets/AtlasTextures/Items/MonsterCore2.tres",
+            };
+            _dataMap[ItemType.MonsterCore3] = new ItemData()
+            {
+                Name = "三阶妖丹",
+                IconPath = "res://Assets/AtlasTextures/Items/MonsterCore3.tres",
+            };
+            _dataMap[ItemType.MonsterCore4] = new ItemData()
+            {
+                Name = "四阶妖丹",
+                IconPath = "res://Assets/AtlasTextures/Items/Grass.tres",
+            };
+
+            _dataMap[ItemType.Leather1] = new ItemData()
+            {
+                Name = "凡兽皮",
+                IconPath = "res://Assets/AtlasTextures/Items/Leather1.tres",
+            };
+            _dataMap[ItemType.Leather2] = new ItemData()
+            {
+                Name = "灵兽皮",
+                IconPath = "res://Assets/AtlasTextures/Items/Leather2.tres",
+            };
+            _dataMap[ItemType.Leather3] = new ItemData()
+            {
+                Name = "异兽皮",
+                IconPath = "res://Assets/AtlasTextures/Items/Leather3.tres",
+            };
+            _dataMap[ItemType.Leather4] = new ItemData()
+            {
+                Name = "神兽皮",
+                IconPath = "res://Assets/AtlasTextures/Items/Leather4.tres",
+            };
+
+            _dataMap[ItemType.Wood1] = new ItemData()
+            {
+                Name = "凡木",
+                IconPath = "res://Assets/AtlasTextures/Items/Wood1.tres",
+            };
+            _dataMap[ItemType.Wood2] = new ItemData()
+            {
+                Name = "百年灵木",
+                IconPath = "res://Assets/AtlasTextures/Items/Wood2.tres",
+            };
+            _dataMap[ItemType.Wood3] = new ItemData()
+            {
+                Name = "千年灵木",
+                IconPath = "res://Assets/AtlasTextures/Items/Wood3.tres",
+            };
+            _dataMap[ItemType.Wood4] = new ItemData()
+            {
+                Name = "神木",
+                IconPath = "res://Assets/AtlasTextures/Items/Wood4.tres",
+            };
+
+            _dataMap[ItemType.Metal1] = new ItemData()
+            {
+                Name = "凡铁",
+                IconPath = "res://Assets/AtlasTextures/Items/Metal1.tres",
+            };
+            _dataMap[ItemType.Metal2] = new ItemData()
+            {
+                Name = "玄铁",
+                IconPath = "res://Assets/AtlasTextures/Items/Metal2.tres",
+            };
+            _dataMap[ItemType.Metal3] = new ItemData()
+            {
+                Name = "精金",
+                IconPath = "res://Assets/AtlasTextures/Items/Metal3.tres",
+            };
+            _dataMap[ItemType.Metal4] = new ItemData()
+            {
+                Name = "天金",
+                IconPath = "res://Assets/AtlasTextures/Items/Metal4.tres",
+            };
+
+            _dataMap[ItemType.QiStone1] = new ItemData()
+            {
+                Name = "下品灵石",
+                IconPath = "res://Assets/AtlasTextures/Items/QiStone1.tres",
+                CraftRequiredItemList = new List<(ItemType, int)>() { (ItemType.Stone, 99) }
+            };
+            _dataMap[ItemType.QiStone2] = new ItemData()
+            {
+                Name = "中品灵石",
+                IconPath = "res://Assets/AtlasTextures/Items/QiStone2.tres",
+                CraftRequiredItemList = new List<(ItemType, int)>() { (ItemType.QiStone1, 99) }
+            };
+            _dataMap[ItemType.QiStone3] = new ItemData()
+            {
+                Name = "上品灵石",
+                IconPath = "res://Assets/AtlasTextures/Items/QiStone3.tres",
+                CraftRequiredItemList = new List<(ItemType, int)>() { (ItemType.QiStone2, 99) }
+            };
+            _dataMap[ItemType.QiStone4] = new ItemData()
+            {
+                Name = "极品灵石",
+                IconPath = "res://Assets/AtlasTextures/Items/QiStone4.tres",
+                CraftRequiredItemList = new List<(ItemType, int)>() { (ItemType.QiStone3, 99) }
+            };
+
+            _dataMap[ItemType.Sword1] = new ItemData()
+            {
+                Name = "新剑",
+                IconPath = "res://Assets/AtlasTextures/Items/Sword1.tres",
+                CraftRequiredItemList = new List<(ItemType, int)>() { (ItemType.Wood1, 1), (ItemType.Metal1, 1) }
+            };
+            _dataMap[ItemType.Sword2] = new ItemData()
+            {
+                Name = "芒剑",
+                IconPath = "res://Assets/AtlasTextures/Items/Sword2.tres",
+                CraftRequiredItemList = new List<(ItemType, int)>() { (ItemType.Wood2, 1), (ItemType.Metal2, 1) }
+            };
+            _dataMap[ItemType.Sword3] = new ItemData()
+            {
+                Name = "绝剑",
+                IconPath = "res://Assets/AtlasTextures/Items/Sword3.tres",
+                CraftRequiredItemList = new List<(ItemType, int)>() { (ItemType.Wood3, 1), (ItemType.Metal3, 1) }
+            };
+            _dataMap[ItemType.Sword4] = new ItemData()
+            {
+                Name = "无剑",
+                IconPath = "res://Assets/AtlasTextures/Items/Sword4.tres",
+                CraftRequiredItemList = new List<(ItemType, int)>() { (ItemType.Wood4, 1), (ItemType.Metal4, 1) }
+            };
+
+            _dataMap[ItemType.Bow1] = new ItemData()
+            {
+                Name = "新弓",
+                IconPath = "res://Assets/AtlasTextures/Items/Bow1.tres",
+                CraftRequiredItemList = new List<(ItemType, int)>() { (ItemType.Wood4, 1), (ItemType.Metal4, 1) }
+            };
+            _dataMap[ItemType.Bow2] = new ItemData()
+            {
+                Name = "芒弓",
+                IconPath = "res://Assets/AtlasTextures/Items/Bow2.tres",
+                CraftRequiredItemList = new List<(ItemType, int)>() { (ItemType.Wood4, 1), (ItemType.Metal4, 1) }
+            };
+            _dataMap[ItemType.Bow3] = new ItemData()
+            {
+                Name = "绝弓",
+                IconPath = "res://Assets/AtlasTextures/Items/Bow3.tres",
+                CraftRequiredItemList = new List<(ItemType, int)>() { (ItemType.Wood4, 1), (ItemType.Metal4, 1) }
+            };
+            _dataMap[ItemType.Bow4] = new ItemData()
+            {
+                Name = "无弓",
+                IconPath = "res://Assets/AtlasTextures/Items/Bow4.tres",
+                CraftRequiredItemList = new List<(ItemType, int)>() { (ItemType.Wood4, 1), (ItemType.Metal4, 1) }
+            };
         }
 
         public ItemData GetData(ItemType type)

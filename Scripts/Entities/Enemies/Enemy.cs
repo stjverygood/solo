@@ -1,12 +1,10 @@
 ﻿using Godot;
-using Solo.Scripts.Entities.Components.DynamicComponents;
 using Solo.Scripts.Entities.Components.HpComponents;
 using Solo.Scripts.Entities.Core;
 using Solo.Scripts.Entities.Players;
 using Solo.Scripts.Global;
 using Solo.Scripts.Global.Interfaces;
 using Solo.Scripts.Projectiles;
-using System.Collections.Generic;
 namespace Solo.Scripts.Entities.Enemies
 {
     public enum EnemyState
@@ -32,10 +30,10 @@ namespace Solo.Scripts.Entities.Enemies
 
         public EntityCore Core { get; private set; } = null!;
 
-        public void Init(EntityType type, List<ComponentSaveData> componentSaveDataList)
+        public void Init(EntityType type, EntitySaveData? entitySaveData)
         {
             Core = new EntityCore(type);
-            Core.InitComponent(this, componentSaveDataList);
+            Core.InitComponent(this, entitySaveData);
 
             _naviAgent.VelocityComputed += _naviAgent_VelocityComputed;
             ChangeState(EnemyState.Idle);
@@ -95,10 +93,6 @@ namespace Solo.Scripts.Entities.Enemies
         {
             UpdateState((float)delta);
             _debugLb.Text = _curState.ToString();
-            if (Core.TryGetComponent<DynamicComponent>(out DynamicComponent dynamicComponent))
-            {
-                dynamicComponent.RefreshChunkPos(GlobalPosition);
-            }
         }
 
         private void ChangeState(EnemyState newState)
@@ -337,7 +331,7 @@ namespace Solo.Scripts.Entities.Enemies
             tween.TweenProperty(_animSprite, "scale", new Vector2(0.01f, 0.01f), 1f);
             tween.Finished += () =>
             {
-                GameManager.Instance.World.SpawnDropItem(GlobalPosition, _data.DropItemDropInfoList);
+                //GameManager.Instance.World.SpawnDropItem(GlobalPosition, _data.DropItemDropInfoList);
                 QueueFree();
             };
         }

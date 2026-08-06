@@ -4,7 +4,6 @@ using Solo.Scripts.Entities.Core;
 using Solo.Scripts.Entities.Players;
 using Solo.Scripts.Global;
 using Solo.Scripts.Global.Interfaces;
-using System.Collections.Generic;
 namespace Solo.Scripts.Entities.Expballs
 {
     public partial class ExpBall : Area2D, IEntity
@@ -15,10 +14,10 @@ namespace Solo.Scripts.Entities.Expballs
 
         public EntityCore Core { get; private set; } = null!;
 
-        public void Init(EntityType type, List<ComponentSaveData> componentSaveDataList)
+        public void Init(EntityType type, EntitySaveData? entitySaveData)
         {
             Core = new EntityCore(type);
-            Core.InitComponent(this, componentSaveDataList);
+            Core.InitComponent(this, entitySaveData);
 
             BodyEntered += ExpBall_BodyEntered;
             BodyExited += ExpBall_BodyExited;

@@ -23,7 +23,8 @@ scale = Vector2(1.3749999, 0.75)
 texture = SubResource("AtlasTexture_tfu7j")
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=904785594]
-position = Vector2(-1, 8)
+position = Vector2(-1, 15)
+scale = Vector2(2, 2)
 texture = SubResource("AtlasTexture_qjabb")
 offset = Vector2(0.825, -14.33)
 

@@ -4,7 +4,7 @@ namespace Solo.Scripts.Entities.Components.PositionComponents
 {
     public class PositionComponentSaveData : ComponentSaveData
     {
-        public float WorldX;
-        public float WorldY;
+        public float WorldX { get; set; }
+        public float WorldY { get; set; }
     }
 }

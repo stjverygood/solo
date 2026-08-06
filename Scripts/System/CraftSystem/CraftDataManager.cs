@@ -30,6 +30,44 @@ namespace Solo.Scripts.System.CraftSystem
                     ItemType.Arrow,
                     ItemType.Fireball,
                     ItemType.TreeGrow,
+
+                    ItemType.Grass,//草
+                    ItemType.Stone,//石头
+
+                    ItemType.MonsterCore1,
+                    ItemType.MonsterCore2,
+                    ItemType.MonsterCore3,
+                    ItemType.MonsterCore4,
+
+                    ItemType.Leather1,
+                    ItemType.Leather2,
+                    ItemType.Leather3,
+                    ItemType.Leather4,
+
+                    ItemType.Wood1,
+                    ItemType.Wood2,
+                    ItemType.Wood3,
+                    ItemType.Wood4,
+
+                    ItemType.Metal1,
+                    ItemType.Metal2,
+                    ItemType.Metal3,
+                    ItemType.Metal4,
+
+                    ItemType.QiStone1,
+                    ItemType.QiStone2,
+                    ItemType.QiStone3,
+                    ItemType.QiStone4,
+
+                    ItemType.Sword1,
+                    ItemType.Sword2,
+                    ItemType.Sword3,
+                    ItemType.Sword4,
+
+                    ItemType.Bow1,
+                    ItemType.Bow2,
+                    ItemType.Bow3,
+                    ItemType.Bow4,
                 },
                 CraftBtnText = "合成",
             });

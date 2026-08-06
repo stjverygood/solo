@@ -7,6 +7,4 @@ namespace Solo.Scripts.Entities.Core
     {
         public required Dictionary<Type, ComponentData?> ComponentDataMap;
     }
-
-
 }

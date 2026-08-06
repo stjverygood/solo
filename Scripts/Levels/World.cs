@@ -1,4 +1,5 @@
 using Godot;
+using Solo.Scripts.Entities.Components.DropItemComponents;
 using Solo.Scripts.Entities.Components.PositionComponents;
 using Solo.Scripts.Entities.Components.StartPositionComponent;
 using Solo.Scripts.Entities.Core;
@@ -36,10 +37,10 @@ public partial class World : Node2D
             new EntityWeight(){ Type = EntityType.Tree, Weight = 5f },
             new EntityWeight(){ Type = EntityType.Stone, Weight = 1f },
             new EntityWeight(){ Type = EntityType.Ore, Weight = 1f },
-            new EntityWeight(){ Type = EntityType.NormalMeleeEnemy, Weight = 1f },
-            new EntityWeight(){ Type = EntityType.SpeedMeleeEnemy, Weight = 1f },
-            new EntityWeight(){ Type = EntityType.StrongMeleeEnemy, Weight = 1f },
-            new EntityWeight(){ Type = EntityType.NormalRangedEnemy, Weight = 1f },
+            //new EntityWeight(){ Type = EntityType.NormalMeleeEnemy, Weight = 1f },
+            //new EntityWeight(){ Type = EntityType.SpeedMeleeEnemy, Weight = 1f },
+            //new EntityWeight(){ Type = EntityType.StrongMeleeEnemy, Weight = 1f },
+            //new EntityWeight(){ Type = EntityType.NormalRangedEnemy, Weight = 1f },
         }
     },
     {
@@ -51,10 +52,10 @@ public partial class World : Node2D
             new EntityWeight(){ Type = EntityType.Tree, Weight = 20f },
             new EntityWeight(){ Type = EntityType.Stone, Weight = 1f },
             new EntityWeight(){ Type = EntityType.Ore, Weight = 1f },
-            new EntityWeight(){ Type = EntityType.NormalMeleeEnemy, Weight = 5f },
-            new EntityWeight(){ Type = EntityType.SpeedMeleeEnemy, Weight = 7f },
-            new EntityWeight(){ Type = EntityType.StrongMeleeEnemy, Weight = 1f },
-            new EntityWeight(){ Type = EntityType.NormalRangedEnemy, Weight = 2f },
+            //new EntityWeight(){ Type = EntityType.NormalMeleeEnemy, Weight = 5f },
+            //new EntityWeight(){ Type = EntityType.SpeedMeleeEnemy, Weight = 7f },
+            //new EntityWeight(){ Type = EntityType.StrongMeleeEnemy, Weight = 1f },
+            //new EntityWeight(){ Type = EntityType.NormalRangedEnemy, Weight = 2f },
         }
     },
     {
@@ -66,10 +67,10 @@ public partial class World : Node2D
             new EntityWeight(){ Type = EntityType.Tree, Weight = 1f },
             new EntityWeight(){ Type = EntityType.Stone, Weight = 20f },
             new EntityWeight(){ Type = EntityType.Ore, Weight = 10f },
-            new EntityWeight(){ Type = EntityType.NormalMeleeEnemy, Weight = 4f },
-            new EntityWeight(){ Type = EntityType.SpeedMeleeEnemy, Weight = 2f },
-            new EntityWeight(){ Type = EntityType.StrongMeleeEnemy, Weight = 8f },
-            new EntityWeight(){ Type = EntityType.NormalRangedEnemy, Weight = 2f },
+            //new EntityWeight(){ Type = EntityType.NormalMeleeEnemy, Weight = 4f },
+            //new EntityWeight(){ Type = EntityType.SpeedMeleeEnemy, Weight = 2f },
+            //new EntityWeight(){ Type = EntityType.StrongMeleeEnemy, Weight = 8f },
+            //new EntityWeight(){ Type = EntityType.NormalRangedEnemy, Weight = 2f },
         }
     },
     {
@@ -81,10 +82,10 @@ public partial class World : Node2D
             new EntityWeight(){ Type = EntityType.Tree, Weight = 0f },
             new EntityWeight(){ Type = EntityType.Stone, Weight = 8f },
             new EntityWeight(){ Type = EntityType.Ore, Weight = 4f },
-            new EntityWeight(){ Type = EntityType.NormalMeleeEnemy, Weight = 2f },
-            new EntityWeight(){ Type = EntityType.SpeedMeleeEnemy, Weight = 10f },
-            new EntityWeight(){ Type = EntityType.StrongMeleeEnemy, Weight = 2f },
-            new EntityWeight(){ Type = EntityType.NormalRangedEnemy, Weight = 8f },
+            //new EntityWeight(){ Type = EntityType.NormalMeleeEnemy, Weight = 2f },
+            //new EntityWeight(){ Type = EntityType.SpeedMeleeEnemy, Weight = 10f },
+            //new EntityWeight(){ Type = EntityType.StrongMeleeEnemy, Weight = 2f },
+            //new EntityWeight(){ Type = EntityType.NormalRangedEnemy, Weight = 8f },
         }
     },
     {
@@ -96,16 +97,16 @@ public partial class World : Node2D
             new EntityWeight(){ Type = EntityType.Tree, Weight = 0f },
             new EntityWeight(){ Type = EntityType.Stone, Weight = 10f },
             new EntityWeight(){ Type = EntityType.Ore, Weight = 20f },
-            new EntityWeight(){ Type = EntityType.NormalMeleeEnemy, Weight = 2f },
-            new EntityWeight(){ Type = EntityType.SpeedMeleeEnemy, Weight = 8f },
-            new EntityWeight(){ Type = EntityType.StrongMeleeEnemy, Weight = 12f },
-            new EntityWeight(){ Type = EntityType.NormalRangedEnemy, Weight = 10f },
+            //new EntityWeight(){ Type = EntityType.NormalMeleeEnemy, Weight = 2f },
+            //new EntityWeight(){ Type = EntityType.SpeedMeleeEnemy, Weight = 8f },
+            //new EntityWeight(){ Type = EntityType.StrongMeleeEnemy, Weight = 12f },
+            //new EntityWeight(){ Type = EntityType.NormalRangedEnemy, Weight = 10f },
         }
     },
 };
 
     //管理当前激活区块的实体
-    public Dictionary<Vector2I, List<IEntity>> EntityMap = new();
+    private Dictionary<Vector2I, List<IEntity>> _entityMap = new();
 
     //区块实体的缓存, 卸载区块时把数据写入这个缓存, 区块加载时用这个缓存恢复, 游戏关闭后全部区块都要卸载, 会先写入缓存, 最后缓存再进入存档, 下次打开游戏, 也是先从存档加载缓存
     private Dictionary<Vector2I, List<EntitySaveData>> _entitySaveDataMap = new();
@@ -117,13 +118,12 @@ public partial class World : Node2D
         AddChild(player);
         if (SaveManager.Instance.CurSaveData.PlayerSaveData == null)
         {
-            player.Init(EntityType.Player, new List<ComponentSaveData>());
+            player.Init(EntityType.Player, null);
             player.Core.GetComponent<StartPositionComponent>().StartPositon = new Vector2(0, 0);
             player.Core.GetComponent<PositionComponent>().SetWorldPosition(new Vector2(0, 0));
         }
-
         else
-            player.Init(EntityType.Player, SaveManager.Instance.CurSaveData.PlayerSaveData.ComponentSaveDataList);
+            player.Init(EntityType.Player, SaveManager.Instance.CurSaveData.PlayerSaveData);
 
         ChunkManager chunkManager = GameManager.Instance.ChunkManagerPs.Instantiate<ChunkManager>();
         AddChild(chunkManager);
@@ -162,24 +162,26 @@ public partial class World : Node2D
     {
         if (_entitySaveDataMap.ContainsKey(chunkPos) == false)
             _entitySaveDataMap[chunkPos] = new List<EntitySaveData>();
-        List<IEntity> entityList = EntityMap[chunkPos];
+        List<IEntity> entityList = _entityMap[chunkPos];
         foreach (IEntity entity in entityList)
         {
             if (IsInstanceValid((Node2D)entity) == false)
                 continue;
-            if (entity is ISaveable saveable)
-            {
-                _entitySaveDataMap[chunkPos].Add(saveable.GetSaveData());
-            }
+            _entitySaveDataMap[chunkPos].Add(entity.Core.GetEntitySaveData());
             ((Node2D)entity).QueueFree();
+
+            //if (entity is ISaveable saveable)
+            //{
+
+            //}
         }
-        EntityMap.Remove(chunkPos);
+        _entityMap.Remove(chunkPos);
     }
 
     private void InitEntity(Vector2I chunkPos)
     {
-        if (!EntityMap.ContainsKey(chunkPos))
-            EntityMap[chunkPos] = new List<IEntity>();
+        if (!_entityMap.ContainsKey(chunkPos))
+            _entityMap[chunkPos] = new List<IEntity>();
 
         int chunkSize = GameManager.Instance.ChunkManager.ChunkSize;
         int tileSize = GameManager.Instance.ChunkManager.TileSize;
@@ -231,7 +233,9 @@ public partial class World : Node2D
                     for (int i = cursor; i < cursor + count; i++)
                     {
                         Vector2 worldPos = shuffledPositions[i] * GameManager.Instance.ChunkManager.TileSize + new Vector2(GameManager.Instance.ChunkManager.TileSize / 2f, GameManager.Instance.ChunkManager.TileSize / 2f);
-                        //SpawnEntity((EntityType)entityWeight.Type, chunkPos, worldPos, null);
+                        IEntity entity = SpawnEntity((EntityType)entityWeight.Type);
+                        entity.Init((EntityType)entityWeight.Type, null);
+                        entity.Core.GetComponent<PositionComponent>().SetWorldPosition(worldPos);
                     }
                 }
                 cursor += count;
@@ -242,11 +246,12 @@ public partial class World : Node2D
 
     private void RecoverEntity(Vector2I chunkPos)
     {
-        if (EntityMap.ContainsKey(chunkPos) == false)
-            EntityMap[chunkPos] = new List<IEntity>();
+        if (_entityMap.ContainsKey(chunkPos) == false)
+            _entityMap[chunkPos] = new List<IEntity>();
         foreach (EntitySaveData entitySaveData in _entitySaveDataMap[chunkPos])
         {
-            SpawnEntity(entitySaveData.Type, chunkPos, Vector2.Zero, entitySaveData);
+            IEntity entity = SpawnEntity(entitySaveData.Type);
+            entity.Init(entitySaveData.Type, entitySaveData);
         }
         _entitySaveDataMap.Remove(chunkPos);
     }
@@ -267,20 +272,38 @@ public partial class World : Node2D
 
         //玩家
         SaveManager.Instance.CurSaveData.PlayerSaveData = GameManager.Instance.Player.Core.GetEntitySaveData();
-
         SaveManager.Instance.WriteCurSaveData();
     }
 
 
-    public void SpawnEntity(EntityType type, Vector2I chunkPos, Vector2 worldPos, EntitySaveData? saveData)
+    public IEntity SpawnEntity(EntityType type)
     {
         PackedScene entityPs = GameManager.Instance.EntityPsMap[type];
         IEntity entity = entityPs.Instantiate<IEntity>();
         GetTree().CurrentScene.AddChild((Node2D)entity);
-        entity.Init(type, saveData.ComponentSaveDataList);
-        EntityMap[chunkPos].Add(entity);
+        return entity;
+        //if (saveData == null)
+        //    entity.Init(type, new List<ComponentSaveData>());
+        //else
+        //    entity.Init(type, saveData.ComponentSaveDataList);
+        //if (saveData == null)
+        //    entity.Core.GetComponent<PositionComponent>().SetWorldPosition(worldPos);
     }
 
+    public void RefreshEntityChunk(IEntity entity)
+    {
+        if (entity.Core.Type == EntityType.Player)
+            return;
+        PositionComponent posComp = entity.Core.GetComponent<PositionComponent>();
+        Vector2I oldChunkPos = posComp.CurChunkPos;
+        Vector2I newChunkPos = GameManager.Instance.ChunkManager.WorldToChunkPos(posComp.GetWorldPosition());
+        if (_entityMap.ContainsKey(oldChunkPos))
+            _entityMap[oldChunkPos].Remove(entity);
+        if (_entityMap.ContainsKey(newChunkPos) == false)
+            _entityMap[newChunkPos] = new List<IEntity>();
+        _entityMap[newChunkPos].Add(entity);
+        posComp.CurChunkPos = newChunkPos;
+    }
 
     // Fisher-Yates 洗牌，O(n)，比反复调用随机下标生成更高效也更安全
     private void ShuffleList<T>(List<T> list)
@@ -305,7 +328,7 @@ public partial class World : Node2D
                 DropItem dropItem = GameManager.Instance.EntityPsMap[EntityType.DropItem].Instantiate<DropItem>();
                 GetTree().CurrentScene.AddChild(dropItem);
                 //dropItem.Init(EntityType.DropItem, worldPos, null);
-                EntityMap[GameManager.Instance.ChunkManager.WorldToChunkPos(worldPos)].Add(dropItem);
+                _entityMap[GameManager.Instance.ChunkManager.WorldToChunkPos(worldPos)].Add(dropItem);
                 dropItem.SetItemInstance(new ItemInstance() { Type = info.Type, Count = 1 });
                 dropItem.ApplyForce();
             }
@@ -316,7 +339,7 @@ public partial class World : Node2D
         DropItem dropItem = GameManager.Instance.EntityPsMap[EntityType.DropItem].Instantiate<DropItem>();
         GetTree().CurrentScene.AddChild(dropItem);
         //dropItem.Init(EntityType.DropItem, worldPos, null);
-        EntityMap[GameManager.Instance.ChunkManager.WorldToChunkPos(worldPos)].Add(dropItem);
+        _entityMap[GameManager.Instance.ChunkManager.WorldToChunkPos(worldPos)].Add(dropItem);
         dropItem.SetItemInstance(itemInstance);
         dropItem.ApplyForce();
     }
@@ -330,7 +353,7 @@ public partial class World : Node2D
             ExpBall expBall = GameManager.Instance.EntityPsMap[EntityType.ExpBall].Instantiate<ExpBall>();
             GetTree().CurrentScene.AddChild(expBall);
             //expBall.Init(EntityType.ExpBall, worldPos, null);
-            EntityMap[GameManager.Instance.ChunkManager.WorldToChunkPos(worldPos)].Add(expBall);
+            _entityMap[GameManager.Instance.ChunkManager.WorldToChunkPos(worldPos)].Add(expBall);
             expBall.SetExp(exp);
         }
     }

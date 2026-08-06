@@ -1,5 +1,6 @@
 ﻿using Solo.Scripts.Entities.Components.AtkComponents;
 using Solo.Scripts.Entities.Components.DefComponents;
+using Solo.Scripts.Entities.Components.DropItemComponents;
 using Solo.Scripts.Entities.Components.ExpComponents;
 using Solo.Scripts.Entities.Components.HpComponents;
 using Solo.Scripts.Entities.Components.InventoryComponents;
@@ -24,7 +25,7 @@ namespace Solo.Scripts.Entities.Core
             Type = type;
         }
 
-        public void InitComponent(IEntity entity, List<ComponentSaveData> componentSaveDataList)
+        public void InitComponent(IEntity entity, EntitySaveData? entitySaveData)
         {
             EntityData entityData = EntityDataManager.Instance.GetData(Type);
             foreach (KeyValuePair<Type, ComponentData?> pair in entityData.ComponentDataMap)
@@ -47,19 +48,33 @@ namespace Solo.Scripts.Entities.Core
                     _componentMap[typeof(PositionComponent)] = new PositionComponent(entity);
                 else if (pair.Key == typeof(StartPositionComponent))
                     _componentMap[typeof(StartPositionComponent)] = new StartPositionComponent(entity);
+                else if (pair.Key == typeof(DropItemComponent))
+                    _componentMap[typeof(DropItemComponent)] = new DropItemComponent(entity);
 
 
             }
-            Dictionary<string, ComponentSaveData> compSaveDataMap = new Dictionary<string, ComponentSaveData>();
-            foreach (ComponentSaveData saveData in componentSaveDataList)
+
+            if (entitySaveData == null)
             {
-                compSaveDataMap[saveData.TypeName] = saveData;
+                foreach (KeyValuePair<Type, Component> typeCompPair in _componentMap)
+                {
+                    entityData.ComponentDataMap.TryGetValue(typeCompPair.Key, out ComponentData? compData);
+                    typeCompPair.Value.Init(compData, null);
+                }
             }
-            foreach (KeyValuePair<Type, Component> typeCompPair in _componentMap)
+            else
             {
-                entityData.ComponentDataMap.TryGetValue(typeCompPair.Key, out ComponentData? compData);
-                compSaveDataMap.TryGetValue(typeCompPair.Value.GetType().Name, out ComponentSaveData? compSaveData);
-                typeCompPair.Value.Init(compData, compSaveData);
+                Dictionary<string, ComponentSaveData> compSaveDataMap = new Dictionary<string, ComponentSaveData>();
+                foreach (ComponentSaveData saveData in entitySaveData.ComponentSaveDataList)
+                {
+                    compSaveDataMap[saveData.TypeName] = saveData;
+                }
+                foreach (KeyValuePair<Type, Component> typeCompPair in _componentMap)
+                {
+                    entityData.ComponentDataMap.TryGetValue(typeCompPair.Key, out ComponentData? compData);
+                    compSaveDataMap.TryGetValue(typeCompPair.Value.GetType().Name, out ComponentSaveData? compSaveData);
+                    typeCompPair.Value.Init(compData, compSaveData);
+                }
             }
         }
         //public void AddComponent(Component component)

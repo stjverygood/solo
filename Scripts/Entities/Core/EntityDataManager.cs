@@ -1,5 +1,6 @@
 ﻿using Solo.Scripts.Entities.Components.AtkComponents;
 using Solo.Scripts.Entities.Components.DefComponents;
+using Solo.Scripts.Entities.Components.DropItemComponents;
 using Solo.Scripts.Entities.Components.ExpComponents;
 using Solo.Scripts.Entities.Components.HpComponents;
 using Solo.Scripts.Entities.Components.InventoryComponents;
@@ -173,6 +174,85 @@ namespace Solo.Scripts.Entities.Core
             //    ExpBallDropInfo = new ExpBallDropInfo() { MinExp = 100, MaxExp = 300, Times = 5, Chance = 0.8f }
             //};
 
+            _dataMap[EntityType.Tree] = new EntityData()
+            {
+                ComponentDataMap = new Dictionary<Type, ComponentData?>()
+                {
+                    { typeof(PositionComponent), null },
+                    { typeof(HpComponent), new HpComponentData() { BaseMaxHp = 100 } },
+                    { typeof(DefComponent), new DefComponentData() { BaseDef = 100 } },
+                    { typeof(DropItemComponent), new DropItemComponentData()
+                        {
+                            DropInfoList = new List<DropItemDropInfo>()
+                            {
+                                new DropItemDropInfo() { Type = ItemType.Wood, Times = 4, Chance = 0.7f},
+                                new DropItemDropInfo() { Type = ItemType.Stone, Times = 2, Chance = 0.6f}
+                            }
+                        }
+                    }
+                }
+            };
+            _dataMap[EntityType.Grass] = new EntityData()
+            {
+                ComponentDataMap = new Dictionary<Type, ComponentData?>()
+                {
+                    { typeof(PositionComponent), null },
+                    { typeof(HpComponent), new HpComponentData() { BaseMaxHp = 100 } },
+                    { typeof(DefComponent), new DefComponentData() { BaseDef = 100 } },
+                    { typeof(DropItemComponent), new DropItemComponentData()
+                        {
+                            DropInfoList = new List<DropItemDropInfo>()
+                            {
+                                new DropItemDropInfo() { Type = ItemType.Wood, Times = 4, Chance = 0.7f},
+                                new DropItemDropInfo() { Type = ItemType.Stone, Times = 2, Chance = 0.6f}
+                            }
+                        }
+                    }
+                }
+            };
+            _dataMap[EntityType.Stone] = new EntityData()
+            {
+                ComponentDataMap = new Dictionary<Type, ComponentData?>()
+                {
+                    { typeof(PositionComponent), null },
+                    { typeof(HpComponent), new HpComponentData() { BaseMaxHp = 100 } },
+                    { typeof(DefComponent), new DefComponentData() { BaseDef = 100 } },
+                    { typeof(DropItemComponent), new DropItemComponentData()
+                        {
+                            DropInfoList = new List<DropItemDropInfo>()
+                            {
+                                new DropItemDropInfo() { Type = ItemType.Wood, Times = 4, Chance = 0.7f},
+                                new DropItemDropInfo() { Type = ItemType.Stone, Times = 2, Chance = 0.6f}
+                            }
+                        }
+                    }
+                }
+            };
+            _dataMap[EntityType.Ore] = new EntityData()
+            {
+                ComponentDataMap = new Dictionary<Type, ComponentData?>()
+                {
+                    { typeof(PositionComponent), null },
+                    { typeof(HpComponent), new HpComponentData() { BaseMaxHp = 100 } },
+                    { typeof(DefComponent), new DefComponentData() { BaseDef = 100 } },
+                    { typeof(DropItemComponent), new DropItemComponentData()
+                        {
+                            DropInfoList = new List<DropItemDropInfo>()
+                            {
+                                new DropItemDropInfo() { Type = ItemType.Wood, Times = 4, Chance = 0.7f},
+                                new DropItemDropInfo() { Type = ItemType.Stone, Times = 2, Chance = 0.6f}
+                            }
+                        }
+                    }
+                }
+            };
+            _dataMap[EntityType.DropItem] = new EntityData()
+            {
+                ComponentDataMap = new Dictionary<Type, ComponentData?>()
+                {
+                    { typeof(PositionComponent), null },
+                }
+            };
             //_dataMap[EntityType.Tree] = new ResourceData()
             //{
             //    MaxHp = 500,

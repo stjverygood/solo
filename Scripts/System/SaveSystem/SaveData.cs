@@ -32,8 +32,8 @@ namespace Solo.Scripts.System.SaveSystem
 
         public SaveData()
         {
-            ChunkElevationNoiseSeedStr = "ChunkElevationNoiseSeedStr2";
-            ChunkMoistureNoiseSeedStr = "ChunkMoistureNoiseSeedStr2";
+            ChunkElevationNoiseSeedStr = "ChunkElevationNoiseSeedStr4";
+            ChunkMoistureNoiseSeedStr = "ChunkMoistureNoiseSeedStr4";
             ChunkSaveDataList = new List<ChunkSaveData>();
 
             //PlayerData playerData = (PlayerData)EntityDataManager.Instance.GetData(EntityType.Player);

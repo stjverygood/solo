@@ -1,8 +1,6 @@
 ﻿using Solo.Scripts.Entities.Core;
-using Solo.Scripts.Entities.DropItems;
 using Solo.Scripts.Entities.Expballs;
 using Solo.Scripts.Global;
-using System.Collections.Generic;
 
 namespace Solo.Scripts.Entities.Enemies
 {
@@ -20,7 +18,7 @@ namespace Solo.Scripts.Entities.Enemies
         public float IdleDuration;
         public float PatrolRange;
         public ProjectileType ProjectileType;
-        public required List<DropItemDropInfo> DropItemDropInfoList;
+        //public required List<DropItemDropInfo> DropItemDropInfoList;
         public required ExpBallDropInfo ExpBallDropInfo;
     }
 }

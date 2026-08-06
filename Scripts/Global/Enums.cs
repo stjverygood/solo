@@ -188,9 +188,9 @@
         MainBaseStone,//太古源石, 用于合成主基地
         Silk,//丝绸
         Leather,//皮革, 这里可以拓展成各种皮革, 各种妖兽皮
-        Grass,//草
+
         Rope,//绳子
-        Stone,//石头
+
 
 
         Wood,//木头
@@ -259,5 +259,44 @@
         Crucible,//熔炉
         ItemBox,//储物箱
         TreeGrow,//树苗
+
+
+        Grass,//草
+        Stone,//石头
+
+        MonsterCore1,
+        MonsterCore2,
+        MonsterCore3,
+        MonsterCore4,
+
+        Leather1,
+        Leather2,
+        Leather3,
+        Leather4,
+
+        Wood1,
+        Wood2,
+        Wood3,
+        Wood4,
+
+        Metal1,
+        Metal2,
+        Metal3,
+        Metal4,
+
+        QiStone1,
+        QiStone2,
+        QiStone3,
+        QiStone4,
+
+        Sword1,
+        Sword2,
+        Sword3,
+        Sword4,
+
+        Bow1,
+        Bow2,
+        Bow3,
+        Bow4,
     }
 }
