@@ -14,6 +14,7 @@ using Solo.Scripts.System.ItemSystem;
 using Solo.Scripts.System.SaveSystem;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 public struct EntityWeight
 {
@@ -141,9 +142,41 @@ public partial class World : Node2D
         UIManager.Init();
     }
 
+    private float _entityChunkRefreshTimer = 0;
+    private float _entityChunkRefreshDuration = 1f; // 与ChunkManager卸载检查同频
     public override void _PhysicsProcess(double delta)
     {
         _canvasModulate.Color = _dayNightGradient.Sample(GameManager.Instance.TimeRatio);
+
+        _entityChunkRefreshTimer += (float)delta;
+        if (_entityChunkRefreshTimer < _entityChunkRefreshDuration)
+            return;
+        _entityChunkRefreshTimer = 0;
+        RefreshEntityChunkMap();
+    }
+
+    // 实体移动(如敌人的MoveAndSlide)不会主动上报区块, 由World定期校准归属
+    // 卸载是玩家距离驱动(4区块), 实体跨区块后最多1秒即被修正, 窗口不可达
+    private void RefreshEntityChunkMap()
+    {
+        foreach (KeyValuePair<Vector2I, List<IEntity>> pair in _entityMap.ToList())
+        {
+            foreach (IEntity entity in pair.Value.ToList())
+            {
+                if (IsInstanceValid((Node2D)entity) == false)
+                {
+                    pair.Value.Remove(entity); // 已销毁实体从账本清理
+                    continue;
+                }
+                if (entity.Core == null) // 未初始化Core的实体(直加路径)不参与追踪
+                    continue;
+                PositionComponent posComp = entity.Core.GetComponent<PositionComponent>();
+                Vector2I newChunkPos = GameManager.Instance.ChunkManager.WorldToChunkPos(posComp.GetWorldPosition());
+                if (posComp.CurChunkPos == newChunkPos)
+                    continue; // 注册位置与当前位置一致
+                RefreshEntityChunk(entity);
+            }
+        }
     }
 
     private void ChunkManager_OnChunkLoaded(Vector2I chunkPos)
@@ -297,11 +330,18 @@ public partial class World : Node2D
         PositionComponent posComp = entity.Core.GetComponent<PositionComponent>();
         Vector2I oldChunkPos = posComp.CurChunkPos;
         Vector2I newChunkPos = GameManager.Instance.ChunkManager.WorldToChunkPos(posComp.GetWorldPosition());
-        if (_entityMap.ContainsKey(oldChunkPos))
-            _entityMap[oldChunkPos].Remove(entity);
-        if (_entityMap.ContainsKey(newChunkPos) == false)
-            _entityMap[newChunkPos] = new List<IEntity>();
-        _entityMap[newChunkPos].Add(entity);
+        if (_entityMap.TryGetValue(oldChunkPos, out List<IEntity>? oldList))
+            oldList.Remove(entity);
+        if (_entityMap.TryGetValue(newChunkPos, out List<IEntity>? newList))
+        {
+            // 直加路径(如SpawnDropItem)未设置CurChunkPos, 首次校正时会重复添加
+            if (newList.Contains(entity) == false)
+                newList.Add(entity);
+        }
+        else
+        {
+            _entityMap[newChunkPos] = new List<IEntity>() { entity };
+        }
         posComp.CurChunkPos = newChunkPos;
     }
 
