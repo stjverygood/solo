@@ -3,7 +3,7 @@ using Solo.Scripts.Entities.Core;
 using Solo.Scripts.Global.Interfaces;
 
 
-namespace Solo.Scripts.Entities.Components.StartPositionComponent
+namespace Solo.Scripts.Entities.Components.StartPositionComponents
 {
     public class StartPositionComponent : Component
     {

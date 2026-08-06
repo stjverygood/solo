@@ -1,7 +1,7 @@
 using Godot;
 using Solo.Scripts.Entities.Components.DropItemComponents;
 using Solo.Scripts.Entities.Components.PositionComponents;
-using Solo.Scripts.Entities.Components.StartPositionComponent;
+using Solo.Scripts.Entities.Components.StartPositionComponents;
 using Solo.Scripts.Entities.Core;
 using Solo.Scripts.Entities.DropItems;
 using Solo.Scripts.Entities.Expballs;
@@ -37,7 +37,7 @@ public partial class World : Node2D
             new EntityWeight(){ Type = EntityType.Tree, Weight = 5f },
             new EntityWeight(){ Type = EntityType.Stone, Weight = 1f },
             new EntityWeight(){ Type = EntityType.Ore, Weight = 1f },
-            //new EntityWeight(){ Type = EntityType.NormalMeleeEnemy, Weight = 1f },
+            new EntityWeight(){ Type = EntityType.NormalMeleeEnemy, Weight = 1f },
             //new EntityWeight(){ Type = EntityType.SpeedMeleeEnemy, Weight = 1f },
             //new EntityWeight(){ Type = EntityType.StrongMeleeEnemy, Weight = 1f },
             //new EntityWeight(){ Type = EntityType.NormalRangedEnemy, Weight = 1f },
@@ -52,7 +52,7 @@ public partial class World : Node2D
             new EntityWeight(){ Type = EntityType.Tree, Weight = 20f },
             new EntityWeight(){ Type = EntityType.Stone, Weight = 1f },
             new EntityWeight(){ Type = EntityType.Ore, Weight = 1f },
-            //new EntityWeight(){ Type = EntityType.NormalMeleeEnemy, Weight = 5f },
+            new EntityWeight(){ Type = EntityType.NormalMeleeEnemy, Weight = 5f },
             //new EntityWeight(){ Type = EntityType.SpeedMeleeEnemy, Weight = 7f },
             //new EntityWeight(){ Type = EntityType.StrongMeleeEnemy, Weight = 1f },
             //new EntityWeight(){ Type = EntityType.NormalRangedEnemy, Weight = 2f },
@@ -67,7 +67,7 @@ public partial class World : Node2D
             new EntityWeight(){ Type = EntityType.Tree, Weight = 1f },
             new EntityWeight(){ Type = EntityType.Stone, Weight = 20f },
             new EntityWeight(){ Type = EntityType.Ore, Weight = 10f },
-            //new EntityWeight(){ Type = EntityType.NormalMeleeEnemy, Weight = 4f },
+            new EntityWeight(){ Type = EntityType.NormalMeleeEnemy, Weight = 4f },
             //new EntityWeight(){ Type = EntityType.SpeedMeleeEnemy, Weight = 2f },
             //new EntityWeight(){ Type = EntityType.StrongMeleeEnemy, Weight = 8f },
             //new EntityWeight(){ Type = EntityType.NormalRangedEnemy, Weight = 2f },
@@ -82,7 +82,7 @@ public partial class World : Node2D
             new EntityWeight(){ Type = EntityType.Tree, Weight = 0f },
             new EntityWeight(){ Type = EntityType.Stone, Weight = 8f },
             new EntityWeight(){ Type = EntityType.Ore, Weight = 4f },
-            //new EntityWeight(){ Type = EntityType.NormalMeleeEnemy, Weight = 2f },
+            new EntityWeight(){ Type = EntityType.NormalMeleeEnemy, Weight = 2f },
             //new EntityWeight(){ Type = EntityType.SpeedMeleeEnemy, Weight = 10f },
             //new EntityWeight(){ Type = EntityType.StrongMeleeEnemy, Weight = 2f },
             //new EntityWeight(){ Type = EntityType.NormalRangedEnemy, Weight = 8f },
@@ -97,7 +97,7 @@ public partial class World : Node2D
             new EntityWeight(){ Type = EntityType.Tree, Weight = 0f },
             new EntityWeight(){ Type = EntityType.Stone, Weight = 10f },
             new EntityWeight(){ Type = EntityType.Ore, Weight = 20f },
-            //new EntityWeight(){ Type = EntityType.NormalMeleeEnemy, Weight = 2f },
+            new EntityWeight(){ Type = EntityType.NormalMeleeEnemy, Weight = 2f },
             //new EntityWeight(){ Type = EntityType.SpeedMeleeEnemy, Weight = 8f },
             //new EntityWeight(){ Type = EntityType.StrongMeleeEnemy, Weight = 12f },
             //new EntityWeight(){ Type = EntityType.NormalRangedEnemy, Weight = 10f },

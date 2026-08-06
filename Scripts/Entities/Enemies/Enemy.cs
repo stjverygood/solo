@@ -1,4 +1,5 @@
 ﻿using Godot;
+using Solo.Scripts.Entities.Components.EnemyComponents;
 using Solo.Scripts.Entities.Components.HpComponents;
 using Solo.Scripts.Entities.Core;
 using Solo.Scripts.Entities.Players;
@@ -24,9 +25,6 @@ namespace Solo.Scripts.Entities.Enemies
         private EnemyState _curState;
         private Vector2 _curDir = Vector2.Right;
         private bool canMove = false;
-
-        public EntityType Type;
-        private EnemyData _data = null!;
 
         public EntityCore Core { get; private set; } = null!;
 
@@ -186,14 +184,14 @@ namespace Solo.Scripts.Entities.Enemies
                 return;
             }
 
-            if (player != null && GlobalPosition.DistanceSquaredTo(player.GlobalPosition) <= _data.ViewRangeSq)
+            if (player != null && GlobalPosition.DistanceSquaredTo(player.GlobalPosition) <= Core.GetComponent<EnemyComponent>().Data.ViewRangeSq)
             {
                 ChangeState(EnemyState.Chase);
                 return;
             }
 
             _idleTimer += delta;
-            if (_idleTimer >= _data.IdleDuration)
+            if (_idleTimer >= Core.GetComponent<EnemyComponent>().Data.IdleDuration)
             {
                 ChangeState(EnemyState.Patrol);
                 return;
@@ -211,7 +209,7 @@ namespace Solo.Scripts.Entities.Enemies
         {
             _animSprite.Play("Move");
             canMove = true;
-            _naviAgent.TargetPosition = GetRandomValidTarget(GlobalPosition, _data.PatrolRange); ;
+            _naviAgent.TargetPosition = GetRandomValidTarget(GlobalPosition, Core.GetComponent<EnemyComponent>().Data.PatrolRange); ;
         }
         private void UpdatePatrol(float delta)
         {
@@ -221,7 +219,7 @@ namespace Solo.Scripts.Entities.Enemies
                 ChangeState(EnemyState.Idle);
                 return;
             }
-            if (player != null && GlobalPosition.DistanceSquaredTo(player.GlobalPosition) <= _data.ViewRangeSq)
+            if (player != null && GlobalPosition.DistanceSquaredTo(player.GlobalPosition) <= Core.GetComponent<EnemyComponent>().Data.ViewRangeSq)
             {
                 ChangeState(EnemyState.Chase);
                 return;
@@ -238,7 +236,7 @@ namespace Solo.Scripts.Entities.Enemies
                 _animSprite.FlipH = false;
             else
                 _animSprite.FlipH = true;
-            _naviAgent.Velocity = _curDir * _data.MoveSpeed;
+            _naviAgent.Velocity = _curDir * Core.GetComponent<EnemyComponent>().Data.MoveSpeed;
         }
         private void ExitPatrol()
         {
@@ -261,13 +259,13 @@ namespace Solo.Scripts.Entities.Enemies
             }
 
             Player player = GameManager.Instance.Player;
-            if (player == null || GlobalPosition.DistanceSquaredTo(player.GlobalPosition) > _data.ViewRangeSq)
+            if (player == null || GlobalPosition.DistanceSquaredTo(player.GlobalPosition) > Core.GetComponent<EnemyComponent>().Data.ViewRangeSq)
             {
                 ChangeState(EnemyState.Idle);
                 return;
             }
 
-            if (GlobalPosition.DistanceSquaredTo(player.GlobalPosition) <= _data.AtkRangeSq)
+            if (GlobalPosition.DistanceSquaredTo(player.GlobalPosition) <= Core.GetComponent<EnemyComponent>().Data.AtkRangeSq)
             {
                 ChangeState(EnemyState.Atk);
                 return;
@@ -280,7 +278,7 @@ namespace Solo.Scripts.Entities.Enemies
                 _animSprite.FlipH = false;
             else
                 _animSprite.FlipH = true;
-            _naviAgent.Velocity = _curDir * _data.MoveSpeed;
+            _naviAgent.Velocity = _curDir * Core.GetComponent<EnemyComponent>().Data.MoveSpeed;
         }
         private void ExitChase()
         {
@@ -300,7 +298,7 @@ namespace Solo.Scripts.Entities.Enemies
             if (_animSprite.Frame == 3 && isAtked == false)
             {
                 isAtked = true;
-                GameManager.Instance.SpawnProjectile(_data.ProjectileType,
+                GameManager.Instance.SpawnProjectile(Core.GetComponent<EnemyComponent>().Data.ProjectileType,
                     new ProjectileContext()
                     {
                         Projecter = this,
@@ -326,7 +324,7 @@ namespace Solo.Scripts.Entities.Enemies
         private void EnterDeath()
         {
             canMove = false;
-            GameManager.Instance.World.SpawnExpBall(GlobalPosition, _data.ExpBallDropInfo);
+            //GameManager.Instance.World.SpawnExpBall(GlobalPosition, Core.GetComponent<expballd>().);
             Tween tween = CreateTween().SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out);
             tween.TweenProperty(_animSprite, "scale", new Vector2(0.01f, 0.01f), 1f);
             tween.Finished += () =>

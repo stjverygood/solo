@@ -1,13 +1,14 @@
 ﻿using Solo.Scripts.Entities.Components.AtkComponents;
 using Solo.Scripts.Entities.Components.DefComponents;
 using Solo.Scripts.Entities.Components.DropItemComponents;
+using Solo.Scripts.Entities.Components.EnemyComponents;
 using Solo.Scripts.Entities.Components.ExpComponents;
 using Solo.Scripts.Entities.Components.HpComponents;
 using Solo.Scripts.Entities.Components.InventoryComponents;
 using Solo.Scripts.Entities.Components.PositionComponents;
 using Solo.Scripts.Entities.Components.QiComponents;
 using Solo.Scripts.Entities.Components.RealmComponents;
-using Solo.Scripts.Entities.Components.StartPositionComponent;
+using Solo.Scripts.Entities.Components.StartPositionComponents;
 using Solo.Scripts.Global;
 using Solo.Scripts.System.InventorySystem;
 using System;
@@ -100,6 +101,26 @@ namespace Solo.Scripts.Entities.Core
                 }
             };
 
+            _dataMap[EntityType.NormalMeleeEnemy] = new EntityData()
+            {
+                ComponentDataMap = new Dictionary<Type, ComponentData?>()
+                {
+                    { typeof(EnemyComponent), new EnemyComponentData() { MoveSpeed = 30, ViewRange = 100, ViewRangeSq = 100 * 100, AtkRange = 20, AtkRangeSq = 20 * 20, IdleDuration = 1, PatrolRange = 200, ProjectileType = ProjectileType.SwordWave,} },
+                    { typeof(HpComponent), new HpComponentData() { BaseMaxHp = 100 } },
+                    { typeof(AtkComponent), new AtkComponentData() { BaseAtk = 100 } },
+                    { typeof(DefComponent), new DefComponentData() { BaseDef = 100 } },
+                    { typeof(PositionComponent), null},
+                    { typeof(DropItemComponent), new DropItemComponentData()
+                        {
+                            DropInfoList = new List<DropItemDropInfo>()
+                            {
+                                new DropItemDropInfo() { Type = ItemType.Sword2, Times = 4, Chance = 0.7f},
+                                new DropItemDropInfo() { Type = ItemType.QiStone4, Times = 2, Chance = 0.6f}
+                            }
+                        }
+                    }
+                }
+            };
             //_dataMap[EntityType.NormalMeleeEnemy] = new EnemyData()
             //{
             //    MaxHp = 100,

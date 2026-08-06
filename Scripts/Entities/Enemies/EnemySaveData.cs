@@ -1,9 +1,9 @@
-﻿using Solo.Scripts.Entities.Core;
+﻿//using Solo.Scripts.Entities.Core;
 
-namespace Solo.Scripts.Entities.Enemies
-{
-    public class EnemySaveData : EntitySaveData
-    {
-        public float CurHp { get; set; }
-    }
-}
+//namespace Solo.Scripts.Entities.Enemies
+//{
+//    public class EnemySaveData : EntitySaveData
+//    {
+//        public float CurHp { get; set; }
+//    }
+//}

@@ -1,13 +1,14 @@
 ﻿using Solo.Scripts.Entities.Components.AtkComponents;
 using Solo.Scripts.Entities.Components.DefComponents;
 using Solo.Scripts.Entities.Components.DropItemComponents;
+using Solo.Scripts.Entities.Components.EnemyComponents;
 using Solo.Scripts.Entities.Components.ExpComponents;
 using Solo.Scripts.Entities.Components.HpComponents;
 using Solo.Scripts.Entities.Components.InventoryComponents;
 using Solo.Scripts.Entities.Components.PositionComponents;
 using Solo.Scripts.Entities.Components.QiComponents;
 using Solo.Scripts.Entities.Components.RealmComponents;
-using Solo.Scripts.Entities.Components.StartPositionComponent;
+using Solo.Scripts.Entities.Components.StartPositionComponents;
 using Solo.Scripts.Global;
 using Solo.Scripts.Global.Interfaces;
 using System;
@@ -50,7 +51,8 @@ namespace Solo.Scripts.Entities.Core
                     _componentMap[typeof(StartPositionComponent)] = new StartPositionComponent(entity);
                 else if (pair.Key == typeof(DropItemComponent))
                     _componentMap[typeof(DropItemComponent)] = new DropItemComponent(entity);
-
+                else if (pair.Key == typeof(EnemyComponent))
+                    _componentMap[typeof(EnemyComponent)] = new EnemyComponent(entity);
 
             }
 

@@ -4,7 +4,7 @@ using Solo.Scripts.Entities.Components.InventoryComponents;
 using Solo.Scripts.Entities.Components.PositionComponents;
 using Solo.Scripts.Entities.Components.QiComponents;
 using Solo.Scripts.Entities.Components.RealmComponents;
-using Solo.Scripts.Entities.Components.StartPositionComponent;
+using Solo.Scripts.Entities.Components.StartPositionComponents;
 using System.Text.Json.Serialization;
 
 namespace Solo.Scripts.Entities.Core

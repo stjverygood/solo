@@ -1,6 +1,6 @@
 ﻿using Solo.Scripts.Entities.Core;
 
-namespace Solo.Scripts.Entities.Components.StartPositionComponent
+namespace Solo.Scripts.Entities.Components.StartPositionComponents
 {
     public class StartPositionComponentSaveData : ComponentSaveData
     {

@@ -4,7 +4,7 @@ using Solo.Scripts.Entities.Components.HpComponents;
 using Solo.Scripts.Entities.Components.InventoryComponents;
 using Solo.Scripts.Entities.Components.QiComponents;
 using Solo.Scripts.Entities.Components.RealmComponents;
-using Solo.Scripts.Entities.Components.StartPositionComponent;
+using Solo.Scripts.Entities.Components.StartPositionComponents;
 using Solo.Scripts.Entities.Core;
 using Solo.Scripts.Global;
 using Solo.Scripts.Global.Interfaces;
