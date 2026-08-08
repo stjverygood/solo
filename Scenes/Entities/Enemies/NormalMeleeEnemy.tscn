@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://bfckrtubfdcw1"]
 
-[ext_resource type="Script" uid="uid://cp7o76b4a0sfs" path="res://Scripts/Entities/Enemies/Enemy.cs" id="1_jllsw"]
+[ext_resource type="Script" uid="uid://c6aa0lr6lqoku" path="res://Scripts/Entities/Enemy.cs" id="1_4bnqt"]
 [ext_resource type="Texture2D" uid="uid://csphlls858cnj" path="res://Assets/Png/EntityAnimSheets/Zombie/Orc_Idle.png" id="2_4bnqt"]
 [ext_resource type="Texture2D" uid="uid://13bg80goh53b" path="res://Assets/Png/EntityAnimSheets/Zombie/Orc_Walk.png" id="3_o03nw"]
 [ext_resource type="PackedScene" uid="uid://dgrarrj2s36w8" path="res://Scenes/UI/Commons/HpBar.tscn" id="4_4bnqt"]
@@ -167,7 +167,7 @@ animations = [{
 }]
 
 [node name="NormalMeleeEnemy" type="CharacterBody2D" unique_id=1153094625 node_paths=PackedStringArray("_animSprite", "_naviAgent", "_debugLb")]
-script = ExtResource("1_jllsw")
+script = ExtResource("1_4bnqt")
 _animSprite = NodePath("AnimatedSprite2D")
 _naviAgent = NodePath("NavigationAgent2D")
 _debugLb = NodePath("DebugLabel")

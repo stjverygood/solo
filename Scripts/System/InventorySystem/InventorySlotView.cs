@@ -1,5 +1,5 @@
 using Godot;
-using Solo.Scripts.Entities.Components.InventoryComponents;
+using Solo.Scripts.Components.InventoryComponents;
 using Solo.Scripts.Global;
 using Solo.Scripts.System.ItemSystem;
 

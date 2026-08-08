@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://cn7pil5cp6afb"]
 
 [ext_resource type="Texture2D" uid="uid://bt0s8ja1k2w0g" path="res://Assets/Png/building.png" id="1_518au"]
-[ext_resource type="Script" uid="uid://byag51bat8vwh" path="res://Scripts/Entities/Resources/Resource.cs" id="1_gotok"]
+[ext_resource type="Script" uid="uid://f61vm82i2b1o" path="res://Scripts/Entities/Resource.cs" id="1_gotok"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_yxouj"]
 radius = 4.0

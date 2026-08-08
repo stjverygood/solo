@@ -1,0 +1,63 @@
+[gd_scene format=3 uid="uid://qw0q5wipafhq"]
+
+[ext_resource type="Script" uid="uid://bfbkuamsur4pu" path="res://Scripts/Entities/DropItem.cs" id="1_tk0h0"]
+[ext_resource type="FontFile" uid="uid://chelxpn5elvbb" path="res://Assets/zpix.ttf" id="2_byhkn"]
+[ext_resource type="Texture2D" uid="uid://bt0s8ja1k2w0g" path="res://Assets/Png/building.png" id="2_vxgl1"]
+[ext_resource type="Shader" uid="uid://i3lcvke3ll2n" path="res://Assets/Shaders/Outline.gdshader" id="3_vxgl1"]
+[ext_resource type="Texture2D" uid="uid://b4b4tkbxuo1e5" path="res://Assets/Png/item.png" id="4_g50nv"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_yxouj"]
+radius = 6.0
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_yxouj"]
+atlas = ExtResource("2_vxgl1")
+region = Rect2(0, 128, 16, 16)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_8oblo"]
+shader = ExtResource("3_vxgl1")
+shader_parameter/outline_color = Color(0.96, 0.93, 0.73, 1)
+shader_parameter/outline_width = 1.0
+shader_parameter/flash_modifier = 0.0
+shader_parameter/flash_color = Color(1, 1, 1, 1)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wdnd1"]
+atlas = ExtResource("4_g50nv")
+region = Rect2(400, 496, 16, 16)
+
+[node name="DropItem" type="StaticBody2D" unique_id=2105533556 node_paths=PackedStringArray("IconSprite", "InfoLb")]
+y_sort_enabled = true
+collision_layer = 2
+collision_mask = 0
+script = ExtResource("1_tk0h0")
+IconSprite = NodePath("Sprite2D")
+InfoLb = NodePath("InfoLb")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=751436325]
+shape = SubResource("CircleShape2D_yxouj")
+
+[node name="ShadowSprite2D" type="Sprite2D" parent="." unique_id=1156424086]
+visible = false
+position = Vector2(0, 1)
+texture = SubResource("AtlasTexture_yxouj")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1694164295]
+material = SubResource("ShaderMaterial_8oblo")
+position = Vector2(0, 4)
+scale = Vector2(0.5, 0.5)
+texture = SubResource("AtlasTexture_wdnd1")
+offset = Vector2(0, -7.04)
+
+[node name="InfoLb" type="Label" parent="." unique_id=1286302052]
+z_index = 10
+offset_left = -23.000002
+offset_top = -18.000002
+offset_right = 35.895706
+offset_bottom = -2.049079
+scale = Vector2(0.815, 0.815)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 2
+theme_override_fonts/font = ExtResource("2_byhkn")
+theme_override_font_sizes/font_size = 10
+text = "木材"
+horizontal_alignment = 1
+vertical_alignment = 1

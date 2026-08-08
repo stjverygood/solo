@@ -1,4 +1,5 @@
-﻿using Solo.Scripts.Global;
+﻿using Solo.Scripts.Components.Core;
+using Solo.Scripts.Global;
 using System.Collections.Generic;
 
 namespace Solo.Scripts.Entities.Core

@@ -1,5 +1,5 @@
 using Godot;
-using Solo.Scripts.Entities.Components.InventoryComponents;
+using Solo.Scripts.Components.InventoryComponents;
 using Solo.Scripts.System.InventorySystem;
 
 namespace Solo.Scripts.UI.InventoryViews

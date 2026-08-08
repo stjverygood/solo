@@ -1,5 +1,5 @@
 using Godot;
-using Solo.Scripts.Entities.Players;
+using Solo.Scripts.Entities;
 using Solo.Scripts.Global;
 using Solo.Scripts.System.SaveSystem;
 using System;
@@ -12,13 +12,6 @@ namespace Solo.Scripts.System.ChunkSystem
     {
         [Export] private TileMapLayer _waterTileMapLayer = null!;
         [Export] private TileMapLayer _landTileMapLayer = null!;
-        //[Export] private PackedScene _buildingPs;
-        [Export] public PackedScene DropItemPs = null!;
-        [Export] public PackedScene _unitPs = null!;
-
-        [Export] public PackedScene _zombiePs = null!;
-
-        //public BuildingManager BuildingManager;
         private bool _enable = false;
         private Player _player = null!;
         private FastNoiseLite _elevationNoise = new FastNoiseLite(); // 海拔/地形起伏,决定水/陆地

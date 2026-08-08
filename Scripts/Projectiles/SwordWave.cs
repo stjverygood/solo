@@ -1,7 +1,7 @@
 using Godot;
-using Solo.Scripts.Entities.Components.AtkComponents;
-using Solo.Scripts.Entities.Components.DefComponents;
-using Solo.Scripts.Entities.Components.HpComponents;
+using Solo.Scripts.Components.AtkComponents;
+using Solo.Scripts.Components.DefComponents;
+using Solo.Scripts.Components.HpComponents;
 using Solo.Scripts.Global;
 using Solo.Scripts.Global.Interfaces;
 using System.Collections.Generic;

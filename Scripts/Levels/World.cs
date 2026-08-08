@@ -1,8 +1,8 @@
 using Godot;
-using Solo.Scripts.Entities.Components.PositionComponents;
-using Solo.Scripts.Entities.Components.StartPositionComponents;
+using Solo.Scripts.Components.PositionComponents;
+using Solo.Scripts.Components.StartPositionComponents;
+using Solo.Scripts.Entities;
 using Solo.Scripts.Entities.Core;
-using Solo.Scripts.Entities.Players;
 using Solo.Scripts.Global;
 using Solo.Scripts.Global.Interfaces;
 using Solo.Scripts.Levels;

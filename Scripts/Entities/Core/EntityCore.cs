@@ -1,4 +1,5 @@
-﻿using Solo.Scripts.Global;
+﻿using Solo.Scripts.Components.Core;
+using Solo.Scripts.Global;
 using Solo.Scripts.Global.Interfaces;
 using System;
 using System.Collections.Generic;

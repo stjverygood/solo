@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://djb6fn7yg8ney"]
 
-[ext_resource type="Script" uid="uid://cp7o76b4a0sfs" path="res://Scripts/Entities/Enemies/Enemy.cs" id="1_8mwda"]
+[ext_resource type="Script" uid="uid://c6aa0lr6lqoku" path="res://Scripts/Entities/Enemy.cs" id="1_8mwda"]
 [ext_resource type="Texture2D" uid="uid://bktw06wl0k8s0" path="res://Assets/Png/EntityAnimSheets/Player/Soldier_Idle.png" id="2_vbnra"]
 [ext_resource type="Texture2D" uid="uid://bc3lqr2l6kbt1" path="res://Assets/Png/EntityAnimSheets/Player/Soldier_Walk.png" id="3_2gxlp"]
 
